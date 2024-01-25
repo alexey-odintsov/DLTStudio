@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.ui
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +13,7 @@ import com.alekso.dltparser.dlt.DLTMessage
 import java.text.DateFormat
 
 @Composable
+@Preview
 fun LogRow(index: Int, message: DLTMessage, dateFormat: DateFormat) {
     Box(
         modifier = Modifier
