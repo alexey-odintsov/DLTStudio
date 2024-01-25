@@ -29,9 +29,30 @@ fun LazyScrollable(dltSession: ParseSession) {
 
         val state = rememberLazyListState()
 
-        LazyColumn(Modifier.fillMaxSize().padding(end = 12.dp), state) {
+        LogRow(
+            "#",
+            "DateTime",
+            "ecu",
+            "ecuId",
+            "sessId",
+            "appId",
+            "ctxId",
+            "content", true
+        )
+
+        LazyColumn(Modifier.fillMaxSize().padding(top = 20.dp, end = 12.dp), state) {
             items(dltSession.dltMessages.size) { i ->
-                LogRow(i, dltSession.dltMessages[i], simpleDateFormat)
+                val message = dltSession.dltMessages[i]
+                LogRow(
+                    i.toString(),
+                    simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
+                    message.ecuId,
+                    "${message.standardHeader.ecuId}",
+                    "${message.standardHeader.sessionId}",
+                    "${message.extendedHeader?.applicationId}",
+                    "${message.extendedHeader?.contextId}",
+                    "${message.payload?.asText()}"
+                )
                 Spacer(modifier = Modifier.height(2.dp))
             }
         }

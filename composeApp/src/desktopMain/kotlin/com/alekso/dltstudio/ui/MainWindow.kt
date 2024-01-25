@@ -30,7 +30,7 @@ fun MainWindow() {
         Button(onClick = {
             coroutineScope.launch {
                 withContext(Dispatchers.IO) {
-                    dltSession = ParseSession({ i -> progress = i }, File("/users/alekso/Downloads/dlt1.dlt"))
+                    dltSession = ParseSession({ i -> progress = i }, File("/users/alekso/Downloads/dlt3.dlt"))
                     dltSession?.start()
                 }
             }

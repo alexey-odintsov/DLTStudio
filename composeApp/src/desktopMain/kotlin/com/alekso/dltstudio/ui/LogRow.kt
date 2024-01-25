@@ -14,7 +14,17 @@ import java.text.DateFormat
 
 @Composable
 @Preview
-fun LogRow(index: Int, message: DLTMessage, dateFormat: DateFormat) {
+fun LogRow(
+    index: String,
+    datetime: String,
+    ecu: String,
+    ecuId: String,
+    sessionId: String,
+    applicationId: String,
+    contextId: String,
+    content: String,
+    isHeader: Boolean = false
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -23,35 +33,43 @@ fun LogRow(index: Int, message: DLTMessage, dateFormat: DateFormat) {
             Cell(
                 modifier = Modifier.width(30.dp),
                 textAlign = TextAlign.Right,
-                text = index.toString()
+                text = index,
+                isHeader = isHeader
             )
             Cell(
-                modifier = Modifier.width(220.dp),
-                text = dateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000)
-            )
-            Cell(
-                modifier = Modifier.width(50.dp),
-                text = message.ecuId
-            )
-            Cell(
-                modifier = Modifier.width(50.dp),
-                text = "${message.standardHeader.ecuId}"
+                modifier = Modifier.width(200.dp),
+                text = datetime,
+                isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(50.dp),
-                text = "${message.standardHeader.sessionId}"
+                text = ecu,
+                isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(50.dp),
-                text = "${message.extendedHeader?.applicationId}"
+                text = ecuId,
+                isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(50.dp),
-                text = "${message.extendedHeader?.contextId}"
+                text = sessionId,
+                isHeader = isHeader
+            )
+            Cell(
+                modifier = Modifier.width(50.dp),
+                text = applicationId,
+                isHeader = isHeader
+            )
+            Cell(
+                modifier = Modifier.width(50.dp),
+                text = contextId,
+                isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(800.dp),
-                text = "${message.payload?.asText()}"
+                text = content,
+                isHeader = isHeader
             )
         }
     }
