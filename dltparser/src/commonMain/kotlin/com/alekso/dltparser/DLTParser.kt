@@ -274,6 +274,12 @@ object DLTParser {
         } else {
             payloadSize = typeInfo.typeLengthBits / 8
         }
+
+        // Sanity check to fix infinite reading
+        if (payloadSize <= 0) {
+            payloadSize = 10
+        }
+
         val toIndex = i + 4 + additionalSize + payloadSize - 1
         val payload =
             bytes.sliceArray(i + 4 + additionalSize..if (toIndex < bytes.size) toIndex else bytes.size - 1)
