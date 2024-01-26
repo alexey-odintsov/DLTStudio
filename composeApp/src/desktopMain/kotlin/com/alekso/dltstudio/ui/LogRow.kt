@@ -9,14 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
-import java.text.DateFormat
 
 @Composable
 @Preview
 fun LogRow(
     index: String,
     datetime: String,
+    timeOffset: String,
     ecu: String,
     ecuId: String,
     sessionId: String,
@@ -38,31 +37,43 @@ fun LogRow(
             )
             Cell(
                 modifier = Modifier.width(200.dp),
+                textAlign = TextAlign.Center,
                 text = datetime,
                 isHeader = isHeader
             )
             Cell(
+                modifier = Modifier.width(80.dp),
+                textAlign = TextAlign.Right,
+                text = timeOffset,
+                isHeader = isHeader
+            )
+            Cell(
                 modifier = Modifier.width(50.dp),
+                textAlign = TextAlign.Center,
                 text = ecu,
                 isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(50.dp),
+                textAlign = TextAlign.Center,
                 text = ecuId,
                 isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(50.dp),
+                textAlign = TextAlign.Center,
                 text = sessionId,
                 isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(50.dp),
+                textAlign = TextAlign.Center,
                 text = applicationId,
                 isHeader = isHeader
             )
             Cell(
                 modifier = Modifier.width(50.dp),
+                textAlign = TextAlign.Center,
                 text = contextId,
                 isHeader = isHeader
             )

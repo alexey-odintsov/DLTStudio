@@ -32,6 +32,7 @@ fun LazyScrollable(dltSession: ParseSession) {
         LogRow(
             "#",
             "DateTime",
+            "Time",
             "ecu",
             "ecuId",
             "sessId",
@@ -46,6 +47,7 @@ fun LazyScrollable(dltSession: ParseSession) {
                 LogRow(
                     i.toString(),
                     simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
+                    if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!! / 10000f) else "-",
                     message.ecuId,
                     "${message.standardHeader.ecuId}",
                     "${message.standardHeader.sessionId}",
