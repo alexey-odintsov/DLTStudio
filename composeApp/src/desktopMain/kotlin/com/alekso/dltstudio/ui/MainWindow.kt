@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
@@ -13,7 +13,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -42,7 +41,7 @@ fun MainWindow() {
     }
 
     LinearProgressIndicator(
-        modifier = Modifier.width(1200.dp),
+        modifier = Modifier.fillMaxWidth(),
         backgroundColor = Color.White,
         progress = progress,
     )
