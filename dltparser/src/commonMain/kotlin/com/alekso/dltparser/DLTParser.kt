@@ -11,7 +11,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 object DLTParser {
-
+    private const val MAX_BYTES_TO_READ_DEBUG = -1 // put -1 to ignore
+    private const val DLT_HEADER_SIZE_BYTES = 16
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
     /**
@@ -30,7 +31,7 @@ object DLTParser {
             var i = 0
             val messages = mutableListOf<DLTMessage>()
 
-            while (i < bytes.size - 17) {
+            while (i < bytes.size - DLT_HEADER_SIZE_BYTES && (MAX_BYTES_TO_READ_DEBUG < 0 || i < MAX_BYTES_TO_READ_DEBUG)) {
                 val shouldLog = logsReadCount == 11
 
                 while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)
@@ -44,7 +45,7 @@ object DLTParser {
                 val timeStampSec = bytes.sliceArray(i + 4..i + 7).toInt32l()
                 val timeStampUs = bytes.sliceArray(i + 8..i + 11).toInt32l()
                 val ecuId = bytes.sliceArray(i + 12..i + 15).decodeToString()
-                i += 16
+                i += DLT_HEADER_SIZE_BYTES
 
                 printIf(
                     shouldLog,
@@ -91,7 +92,7 @@ object DLTParser {
                     )
                     logsReadCount++
                 } catch (e: Exception) {
-                    i++
+                    i++ // move counter to the next byte
                     println(e)
                 }
             }
