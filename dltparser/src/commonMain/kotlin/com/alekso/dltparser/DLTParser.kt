@@ -272,6 +272,8 @@ object DLTParser {
                 2 // PRS_Dlt_00160 - 16-bit unsigned integer shall specify the length of the raw data in byte
         } else if (typeInfo.typeUnsigned || typeInfo.typeSigned) {
             payloadSize = typeInfo.typeLengthBits / 8
+        } else if (typeInfo.typeBool) {
+            payloadSize = 1
         } else {
             payloadSize = typeInfo.typeLengthBits / 8
         }
@@ -312,6 +314,7 @@ object DLTParser {
 
             typeInfo.typeSigned -> " ${payload.readInt(0, Endian.LITTLE)} [${payload.toHex()}]"
             typeInfo.typeRaw -> " [${payload.toHex()}]"
+            typeInfo.typeBool -> " ${if (payload[0] == 0.toByte()) "FALSE" else "TRUE"}"
             else -> payload.toHex()
         }
     }
