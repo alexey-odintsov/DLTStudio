@@ -42,8 +42,8 @@ object DLTParser {
 
                 progressCallback.invoke(i.toFloat() / bytes.size.toFloat())
                 val signature = bytes.readString(i, 4)
-                val timeStampSec = bytes.sliceArray(i + 4..i + 7).toInt32l()
-                val timeStampUs = bytes.sliceArray(i + 8..i + 11).toInt32l()
+                val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
+                val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
                 val ecuId = bytes.readString(i + 12, 4)
                 i += DLT_HEADER_SIZE_BYTES
 
@@ -105,13 +105,13 @@ object DLTParser {
         var p = i
         val headerType = parseStandardHeaderType(shouldLog, bytes[p]); p += 1
         val messageCounter = bytes[p]; p += 1
-        val length = bytes.sliceArray(p..p + 1).toInt16b(); p += 2
+        val length = bytes.readShort(p, Endian.BIG).toInt(); p += 2
         val ecuId =
             if (headerType.withEcuId) bytes.readString(p, 4) else null; p += 4
         val sessionId =
-            if (headerType.withSessionId) bytes.sliceArray(p..p + 3).toInt32b() else null; p += 4
+            if (headerType.withSessionId) bytes.readInt(p, Endian.BIG) else null; p += 4
         val timeStamp =
-            if (headerType.withTimestamp) bytes.sliceArray(p..p + 3).toInt32b() else null; p += 4
+            if (headerType.withTimestamp) bytes.readInt(p, Endian.BIG) else null; p += 4
 
         printIf(
             shouldLog,
@@ -256,18 +256,18 @@ object DLTParser {
             shouldLog, "   $j: Argument.parse:  ${bytes.sliceArray(i..i + 20).toHex()}"
         )
 
-        val typeInfoInt = bytes.sliceArray(i..i + 3).toInt32l()
+        val typeInfoInt = bytes.readInt(i, Endian.LITTLE)
         val typeInfo = parseVerbosePayloadTypeInfo(shouldLog, typeInfoInt)
         printIf(shouldLog, "       typeInfo: $typeInfo")
 
         var payloadSize = 0
         var additionalSize = 0
         if (typeInfo.typeString) {
-            payloadSize = bytes.sliceArray(i + 4..i + 5).toInt16l()
+            payloadSize = bytes.readShort(i + 4, Endian.LITTLE).toInt()
             additionalSize =
                 2 // PRS_Dlt_00156 - 16-bit unsigned integer specifies the length of the string
         } else if (typeInfo.typeRaw) {
-            payloadSize = bytes.sliceArray(i + 4..i + 5).toInt16l()
+            payloadSize = bytes.readShort(i + 4, Endian.LITTLE).toInt()
             additionalSize =
                 2 // PRS_Dlt_00160 - 16-bit unsigned integer shall specify the length of the raw data in byte
         } else if (typeInfo.typeUnsigned || typeInfo.typeSigned) {
@@ -305,12 +305,12 @@ object DLTParser {
             typeInfo.typeUnsigned -> {
                 when (typeInfo.typeLengthBits) {
                     8 -> " ${payload[0].toUInt()} [${payload.toHex()}]"
-                    16 -> " ${payload.toInt16l().toUInt()} [${payload.toHex()}]"
-                    else -> " ${payload.toInt32l().toUInt()} [${payload.toHex()}]"
+                    16 -> " ${payload.readShort(0, Endian.LITTLE).toUShort()} [${payload.toHex()}]"
+                    else -> " ${payload.readInt(0, Endian.LITTLE).toUInt()} [${payload.toHex()}]"
                 }
             }
 
-            typeInfo.typeSigned -> " ${payload.toInt32l()} [${payload.toHex()}]"
+            typeInfo.typeSigned -> " ${payload.readInt(0, Endian.LITTLE)} [${payload.toHex()}]"
             typeInfo.typeRaw -> " [${payload.toHex()}]"
             else -> payload.toHex()
         }
