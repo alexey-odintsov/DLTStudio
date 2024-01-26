@@ -41,10 +41,10 @@ object DLTParser {
                 }
 
                 progressCallback.invoke(i.toFloat() / bytes.size.toFloat())
-                val signature = bytes.sliceArray(i..i + 3).decodeToString()
+                val signature = bytes.readString(i, 4)
                 val timeStampSec = bytes.sliceArray(i + 4..i + 7).toInt32l()
                 val timeStampUs = bytes.sliceArray(i + 8..i + 11).toInt32l()
-                val ecuId = bytes.sliceArray(i + 12..i + 15).decodeToString()
+                val ecuId = bytes.readString(i + 12, 4)
                 i += DLT_HEADER_SIZE_BYTES
 
                 printIf(
@@ -107,7 +107,7 @@ object DLTParser {
         val messageCounter = bytes[p]; p += 1
         val length = bytes.sliceArray(p..p + 1).toInt16b(); p += 2
         val ecuId =
-            if (headerType.withEcuId) bytes.sliceArray(p..p + 3).decodeToString() else null; p += 4
+            if (headerType.withEcuId) bytes.readString(p, 4) else null; p += 4
         val sessionId =
             if (headerType.withSessionId) bytes.sliceArray(p..p + 3).toInt32b() else null; p += 4
         val timeStamp =
@@ -161,8 +161,8 @@ object DLTParser {
         var p = i
         val messageInfo = parseMessageInfo(bytes[p]); p += 1
         val argumentsCount = bytes[p].toInt(); p += 1
-        val applicationId = bytes.sliceArray(p..p + 3).decodeToString(); p += 4
-        val contextId = bytes.sliceArray(p..p + 3).decodeToString(); p += 4
+        val applicationId = bytes.readString(p, 4); p += 4
+        val contextId = bytes.readString(p, 4); p += 4
 
         printIf(
             shouldLog,

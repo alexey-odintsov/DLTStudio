@@ -12,7 +12,7 @@ fun Int.isBitSet(position: Int): Boolean {
 fun ByteArray.toInt16l(): Int = (get(1).toInt() shl 8) or (get(0).toInt())
 fun ByteArray.toInt16b(): Int = (get(0).toInt() shl 8) or (get(1).toInt())
 
-fun Byte.toHex(): String ="%02x ".format(this)
+fun Byte.toHex(): String = "%02x ".format(this)
 
 fun ByteArray.toInt32l(): Int =
     (get(3).toInt() shl 24) or
@@ -25,6 +25,8 @@ fun ByteArray.toInt32b(): Int =
             (get(1).toInt() and 0xff shl 16) or
             (get(2).toInt() and 0xff shl 8) or
             (get(3).toInt() and 0xff)
+
+fun ByteArray.readString(start: Int, bytes: Int) = decodeToString(start, start + bytes)
 
 fun ByteArray.toHex(): String =
     joinToString(separator = "", limit = 256) { eachByte -> "%02x ".format(eachByte) }
