@@ -31,7 +31,7 @@ object DLTParser {
             val messages = mutableListOf<DLTMessage>()
 
             while (i < bytes.size - 17) {
-                val shouldLog = logsReadCount == 30
+                val shouldLog = logsReadCount == 11
 
                 while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)
                 ) {
@@ -251,26 +251,62 @@ object DLTParser {
         bytes: ByteArray,
         i: Int
     ): VerbosePayload.Argument {
+        printIf(
+            shouldLog, "   $j: Argument.parse:  ${bytes.sliceArray(i..i + 20).toHex()}"
+        )
 
         val typeInfoInt = bytes.sliceArray(i..i + 3).toInt32l()
         val typeInfo = parseVerbosePayloadTypeInfo(shouldLog, typeInfoInt)
-
-        val payloadSizeUnchecked = bytes.sliceArray(i + 4..i + 5).toInt16l().toUByte()
-        val payloadSize: Int = if (payloadSizeUnchecked > 0U) payloadSizeUnchecked.toInt() else 1
-        val toIndex = i + 6 + payloadSize
-        val payload = bytes.sliceArray(i + 6..if (toIndex < bytes.size) toIndex else bytes.size - 1)
-
-        printIf(shouldLog, "   $j: Argument.parse:")
-        printIf(shouldLog, "       " + bytes.sliceArray(i..i + 20).toHex())
         printIf(shouldLog, "       typeInfo: $typeInfo")
-        printIf(shouldLog, "       payload size: $payloadSize, content: '${String(payload)}'")
+
+        var payloadSize = 0
+        var additionalSize = 0
+        if (typeInfo.typeString) {
+            payloadSize = bytes.sliceArray(i + 4..i + 5).toInt16l()
+            additionalSize =
+                2 // PRS_Dlt_00156 - 16-bit unsigned integer specifies the length of the string
+        } else if (typeInfo.typeRaw) {
+            payloadSize = bytes.sliceArray(i + 4..i + 5).toInt16l()
+            additionalSize =
+                2 // PRS_Dlt_00160 - 16-bit unsigned integer shall specify the length of the raw data in byte
+        } else if (typeInfo.typeUnsigned || typeInfo.typeSigned) {
+            payloadSize = typeInfo.typeLengthBits / 8
+        } else {
+            payloadSize = typeInfo.typeLengthBits / 8
+        }
+        val toIndex = i + 4 + additionalSize + payloadSize - 1
+        val payload =
+            bytes.sliceArray(i + 4 + additionalSize..if (toIndex < bytes.size) toIndex else bytes.size - 1)
+
+        printIf(
+            shouldLog,
+            "       payload size: $payloadSize, content: ${payloadToString(payload, typeInfo)}"
+        )
 
         return VerbosePayload.Argument(
             typeInfoInt,
             typeInfo,
+            additionalSize,
             payloadSize,
             payload
         )
+    }
+
+    private fun payloadToString(payload: ByteArray, typeInfo: VerbosePayload.TypeInfo): String {
+        return when {
+            typeInfo.typeString -> String(payload)
+            typeInfo.typeUnsigned -> {
+                when (typeInfo.typeLengthBits) {
+                    8 -> " ${payload[0].toUInt()} [${payload.toHex()}]"
+                    16 -> " ${payload.toInt16l().toUInt()} [${payload.toHex()}]"
+                    else -> " ${payload.toInt32l().toUInt()} [${payload.toHex()}]"
+                }
+            }
+
+            typeInfo.typeSigned -> " ${payload.toInt32l()} [${payload.toHex()}]"
+            typeInfo.typeRaw -> " [${payload.toHex()}]"
+            else -> payload.toHex()
+        }
     }
 
     private fun parseVerbosePayloadTypeInfo(
@@ -278,8 +314,7 @@ object DLTParser {
         typeInfoInt: Int
     ): VerbosePayload.TypeInfo {
         val mask = 0b0000000000000000_0000000000001111
-        val shifted = (typeInfoInt).shr(28)
-        val typeLengthBits = when ((typeInfoInt).shr(28) and mask) {
+        val typeLengthBits = when ((typeInfoInt) and mask) {
             1 -> 8
             2 -> 16
             3 -> 32
@@ -287,20 +322,21 @@ object DLTParser {
             5 -> 128
             else -> 0
         }
-        printIf(
-            shouldLog, "   typeLengthBits : ${typeInfoInt.toString(16).padStart(8, '0')} "
-        )
+//        printIf(
+//            shouldLog, "   typeLengthBits : ${typeInfoInt.toString(16).padStart(8, '0')} "
+//        )
         printIf(
             shouldLog, "   typeInfo : ${typeInfoInt.toString(2).padStart(32, '0')} "
         )
-        printIf(
-            shouldLog, "   shifted        : ${shifted.toString(2).padStart(32, '0')}"
-        )
-        printIf(
-            shouldLog,
-            "   mask           : ${mask.toString(2).padStart(32, '0')} ->" +
-                    " $typeLengthBits"
-        )
+//        printIf(
+//            shouldLog, "   shifted        : ${shifted.toString(2).padStart(32, '0')}"
+//        )
+//        printIf(
+//            shouldLog,
+//            "   mask           : ${mask.toString(2).padStart(32, '0')} ->" +
+//                    " $typeLengthBits"
+//        )
+//        printIf(shouldLog, "   typeLength: $typeLength")
 
         val stringCodingMask = 0b000000000000000111000000000000000
         val stringCoding = when ((typeInfoInt).shr(15) and stringCodingMask) {
