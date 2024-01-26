@@ -5,4 +5,12 @@ plugins {
 
 kotlin {
     jvm()
+
+    sourceSets {
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+    }
 }
