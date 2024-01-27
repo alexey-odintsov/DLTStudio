@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 object DLTParser {
-    private const val MAX_BYTES_TO_READ_DEBUG = -1 // put -1 to ignore
+    private const val MAX_BYTES_TO_READ_DEBUG = 50000 // put -1 to ignore
     private const val DLT_HEADER_SIZE_BYTES = 16
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
@@ -41,55 +41,11 @@ object DLTParser {
                 }
 
                 progressCallback.invoke(i.toFloat() / bytes.size.toFloat())
-                val signature = bytes.readString(i, 4)
-                val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
-                val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
-                val ecuId = bytes.readString(i + 12, 4)
-                i += DLT_HEADER_SIZE_BYTES
-
-                printIf(
-                    shouldLog,
-                    "#$logsReadCount '$signature', timestamp: '${
-                        simpleDateFormat.format(
-                            timeStampSec * 1000L
-                        )
-                    }', ecu: '$ecuId'"
-                )
-
                 try {
-                    val standardHeader = parseStandardHeader(shouldLog, bytes, i)
-                    i += standardHeader.getSize()
-
-                    var extendedHeader: ExtendedHeader? = null
-                    if (standardHeader.headerType.useExtendedHeader) {
-                        extendedHeader = parseExtendedHeader(shouldLog, bytes, i)
-                        i += extendedHeader.getSize()
-                    }
-
-                    var payload: Payload? = null
-                    if (extendedHeader != null && extendedHeader.messageInfo.verbose) {
-                        val arguments = mutableListOf<VerbosePayload.Argument>()
-                        printIf(
-                            shouldLog,
-                            "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
-                        )
-                        for (j in 0..<extendedHeader.argumentsCount) {
-                            val verbosePayloadArgument = parseVerbosePayload(shouldLog, j, bytes, i)
-                            arguments.add(verbosePayloadArgument)
-                            i += verbosePayloadArgument.getSize()
-                        }
-                        payload = VerbosePayload(arguments)
-                    }
-
-                    printIf(shouldLog, "")
-
-                    messages.add(
-                        DLTMessage(
-                            signature, timeStampSec, timeStampUs, ecuId,
-                            standardHeader, extendedHeader,
-                            payload
-                        )
-                    )
+                    printIf(shouldLog, "#$logsReadCount")
+                    val dltMessage = parseDLTMessage(bytes, i, shouldLog)
+                    messages.add(dltMessage)
+                    i += dltMessage.sizeBytes // skip read bytes
                     logsReadCount++
                 } catch (e: Exception) {
                     i++ // move counter to the next byte
@@ -98,6 +54,55 @@ object DLTParser {
             }
             return messages
         }
+    }
+
+    public fun parseDLTMessage(bytes: ByteArray, offset: Int, shouldLog: Boolean): DLTMessage {
+        var i = offset
+        val signature = bytes.readString(i, 4)
+        val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
+        val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
+        val ecuId = bytes.readString(i + 12, 4)
+        i += DLT_HEADER_SIZE_BYTES
+
+        printIf(
+            shouldLog,
+            "'$signature', timestamp: '${
+                simpleDateFormat.format(
+                    timeStampSec * 1000L
+                )
+            }', ecu: '$ecuId'"
+        )
+
+        val standardHeader = parseStandardHeader(shouldLog, bytes, i)
+        i += standardHeader.getSize()
+
+        var extendedHeader: ExtendedHeader? = null
+        if (standardHeader.headerType.useExtendedHeader) {
+            extendedHeader = parseExtendedHeader(shouldLog, bytes, i)
+            i += extendedHeader.getSize()
+        }
+
+        var payload: Payload? = null
+        if (extendedHeader != null && extendedHeader.messageInfo.verbose) {
+            val arguments = mutableListOf<VerbosePayload.Argument>()
+            printIf(
+                shouldLog,
+                "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
+            )
+            for (j in 0..<extendedHeader.argumentsCount) {
+                val verbosePayloadArgument = parseVerbosePayload(shouldLog, j, bytes, i)
+                arguments.add(verbosePayloadArgument)
+                i += verbosePayloadArgument.getSize()
+            }
+            payload = VerbosePayload(arguments)
+        }
+        printIf(shouldLog, "")
+
+        return DLTMessage(
+            signature, timeStampSec, timeStampUs, ecuId,
+            standardHeader, extendedHeader,
+            payload, i - offset
+        )
     }
 
     private fun parseStandardHeader(shouldLog: Boolean, bytes: ByteArray, i: Int): StandardHeader {

@@ -13,6 +13,8 @@ data class DLTMessage(
     val standardHeader: StandardHeader,
     val extendedHeader: ExtendedHeader?,
     val payload: Payload?,
+    // meta info
+    val sizeBytes: Int,
 ) {
 
     override fun toString(): String {
