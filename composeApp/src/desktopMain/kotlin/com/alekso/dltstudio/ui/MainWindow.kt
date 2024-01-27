@@ -39,9 +39,11 @@ fun MainWindow() {
 
     Column {
         Button(onClick = {
+            dltSession =
+                ParseSession({ i -> progress = i }, File("/users/alekso/Downloads/dlt3.dlt"))
             coroutineScope.launch {
                 withContext(Dispatchers.IO) {
-                    dltSession = parseFile("/users/alekso/Downloads/dlt3.dlt", { i -> progress = i })
+                    dltSession?.start()
                 }
             }
         }) {
@@ -57,10 +59,12 @@ fun MainWindow() {
                         val pathList = filesList.readFiles()
                         println(pathList)
                         if (pathList.isNotEmpty()) {
+                            // TODO: Add support for multiple files session
+                            dltSession =
+                                ParseSession({ i -> progress = i }, File(pathList[0].substring(5)))
                             coroutineScope.launch {
                                 withContext(Dispatchers.IO) {
-                                    dltSession =
-                                        parseFile(pathList[0].substring(5), { i -> progress = i })
+                                    dltSession?.start()
                                 }
                             }
                         }
