@@ -30,7 +30,7 @@ fun LogRow(
     ) {
         Row {
             Cell(
-                modifier = Modifier.width(30.dp),
+                modifier = Modifier.width(60.dp),
                 textAlign = TextAlign.Right,
                 text = index,
                 isHeader = isHeader
