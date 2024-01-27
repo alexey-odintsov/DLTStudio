@@ -1,6 +1,9 @@
 package com.alekso.dltstudio.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Button
 import androidx.compose.material.LinearProgressIndicator
@@ -25,25 +28,35 @@ fun MainWindow() {
     var progress by remember { mutableStateOf(0f) }
     val coroutineScope = rememberCoroutineScope()
 
-    if (dltSession == null) {
+    Column {
         Button(onClick = {
             coroutineScope.launch {
                 withContext(Dispatchers.IO) {
-                    dltSession = ParseSession({ i -> progress = i }, File("/users/alekso/Downloads/dlt3.dlt"))
+                    dltSession = ParseSession(
+                        { i -> progress = i },
+                        File("/users/alekso/Downloads/dlt3.dlt")
+                    )
                     dltSession?.start()
                 }
             }
         }) {
             Text("Load file..")
         }
-    } else {
-        LazyScrollable(dltSession!!)
-    }
 
+        LazyScrollable(modifier = Modifier.weight(1f).background(Color.LightGray), dltSession)
+        StatusBar(modifier = Modifier.fillMaxWidth(), progress)
+    }
+}
+
+@Preview
+@Composable
+fun StatusBar(modifier: Modifier = Modifier, progress: Float) {
     LinearProgressIndicator(
         modifier = Modifier.fillMaxWidth(),
         backgroundColor = Color.White,
         progress = progress,
     )
-
+    Box(modifier = modifier) {
+        Text(text = "Status")
+    }
 }

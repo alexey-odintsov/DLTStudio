@@ -2,6 +2,7 @@ package com.alekso.dltstudio.ui
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,12 +21,8 @@ import java.util.Locale
 private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
 @Composable
-fun LazyScrollable(dltSession: ParseSession) {
-    Box(
-        modifier = Modifier.fillMaxSize()
-            //.background(color = Color(180, 180, 180))
-            .padding(10.dp)
-    ) {
+fun LazyScrollable(modifier: Modifier, dltSession: ParseSession?) {
+    Column(modifier = modifier) {
 
         val state = rememberLazyListState()
 
@@ -41,28 +38,32 @@ fun LazyScrollable(dltSession: ParseSession) {
             "content", true
         )
 
-        LazyColumn(Modifier.fillMaxSize().padding(top = 20.dp, end = 12.dp), state) {
-            items(dltSession.dltMessages.size) { i ->
-                val message = dltSession.dltMessages[i]
-                LogRow(
-                    i.toString(),
-                    simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
-                    if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!! / 10000f) else "-",
-                    message.ecuId,
-                    "${message.standardHeader.ecuId}",
-                    "${message.standardHeader.sessionId}",
-                    "${message.extendedHeader?.applicationId}",
-                    "${message.extendedHeader?.contextId}",
-                    "${message.payload?.asText()}"
-                )
-                Spacer(modifier = Modifier.height(2.dp))
+        Box(modifier = Modifier.weight(1f)) {
+            LazyColumn(Modifier, state) {
+                if (dltSession != null) {
+                    items(dltSession.dltMessages.size) { i ->
+                        val message = dltSession.dltMessages[i]
+                        LogRow(
+                            i.toString(),
+                            simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
+                            if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!! / 10000f) else "-",
+                            message.ecuId,
+                            "${message.standardHeader.ecuId}",
+                            "${message.standardHeader.sessionId}",
+                            "${message.extendedHeader?.applicationId}",
+                            "${message.extendedHeader?.contextId}",
+                            "${message.payload?.asText()}"
+                        )
+                        Spacer(modifier = Modifier.height(2.dp))
+                    }
+                }
             }
-        }
-        VerticalScrollbar(
-            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-            adapter = rememberScrollbarAdapter(
-                scrollState = state
+            VerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = state
+                )
             )
-        )
+        }
     }
 }
