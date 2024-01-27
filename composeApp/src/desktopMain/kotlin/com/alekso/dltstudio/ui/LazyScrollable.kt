@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,12 +20,17 @@ import java.util.Locale
 private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
 @Composable
-fun LazyScrollable(modifier: Modifier, dltSession: ParseSession?) {
+fun LazyScrollable(
+    modifier: Modifier,
+    dltSession: ParseSession?,
+    selectedRowCallback: (Int) -> Unit
+) {
     Column(modifier = modifier) {
 
         val state = rememberLazyListState()
 
         LogRow(
+            modifier = Modifier,
             "#",
             "DateTime",
             "Time",
@@ -33,7 +39,7 @@ fun LazyScrollable(modifier: Modifier, dltSession: ParseSession?) {
             "sessId",
             "appId",
             "ctxId",
-            "content", true
+            "content",
         )
 
         Box(modifier = Modifier.weight(1f)) {
@@ -42,6 +48,11 @@ fun LazyScrollable(modifier: Modifier, dltSession: ParseSession?) {
                     items(dltSession.dltMessages.size) { i ->
                         val message = dltSession.dltMessages[i]
                         LogRow(
+                            modifier = Modifier.selectable(
+                                selected = true,
+                                onClick = {
+                                    selectedRowCallback.invoke(i)
+                                }),
                             i.toString(),
                             simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
                             if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!! / 10000f) else "-",

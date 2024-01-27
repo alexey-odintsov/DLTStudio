@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.DLTMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -34,6 +35,7 @@ import java.io.File
 @Preview
 fun MainWindow() {
     var dltSession by remember { mutableStateOf<ParseSession?>(null) }
+    var selectedRow by remember { mutableStateOf(0) }
     var progress by remember { mutableStateOf(0f) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -71,19 +73,21 @@ fun MainWindow() {
                     }
                 }),
             dltSession
+        ) { i -> selectedRow = i }
+        LogPreview(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            dltSession?.dltMessages?.getOrNull(selectedRow)
         )
         StatusBar(modifier = Modifier.fillMaxWidth(), progress, dltSession)
     }
 }
 
 
-suspend fun parseFile(path: String, progressCallback: (Float) -> Unit): ParseSession {
-    val dltSession = ParseSession(
-        progressCallback,
-        File(path)
-    )
-    dltSession.start()
-    return dltSession
+@Composable
+fun LogPreview(modifier: Modifier, dtlMessage: DLTMessage?) {
+    Box(modifier = modifier.then(Modifier.background(Color.White))) {
+        Text(text = "$dtlMessage")
+    }
 }
 
 @Composable

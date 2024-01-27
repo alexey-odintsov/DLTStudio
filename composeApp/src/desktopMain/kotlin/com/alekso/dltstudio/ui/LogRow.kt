@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -14,6 +13,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 @Preview
 fun LogRow(
+    modifier: Modifier,
     index: String,
     datetime: String,
     timeOffset: String,
@@ -26,11 +26,9 @@ fun LogRow(
     isHeader: Boolean = false
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .selectable(enabled = true, selected = true, onClick = {
-
-            })
+        modifier = modifier.then(
+            Modifier.fillMaxWidth()
+        )
     ) {
         Row {
             Cell(
