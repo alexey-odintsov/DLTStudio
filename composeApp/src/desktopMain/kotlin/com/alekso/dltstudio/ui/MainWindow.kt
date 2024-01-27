@@ -18,14 +18,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.DragData
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun MainWindow() {
@@ -37,22 +41,46 @@ fun MainWindow() {
         Button(onClick = {
             coroutineScope.launch {
                 withContext(Dispatchers.IO) {
-                    dltSession = ParseSession(
-                        { i -> progress = i },
-                        File("/users/alekso/Downloads/dlt3.dlt")
-                    )
-                    dltSession?.start()
+                    dltSession = parseFile("/users/alekso/Downloads/dlt3.dlt", { i -> progress = i })
                 }
             }
         }) {
             Text("Load file..")
         }
 
-        LazyScrollable(modifier = Modifier.weight(1f).background(Color.LightGray), dltSession)
+        LazyScrollable(
+            modifier = Modifier.weight(1f)
+                .background(Color.LightGray)
+                .onExternalDrag(onDrop = {
+                    if (it.dragData is DragData.FilesList) {
+                        val filesList = it.dragData as DragData.FilesList
+                        val pathList = filesList.readFiles()
+                        println(pathList)
+                        if (pathList.isNotEmpty()) {
+                            coroutineScope.launch {
+                                withContext(Dispatchers.IO) {
+                                    dltSession =
+                                        parseFile(pathList[0].substring(5), { i -> progress = i })
+                                }
+                            }
+                        }
+                    }
+                }),
+            dltSession
+        )
         StatusBar(modifier = Modifier.fillMaxWidth(), progress, dltSession)
     }
 }
 
+
+suspend fun parseFile(path: String, progressCallback: (Float) -> Unit): ParseSession {
+    val dltSession = ParseSession(
+        progressCallback,
+        File(path)
+    )
+    dltSession.start()
+    return dltSession
+}
 
 @Composable
 fun StatusBar(modifier: Modifier = Modifier, progress: Float, dltSession: ParseSession?) {
