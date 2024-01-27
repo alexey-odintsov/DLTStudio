@@ -81,7 +81,7 @@ fun LogRow(
                 isHeader = isHeader
             )
             Cell(
-                modifier = Modifier.width(800.dp),
+                modifier = Modifier.weight(1f),
                 text = content,
                 isHeader = isHeader
             )
