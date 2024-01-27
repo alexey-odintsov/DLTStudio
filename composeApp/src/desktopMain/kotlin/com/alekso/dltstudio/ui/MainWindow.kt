@@ -2,13 +2,13 @@ package com.alekso.dltstudio.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -78,15 +78,23 @@ fun MainWindow() {
             modifier = Modifier.fillMaxWidth().height(200.dp),
             dltSession?.dltMessages?.getOrNull(selectedRow)
         )
+        Divider()
         StatusBar(modifier = Modifier.fillMaxWidth(), progress, dltSession)
     }
 }
 
 
 @Composable
-fun LogPreview(modifier: Modifier, dtlMessage: DLTMessage?) {
-    Box(modifier = modifier.then(Modifier.background(Color.White))) {
-        Text(text = "$dtlMessage")
+fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
+    Column(modifier = modifier.then(Modifier)) {
+        Divider()
+        if (dltMessage != null) {
+            Text(text = "${dltMessage.standardHeader}")
+            Divider()
+            Text(text = "${dltMessage.extendedHeader}")
+            Divider()
+            Text(text = "${dltMessage.payload}")
+        }
     }
 }
 

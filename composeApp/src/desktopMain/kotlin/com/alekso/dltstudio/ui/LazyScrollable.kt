@@ -3,9 +3,7 @@ package com.alekso.dltstudio.ui
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
@@ -13,7 +11,6 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -63,7 +60,6 @@ fun LazyScrollable(
                             "${message.extendedHeader?.contextId}",
                             "${message.payload?.asText()}"
                         )
-                        Spacer(modifier = Modifier.height(2.dp))
                     }
                 }
             }

@@ -26,7 +26,7 @@ fun Cell(
             .padding(end = 1.dp)
             .background(color = if (isHeader) Color.Transparent else Color(250, 250, 250))
             .then(modifier),
-//        maxLines = 1,
+        maxLines = 1,
         textAlign = textAlign,
         fontSize = 12.sp,
         fontFamily = FontFamily.Monospace,

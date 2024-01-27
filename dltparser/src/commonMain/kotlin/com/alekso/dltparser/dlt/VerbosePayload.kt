@@ -15,14 +15,22 @@ data class VerbosePayload(
     override fun asText(): String {
         var result = ""
         arguments.forEachIndexed { index, it ->
-            result += if (index > 0) "\n" else ""
-            result += "${index}: "
+            result += if (index > 0) " " else ""
             if (it.typeInfo.typeString) {
                 result += String(it.payload)
             } else {
                 result += "[${it.payload.toHex()}]"
             }
         }
+//        arguments.forEachIndexed { index, it ->
+//            result += if (index > 0) "\n" else ""
+//            result += "${index}: "
+//            if (it.typeInfo.typeString) {
+//                result += String(it.payload)
+//            } else {
+//                result += "[${it.payload.toHex()}]"
+//            }
+//        }
         return result
     }
 
