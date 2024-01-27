@@ -275,6 +275,7 @@ object DLTParser {
         } else if (typeInfo.typeBool) {
             payloadSize = 1
         } else {
+//            throw IllegalStateException("Can't parse ${typeInfo}")
             payloadSize = typeInfo.typeLengthBits / 8
         }
 
@@ -312,7 +313,13 @@ object DLTParser {
                 }
             }
 
-            typeInfo.typeSigned -> " ${payload.readInt(0, Endian.LITTLE)} [${payload.toHex()}]"
+            typeInfo.typeSigned ->
+                when (typeInfo.typeLengthBits) {
+                    8 -> " ${payload[0].toInt()} [${payload.toHex()}]"
+                    16 -> " ${payload.readShort(0, Endian.LITTLE).toInt()} [${payload.toHex()}]"
+                    else -> " ${payload.readInt(0, Endian.LITTLE).toUInt()} [${payload.toHex()}]"
+                }
+
             typeInfo.typeRaw -> " [${payload.toHex()}]"
             typeInfo.typeBool -> " ${if (payload[0] == 0.toByte()) "FALSE" else "TRUE"}"
             else -> payload.toHex()
