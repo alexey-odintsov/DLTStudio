@@ -13,7 +13,7 @@ fun Int.isBitSet(position: Int): Boolean {
     return ((this shl (position.inv() and 31)) < 0)
 }
 
-fun Byte.toHex(): String = "%02x ".format(this)
+fun Byte.toHex(): String = "%02x".format(this)
 
 fun ByteArray.readString(start: Int, bytes: Int) = decodeToString(start, start + bytes)
 
@@ -46,4 +46,4 @@ fun ByteArray.readInt(start: Int, endian: Endian): Int {
 }
 
 fun ByteArray.toHex(): String =
-    joinToString(separator = "", limit = 256) { eachByte -> "%02x ".format(eachByte) }
+    joinToString(separator = " ", limit = 256) { eachByte -> "%02x".format(eachByte) }
