@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -84,19 +83,6 @@ fun MainWindow() {
 }
 
 
-@Composable
-fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
-    Column(modifier = modifier.then(Modifier)) {
-        Divider()
-        if (dltMessage != null) {
-            Text(text = "${dltMessage.standardHeader}")
-            Divider()
-            Text(text = "${dltMessage.extendedHeader}")
-            Divider()
-            Text(text = "${dltMessage.payload}")
-        }
-    }
-}
 
 @Composable
 fun StatusBar(modifier: Modifier = Modifier, progress: Float, dltSession: ParseSession?) {

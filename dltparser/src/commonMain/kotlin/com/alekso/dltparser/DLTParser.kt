@@ -293,42 +293,20 @@ object DLTParser {
         val payload =
             bytes.sliceArray(i + 4 + additionalSize..if (toIndex < bytes.size) toIndex else bytes.size - 1)
 
-        printIf(
-            shouldLog,
-            "       payload size: $payloadSize, content: ${payloadToString(payload, typeInfo)}"
-        )
-
-        return VerbosePayload.Argument(
+        val argument = VerbosePayload.Argument(
             typeInfoInt,
             typeInfo,
             additionalSize,
             payloadSize,
             payload
         )
-    }
 
-    private fun payloadToString(payload: ByteArray, typeInfo: VerbosePayload.TypeInfo): String {
-        return when {
-            typeInfo.typeString -> String(payload)
-            typeInfo.typeUnsigned -> {
-                when (typeInfo.typeLengthBits) {
-                    8 -> " ${payload[0].toUInt()} [${payload.toHex()}]"
-                    16 -> " ${payload.readShort(0, Endian.LITTLE).toUShort()} [${payload.toHex()}]"
-                    else -> " ${payload.readInt(0, Endian.LITTLE).toUInt()} [${payload.toHex()}]"
-                }
-            }
+        printIf(
+            shouldLog,
+            "       payload size: $payloadSize, content: ${argument.getPayloadAsText()}"
+        )
 
-            typeInfo.typeSigned ->
-                when (typeInfo.typeLengthBits) {
-                    8 -> " ${payload[0].toInt()} [${payload.toHex()}]"
-                    16 -> " ${payload.readShort(0, Endian.LITTLE).toInt()} [${payload.toHex()}]"
-                    else -> " ${payload.readInt(0, Endian.LITTLE).toUInt()} [${payload.toHex()}]"
-                }
-
-            typeInfo.typeRaw -> " [${payload.toHex()}]"
-            typeInfo.typeBool -> " ${if (payload[0] == 0.toByte()) "FALSE" else "TRUE"}"
-            else -> payload.toHex()
-        }
+        return argument
     }
 
     private fun parseVerbosePayloadTypeInfo(

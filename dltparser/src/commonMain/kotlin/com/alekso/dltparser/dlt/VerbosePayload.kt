@@ -1,5 +1,8 @@
 package com.alekso.dltparser.dlt
 
+import com.alekso.dltparser.Endian
+import com.alekso.dltparser.readInt
+import com.alekso.dltparser.readShort
 import com.alekso.dltparser.toHex
 
 
@@ -16,21 +19,8 @@ data class VerbosePayload(
         var result = ""
         arguments.forEachIndexed { index, it ->
             result += if (index > 0) " " else ""
-            if (it.typeInfo.typeString) {
-                result += String(it.payload)
-            } else {
-                result += "[${it.payload.toHex()}]"
-            }
+            result += it.getPayloadAsText()
         }
-//        arguments.forEachIndexed { index, it ->
-//            result += if (index > 0) "\n" else ""
-//            result += "${index}: "
-//            if (it.typeInfo.typeString) {
-//                result += String(it.payload)
-//            } else {
-//                result += "[${it.payload.toHex()}]"
-//            }
-//        }
         return result
     }
 
@@ -43,6 +33,29 @@ data class VerbosePayload(
     ) {
         fun getSize(): Int {
             return 4 + additionalSize + payloadSize
+        }
+
+        fun getPayloadAsText(): String {
+            return when {
+                typeInfo.typeString -> String(payload)
+                typeInfo.typeUnsigned -> {
+                    when (typeInfo.typeLengthBits) {
+                        8 -> "${payload[0].toUInt()}"
+                        16 -> "${payload.readShort(0, Endian.LITTLE).toUShort()}"
+                        else -> "${payload.readInt(0, Endian.LITTLE).toUInt()}"
+                    }
+                }
+
+                typeInfo.typeSigned ->
+                    when (typeInfo.typeLengthBits) {
+                        8 -> "${payload[0].toInt()}"
+                        16 -> "${payload.readShort(0, Endian.LITTLE).toInt()}"
+                        else -> "${payload.readInt(0, Endian.LITTLE).toUInt()}"
+                    }
+
+                typeInfo.typeBool -> if (payload[0] == 0.toByte()) "FALSE" else "TRUE"
+                else -> payload.toHex() // TODO: Add other types
+            }
         }
 
     }
@@ -70,6 +83,10 @@ data class VerbosePayload(
 
         override fun toString(): String {
             val result = "len: $typeLengthBits bits (${typeLengthBits / 8} bytes); "
+            return "$result; ${getTypeString()}; $stringCoding"
+        }
+
+        fun getTypeString(): String {
             val typeList = mutableListOf<String>()
             if (typeBool) {
                 typeList.add("BOOL")
@@ -104,7 +121,7 @@ data class VerbosePayload(
             if (typeStruct) {
                 typeList.add("STRUCT")
             }
-            return "$result; $typeList; $stringCoding"
+            return typeList.toString()
         }
     }
 }
