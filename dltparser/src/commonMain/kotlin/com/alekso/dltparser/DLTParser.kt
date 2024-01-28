@@ -87,20 +87,24 @@ object DLTParser {
         }
 
         var payload: Payload? = null
-        if (extendedHeader != null && extendedHeader.messageInfo.verbose) {
-            val arguments = mutableListOf<VerbosePayload.Argument>()
-            if (DEBUG_LOG) {
-                printIf(
-                    shouldLog,
-                    "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
-                )
+        if (extendedHeader != null) {
+            if (extendedHeader.messageInfo.verbose) {
+                val arguments = mutableListOf<VerbosePayload.Argument>()
+                if (DEBUG_LOG) {
+                    printIf(
+                        shouldLog,
+                        "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
+                    )
+                }
+                for (j in 0..<extendedHeader.argumentsCount) {
+                    val verbosePayloadArgument = parseVerbosePayload(shouldLog, j, bytes, i)
+                    arguments.add(verbosePayloadArgument)
+                    i += verbosePayloadArgument.getSize()
+                }
+                payload = VerbosePayload(arguments)
+            } else {
+                throw UnsupportedOperationException("Non verbose header found! offset: $offset: header: $extendedHeader")
             }
-            for (j in 0..<extendedHeader.argumentsCount) {
-                val verbosePayloadArgument = parseVerbosePayload(shouldLog, j, bytes, i)
-                arguments.add(verbosePayloadArgument)
-                i += verbosePayloadArgument.getSize()
-            }
-            payload = VerbosePayload(arguments)
         }
         if (DEBUG_LOG) {
             printIf(shouldLog, "")
@@ -305,8 +309,8 @@ object DLTParser {
         } else if (typeInfo.typeBool) {
             payloadSize = 1
         } else {
-//            throw IllegalStateException("Can't parse ${typeInfo}")
-            payloadSize = typeInfo.typeLengthBits / 8
+            throw IllegalStateException("Can't parse ${typeInfo}")
+            // payloadSize = typeInfo.typeLengthBits / 8
         }
 
         // Sanity check to fix infinite reading
