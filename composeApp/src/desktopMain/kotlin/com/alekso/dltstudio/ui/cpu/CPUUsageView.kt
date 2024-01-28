@@ -9,6 +9,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 
 private val colors = listOf(
@@ -26,7 +29,28 @@ private val colors = listOf(
 
 @Composable
 fun CPUUsageView(modifier: Modifier, items: List<CPUUsageEntry>) {
+    val textMeasurer = rememberTextMeasurer()
+
     Canvas(modifier = modifier.background(Color.Gray)) {
+        val height = size.height
+        val width = size.width
+
+        for (i in 0..100 step 10) {
+            drawLine(
+                Color.LightGray,
+                Offset(0f, height * i / 100f),
+                Offset(width, height * i / 100f),
+                alpha = 0.5f
+            )
+            drawText(
+                textMeasurer,
+                text = "${100 - i}%",
+                topLeft = Offset(3.dp.toPx(), height * i / 100f),
+                style = TextStyle(color = Color.LightGray)
+            )
+        }
+
+
         items.forEachIndexed { i, entry ->
             val prev = if (i > 0) items[i - 1] else null
             val step = 10.dp.toPx()
@@ -35,9 +59,9 @@ fun CPUUsageView(modifier: Modifier, items: List<CPUUsageEntry>) {
             for (j in 0..<entry.cpuUsage.size) {
                 val prevX = if (prev != null) (i - 1) * step else 0f
                 val prevY =
-                    if (prev != null) size.height - size.height * prev.cpuUsage[j] / 100f else 0f
+                    if (prev != null) height - height * prev.cpuUsage[j] / 100f else 0f
                 val curX = i * step
-                val curY = size.height - size.height * entry.cpuUsage[j] / 100f
+                val curY = height - height * entry.cpuUsage[j] / 100f
                 drawLine(
                     colors[j],
                     Offset(prevX, prevY),
