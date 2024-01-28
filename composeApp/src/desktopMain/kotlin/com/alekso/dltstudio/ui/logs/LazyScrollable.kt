@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.ui
+package com.alekso.dltstudio.ui.logs
 
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
@@ -11,6 +11,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.alekso.dltstudio.ui.ParseSession
 import java.text.SimpleDateFormat
 import java.util.Locale
 

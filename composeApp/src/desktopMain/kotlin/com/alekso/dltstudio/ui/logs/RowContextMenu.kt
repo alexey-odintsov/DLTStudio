@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.ui
+package com.alekso.dltstudio.ui.logs
 
 import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.ContextMenuItem
