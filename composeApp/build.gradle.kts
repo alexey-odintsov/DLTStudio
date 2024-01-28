@@ -36,6 +36,7 @@ kotlin {
 compose.desktop {
     application {
         mainClass = "MainKt"
+        jvmArgs += listOf("-Xmx8G")
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
