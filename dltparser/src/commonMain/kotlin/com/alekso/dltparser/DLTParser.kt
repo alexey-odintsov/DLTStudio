@@ -11,7 +11,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 object DLTParser {
-    private const val MAX_BYTES_TO_READ_DEBUG = 50000 // put -1 to ignore
+    private const val DEBUG_LOG = false
+    private const val MAX_BYTES_TO_READ_DEBUG = -1 // put -1 to ignore
     private const val DLT_HEADER_SIZE_BYTES = 16
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
@@ -30,19 +31,22 @@ object DLTParser {
             var logsReadCount = 0
             var i = 0
             val messages = mutableListOf<DLTMessage>()
+            var shouldLog: Boolean
 
             while (i < bytes.size - DLT_HEADER_SIZE_BYTES && (MAX_BYTES_TO_READ_DEBUG < 0 || i < MAX_BYTES_TO_READ_DEBUG)) {
-                val shouldLog = logsReadCount == 11
+                shouldLog = logsReadCount == 11
 
+                // Skip until 'DLT' signature found
                 while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)
                 ) {
                     i++
-                    progressCallback.invoke(i.toFloat() / bytes.size.toFloat())
                 }
 
                 progressCallback.invoke(i.toFloat() / bytes.size.toFloat())
                 try {
-                    printIf(shouldLog, "#$logsReadCount")
+                    if (DEBUG_LOG) {
+                        printIf(shouldLog, "#$logsReadCount")
+                    }
                     val dltMessage = parseDLTMessage(bytes, i, shouldLog)
                     messages.add(dltMessage)
                     i += dltMessage.sizeBytes // skip read bytes
@@ -58,21 +62,21 @@ object DLTParser {
 
     public fun parseDLTMessage(bytes: ByteArray, offset: Int, shouldLog: Boolean): DLTMessage {
         var i = offset
-        val signature = bytes.readString(i, 4)
         val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
         val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
         val ecuId = bytes.readString(i + 12, 4)
         i += DLT_HEADER_SIZE_BYTES
 
-        printIf(
-            shouldLog,
-            "'$signature', timestamp: '${
-                simpleDateFormat.format(
-                    timeStampSec * 1000L
-                )
-            }', ecu: '$ecuId'"
-        )
-
+        if (DEBUG_LOG) {
+            printIf(
+                shouldLog,
+                "timestamp: '${
+                    simpleDateFormat.format(
+                        timeStampSec * 1000L
+                    )
+                }', ecu: '$ecuId'"
+            )
+        }
         val standardHeader = parseStandardHeader(shouldLog, bytes, i)
         i += standardHeader.getSize()
 
@@ -85,10 +89,12 @@ object DLTParser {
         var payload: Payload? = null
         if (extendedHeader != null && extendedHeader.messageInfo.verbose) {
             val arguments = mutableListOf<VerbosePayload.Argument>()
-            printIf(
-                shouldLog,
-                "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
-            )
+            if (DEBUG_LOG) {
+                printIf(
+                    shouldLog,
+                    "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
+                )
+            }
             for (j in 0..<extendedHeader.argumentsCount) {
                 val verbosePayloadArgument = parseVerbosePayload(shouldLog, j, bytes, i)
                 arguments.add(verbosePayloadArgument)
@@ -96,17 +102,21 @@ object DLTParser {
             }
             payload = VerbosePayload(arguments)
         }
-        printIf(shouldLog, "")
+        if (DEBUG_LOG) {
+            printIf(shouldLog, "")
+        }
 
         return DLTMessage(
-            signature, timeStampSec, timeStampUs, ecuId,
+            timeStampSec, timeStampUs, ecuId,
             standardHeader, extendedHeader,
             payload, i - offset
         )
     }
 
     private fun parseStandardHeader(shouldLog: Boolean, bytes: ByteArray, i: Int): StandardHeader {
-        printIf(shouldLog, "StandardHeader.parse")
+        if (DEBUG_LOG) {
+            printIf(shouldLog, "StandardHeader.parse")
+        }
         var p = i
         val headerType = parseStandardHeaderType(shouldLog, bytes[p]); p += 1
         val messageCounter = bytes[p]; p += 1
@@ -118,12 +128,14 @@ object DLTParser {
         val timeStamp =
             if (headerType.withTimestamp) bytes.readInt(p, Endian.BIG) else null; p += 4
 
-        printIf(
-            shouldLog,
-            "   messageCounter: $messageCounter; length: $length: ecuId: '$ecuId', sessionId: $sessionId; timeStamp: ${
-                if (timeStamp != null) simpleDateFormat.format(timeStamp * 1000L) else "null"
-            }"
-        )
+        if (DEBUG_LOG) {
+            printIf(
+                shouldLog,
+                "   messageCounter: $messageCounter; length: $length: ecuId: '$ecuId', sessionId: $sessionId; timeStamp: ${
+                    if (timeStamp != null) simpleDateFormat.format(timeStamp * 1000L) else "null"
+                }"
+            )
+        }
 
         return StandardHeader(
             headerType,
@@ -143,12 +155,14 @@ object DLTParser {
         val withTimestamp = byte.isBitSet(4)
         val versionNumber = (byte.toInt() shr 5).toByte()
 
-        printIf(
-            shouldLog,
-            "   HeaderType.parse: " +
-                    "${byte.toHex()} (${byte.toString(2).padStart(8, '0')}) " +
-                    "extendedHeader: $useExtendedHeader, payloadLittleEndian: $payloadLittleEndian, withEcuId: $withEcuId, withSessionId: $withSessionId, withTimestamp: $withTimestamp, versionNumber: $versionNumber)"
-        )
+        if (DEBUG_LOG) {
+            printIf(
+                shouldLog,
+                "   HeaderType.parse: " +
+                        "${byte.toHex()} (${byte.toString(2).padStart(8, '0')}) " +
+                        "extendedHeader: $useExtendedHeader, payloadLittleEndian: $payloadLittleEndian, withEcuId: $withEcuId, withSessionId: $withSessionId, withTimestamp: $withTimestamp, versionNumber: $versionNumber)"
+            )
+        }
 
         return StandardHeader.HeaderType(
             byte,
@@ -162,17 +176,24 @@ object DLTParser {
     }
 
     private fun parseExtendedHeader(shouldLog: Boolean, bytes: ByteArray, i: Int): ExtendedHeader {
-        printIf(shouldLog, "ExtendedHeader.parse:")
+        if (DEBUG_LOG) {
+            printIf(shouldLog, "ExtendedHeader.parse:")
+        }
         var p = i
         val messageInfo = parseMessageInfo(bytes[p]); p += 1
         val argumentsCount = bytes[p].toInt(); p += 1
+        if (argumentsCount > 100) {
+            throw Exception("Too many arguments $argumentsCount i: $i")
+        }
         val applicationId = bytes.readString(p, 4); p += 4
         val contextId = bytes.readString(p, 4); p += 4
 
-        printIf(
-            shouldLog,
-            "   messageInfo: $messageInfo, argumentsCount: $argumentsCount, applicationId: $applicationId, contextId: $contextId"
-        )
+        if (DEBUG_LOG) {
+            printIf(
+                shouldLog,
+                "   messageInfo: $messageInfo, argumentsCount: $argumentsCount, applicationId: $applicationId, contextId: $contextId"
+            )
+        }
 
         return ExtendedHeader(
             messageInfo,
@@ -257,13 +278,17 @@ object DLTParser {
         bytes: ByteArray,
         i: Int
     ): VerbosePayload.Argument {
-        printIf(
-            shouldLog, "   $j: Argument.parse:  ${bytes.sliceArray(i..i + 20).toHex()}"
-        )
+        if (DEBUG_LOG) {
+            printIf(
+                shouldLog, "   $j: Argument.parse:  ${bytes.sliceArray(i..i + 20).toHex()}"
+            )
+        }
 
         val typeInfoInt = bytes.readInt(i, Endian.LITTLE)
         val typeInfo = parseVerbosePayloadTypeInfo(shouldLog, typeInfoInt)
-        printIf(shouldLog, "       typeInfo: $typeInfo")
+        if (DEBUG_LOG) {
+            printIf(shouldLog, "       typeInfo: $typeInfo")
+        }
 
         var payloadSize = 0
         var additionalSize = 0
@@ -301,10 +326,12 @@ object DLTParser {
             payload
         )
 
-        printIf(
-            shouldLog,
-            "       payload size: $payloadSize, content: ${argument.getPayloadAsText()}"
-        )
+        if (DEBUG_LOG) {
+            printIf(
+                shouldLog,
+                "       payload size: $payloadSize, content: ${argument.getPayloadAsText()}"
+            )
+        }
 
         return argument
     }
@@ -322,12 +349,13 @@ object DLTParser {
             5 -> 128
             else -> 0
         }
+        if (DEBUG_LOG) {
 //        printIf(
 //            shouldLog, "   typeLengthBits : ${typeInfoInt.toString(16).padStart(8, '0')} "
 //        )
-        printIf(
-            shouldLog, "   typeInfo : ${typeInfoInt.toString(2).padStart(32, '0')} "
-        )
+            printIf(
+                shouldLog, "   typeInfo : ${typeInfoInt.toString(2).padStart(32, '0')} "
+            )
 //        printIf(
 //            shouldLog, "   shifted        : ${shifted.toString(2).padStart(32, '0')}"
 //        )
@@ -337,6 +365,7 @@ object DLTParser {
 //                    " $typeLengthBits"
 //        )
 //        printIf(shouldLog, "   typeLength: $typeLength")
+        }
 
         val stringCodingMask = 0b000000000000000111000000000000000
         val stringCoding = when ((typeInfoInt).shr(15) and stringCodingMask) {
