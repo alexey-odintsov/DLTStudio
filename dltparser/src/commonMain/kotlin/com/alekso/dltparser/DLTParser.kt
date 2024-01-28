@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 object DLTParser {
-    private const val DEBUG_LOG = false
+    private const val DEBUG_LOG = false // WARNING: Logging drastically slow down parsing!!!
     private const val MAX_BYTES_TO_READ_DEBUG = -1 // put -1 to ignore
     private const val DLT_HEADER_SIZE_BYTES = 16
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
