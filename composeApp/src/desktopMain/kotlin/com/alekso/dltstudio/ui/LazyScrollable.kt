@@ -44,22 +44,24 @@ fun LazyScrollable(
                 if (dltSession != null) {
                     items(dltSession.dltMessages.size) { i ->
                         val message = dltSession.dltMessages[i]
-                        LogRow(
-                            modifier = Modifier.selectable(
-                                selected = true,
-                                onClick = {
-                                    selectedRowCallback.invoke(i)
-                                }),
-                            i.toString(),
-                            simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
-                            if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!! / 10000f) else "-",
-                            message.ecuId,
-                            "${message.standardHeader.ecuId}",
-                            "${message.standardHeader.sessionId}",
-                            "${message.extendedHeader?.applicationId}",
-                            "${message.extendedHeader?.contextId}",
-                            "${message.payload?.asText()}"
-                        )
+                        RowContextMenu {
+                            LogRow(
+                                modifier = Modifier.selectable(
+                                    selected = true,
+                                    onClick = {
+                                        selectedRowCallback.invoke(i)
+                                    }),
+                                i.toString(),
+                                simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
+                                if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!! / 10000f) else "-",
+                                message.ecuId,
+                                "${message.standardHeader.ecuId}",
+                                "${message.standardHeader.sessionId}",
+                                "${message.extendedHeader?.applicationId}",
+                                "${message.extendedHeader?.contextId}",
+                                "${message.payload?.asText()}"
+                            )
+                        }
                     }
                 }
             }
