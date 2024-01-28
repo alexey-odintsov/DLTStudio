@@ -23,6 +23,7 @@ fun StatusBar(modifier: Modifier = Modifier, progress: Float, dltSession: ParseS
             Text(text = "No file loaded")
         }
         if (progress > 0f) {
+            Text(" | Progress: %.3f".format(progress * 100f))
             LinearProgressIndicator(
                 modifier = Modifier.weight(1f).padding(start = 4.dp, end = 4.dp)
                     .align(Alignment.CenterVertically),
