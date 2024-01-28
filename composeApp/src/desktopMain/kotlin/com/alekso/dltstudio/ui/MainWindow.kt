@@ -39,7 +39,11 @@ fun MainWindow() {
                 statusBarProgressCallback
             )
 
-            1 -> CPUPanel(modifier = Modifier.weight(1f))
+            1 -> CPUPanel(
+                modifier = Modifier.weight(1f),
+                dltSession,
+                statusBarProgressCallback
+            )
 
             2 -> Text("Memory tab content", modifier = Modifier.weight(1f))
         }
