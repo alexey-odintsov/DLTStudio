@@ -16,7 +16,7 @@ class CPUAnalyzerParserTest {
         val timestamp = 123
         val actual = CPUAnalyzer.analyzeCPUUsage(
             DLTMessage(
-                "DTL", timestamp, 123, "MGUA",
+                timestamp, 123, "MGUA",
                 StandardHeader(
                     StandardHeader.HeaderType(3.toByte(), true, true, true, true, true, 1.toByte()),
                     21,

@@ -146,7 +146,7 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 @Composable
 fun previewLogPreview() {
     val dltMessage = DLTMessage(
-        "DTLA", 21142234, 243243, "MGUA",
+        21142234, 243243, "MGUA",
         StandardHeader(
             StandardHeader.HeaderType(0.toByte(), true, true, true, true, true, 1),
             10.toByte(), 10, "MGUA", 443, 332422
