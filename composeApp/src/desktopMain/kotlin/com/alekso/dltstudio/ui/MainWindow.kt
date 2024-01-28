@@ -50,38 +50,54 @@ fun MainWindow() {
         }) {
             Text("Load file..")
         }
+        var tabIndex by remember { mutableStateOf(0) }
+        TabsPanel(tabIndex, listOf("Logs", "CPU", "Memory"), { i -> tabIndex = i })
 
-        LazyScrollable(
-            modifier = Modifier.weight(1f)
-                .background(Color.LightGray)
-                .onExternalDrag(onDrop = {
-                    if (it.dragData is DragData.FilesList) {
-                        val filesList = it.dragData as DragData.FilesList
-                        val pathList = filesList.readFiles()
-                        println(pathList)
-                        if (pathList.isNotEmpty()) {
-                            // TODO: Add support for multiple files session
-                            dltSession =
-                                ParseSession({ i -> progress = i }, File(pathList[0].substring(5)))
-                            coroutineScope.launch {
-                                withContext(Dispatchers.IO) {
-                                    dltSession?.start()
+        when (tabIndex) {
+            0 -> {
+                LazyScrollable(
+                    modifier = Modifier.weight(1f)
+                        .background(Color.LightGray)
+                        .onExternalDrag(onDrop = {
+                            if (it.dragData is DragData.FilesList) {
+                                val filesList = it.dragData as DragData.FilesList
+                                val pathList = filesList.readFiles()
+                                println(pathList)
+                                if (pathList.isNotEmpty()) {
+                                    // TODO: Add support for multiple files session
+                                    dltSession =
+                                        ParseSession(
+                                            { i -> progress = i },
+                                            File(pathList[0].substring(5))
+                                        )
+                                    coroutineScope.launch {
+                                        withContext(Dispatchers.IO) {
+                                            dltSession?.start()
+                                        }
+                                    }
                                 }
                             }
-                        }
-                    }
-                }),
-            dltSession
-        ) { i -> selectedRow = i }
-        LogPreview(
-            modifier = Modifier.fillMaxWidth().height(200.dp),
-            dltSession?.dltMessages?.getOrNull(selectedRow)
-        )
+                        }),
+                    dltSession
+                ) { i -> selectedRow = i }
+                LogPreview(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    dltSession?.dltMessages?.getOrNull(selectedRow)
+                )
+            }
+
+            1 -> {
+                Text("CPU tab content", modifier = Modifier.weight(1f))
+            }
+
+            2 -> {
+                Text("Memory tab content", modifier = Modifier.weight(1f))
+            }
+        }
         Divider()
         StatusBar(modifier = Modifier.fillMaxWidth(), progress, dltSession)
     }
 }
-
 
 
 @Composable
