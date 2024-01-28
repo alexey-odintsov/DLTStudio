@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.ui.cpu
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -14,9 +14,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+
 @Composable
 fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (Float) -> Unit) {
     val cpuLogs = remember { mutableStateListOf<Int>() }
+    var cpuUsage = remember { mutableStateListOf<CPUUsageEntry>() }
 
     Column(modifier = modifier) {
         if (dltSession != null) {
@@ -24,19 +26,31 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
 
             Button(onClick = {
                 coroutineScope.launch {
+                    val _cpuLogs = mutableStateListOf<Int>()
+                    val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
+
                     withContext(Dispatchers.IO) {
                         println("Start CPU analysing.. ${dltSession.dltMessages.size} messages")
-                        cpuLogs.clear()
+
                         dltSession.dltMessages.forEachIndexed { index, message ->
-                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith("MON") == true &&
-                                message.extendedHeader?.contextId == "CPUC") {
-                                cpuLogs.add(index)
+                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+                                    "MON"
+                                ) == true &&
+                                message.extendedHeader?.contextId == "CPUC"
+                            ) {
+                                _cpuLogs.add(index)
+                                _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(message))
                             }
                             progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                         }
 
-
-                        println("End CPU analysing, found ${cpuLogs.size} messages")
+                        println("End CPU analysing, found ${_cpuLogs.size} messages")
+                    }
+                    withContext(Dispatchers.Default) {
+                        cpuLogs.clear()
+                        cpuLogs.addAll(_cpuLogs)
+                        cpuUsage.clear()
+                        cpuUsage.addAll(_cpuUsage)
                     }
                 }
             }) {
@@ -44,9 +58,7 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
             }
 
             Text("Messages found: ${cpuLogs.size}")
-            Canvas(modifier = Modifier, onDraw = {
-
-            })
+            CPUUsageView(modifier = Modifier.fillMaxSize(1f), items = cpuUsage)
         }
     }
 }
