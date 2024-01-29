@@ -19,8 +19,8 @@ class CPUAnalyzerParserTest {
                 timestamp, 123, "MGUA",
                 StandardHeader(
                     StandardHeader.HeaderType(3.toByte(), true, true, true, true, true, 1.toByte()),
-                    21,
-                    12, "MON", 123, 23423
+                    21U,
+                    12U, "MON", 123, 23423U
                 ),
                 ExtendedHeader(
                     MessageInfo(

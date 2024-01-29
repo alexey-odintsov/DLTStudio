@@ -96,7 +96,7 @@ object DLTParser {
                         "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
                     )
                 }
-                for (j in 0..<extendedHeader.argumentsCount) {
+                for (j in 0..<extendedHeader.argumentsCount.toInt()) {
                     val verbosePayloadArgument = parseVerbosePayload(shouldLog, j, bytes, i)
                     arguments.add(verbosePayloadArgument)
                     i += verbosePayloadArgument.getSize()
@@ -185,9 +185,9 @@ object DLTParser {
         }
         var p = i
         val messageInfo = parseMessageInfo(bytes[p]); p += 1
-        val argumentsCount = bytes[p].toInt(); p += 1
-        if (argumentsCount > 100) {
-            throw Exception("Too many arguments $argumentsCount i: $i")
+        val argumentsCount = bytes[p].toUByte(); p += 1
+        if (argumentsCount < 0U) {
+            throw Exception("Negative arguments count $argumentsCount i: $i")
         }
         val applicationId = bytes.readString(p, 4); p += 4
         val contextId = bytes.readString(p, 4); p += 4
