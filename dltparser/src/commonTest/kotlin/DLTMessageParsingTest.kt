@@ -22,7 +22,7 @@ class DLTMessageParsingTest {
                 true,
                 MessageInfo.MESSAGE_TYPE.DLT_TYPE_APP_TRACE,
                 MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_INFO
-            ), 2, "APP", "CTX"
+            ), 2U, "APP", "CTX"
         ),
         VerbosePayload(
             listOf(
