@@ -149,7 +149,7 @@ fun previewLogPreview() {
         21142234, 243243, "MGUA",
         StandardHeader(
             StandardHeader.HeaderType(0.toByte(), true, true, true, true, true, 1),
-            10.toUByte(), 10, "MGUA", 443, 332422
+            10.toUByte(), 10U, "MGUA", 443, 332422U
         ),
         ExtendedHeader(
             MessageInfo(

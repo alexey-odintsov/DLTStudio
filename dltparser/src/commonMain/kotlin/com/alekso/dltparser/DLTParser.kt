@@ -124,19 +124,19 @@ object DLTParser {
         var p = i
         val headerType = parseStandardHeaderType(shouldLog, bytes[p]); p += 1
         val messageCounter = bytes[p].toUByte(); p += 1
-        val length = bytes.readShort(p, Endian.BIG).toInt(); p += 2
+        val length = bytes.readShort(p, Endian.BIG).toUShort(); p += 2
         val ecuId =
             if (headerType.withEcuId) bytes.readString(p, 4) else null; p += 4
         val sessionId =
             if (headerType.withSessionId) bytes.readInt(p, Endian.BIG) else null; p += 4
         val timeStamp =
-            if (headerType.withTimestamp) bytes.readInt(p, Endian.BIG) else null; p += 4
+            if (headerType.withTimestamp) bytes.readInt(p, Endian.BIG).toUInt() else null; p += 4
 
         if (DEBUG_LOG) {
             printIf(
                 shouldLog,
                 "   messageCounter: $messageCounter; length: $length: ecuId: '$ecuId', sessionId: $sessionId; timeStamp: ${
-                    if (timeStamp != null) simpleDateFormat.format(timeStamp * 1000L) else "null"
+                    if (timeStamp != null) simpleDateFormat.format(timeStamp.toLong() / 10000) else "null"
                 }"
             )
         }

@@ -2,12 +2,30 @@ package com.alekso.dltparser.dlt
 
 
 data class StandardHeader(
+    /**
+     * General info about message
+     */
     val headerType: HeaderType,
+    /**
+     * Number of logs transmitted to selected channel
+     */
     val messageCounter: UByte,
-    val length: Int,
+    /**
+     * Overall length of DLT message: Standard header + Extended header + Payload
+     */
+    val length: UShort,
+    /**
+     * Which ECU has sent message
+     */
     val ecuId: String?,
+    /**
+     * Source of a log/trace within ECU
+     */
     val sessionId: Int?,
-    val timeStamp: Int?,
+    /**
+     * When message was generated
+     */
+    val timeStamp: UInt?,
 ) {
 
     fun getSize(): Int {
