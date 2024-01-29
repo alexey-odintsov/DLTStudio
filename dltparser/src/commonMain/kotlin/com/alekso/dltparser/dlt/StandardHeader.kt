@@ -39,7 +39,7 @@ data class StandardHeader(
     data class HeaderType(
         val originalByte: Byte,
         val useExtendedHeader: Boolean,
-        val payloadLittleEndian: Boolean,
+        val payloadBigEndian: Boolean,
         val withEcuId: Boolean,
         val withSessionId: Boolean,
         val withTimestamp: Boolean,
