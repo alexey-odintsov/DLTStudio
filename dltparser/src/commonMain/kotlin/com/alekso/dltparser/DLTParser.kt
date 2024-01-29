@@ -123,7 +123,7 @@ object DLTParser {
         }
         var p = i
         val headerType = parseStandardHeaderType(shouldLog, bytes[p]); p += 1
-        val messageCounter = bytes[p]; p += 1
+        val messageCounter = bytes[p].toUByte(); p += 1
         val length = bytes.readShort(p, Endian.BIG).toInt(); p += 2
         val ecuId =
             if (headerType.withEcuId) bytes.readString(p, 4) else null; p += 4

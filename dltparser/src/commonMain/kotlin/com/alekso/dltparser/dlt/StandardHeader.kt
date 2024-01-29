@@ -3,7 +3,7 @@ package com.alekso.dltparser.dlt
 
 data class StandardHeader(
     val headerType: HeaderType,
-    val messageCounter: Byte,
+    val messageCounter: UByte,
     val length: Int,
     val ecuId: String?,
     val sessionId: Int?,
