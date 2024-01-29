@@ -29,6 +29,17 @@ fun ByteArray.readShort(start: Int, endian: Endian): Short {
 }
 
 /**
+ * Reads 2 bytes data signed Short
+ */
+fun ByteArray.readUShort(start: Int, endian: Endian): UShort {
+    return if (endian == Endian.LITTLE) {
+        (((get(start + 1).toInt() and 255) shl 8) or (get(start).toInt() and 255)).toUShort()
+    } else {
+        (((get(start).toInt() and 255) shl 8) or (get(start + 1).toInt() and 255)).toUShort()
+    }
+}
+
+/**
  * Reads 4 bytes signed Int
  */
 fun ByteArray.readInt(start: Int, endian: Endian): Int {
