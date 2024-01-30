@@ -12,40 +12,33 @@ class DLTMessageParsingTest {
         21142234, 243243, "MGUA",
         StandardHeader(
             StandardHeader.HeaderType(0.toByte(), true, true, true, true, true, 1),
-            10.toUByte(), 10U, "MGUA", 443, 332422U
+            10.toUByte(), 10U, "MGUA", 106, 332422U
         ),
         ExtendedHeader(
             MessageInfo(
                 30.toByte(),
                 true,
-                MessageInfo.MESSAGE_TYPE.DLT_TYPE_APP_TRACE,
+                MessageInfo.MESSAGE_TYPE.DLT_TYPE_LOG,
                 MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_INFO
-            ), 2U, "APP", "CTX"
+            ), 1U, "SGFX", "COMP"
         ),
         VerbosePayload(
             listOf(
                 VerbosePayload.Argument(
                     1,
                     VerbosePayload.TypeInfo(
-                        1,
-                        false,
-                        false,
-                        false,
-                        false,
-                        false,
-                        false,
-                        true,
-                        false,
-                        false,
-                        false,
-                        false,
-                        VerbosePayload.TypeInfo.STRING_CODING.UTF8
-                    ), 12, 10, "TEST MESSAGE".toByteArray()
+                        typeString = true,
+                        stringCoding = VerbosePayload.TypeInfo.STRING_CODING.UTF8
+                    ),
+                    12,
+                    63,
+                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
                 )
             )
         ),
         122
     )
+
     @Test
     fun parseDLTMessage1() {
         // @formatter:off
@@ -62,7 +55,7 @@ class DLTMessageParsingTest {
         // @formatter:on
         val data = raw.map { it.toByte() }.toByteArray()
         val actual = DLTParser.parseDLTMessage(data, 0, true)
-        val expected = actual
+        val expected = dltMessage
         Assert.assertTrue("$actual != $expected", actual == expected)
     }
 

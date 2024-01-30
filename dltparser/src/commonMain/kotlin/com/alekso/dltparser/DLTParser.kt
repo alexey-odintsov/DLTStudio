@@ -294,7 +294,7 @@ object DLTParser {
     ): VerbosePayload.Argument {
         if (DEBUG_LOG && shouldLog) {
             println(
-                "   $j: Argument.parse:  ${bytes.sliceArray(i..i + 20).toHex()}"
+                "   $j: Argument.parse ($payloadEndian):  ${bytes.sliceArray(i..i + 20).toHex()}"
             )
         }
 
@@ -307,7 +307,7 @@ object DLTParser {
         var payloadSize: Int
         var additionalSize = 0
         if (typeInfo.typeString) {
-            payloadSize = bytes.readShort(i + 5, payloadEndian).toUShort().toInt()
+            payloadSize = bytes.readShort(i + 4, payloadEndian).toUShort().toInt()
             additionalSize =
                 2 // PRS_Dlt_00156 - 16-bit unsigned integer specifies the length of the string
         } else if (typeInfo.typeRaw) {
