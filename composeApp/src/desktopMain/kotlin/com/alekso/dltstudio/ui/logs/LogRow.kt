@@ -24,7 +24,8 @@ fun LogRow(
     applicationId: String,
     contextId: String,
     content: String,
-    isHeader: Boolean = false
+    isHeader: Boolean = false,
+    cellStyle: CellStyle? = null
 ) {
     Column(
         modifier = modifier.then(
@@ -36,54 +37,63 @@ fun LogRow(
                 modifier = Modifier.width(60.dp),
                 textAlign = TextAlign.Right,
                 text = index,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.width(200.dp),
                 textAlign = TextAlign.Center,
                 text = datetime,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.width(80.dp),
                 textAlign = TextAlign.Right,
                 text = timeOffset,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.width(50.dp),
                 textAlign = TextAlign.Center,
                 text = ecu,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.width(50.dp),
                 textAlign = TextAlign.Center,
                 text = ecuId,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.width(50.dp),
                 textAlign = TextAlign.Center,
                 text = sessionId,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.width(50.dp),
                 textAlign = TextAlign.Center,
                 text = applicationId,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.width(50.dp),
                 textAlign = TextAlign.Center,
                 text = contextId,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
             Cell(
                 modifier = Modifier.weight(1f),
                 text = content,
-                isHeader = isHeader
+                isHeader = isHeader,
+                cellStyle = cellStyle
             )
         }
         Divider()

@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.ui.ParseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,6 +33,22 @@ fun LogsPanel(
     var selectedRow by remember { mutableStateOf(0) }
     val coroutineScope = rememberCoroutineScope()
     var dltSession2: ParseSession? = dltSession
+
+    // Add sample color filters
+    val colorFilters = listOf(
+        CellColorFilter(
+            { msg -> msg.extendedHeader?.applicationId.equals("VSIP") },
+            CellStyle(backgroundColor = Color.Green)
+        ),
+        CellColorFilter({ msg ->
+            with(msg.extendedHeader?.messageInfo?.messageTypeInfo) {
+                this == MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_FATAL || this == MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_DLT_ERROR
+            }
+        }, CellStyle(backgroundColor = Color.Red, textColor = Color.White)),
+        CellColorFilter({ msg ->
+            msg.extendedHeader?.messageInfo?.messageTypeInfo == MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_WARN
+        }, CellStyle(backgroundColor = Color.Yellow)),
+    )
 
     LazyScrollable(
         modifier = modifier
@@ -57,7 +74,8 @@ fun LogsPanel(
                     }
                 }
             }),
-        dltSession
+        dltSession,
+        colorFilters
     ) { i -> selectedRow = i }
     LogPreview(
         modifier = Modifier.fillMaxWidth().height(200.dp),

@@ -13,18 +13,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+data class CellStyle(
+    val backgroundColor: Color? = null,
+    val textColor: Color? = null
+)
+
 @Composable
 @Preview
 fun Cell(
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Left,
     text: String,
-    isHeader: Boolean = false
+    isHeader: Boolean = false,
+    cellStyle: CellStyle? = null
 ) {
     Text(
         modifier = Modifier
             .padding(end = 1.dp)
-            .background(color = if (isHeader) Color.Transparent else Color(250, 250, 250))
+            .background(
+                if (isHeader) {
+                    Color.Transparent
+                } else if (cellStyle != null) {
+                    cellStyle.backgroundColor ?: Color(250, 250, 250)
+                } else {
+                    Color(250, 250, 250)
+                }
+            )
             .then(modifier),
         maxLines = 1,
         textAlign = textAlign,
@@ -32,6 +46,9 @@ fun Cell(
         fontFamily = FontFamily.Monospace,
         fontWeight = FontWeight(if (isHeader) 600 else 400),
         softWrap = false,
-        text = text
+        text = text,
+        color = if (cellStyle != null) {
+            cellStyle.textColor ?: Color.Unspecified
+        } else Color.Unspecified
     )
 }

@@ -21,6 +21,7 @@ private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Local
 fun LazyScrollable(
     modifier: Modifier,
     dltSession: ParseSession?,
+    colorFilters: List<CellColorFilter>,
     selectedRowCallback: (Int) -> Unit
 ) {
     Column(modifier = modifier) {
@@ -46,6 +47,8 @@ fun LazyScrollable(
                     items(dltSession.dltMessages.size) { i ->
                         val message = dltSession.dltMessages[i]
                         RowContextMenu {
+                            val cellStyle =
+                                colorFilters.firstOrNull { it.condition(message) }?.cellStyle
                             LogRow(
                                 modifier = Modifier.selectable(
                                     selected = true,
@@ -60,7 +63,8 @@ fun LazyScrollable(
                                 "${message.standardHeader.sessionId}",
                                 "${message.extendedHeader?.applicationId}",
                                 "${message.extendedHeader?.contextId}",
-                                "${message.payload?.asText()}"
+                                "${message.payload?.asText()}",
+                                cellStyle = cellStyle
                             )
                         }
                     }
