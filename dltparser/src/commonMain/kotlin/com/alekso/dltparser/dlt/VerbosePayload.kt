@@ -61,19 +61,19 @@ data class VerbosePayload(
     }
 
     data class TypeInfo(
-        val typeLengthBits: Int,
-        val typeBool: Boolean,
-        val typeSigned: Boolean,
-        val typeUnsigned: Boolean,
-        val typeFloat: Boolean,
-        val typeArray: Boolean,
-        val typeRaw: Boolean,
-        val typeString: Boolean,
-        val variableInfo: Boolean,
-        val fixedPoint: Boolean,
-        val traceInfo: Boolean,
-        val typeStruct: Boolean,
-        val stringCoding: STRING_CODING,
+        val typeLengthBits: Int = 0,
+        val typeBool: Boolean = false,
+        val typeSigned: Boolean = false,
+        val typeUnsigned: Boolean = false,
+        val typeFloat: Boolean = false,
+        val typeArray: Boolean = false,
+        val typeRaw: Boolean = false,
+        val typeString: Boolean = false,
+        val variableInfo: Boolean = false,
+        val fixedPoint: Boolean = false,
+        val traceInfo: Boolean = false,
+        val typeStruct: Boolean = false,
+        val stringCoding: STRING_CODING = STRING_CODING.ASCII,
     ) {
         enum class STRING_CODING {
             ASCII,
