@@ -11,17 +11,25 @@ class VerbosePayloadParsingTest {
     fun `test TypeInfo parsing`() {
         val data = byteArrayOf(0x00, 0x02, 0x00, 0x00)
         val expected = VerbosePayload.TypeInfo(typeString = true)
-        val actual = DLTParser.parseVerbosePayloadTypeInfo(true, data.readInt(0, Endian.LITTLE), Endian.LITTLE)
+        val actual = DLTParser.parseVerbosePayloadTypeInfo(
+            true,
+            data.readInt(0, Endian.LITTLE),
+            Endian.LITTLE
+        )
         Assert.assertTrue("actual  : $actual\nexpected: $expected", actual == expected)
     }
 
-//    @Test
-//    fun `test TypeInfo parsing 2`() {
-//        val data = byteArrayOf(0x43, 0x00, 0x00, 0x00)
-//        val expected = VerbosePayload.TypeInfo(typeUnsigned = true)
-//        val actual = DLTParser.parseVerbosePayloadTypeInfo(true, data.readInt(0, Endian.LITTLE), Endian.LITTLE)
-//        Assert.assertTrue("actual  : $actual\nexpected:$expected", actual == expected)
-//    }
+    @Test
+    fun `test TypeInfo parsing 2`() {
+        val data = byteArrayOf(0x43, 0x00, 0x00, 0x00)
+        val expected = VerbosePayload.TypeInfo(typeLengthBits = 32, typeUnsigned = true)
+        val actual = DLTParser.parseVerbosePayloadTypeInfo(
+            true,
+            data.readInt(0, Endian.LITTLE),
+            Endian.LITTLE
+        )
+        Assert.assertTrue("actual  : $actual\nexpected:$expected", actual == expected)
+    }
 
 
     @Test

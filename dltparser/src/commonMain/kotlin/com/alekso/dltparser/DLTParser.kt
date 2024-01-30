@@ -111,7 +111,10 @@ object DLTParser {
                 }
                 payload = VerbosePayload(arguments)
             } else {
-                throw UnsupportedOperationException("Non verbose header found! offset: $offset: header: $extendedHeader")
+                if (DEBUG_LOG) {
+                    println("Non verbose header found! offset: $offset: header: $extendedHeader")
+                }
+//                throw UnsupportedOperationException("Non verbose header found! offset: $offset: header: $extendedHeader")
             }
         }
         if (DEBUG_LOG && shouldLog) {
@@ -317,6 +320,9 @@ object DLTParser {
             payloadSize = 1
         } else {
 //            throw IllegalStateException("Can't parse ${typeInfo}")
+            if (DEBUG_LOG) {
+                println("Warning! Unsupported Payload type at offset: $i -> $typeInfo (${typeInfoInt.toHex(4)})")
+            }
             payloadSize = typeInfo.typeLengthBits / 8
         }
 
