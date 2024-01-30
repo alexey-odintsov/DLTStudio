@@ -9,14 +9,14 @@ import org.junit.Test
 
 class DLTMessageParsingTest {
     val dltMessage = DLTMessage(
-        21142234, 243243, "MGUA",
+        1703251206, 316811, "MGUA",
         StandardHeader(
-            StandardHeader.HeaderType(0.toByte(), true, true, true, true, true, 1),
-            10.toUByte(), 10U, "MGUA", 106, 332422U
+            StandardHeader.HeaderType(61.toByte(), true, false, true, true, true, 1),
+            38.toUByte(), 95U, "MGUA", 106, 32422418U
         ),
         ExtendedHeader(
             MessageInfo(
-                30.toByte(),
+                65.toByte(),
                 true,
                 MessageInfo.MESSAGE_TYPE.DLT_TYPE_LOG,
                 MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_INFO
@@ -25,18 +25,18 @@ class DLTMessageParsingTest {
         VerbosePayload(
             listOf(
                 VerbosePayload.Argument(
-                    1,
+                    512,
                     VerbosePayload.TypeInfo(
                         typeString = true,
-                        stringCoding = VerbosePayload.TypeInfo.STRING_CODING.UTF8
+                        stringCoding = VerbosePayload.TypeInfo.STRING_CODING.ASCII
                     ),
-                    12,
+                    2,
                     63,
-                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
+                    "Page flip enqueued on connector 260 with handler 0x73d8005740${0x0a.toChar()}${0x00.toChar()}".toByteArray()
                 )
             )
         ),
-        122
+        111
     )
 
     @Test
@@ -56,7 +56,7 @@ class DLTMessageParsingTest {
         val data = raw.map { it.toByte() }.toByteArray()
         val actual = DLTParser.parseDLTMessage(data, 0, true)
         val expected = dltMessage
-        Assert.assertTrue("$actual != $expected", actual == expected)
+        Assert.assertTrue("actual  : $actual\nexpected: $expected", actual == expected)
     }
 
     @Test

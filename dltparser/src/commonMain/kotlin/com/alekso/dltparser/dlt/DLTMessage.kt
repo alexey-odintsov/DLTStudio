@@ -17,9 +17,10 @@ data class DLTMessage(
 ) {
 
     override fun toString(): String {
-        return "{$timeStampUs, $timeStampUs, '$ecuId'\n" +
+        return "{$timeStampSec, $timeStampUs, '$ecuId'\n" +
                 " $standardHeader\n" +
                 " $extendedHeader}\n" +
-                " $payload}\n"
+                " $payload}\n" +
+                " meta size bytes: $sizeBytes"
     }
 }
