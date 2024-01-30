@@ -10,10 +10,14 @@ import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+
 object DLTParser {
-    private const val DEBUG_LOG = false // WARNING: Logging drastically slow down parsing!!!
+    private const val DEBUG_LOG = true // WARNING: Logging drastically slow down parsing!!!
     private const val MAX_BYTES_TO_READ_DEBUG = -1 // put -1 to ignore
     private const val DLT_HEADER_SIZE_BYTES = 16
+    private const val STRING_CODING_MASK = 0b00000000000000000000000000000111
+    private val STANDARD_HEADER_ENDIAN = Endian.BIG
+    private val EXTENDED_HEADER_ENDIAN = Endian.BIG
     private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
     /**
@@ -100,7 +104,7 @@ object DLTParser {
                         j,
                         bytes,
                         i,
-                        standardHeader.headerType.payloadBigEndian
+                        if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
                     )
                     arguments.add(verbosePayloadArgument)
                     i += verbosePayloadArgument.getSize()
@@ -128,13 +132,14 @@ object DLTParser {
         var p = i
         val headerType = parseStandardHeaderType(shouldLog, bytes[p]); p += 1
         val messageCounter = bytes[p].toUByte(); p += 1
-        val length = bytes.readShort(p, Endian.BIG).toUShort(); p += 2
+        val length = bytes.readShort(p, STANDARD_HEADER_ENDIAN).toUShort(); p += 2
         val ecuId =
             if (headerType.withEcuId) bytes.readString(p, 4) else null; p += 4
         val sessionId =
-            if (headerType.withSessionId) bytes.readInt(p, Endian.BIG) else null; p += 4
+            if (headerType.withSessionId) bytes.readInt(p, STANDARD_HEADER_ENDIAN) else null; p += 4
         val timeStamp =
-            if (headerType.withTimestamp) bytes.readInt(p, Endian.BIG).toUInt() else null; p += 4
+            if (headerType.withTimestamp) bytes.readInt(p, STANDARD_HEADER_ENDIAN)
+                .toUInt() else null; p += 4
 
         if (DEBUG_LOG && shouldLog) {
             println(
@@ -277,12 +282,12 @@ object DLTParser {
     }
 
 
-    private fun parseVerbosePayload(
+    fun parseVerbosePayload(
         shouldLog: Boolean,
         j: Int,
         bytes: ByteArray,
         i: Int,
-        payloadBigEndian: Boolean
+        payloadEndian: Endian
     ): VerbosePayload.Argument {
         if (DEBUG_LOG && shouldLog) {
             println(
@@ -290,14 +295,13 @@ object DLTParser {
             )
         }
 
-        val payloadEndian = if (payloadBigEndian) Endian.BIG else Endian.LITTLE
-        val typeInfoInt = bytes.readInt(i, Endian.LITTLE)
-        val typeInfo = parseVerbosePayloadTypeInfo(shouldLog, typeInfoInt)
+        val typeInfoInt = bytes.readInt(i, payloadEndian)
+        val typeInfo = parseVerbosePayloadTypeInfo(shouldLog, typeInfoInt, payloadEndian)
         if (DEBUG_LOG && shouldLog) {
             println("       typeInfo: $typeInfo")
         }
 
-        var payloadSize = 0
+        var payloadSize: Int
         var additionalSize = 0
         if (typeInfo.typeString) {
             payloadSize = bytes.readShort(i + 5, payloadEndian).toUShort().toInt()
@@ -312,8 +316,8 @@ object DLTParser {
         } else if (typeInfo.typeBool) {
             payloadSize = 1
         } else {
-            throw IllegalStateException("Can't parse ${typeInfo}")
-            // payloadSize = typeInfo.typeLengthBits / 8
+//            throw IllegalStateException("Can't parse ${typeInfo}")
+            payloadSize = typeInfo.typeLengthBits / 8
         }
 
         // Sanity check to fix infinite reading
@@ -342,43 +346,36 @@ object DLTParser {
         return argument
     }
 
-    private fun parseVerbosePayloadTypeInfo(
+    fun parseVerbosePayloadTypeInfo(
         shouldLog: Boolean,
-        typeInfoInt: Int
+        typeInfoInt: Int,
+        payloadEndian: Endian
     ): VerbosePayload.TypeInfo {
-        val mask = 0b0000000000000000_0000000000001111
-        val typeLengthBits = when ((typeInfoInt) and mask) {
-            1 -> 8
-            2 -> 16
-            3 -> 32
-            4 -> 64
-            5 -> 128
+        val typeLengthBits = when (typeInfoInt and 0b1111) {
+            0b0001 -> 8
+            0b0010 -> 16
+            0b0011 -> 32
+            0b0100 -> 64
+            0b0101 -> 128
             else -> 0
         }
-        if (DEBUG_LOG && shouldLog) {
-//        printIf(
-//            shouldLog, "   typeLengthBits : ${typeInfoInt.toString(16).padStart(8, '0')} "
-//        )
-            println(
-                "   typeInfo : ${typeInfoInt.toString(2).padStart(32, '0')} "
-            )
-//        printIf(
-//            shouldLog, "   shifted        : ${shifted.toString(2).padStart(32, '0')}"
-//        )
-//        printIf(
-//            shouldLog,
-//            "   mask           : ${mask.toString(2).padStart(32, '0')} ->" +
-//                    " $typeLengthBits"
-//        )
-//        printIf(shouldLog, "   typeLength: $typeLength")
-        }
 
-        val stringCodingMask = 0b000000000000000111000000000000000
-        val stringCoding = when ((typeInfoInt).shr(15) and stringCodingMask) {
+        val stringCoding = when (typeInfoInt.shr(15) and STRING_CODING_MASK) {
             0 -> VerbosePayload.TypeInfo.STRING_CODING.ASCII
             1 -> VerbosePayload.TypeInfo.STRING_CODING.UTF8
             else -> VerbosePayload.TypeInfo.STRING_CODING.RESERVED
         }
+
+        if (DEBUG_LOG && shouldLog) {
+            println("   typeInfoInt: 0x${typeInfoInt.toHex(4)} (${typeInfoInt.toBinary(32)}b)")
+            println("   typeLengthBits: $typeLengthBits (${(typeInfoInt and 0b1111).toBinary(32)}b)")
+            println(
+                "   stringCoding: $stringCoding (${
+                    (typeInfoInt.shr(15) and STRING_CODING_MASK).toBinary(32)
+                }b)"
+            )
+        }
+
         return VerbosePayload.TypeInfo(
             typeLengthBits,
             typeBool = typeInfoInt.isBitSet(4),
