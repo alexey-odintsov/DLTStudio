@@ -58,6 +58,28 @@ data class VerbosePayload(
             }
         }
 
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+
+            other as Argument
+
+            if (typeInfoInt != other.typeInfoInt) return false
+            if (typeInfo != other.typeInfo) return false
+            if (additionalSize != other.additionalSize) return false
+            if (payloadSize != other.payloadSize) return false
+            return payload.contentEquals(other.payload)
+        }
+
+        override fun hashCode(): Int {
+            var result = typeInfoInt
+            result = 31 * result + typeInfo.hashCode()
+            result = 31 * result + additionalSize
+            result = 31 * result + payloadSize
+            result = 31 * result + payload.contentHashCode()
+            return result
+        }
+
     }
 
     data class TypeInfo(

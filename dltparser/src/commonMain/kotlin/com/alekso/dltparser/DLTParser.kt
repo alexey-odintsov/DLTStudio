@@ -307,11 +307,11 @@ object DLTParser {
         var payloadSize: Int
         var additionalSize = 0
         if (typeInfo.typeString) {
-            payloadSize = bytes.readShort(i + 4, payloadEndian).toUShort().toInt()
+            payloadSize = bytes.readUShort(i + 4, payloadEndian).toInt()
             additionalSize =
                 2 // PRS_Dlt_00156 - 16-bit unsigned integer specifies the length of the string
         } else if (typeInfo.typeRaw) {
-            payloadSize = bytes.readShort(i + 4, payloadEndian).toInt()
+            payloadSize = bytes.readUShort(i + 4, payloadEndian).toInt()
             additionalSize =
                 2 // PRS_Dlt_00160 - 16-bit unsigned integer shall specify the length of the raw data in byte
         } else if (typeInfo.typeUnsigned || typeInfo.typeSigned) {
