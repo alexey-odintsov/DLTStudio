@@ -4,7 +4,6 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -13,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.ui.cpu.CPUPanel
 import com.alekso.dltstudio.ui.logs.LogsPanel
+import com.alekso.dltstudio.ui.timeline.TimeLinePanel
 
 @Composable
 @Preview
@@ -29,7 +29,7 @@ fun MainWindow() {
 
         // TODO: Add toolbox
 
-        TabsPanel(tabIndex, listOf("Logs", "CPU", "Memory"), tabClickListener)
+        TabsPanel(tabIndex, listOf("Logs", "CPU", "Timeline"), tabClickListener)
 
         when (tabIndex) {
             0 -> LogsPanel(
@@ -45,7 +45,11 @@ fun MainWindow() {
                 statusBarProgressCallback
             )
 
-            2 -> Text("Memory tab content", modifier = Modifier.weight(1f))
+            2 -> TimeLinePanel(
+                modifier = Modifier.weight(1f),
+                dltSession,
+                statusBarProgressCallback
+            )
         }
         Divider()
         StatusBar(modifier = Modifier.fillMaxWidth(), progress, dltSession)
