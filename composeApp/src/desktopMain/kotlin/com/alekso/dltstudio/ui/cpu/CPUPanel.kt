@@ -1,7 +1,9 @@
 package com.alekso.dltstudio.ui.cpu
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -9,6 +11,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.ParseSession
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -19,6 +22,7 @@ import kotlinx.coroutines.withContext
 fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (Float) -> Unit) {
     val cpuLogs = remember { mutableStateListOf<Int>() }
     var cpuUsage = remember { mutableStateListOf<CPUUsageEntry>() }
+    var cpus = remember { mutableStateListOf<CPUSEntry>() }
 
     Column(modifier = modifier) {
         if (dltSession != null) {
@@ -28,11 +32,13 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                 coroutineScope.launch {
                     val _cpuLogs = mutableStateListOf<Int>()
                     val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
+                    val _cpus = mutableStateListOf<CPUSEntry>()
 
                     withContext(Dispatchers.IO) {
                         println("Start CPU analysing.. ${dltSession.dltMessages.size} messages")
 
                         dltSession.dltMessages.forEachIndexed { index, message ->
+                            // CPUC
                             if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
                                     "MON"
                                 ) == true &&
@@ -40,6 +46,20 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                             ) {
                                 _cpuLogs.add(index)
                                 _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(message))
+                            }
+                            progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+
+                            // CPUS
+                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+                                    "MON"
+                                ) == true &&
+                                message.extendedHeader?.contextId == "CPUS"
+                            ) {
+                                try {
+                                    _cpus.add(CPUAnalyzer.analyzeCPUS(message))
+                                } catch (e: Exception) {
+                                    // skip
+                                }
                             }
                             progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                         }
@@ -51,6 +71,8 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                         cpuLogs.addAll(_cpuLogs)
                         cpuUsage.clear()
                         cpuUsage.addAll(_cpuUsage)
+                        cpus.clear()
+                        cpus.addAll(_cpus)
                     }
                 }
             }) {
@@ -58,7 +80,11 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
             }
 
             Text("Messages found: ${cpuLogs.size}")
-            CPUUsageView(modifier = Modifier.fillMaxSize(1f), items = cpuUsage)
+            CPUUsageView(modifier = Modifier.height(300.dp).fillMaxWidth(), items = cpuUsage)
+            CPUSView(
+                modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
+                items = cpus
+            )
         }
     }
 }
