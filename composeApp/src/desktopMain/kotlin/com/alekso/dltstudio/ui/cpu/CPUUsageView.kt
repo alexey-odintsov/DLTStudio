@@ -28,7 +28,12 @@ private val colors = listOf(
 )
 
 @Composable
-fun CPUUsageView(modifier: Modifier, items: List<CPUUsageEntry>) {
+fun CPUUsageView(
+    modifier: Modifier,
+    items: List<CPUUsageEntry>,
+    offset: Int = 0,
+    scale: Float = 1f
+) {
     val textMeasurer = rememberTextMeasurer()
 
     Canvas(modifier = modifier.background(Color.Gray)) {

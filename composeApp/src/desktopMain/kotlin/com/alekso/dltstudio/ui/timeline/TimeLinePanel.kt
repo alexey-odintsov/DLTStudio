@@ -103,7 +103,7 @@ fun TimeLinePanel(
                         Box(modifier = Modifier.width(150.dp)) {
                             Text("CPU Usage")
                         }
-                        TimelineCPUCView(
+                        CPUUsageView(
                             offset = offset,
                             scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth(),
@@ -117,6 +117,8 @@ fun TimeLinePanel(
                             Text("CPU Usage")
                         }
                         CPUSView(
+                            offset = offset,
+                            scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
                             items = dltSession.cpus
                         )
@@ -127,9 +129,11 @@ fun TimeLinePanel(
                         Box(modifier = Modifier.width(150.dp)) {
                             Text("CPU Usage")
                         }
-                        CPUSView(
+                        CPUUsageView(
+                            offset = offset,
+                            scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
-                            items = dltSession.cpus
+                            items = dltSession.cpuUsage
                         )
                     }
                 }
