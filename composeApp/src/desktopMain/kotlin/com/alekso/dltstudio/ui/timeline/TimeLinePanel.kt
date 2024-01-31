@@ -31,12 +31,8 @@ fun TimeLinePanel(
     dltSession: ParseSession?,
     progressCallback: (Float) -> Unit
 ) {
-    var timeStart by remember { mutableStateOf(Long.MAX_VALUE) }
-    var timeEnd by remember { mutableStateOf(Long.MIN_VALUE) }
     var offset by remember { mutableStateOf(0) }
     var scale by remember { mutableStateOf(1f) }
-
-    var cpuUsage = remember { mutableStateListOf<CPUUsageEntry>() }
 
     Column(modifier = modifier) {
         if (dltSession != null) {
@@ -52,11 +48,11 @@ fun TimeLinePanel(
                         dltSession.dltMessages.forEachIndexed { index, message ->
                             // timeStamps
                             val ts = (message.timeStampSec * 1000L + message.timeStampUs / 1000)
-                            if (ts > timeEnd) {
-                                timeEnd = ts
+                            if (ts > dltSession.timeEnd) {
+                                dltSession.timeEnd = ts
                             }
-                            if (ts < timeStart) {
-                                timeStart = ts
+                            if (ts < dltSession.timeStart) {
+                                dltSession.timeStart = ts
                             }
 
 
@@ -74,8 +70,8 @@ fun TimeLinePanel(
 
                     }
                     withContext(Dispatchers.Default) {
-                        cpuUsage.clear()
-                        cpuUsage.addAll(_cpuUsage)
+                        dltSession.cpuUsage.clear()
+                        dltSession.cpuUsage.addAll(_cpuUsage)
                     }
                 }
             }) {
@@ -83,16 +79,14 @@ fun TimeLinePanel(
             }
 
             Text(
-                "Time range: ${simpleDateFormat.format(timeStart)} .. ${
-                    simpleDateFormat.format(
-                        timeEnd
-                    )
+                "Time range: ${simpleDateFormat.format(dltSession.timeStart)} .. ${
+                    simpleDateFormat.format(dltSession.timeEnd)
                 }"
             )
 
             TimelineCPUCView(
                 offset = offset, scale = scale,
-                modifier = Modifier.height(300.dp).fillMaxWidth(), items = cpuUsage
+                modifier = Modifier.height(300.dp).fillMaxWidth(), items = dltSession.cpuUsage
             )
         }
     }
