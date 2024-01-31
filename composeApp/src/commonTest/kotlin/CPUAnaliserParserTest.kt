@@ -36,19 +36,9 @@ class CPUAnalyzerParserTest {
                         VerbosePayload.Argument(
                             1,
                             VerbosePayload.TypeInfo(
-                                1,
-                                false,
-                                false,
-                                false,
-                                false,
-                                false,
-                                false,
-                                true,
-                                false,
-                                false,
-                                false,
-                                false,
-                                VerbosePayload.TypeInfo.STRING_CODING.UTF8
+                                typeLengthBits = 1,
+                                typeString = true,
+                                stringCoding = VerbosePayload.TypeInfo.STRING_CODING.UTF8
                             ),
                             1,
                             2,
