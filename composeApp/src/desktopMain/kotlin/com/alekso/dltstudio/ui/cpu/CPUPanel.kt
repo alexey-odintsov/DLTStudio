@@ -8,7 +8,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,8 +19,6 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (Float) -> Unit) {
-    var cpuUsage = remember { mutableStateListOf<CPUUsageEntry>() }
-    var cpus = remember { mutableStateListOf<CPUSEntry>() }
 
     Column(modifier = modifier) {
         if (dltSession != null) {
@@ -64,21 +61,24 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                         println("End CPU analysing, found ${_cpuLogs.size} messages")
                     }
                     withContext(Dispatchers.Default) {
-                        cpuUsage.clear()
-                        cpuUsage.addAll(_cpuUsage)
-                        cpus.clear()
-                        cpus.addAll(_cpus)
+                        dltSession.cpuUsage.clear()
+                        dltSession.cpuUsage.addAll(_cpuUsage)
+                        dltSession.cpus.clear()
+                        dltSession.cpus.addAll(_cpus)
                     }
                 }
             }) {
                 Text("Analyze CPU Usage")
             }
 
-            Text("Messages found: ${cpuUsage.size}")
-            CPUUsageView(modifier = Modifier.height(300.dp).fillMaxWidth(), items = cpuUsage)
+            Text("Messages found: CPUC: ${dltSession.cpuUsage.size}; CPUS: ${dltSession.cpus.size}")
+            CPUUsageView(
+                modifier = Modifier.height(300.dp).fillMaxWidth(),
+                items = dltSession.cpuUsage
+            )
             CPUSView(
                 modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
-                items = cpus
+                items = dltSession.cpus
             )
         }
     }
