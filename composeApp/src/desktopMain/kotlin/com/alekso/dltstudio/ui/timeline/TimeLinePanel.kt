@@ -1,16 +1,22 @@
 package com.alekso.dltstudio.ui.timeline
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.ParseSession
+import com.alekso.dltstudio.ui.cpu.CPUAnalyzer
+import com.alekso.dltstudio.ui.cpu.CPUUsageEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -28,6 +34,9 @@ fun TimeLinePanel(
     var timeStart by remember { mutableStateOf(Long.MAX_VALUE) }
     var timeEnd by remember { mutableStateOf(Long.MIN_VALUE) }
     var offset by remember { mutableStateOf(0) }
+    var scale by remember { mutableStateOf(1f) }
+
+    var cpuUsage = remember { mutableStateListOf<CPUUsageEntry>() }
 
     Column(modifier = modifier) {
         if (dltSession != null) {
@@ -35,10 +44,13 @@ fun TimeLinePanel(
 
             Button(onClick = {
                 coroutineScope.launch {
+                    val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
                     withContext(Dispatchers.IO) {
+
                         println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
 
                         dltSession.dltMessages.forEachIndexed { index, message ->
+                            // timeStamps
                             val ts = (message.timeStampSec * 1000L + message.timeStampUs / 1000)
                             if (ts > timeEnd) {
                                 timeEnd = ts
@@ -46,11 +58,25 @@ fun TimeLinePanel(
                             if (ts < timeStart) {
                                 timeStart = ts
                             }
+
+
+                            // CPUC
+                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+                                    "MON"
+                                ) == true &&
+                                message.extendedHeader?.contextId == "CPUC"
+                            ) {
+                                _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(index, message))
+                            }
+
                             progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                         }
 
                     }
-
+                    withContext(Dispatchers.Default) {
+                        cpuUsage.clear()
+                        cpuUsage.addAll(_cpuUsage)
+                    }
                 }
             }) {
                 Text("Build timeline")
@@ -64,6 +90,10 @@ fun TimeLinePanel(
                 }"
             )
 
+            TimelineCPUCView(
+                offset = offset, scale = scale,
+                modifier = Modifier.height(300.dp).fillMaxWidth(), items = cpuUsage
+            )
         }
     }
 }

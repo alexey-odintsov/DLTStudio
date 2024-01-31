@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.ui.cpu
+package com.alekso.dltstudio.ui.timeline
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
@@ -13,6 +13,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.ui.cpu.CPUUsageEntry
 
 private val colors = listOf(
     Color.Blue,
@@ -28,7 +29,7 @@ private val colors = listOf(
 )
 
 @Composable
-fun CPUUsageView(modifier: Modifier, items: List<CPUUsageEntry>) {
+fun TimelineCPUCView(modifier: Modifier, items: List<CPUUsageEntry>, offset: Int, scale: Float) {
     val textMeasurer = rememberTextMeasurer()
 
     Canvas(modifier = modifier.background(Color.Gray)) {
@@ -76,18 +77,19 @@ fun CPUUsageView(modifier: Modifier, items: List<CPUUsageEntry>) {
 @Preview
 @Composable
 fun PreviewCPUUsageView() {
-    CPUUsageView(
+    TimelineCPUCView(
+        offset = 0, scale = 1f,
         modifier = Modifier.width(200.dp).height(200.dp), items = listOf(
-            CPUUsageEntry(23, 123123213, listOf(60.3f, 50.0f)),
-            CPUUsageEntry(54, 123123214, listOf(49.8f, 55.2f)),
-            CPUUsageEntry(76, 123123215, listOf(11.3f, 35.2f)),
-            CPUUsageEntry(91, 123123216, listOf(8.0f, 50.5f)),
-            CPUUsageEntry(107, 123123217, listOf(34.9f, 70.3f)),
-            CPUUsageEntry(167, 123123218, listOf(55.1f, 80.4f)),
-            CPUUsageEntry(197, 123123219, listOf(80.6f, 96.4f)),
-            CPUUsageEntry(212, 123123220, listOf(84.6f, 99.7f)),
-            CPUUsageEntry(247, 123123221, listOf(89.6f, 99.9f)),
-            CPUUsageEntry(287, 123123222, listOf(94.6f, 81.3f)),
+            CPUUsageEntry(0, 123123213, listOf(60.3f, 50.0f)),
+            CPUUsageEntry(13, 123123214, listOf(49.8f, 55.2f)),
+            CPUUsageEntry(24, 123123215, listOf(11.3f, 35.2f)),
+            CPUUsageEntry(45, 123123216, listOf(8.0f, 50.5f)),
+            CPUUsageEntry(68, 123123217, listOf(34.9f, 70.3f)),
+            CPUUsageEntry(78, 123123218, listOf(55.1f, 80.4f)),
+            CPUUsageEntry(97, 123123219, listOf(80.6f, 96.4f)),
+            CPUUsageEntry(105, 123123220, listOf(84.6f, 99.7f)),
+            CPUUsageEntry(123, 123123221, listOf(89.6f, 99.9f)),
+            CPUUsageEntry(141, 123123222, listOf(94.6f, 81.3f)),
         )
     )
 }

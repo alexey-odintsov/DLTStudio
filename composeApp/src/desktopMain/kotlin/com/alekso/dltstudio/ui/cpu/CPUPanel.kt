@@ -20,7 +20,6 @@ import kotlinx.coroutines.withContext
 
 @Composable
 fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (Float) -> Unit) {
-    val cpuLogs = remember { mutableStateListOf<Int>() }
     var cpuUsage = remember { mutableStateListOf<CPUUsageEntry>() }
     var cpus = remember { mutableStateListOf<CPUSEntry>() }
 
@@ -44,10 +43,8 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                                 ) == true &&
                                 message.extendedHeader?.contextId == "CPUC"
                             ) {
-                                _cpuLogs.add(index)
-                                _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(message))
+                                _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(index, message))
                             }
-                            progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
 
                             // CPUS
                             if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
@@ -67,8 +64,6 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                         println("End CPU analysing, found ${_cpuLogs.size} messages")
                     }
                     withContext(Dispatchers.Default) {
-                        cpuLogs.clear()
-                        cpuLogs.addAll(_cpuLogs)
                         cpuUsage.clear()
                         cpuUsage.addAll(_cpuUsage)
                         cpus.clear()
@@ -79,7 +74,7 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                 Text("Analyze CPU Usage")
             }
 
-            Text("Messages found: ${cpuLogs.size}")
+            Text("Messages found: ${cpuUsage.size}")
             CPUUsageView(modifier = Modifier.height(300.dp).fillMaxWidth(), items = cpuUsage)
             CPUSView(
                 modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),

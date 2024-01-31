@@ -5,6 +5,7 @@ import com.alekso.dltparser.dlt.VerbosePayload
 
 
 data class CPUUsageEntry(
+    val index: Int,
     val timestamp: Int,
     val cpuUsage: List<Float>,
 )
@@ -31,7 +32,7 @@ data class CPUSEntry(
 )
 
 object CPUAnalyzer {
-    fun analyzeCPUUsage(dltMessage: DLTMessage): CPUUsageEntry {
+    fun analyzeCPUUsage(index: Int, dltMessage: DLTMessage): CPUUsageEntry {
         val cpuUsageList = mutableListOf<Float>()
 
         val payload = (dltMessage.payload as VerbosePayload).asText()
@@ -50,7 +51,7 @@ object CPUAnalyzer {
             idx++
         }
 
-        return CPUUsageEntry(dltMessage.timeStampSec, cpuUsageList)
+        return CPUUsageEntry(index, dltMessage.timeStampSec, cpuUsageList)
     }
 
     fun analyzeCPUS(dltMessage: DLTMessage): CPUSEntry {

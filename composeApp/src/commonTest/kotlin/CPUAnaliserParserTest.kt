@@ -15,6 +15,7 @@ class CPUAnalyzerParserTest {
         val data = "cpu0: 57.3% cpu1: 13% cpu2: 9.3%"
         val timestamp = 123
         val actual = CPUAnalyzer.analyzeCPUUsage(
+            1,
             DLTMessage(
                 timestamp, 123, "MGUA",
                 StandardHeader(
@@ -57,7 +58,7 @@ class CPUAnalyzerParserTest {
                 ), 1
             )
         )
-        val expected = CPUUsageEntry(timestamp, listOf(57.3f, 13f, 9.3f))
+        val expected = CPUUsageEntry(1, timestamp, listOf(57.3f, 13f, 9.3f))
         Assert.assertTrue("$actual != $expected", actual == expected)
     }
 }
