@@ -17,7 +17,7 @@ import com.alekso.dltstudio.ui.ParseSession
 @Composable
 fun TimeRuler(
     modifier: Modifier = Modifier,
-    offset: Int,
+    offset: Float,
     scale: Float,
     dltSession: ParseSession,
 ) {

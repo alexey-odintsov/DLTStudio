@@ -18,7 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.ParseSession
 import com.alekso.dltstudio.ui.cpu.CPUAnalyzer
@@ -34,13 +37,14 @@ import java.util.Locale
 
 private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TimeLinePanel(
     modifier: Modifier,
     dltSession: ParseSession?,
     progressCallback: (Float) -> Unit,
-    offset: Int,
-    offsetUpdate: (Int) -> Unit,
+    offset: Float,
+    offsetUpdate: (Float) -> Unit,
     scale: Float,
     scaleUpdate: (Float) -> Unit,
 ) {
@@ -112,18 +116,18 @@ fun TimeLinePanel(
                 }"
             )
             Text(
-                "Offset: ${offset}; scale: ${"%.2f".format(scale)}"
+                "Offset: ${"%.2f".format(offset)}; scale: ${"%.2f".format(scale)}"
             )
             Row {
                 val buttonModifier = Modifier.padding(start = 4.dp, end = 4.dp)
                 Button(
                     modifier = buttonModifier,
-                    onClick = { offsetUpdate(offset + 1) }) {
+                    onClick = { offsetUpdate(offset + 1f) }) {
                     Text("<")
                 }
                 Button(
                     modifier = buttonModifier,
-                    onClick = { offsetUpdate(offset - 1) }) {
+                    onClick = { offsetUpdate(offset - 1f) }) {
                     Text(">")
                 }
                 Button(
@@ -138,7 +142,7 @@ fun TimeLinePanel(
                 }
                 Button(modifier = buttonModifier, onClick = {
                     scaleUpdate(1f)
-                    offsetUpdate(0)
+                    offsetUpdate(0f)
                 }) {
                     Text("Reset")
                 }
@@ -164,7 +168,15 @@ fun TimeLinePanel(
                         CPUUsageView(
                             offset = offset,
                             scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth(),
+                            modifier = Modifier.height(300.dp).fillMaxWidth()
+                                .onPointerEvent(PointerEventType.Move) {
+                                    val secSize: Float =
+                                        size.width / (dltSession.totalSeconds * 1.dp.toPx())
+                                    val dragAmount =
+                                        it.changes.first().position.x - it.changes.first().previousPosition.x
+                                    offsetUpdate(offset + (dragAmount / secSize))
+                                    println("Drag: $dragAmount")
+                                },
                             items = dltSession.cpuUsage,
                             dltSession = dltSession
                         )

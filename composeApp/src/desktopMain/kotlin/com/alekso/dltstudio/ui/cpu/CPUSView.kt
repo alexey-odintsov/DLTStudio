@@ -39,7 +39,7 @@ private val colors = listOf(
 fun CPUSView(
     modifier: Modifier,
     items: List<CPUSEntry>,
-    offset: Int = 0,
+    offset: Float = 0f,
     scale: Float = 1f,
     dltSession: ParseSession
 ) {

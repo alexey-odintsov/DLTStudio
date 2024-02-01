@@ -34,7 +34,7 @@ private val colors = listOf(
 fun CPUUsageView(
     modifier: Modifier,
     items: List<CPUUsageEntry>,
-    offset: Int = 0,
+    offset: Float = 0f,
     scale: Float = 1f,
     dltSession: ParseSession
 ) {
