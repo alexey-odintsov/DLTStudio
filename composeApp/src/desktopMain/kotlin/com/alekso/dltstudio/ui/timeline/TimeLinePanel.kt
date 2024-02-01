@@ -15,12 +15,8 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -41,11 +37,12 @@ private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Local
 fun TimeLinePanel(
     modifier: Modifier,
     dltSession: ParseSession?,
-    progressCallback: (Float) -> Unit
+    progressCallback: (Float) -> Unit,
+    offset: Int,
+    offsetUpdate: (Int) -> Unit,
+    scale: Float,
+    scaleUpdate: (Float) -> Unit,
 ) {
-    var offset by remember { mutableStateOf(0) }
-    var scale by remember { mutableStateOf(1f) }
-
     Column(modifier = modifier) {
         if (dltSession != null) {
             val coroutineScope = rememberCoroutineScope()
@@ -95,6 +92,49 @@ fun TimeLinePanel(
                     simpleDateFormat.format(dltSession.timeEnd)
                 }"
             )
+            Text(
+                "Offset: ${offset}; scale: ${"%.2f".format(scale)}"
+            )
+            Row {
+                val buttonModifier = Modifier.padding(start = 4.dp, end = 4.dp)
+                Button(
+                    modifier = buttonModifier,
+                    onClick = { offsetUpdate(offset + 1) }) {
+                    Text("<")
+                }
+                Button(
+                    modifier = buttonModifier,
+                    onClick = { offsetUpdate(offset - 1) }) {
+                    Text(">")
+                }
+                Button(
+                    modifier = buttonModifier,
+                    onClick = { scaleUpdate(scale - 1f) }) {
+                    Text("-")
+                }
+                Button(
+                    modifier = buttonModifier,
+                    onClick = { scaleUpdate(scale + 1f) }) {
+                    Text("+")
+                }
+                Button(modifier = buttonModifier, onClick = {
+                    scaleUpdate(1f)
+                    offsetUpdate(0)
+                }) {
+                    Text("Reset")
+                }
+            }
+
+            Row {
+                Box(modifier = Modifier.width(150.dp))
+                TimeRuler(
+                    Modifier.fillMaxWidth(1f),
+                    dltSession.timeStart,
+                    dltSession.timeEnd,
+                    offset,
+                    scale
+                )
+            }
 
             val state = rememberLazyListState()
             val panels = mutableStateListOf<@Composable () -> Unit>(

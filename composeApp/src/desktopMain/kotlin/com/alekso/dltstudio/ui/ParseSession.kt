@@ -14,7 +14,6 @@ class ParseSession(val progressCallback: (Float) -> Unit, val file: File) {
     var timeStart = Long.MAX_VALUE
     var timeEnd = Long.MIN_VALUE
 
-
     suspend fun start() {
         dltMessages.addAll(DLTParser.read(progressCallback, file.inputStream()))
     }

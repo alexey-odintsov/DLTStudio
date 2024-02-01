@@ -20,10 +20,14 @@ fun MainWindow() {
     var dltSession by remember { mutableStateOf<ParseSession?>(null) }
     var progress by remember { mutableStateOf(0f) }
     var tabIndex by remember { mutableStateOf(0) }
+    var offset by remember { mutableStateOf(0) }
+    var scale by remember { mutableStateOf(1f) }
 
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
     val statusBarProgressCallback: (Float) -> Unit = { i -> progress = i }
     val newSessionCallback: (ParseSession) -> Unit = { newSession -> dltSession = newSession }
+    val offsetUpdateCallback: (Int) -> Unit = { newOffset -> offset = newOffset }
+    val scaleUpdateCallback: (Float) -> Unit = { newScale -> scale = newScale }
 
     Column {
 
@@ -48,7 +52,11 @@ fun MainWindow() {
             2 -> TimeLinePanel(
                 modifier = Modifier.weight(1f),
                 dltSession,
-                statusBarProgressCallback
+                statusBarProgressCallback,
+                offset,
+                offsetUpdateCallback,
+                scale,
+                scaleUpdateCallback
             )
         }
         Divider()
