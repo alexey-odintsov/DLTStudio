@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.ParseSession
 import com.alekso.dltstudio.ui.cpu.CPUAnalyzer
+import com.alekso.dltstudio.ui.cpu.CPUSEntry
 import com.alekso.dltstudio.ui.cpu.CPUSView
 import com.alekso.dltstudio.ui.cpu.CPUUsageEntry
 import com.alekso.dltstudio.ui.cpu.CPUUsageView
@@ -43,6 +44,7 @@ fun TimeLinePanel(
     scale: Float,
     scaleUpdate: (Float) -> Unit,
 ) {
+
     Column(modifier = modifier) {
         if (dltSession != null) {
             val coroutineScope = rememberCoroutineScope()
@@ -50,13 +52,14 @@ fun TimeLinePanel(
             Button(onClick = {
                 coroutineScope.launch {
                     val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
+                    val _cpus = mutableStateListOf<CPUSEntry>()
                     withContext(Dispatchers.IO) {
 
                         println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
 
                         dltSession.dltMessages.forEachIndexed { index, message ->
                             // timeStamps
-                            val ts = (message.timeStampSec * 1000L + message.timeStampUs / 1000)
+                            val ts = message.getTimeStamp()
                             if (ts > dltSession.timeEnd) {
                                 dltSession.timeEnd = ts
                             }
@@ -74,6 +77,18 @@ fun TimeLinePanel(
                                 _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(index, message))
                             }
 
+                            // CPUS
+                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+                                    "MON"
+                                ) == true &&
+                                message.extendedHeader?.contextId == "CPUS"
+                            ) {
+                                try {
+                                    _cpus.add(CPUAnalyzer.analyzeCPUS(index, message))
+                                } catch (e: Exception) {
+                                    // skip
+                                }
+                            }
                             progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                         }
 
@@ -81,6 +96,10 @@ fun TimeLinePanel(
                     withContext(Dispatchers.Default) {
                         dltSession.cpuUsage.clear()
                         dltSession.cpuUsage.addAll(_cpuUsage)
+                        dltSession.cpus.clear()
+                        dltSession.cpus.addAll(_cpus)
+                        dltSession.totalSeconds =
+                            (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
                     }
                 }
             }) {
@@ -132,7 +151,8 @@ fun TimeLinePanel(
                     dltSession.timeStart,
                     dltSession.timeEnd,
                     offset,
-                    scale
+                    scale,
+                    dltSession
                 )
             }
 
@@ -147,7 +167,8 @@ fun TimeLinePanel(
                             offset = offset,
                             scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth(),
-                            items = dltSession.cpuUsage
+                            items = dltSession.cpuUsage,
+                            dltSession = dltSession
                         )
                     }
                 },
@@ -160,7 +181,8 @@ fun TimeLinePanel(
                             offset = offset,
                             scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
-                            items = dltSession.cpus
+                            items = dltSession.cpus,
+                            dltSession = dltSession
                         )
                     }
                 },
@@ -170,10 +192,11 @@ fun TimeLinePanel(
                             Text("CPU Usage")
                         }
                         CPUUsageView(
+                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
+                            items = dltSession.cpuUsage,
                             offset = offset,
                             scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
-                            items = dltSession.cpuUsage
+                            dltSession = dltSession
                         )
                     }
                 }

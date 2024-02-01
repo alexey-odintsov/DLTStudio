@@ -6,29 +6,16 @@ import com.alekso.dltparser.dlt.VerbosePayload
 
 data class CPUUsageEntry(
     val index: Int,
-    val timestamp: Int,
+    val timestamp: Long,
     val cpuUsage: List<Float>,
 )
 
 enum class CPUS_ENTRY {
-    CPU,
-    USER,
-    SYSTEM,
-    IO,
-    IRQ,
-    SOFT_IRQ,
-    NI,
-    ST,
-    G,
-    GN,
-    AVG_CPU,
-    THREAD,
-    KERNEL_THREAD
+    CPU, USER, SYSTEM, IO, IRQ, SOFT_IRQ, NI, ST, G, GN, AVG_CPU, THREAD, KERNEL_THREAD
 }
 
 data class CPUSEntry(
-    val timestamp: Int,
-    val entry: List<Float>
+    val index: Int, val timestamp: Long, val entry: List<Float>
 )
 
 object CPUAnalyzer {
@@ -51,10 +38,10 @@ object CPUAnalyzer {
             idx++
         }
 
-        return CPUUsageEntry(index, dltMessage.timeStampSec, cpuUsageList)
+        return CPUUsageEntry(index, dltMessage.getTimeStamp(), cpuUsageList)
     }
 
-    fun analyzeCPUS(dltMessage: DLTMessage): CPUSEntry {
+    fun analyzeCPUS(index: Int, dltMessage: DLTMessage): CPUSEntry {
         val payload = (dltMessage.payload as VerbosePayload).asText()
         val entries = mutableListOf<Float>(0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f, 0f)
 
@@ -73,17 +60,13 @@ object CPUAnalyzer {
             payload.substring(payload.indexOf(" softirq: ") + 10, payload.indexOf("% ni:"))
                 .toFloat()
         entries[CPUS_ENTRY.NI.ordinal] =
-            payload.substring(payload.indexOf(" ni: ") + 5, payload.indexOf("% st:"))
-                .toFloat()
+            payload.substring(payload.indexOf(" ni: ") + 5, payload.indexOf("% st:")).toFloat()
         entries[CPUS_ENTRY.ST.ordinal] =
-            payload.substring(payload.indexOf(" st: ") + 5, payload.indexOf("% g:"))
-                .toFloat()
+            payload.substring(payload.indexOf(" st: ") + 5, payload.indexOf("% g:")).toFloat()
         entries[CPUS_ENTRY.G.ordinal] =
-            payload.substring(payload.indexOf(" g: ") + 4, payload.indexOf("% gn:"))
-                .toFloat()
+            payload.substring(payload.indexOf(" g: ") + 4, payload.indexOf("% gn:")).toFloat()
         entries[CPUS_ENTRY.GN.ordinal] =
-            payload.substring(payload.indexOf(" gn: ") + 5, payload.indexOf("% avgcpu:"))
-                .toFloat()
+            payload.substring(payload.indexOf(" gn: ") + 5, payload.indexOf("% avgcpu:")).toFloat()
         entries[CPUS_ENTRY.AVG_CPU.ordinal] =
             payload.substring(payload.indexOf(" avgcpu:") + 8, payload.indexOf("% thread:"))
                 .toFloat()
@@ -94,9 +77,6 @@ object CPUAnalyzer {
             payload.substring(payload.indexOf(" kernelthread: ") + 15, payload.lastIndexOf("%"))
                 .toFloat()
 
-        return CPUSEntry(
-            dltMessage.timeStampSec,
-            entries
-        )
+        return CPUSEntry(index, dltMessage.getTimeStamp(), entries)
     }
 }

@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.ui.ParseSession
+import java.io.File
 
 private val colors = listOf(
     Color.Blue,
@@ -32,13 +35,15 @@ fun CPUUsageView(
     modifier: Modifier,
     items: List<CPUUsageEntry>,
     offset: Int = 0,
-    scale: Float = 1f
+    scale: Float = 1f,
+    dltSession: ParseSession
 ) {
     val textMeasurer = rememberTextMeasurer()
 
-    Canvas(modifier = modifier.background(Color.Gray)) {
+    Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
         val height = size.height
         val width = size.width
+        val secSize: Float = size.width / (dltSession.totalSeconds * 1.dp.toPx())
 
         for (i in 0..100 step 10) {
             drawLine(
@@ -58,19 +63,25 @@ fun CPUUsageView(
 
         items.forEachIndexed { i, entry ->
             val prev = if (i > 0) items[i - 1] else null
-            val step = 10.dp.toPx()
-
 
             for (j in 0..<entry.cpuUsage.size) {
-                val prevX = if (prev != null) (i - 1) * step else 0f
-                val prevY =
-                    if (prev != null) height - height * prev.cpuUsage[j] / 100f else 0f
-                val curX = i * step
+                val prevX = if (prev != null) {
+                    ((prev.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+                } else {
+                    0f
+                }
+                val prevY = if (prev != null) {
+                    height - height * prev.cpuUsage[j] / 100f
+                } else {
+                    0f
+                }
+                val curX =
+                    ((entry.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
                 val curY = height - height * entry.cpuUsage[j] / 100f
                 drawLine(
                     colors[j],
-                    Offset(prevX, prevY),
-                    Offset(curX, curY),
+                    Offset(offset * secSize.dp.toPx() * scale + prevX * scale, prevY),
+                    Offset(offset * secSize.dp.toPx() * scale + curX * scale, curY),
                 )
             }
         }
@@ -93,6 +104,6 @@ fun PreviewCPUUsageView() {
             CPUUsageEntry(212, 123123220, listOf(84.6f, 99.7f)),
             CPUUsageEntry(247, 123123221, listOf(89.6f, 99.9f)),
             CPUUsageEntry(287, 123123222, listOf(94.6f, 81.3f)),
-        )
+        ), dltSession = ParseSession({}, File(""))
     )
 }

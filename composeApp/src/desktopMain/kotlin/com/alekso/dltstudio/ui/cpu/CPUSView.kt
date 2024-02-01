@@ -7,12 +7,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.ui.ParseSession
+import java.io.File
 
 private val colors = listOf(
     Color.Blue,
@@ -33,13 +36,20 @@ private val colors = listOf(
 )
 
 @Composable
-fun CPUSView(modifier: Modifier, items: List<CPUSEntry>, offset: Int = 0, scale: Float = 1f) {
+fun CPUSView(
+    modifier: Modifier,
+    items: List<CPUSEntry>,
+    offset: Int = 0,
+    scale: Float = 1f,
+    dltSession: ParseSession
+) {
     val textMeasurer = rememberTextMeasurer()
 
-    Canvas(modifier = modifier.background(Color.Gray)) {
+    Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
         val height = size.height
         val height_1_100 = size.height / 100
         val width = size.width
+        val secSize: Float = size.width / (dltSession.totalSeconds * 1.dp.toPx())
 
         for (i in 0..100 step 10) {
             drawLine(
@@ -59,15 +69,22 @@ fun CPUSView(modifier: Modifier, items: List<CPUSEntry>, offset: Int = 0, scale:
 
         items.forEachIndexed { i, entry ->
             val prev = if (i > 0) items[i - 1] else null
-            val step = 10.dp.toPx()
-
-            val prevX = if (prev != null) (i - 1) * step else 0f
-            val curX = i * step
+            val prevX = if (prev != null) {
+                ((prev.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+            } else {
+                0f
+            }
+            val curX =
+                ((entry.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
 
             for (j in 0..<CPUS_ENTRY.entries.size) {
                 val prevY = if (prev != null) height - height_1_100 * prev.entry[j] else 0f
                 val curY = height - height_1_100 * entry.entry[j]
-                drawLine(colors[j], Offset(prevX, prevY), Offset(curX, curY))
+                drawLine(
+                    colors[j],
+                    Offset(offset * secSize.dp.toPx() * scale + prevX * scale, prevY),
+                    Offset(offset * secSize.dp.toPx() * scale + curX * scale, curY),
+                )
             }
 
         }
@@ -81,13 +98,15 @@ fun PreviewCPUSView() {
     CPUSView(
         modifier = Modifier.width(200.dp).height(200.dp), items = listOf(
             CPUSEntry(
+                0,
                 123123213,
                 listOf(99.8f, 52.9f, 37.3f, 0f, 3.6f, 1.4f, 4.4f, 0f, 0f, 75.4f, 94.6f, 1.9f)
             ),
             CPUSEntry(
+                1,
                 123123213,
                 listOf(99.6f, 49.3f, 39.4f, 0f, 3.6f, 1.3f, 6f, 0f, 0f, 76.2f, 95.6f, 1.9f)
             ),
-        )
+        ), dltSession = ParseSession({}, File(""))
     )
 }

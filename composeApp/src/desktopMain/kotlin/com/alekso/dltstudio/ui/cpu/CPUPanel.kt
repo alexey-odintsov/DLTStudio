@@ -50,7 +50,7 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
                                 message.extendedHeader?.contextId == "CPUS"
                             ) {
                                 try {
-                                    _cpus.add(CPUAnalyzer.analyzeCPUS(message))
+                                    _cpus.add(CPUAnalyzer.analyzeCPUS(index, message))
                                 } catch (e: Exception) {
                                     // skip
                                 }
@@ -74,11 +74,13 @@ fun CPUPanel(modifier: Modifier, dltSession: ParseSession?, progressCallback: (F
             Text("Messages found: CPUC: ${dltSession.cpuUsage.size}; CPUS: ${dltSession.cpus.size}")
             CPUUsageView(
                 modifier = Modifier.height(300.dp).fillMaxWidth(),
-                items = dltSession.cpuUsage
+                items = dltSession.cpuUsage,
+                dltSession = dltSession
             )
             CPUSView(
                 modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
-                items = dltSession.cpus
+                items = dltSession.cpus,
+                dltSession = dltSession
             )
         }
     }

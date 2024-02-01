@@ -16,6 +16,10 @@ data class DLTMessage(
     val sizeBytes: Int,
 ) {
 
+    fun getTimeStamp(): Long {
+        return timeStampSec * 1000L + timeStampUs / 1000
+    }
+
     override fun toString(): String {
         return "{$timeStampSec, $timeStampUs, '$ecuId'\n" +
                 " $standardHeader\n" +
