@@ -20,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
@@ -48,6 +49,14 @@ fun TimeLinePanel(
     scale: Float,
     scaleUpdate: (Float) -> Unit,
 ) {
+
+    val dragCallback = { pe: PointerEvent, width: Int ->
+        if (dltSession != null) {
+            val secSize: Float = width / (dltSession.totalSeconds.toFloat())
+            val dragAmount = pe.changes.first().position.x - pe.changes.first().previousPosition.x
+            offsetUpdate(offset + (dragAmount / secSize / scale))
+        }
+    }
 
     Column(modifier = modifier) {
         if (dltSession != null) {
@@ -169,14 +178,9 @@ fun TimeLinePanel(
                             offset = offset,
                             scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth()
-                                .onPointerEvent(PointerEventType.Move) {
-                                    val secSize: Float =
-                                        size.width / (dltSession.totalSeconds * 1.dp.toPx())
-                                    val dragAmount =
-                                        it.changes.first().position.x - it.changes.first().previousPosition.x
-                                    offsetUpdate(offset + (dragAmount / secSize))
-                                    println("Drag: $dragAmount")
-                                },
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
                             items = dltSession.cpuUsage,
                             dltSession = dltSession
                         )
@@ -190,7 +194,10 @@ fun TimeLinePanel(
                         CPUSView(
                             offset = offset,
                             scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
+                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
                             items = dltSession.cpus,
                             dltSession = dltSession
                         )
@@ -202,7 +209,11 @@ fun TimeLinePanel(
                             Text("CPU Usage")
                         }
                         CPUUsageView(
-                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp),
+                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
+
                             items = dltSession.cpuUsage,
                             offset = offset,
                             scale = scale,
