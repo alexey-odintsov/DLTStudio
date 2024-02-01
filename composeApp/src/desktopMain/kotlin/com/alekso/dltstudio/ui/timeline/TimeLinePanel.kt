@@ -148,8 +148,6 @@ fun TimeLinePanel(
                 Box(modifier = Modifier.width(150.dp))
                 TimeRuler(
                     Modifier.fillMaxWidth(1f),
-                    dltSession.timeStart,
-                    dltSession.timeEnd,
                     offset,
                     scale,
                     dltSession
