@@ -55,7 +55,9 @@ object DLTParser {
                         println("#$logsReadCount")
                     }
                     val dltMessage = parseDLTMessage(bytes, i, shouldLog)
-                    messages.add(dltMessage)
+                    //if (dltMessage.extendedHeader?.applicationId == "PLAT" && dltMessage.extendedHeader?.contextId == "KVSS") {// applicationId=PLAT, contextId=KVSS
+                        messages.add(dltMessage)
+//                    }
                     i += dltMessage.sizeBytes // skip read bytes
                     logsReadCount++
                 } catch (e: Exception) {
@@ -104,15 +106,19 @@ object DLTParser {
                     )
                 }
                 for (j in 0..<extendedHeader.argumentsCount.toInt()) {
-                    val verbosePayloadArgument = parseVerbosePayload(
-                        shouldLog,
-                        j,
-                        bytes,
-                        i,
-                        if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
-                    )
-                    arguments.add(verbosePayloadArgument)
-                    i += verbosePayloadArgument.getSize()
+                    try {
+                        val verbosePayloadArgument = parseVerbosePayload(
+                            shouldLog,
+                            j,
+                            bytes,
+                            i,
+                            if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
+                        )
+                        arguments.add(verbosePayloadArgument)
+                        i += verbosePayloadArgument.getSize()
+                    } catch (e: Exception) {
+                        println("SH: $standardHeader; EH: $extendedHeader; PL: $arguments")
+                    }
                 }
                 payload = VerbosePayload(arguments)
             } else {
@@ -323,6 +329,9 @@ object DLTParser {
             payloadSize = typeInfo.typeLengthBits / 8
         } else if (typeInfo.typeBool) {
             payloadSize = 1
+        } else if (typeInfo.typeFloat) {
+            println()
+            payloadSize = typeInfo.typeLengthBits / 8
         } else {
 //            throw IllegalStateException("Can't parse ${typeInfo}")
             if (DEBUG_LOG) {
