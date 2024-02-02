@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.net.URI
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -63,7 +64,7 @@ fun LogsPanel(
                         dltSession2 =
                             ParseSession(
                                 progressCallback,
-                                File(pathList[0].substring(5))
+                                File(URI.create(pathList[0].substring(5)).path)
                             )
                         newSessionCallback.invoke(dltSession2!!)
                         coroutineScope.launch {
