@@ -15,20 +15,9 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.ParseSession
+import com.alekso.dltstudio.ui.colors.ColorPalette
 import java.io.File
 
-private val colors = listOf(
-    Color.Blue,
-    Color.Red,
-    Color.Green,
-    Color.Yellow,
-    Color.White,
-    Color.Cyan,
-    Color.Magenta,
-    Color.LightGray,
-    Color.DarkGray,
-    Color(23, 123, 200)
-)
 
 @Composable
 fun CPUUsageView(
@@ -79,7 +68,7 @@ fun CPUUsageView(
                     ((entry.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
                 val curY = height - height * entry.cpuUsage[j] / 100f
                 drawLine(
-                    colors[j],
+                    ColorPalette.getColor(j),
                     Offset(offset * secSize.dp.toPx() * scale + prevX * scale, prevY),
                     Offset(offset * secSize.dp.toPx() * scale + curX * scale, curY),
                 )

@@ -26,11 +26,14 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.ParseSession
 import com.alekso.dltstudio.ui.cpu.CPUAnalyzer
+import com.alekso.dltstudio.ui.cpu.CPUCLegend
 import com.alekso.dltstudio.ui.cpu.CPUSEntry
+import com.alekso.dltstudio.ui.cpu.CPUSLegend
 import com.alekso.dltstudio.ui.cpu.CPUSView
 import com.alekso.dltstudio.ui.cpu.CPUUsageEntry
 import com.alekso.dltstudio.ui.cpu.CPUUsageView
 import com.alekso.dltstudio.ui.memory.MemoryAnalyzer
+import com.alekso.dltstudio.ui.memory.MemoryLegend
 import com.alekso.dltstudio.ui.memory.MemoryUsageEntry
 import com.alekso.dltstudio.ui.memory.MemoryView
 import kotlinx.coroutines.Dispatchers
@@ -193,9 +196,10 @@ fun TimeLinePanel(
             val panels = mutableStateListOf<@Composable () -> Unit>(
                 {
                     Row {
-                        Box(modifier = Modifier.width(150.dp)) {
-                            Text("CPU Usage")
-                        }
+                        CPUCLegend(
+                            modifier = Modifier.width(150.dp).height(300.dp),
+                            items = dltSession.cpuUsage
+                        )
                         CPUUsageView(
                             offset = offset,
                             scale = scale,
@@ -210,9 +214,10 @@ fun TimeLinePanel(
                 },
                 {
                     Row {
-                        Box(modifier = Modifier.width(150.dp)) {
-                            Text("CPU Usage")
-                        }
+                        CPUSLegend(
+                            modifier = Modifier.width(150.dp).height(300.dp),
+                            items = dltSession.cpus
+                        )
                         CPUSView(
                             offset = offset,
                             scale = scale,
@@ -227,9 +232,10 @@ fun TimeLinePanel(
                 },
                 {
                     Row {
-                        Box(modifier = Modifier.width(150.dp)) {
-                            Text("Memory Usage")
-                        }
+                        MemoryLegend(
+                            modifier = Modifier.width(150.dp).height(300.dp),
+                            map = dltSession.memt
+                        )
                         MemoryView(
                             modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
                                 .onPointerEvent(
