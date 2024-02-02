@@ -30,6 +30,9 @@ import com.alekso.dltstudio.ui.cpu.CPUSEntry
 import com.alekso.dltstudio.ui.cpu.CPUSView
 import com.alekso.dltstudio.ui.cpu.CPUUsageEntry
 import com.alekso.dltstudio.ui.cpu.CPUUsageView
+import com.alekso.dltstudio.ui.memory.MemoryAnalyzer
+import com.alekso.dltstudio.ui.memory.MemoryUsageEntry
+import com.alekso.dltstudio.ui.memory.MemoryView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -66,6 +69,7 @@ fun TimeLinePanel(
                 coroutineScope.launch {
                     val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
                     val _cpus = mutableStateListOf<CPUSEntry>()
+                    val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
                     withContext(Dispatchers.IO) {
 
                         println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
@@ -102,15 +106,33 @@ fun TimeLinePanel(
                                     // skip
                                 }
                             }
+
+                            // Memory
+                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+                                    "MON"
+                                ) == true &&
+                                message.extendedHeader?.contextId == "MEMT"
+                            ) {
+                                try {
+                                    val memt = MemoryAnalyzer.analyzeMemoryUsage(index, message)
+                                    if (!_memt.containsKey(memt.name)) {
+                                        _memt[memt.name] = mutableListOf()
+                                    }
+                                    (_memt[memt.name] as MutableList).add(memt)
+                                } catch (e: Exception) {
+                                    // skip
+                                }
+                            }
                             progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                         }
-
                     }
                     withContext(Dispatchers.Default) {
                         dltSession.cpuUsage.clear()
                         dltSession.cpuUsage.addAll(_cpuUsage)
                         dltSession.cpus.clear()
                         dltSession.cpus.addAll(_cpus)
+                        dltSession.memt.clear()
+                        dltSession.memt = _memt
                         dltSession.totalSeconds =
                             (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
                     }
@@ -206,15 +228,15 @@ fun TimeLinePanel(
                 {
                     Row {
                         Box(modifier = Modifier.width(150.dp)) {
-                            Text("CPU Usage")
+                            Text("Memory Usage")
                         }
-                        CPUUsageView(
+                        MemoryView(
                             modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
 
-                            items = dltSession.cpuUsage,
+                            map = dltSession.memt,
                             offset = offset,
                             scale = scale,
                             dltSession = dltSession
