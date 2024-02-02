@@ -3,6 +3,7 @@ package com.alekso.dltparser
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.ExtendedHeader
 import com.alekso.dltparser.dlt.MessageInfo
+import com.alekso.dltparser.dlt.NonVerbosePayload
 import com.alekso.dltparser.dlt.Payload
 import com.alekso.dltparser.dlt.StandardHeader
 import com.alekso.dltparser.dlt.VerbosePayload
@@ -36,14 +37,16 @@ object DLTParser {
             var i = 0
             val messages = mutableListOf<DLTMessage>()
             var shouldLog: Boolean
+            var skippedBytes = 0
 
             while (i < bytes.size - DLT_HEADER_SIZE_BYTES && (MAX_BYTES_TO_READ_DEBUG < 0 || i < MAX_BYTES_TO_READ_DEBUG)) {
-                shouldLog = logsReadCount == 3
+                shouldLog = false //logsReadCount == 3
 
                 // Skip until 'DLT' signature found
                 while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)
                 ) {
                     i++
+                    skippedBytes++
                 }
 
                 progressCallback.invoke(i.toFloat() / bytes.size.toFloat())
@@ -57,9 +60,11 @@ object DLTParser {
                     logsReadCount++
                 } catch (e: Exception) {
                     i++ // move counter to the next byte
+                    skippedBytes++
                     println(e)
                 }
             }
+            println("Parsing complete with $skippedBytes skipped bytes")
             return messages
         }
     }
@@ -111,10 +116,10 @@ object DLTParser {
                 }
                 payload = VerbosePayload(arguments)
             } else {
-                if (DEBUG_LOG) {
-                    println("Non verbose header found! offset: $offset: header: $extendedHeader")
-                }
-//                throw UnsupportedOperationException("Non verbose header found! offset: $offset: header: $extendedHeader")
+                // todo: Parse NonVerbose data
+                val payloadSize =
+                    standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
+                payload = NonVerbosePayload(bytes.sliceArray(i..<i + payloadSize))
             }
         }
         if (DEBUG_LOG && shouldLog) {
@@ -321,7 +326,13 @@ object DLTParser {
         } else {
 //            throw IllegalStateException("Can't parse ${typeInfo}")
             if (DEBUG_LOG) {
-                println("Warning! Unsupported Payload type at offset: $i -> $typeInfo (${typeInfoInt.toHex(4)})")
+                println(
+                    "Warning! Unsupported Payload type at offset: $i -> $typeInfo (${
+                        typeInfoInt.toHex(
+                            4
+                        )
+                    })"
+                )
             }
             payloadSize = typeInfo.typeLengthBits / 8
         }

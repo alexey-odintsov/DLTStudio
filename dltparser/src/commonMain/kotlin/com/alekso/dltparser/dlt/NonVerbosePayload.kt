@@ -1,11 +1,28 @@
 package com.alekso.dltparser.dlt
 
-class NonVerbosePayload: Payload {
+import com.alekso.dltparser.toHex
+
+data class NonVerbosePayload(
+    val data: ByteArray
+) : Payload {
     override fun getSize(): Int {
-        return 1
+        return data.size
     }
 
     override fun asText(): String {
-        TODO("Not yet implemented")
+        return data.toHex()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as NonVerbosePayload
+
+        return data.contentEquals(other.data)
+    }
+
+    override fun hashCode(): Int {
+        return data.contentHashCode()
     }
 }

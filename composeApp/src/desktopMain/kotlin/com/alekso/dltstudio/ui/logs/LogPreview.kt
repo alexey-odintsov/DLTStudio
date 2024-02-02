@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.ExtendedHeader
 import com.alekso.dltparser.dlt.MessageInfo
+import com.alekso.dltparser.dlt.NonVerbosePayload
 import com.alekso.dltparser.dlt.StandardHeader
 import com.alekso.dltparser.dlt.VerbosePayload
 import com.alekso.dltparser.toHex
@@ -77,52 +78,65 @@ fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
                     text = "Payload:"
                 )
                 if (dltMessage.payload != null) {
-                    val payload = dltMessage.payload as VerbosePayload
-                    Text(
-                        modifier = paddingModifier,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = 11.sp,
-                        text = "Arguments found: ${payload.arguments.size}"
-                    )
+                    when (val payload = dltMessage.payload) {
+                        is VerbosePayload -> {
+                            Text(
+                                modifier = paddingModifier,
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 11.sp,
+                                text = "Arguments found: ${payload.arguments.size}"
+                            )
 
-                    Row(modifier = paddingModifier) {
-                        MonoText(
-                            modifier = Modifier.width(20.dp).padding(end = 1.dp)
-                                .background(color = Color(250, 250, 250)), text = "#"
-                        )
-                        MonoText(
-                            modifier = Modifier.width(120.dp).padding(end = 1.dp)
-                                .background(color = Color(250, 250, 250)), text = "type"
-                        )
-                        MonoText(
-                            modifier = Modifier.width(40.dp).padding(end = 1.dp)
-                                .background(color = Color(250, 250, 250)), text = "size"
-                        )
-                        MonoText(
-                            modifier = Modifier.weight(1f).padding(end = 1.dp)
-                                .background(color = Color(250, 250, 250)), text = "payload"
-                        )
-                    }
-                    payload.arguments.forEachIndexed { index, it ->
-                        Row(modifier = paddingModifier) {
-                            MonoText(
-                                modifier = Modifier.width(20.dp).padding(end = 1.dp)
-                                    .background(color = Color(250, 250, 250)), text = "$index"
-                            )
-                            MonoText(
-                                modifier = Modifier.width(120.dp).padding(end = 1.dp)
-                                    .background(color = Color(250, 250, 250)),
-                                text = it.typeInfo.getTypeString()
-                            )
-                            MonoText(
-                                modifier = Modifier.width(40.dp).padding(end = 1.dp)
-                                    .background(color = Color(250, 250, 250)),
-                                text = "${it.payloadSize}"
-                            )
-                            MonoText(
-                                modifier = Modifier.weight(1f).padding(end = 1.dp)
-                                    .background(color = Color(250, 250, 250)),
-                                text = it.getPayloadAsText()
+                            Row(modifier = paddingModifier) {
+                                MonoText(
+                                    modifier = Modifier.width(20.dp).padding(end = 1.dp)
+                                        .background(color = Color(250, 250, 250)), text = "#"
+                                )
+                                MonoText(
+                                    modifier = Modifier.width(120.dp).padding(end = 1.dp)
+                                        .background(color = Color(250, 250, 250)), text = "type"
+                                )
+                                MonoText(
+                                    modifier = Modifier.width(40.dp).padding(end = 1.dp)
+                                        .background(color = Color(250, 250, 250)), text = "size"
+                                )
+                                MonoText(
+                                    modifier = Modifier.weight(1f).padding(end = 1.dp)
+                                        .background(color = Color(250, 250, 250)), text = "payload"
+                                )
+                            }
+                            payload.arguments.forEachIndexed { index, it ->
+                                Row(modifier = paddingModifier) {
+                                    MonoText(
+                                        modifier = Modifier.width(20.dp).padding(end = 1.dp)
+                                            .background(color = Color(250, 250, 250)),
+                                        text = "$index"
+                                    )
+                                    MonoText(
+                                        modifier = Modifier.width(120.dp).padding(end = 1.dp)
+                                            .background(color = Color(250, 250, 250)),
+                                        text = it.typeInfo.getTypeString()
+                                    )
+                                    MonoText(
+                                        modifier = Modifier.width(40.dp).padding(end = 1.dp)
+                                            .background(color = Color(250, 250, 250)),
+                                        text = "${it.payloadSize}"
+                                    )
+                                    MonoText(
+                                        modifier = Modifier.weight(1f).padding(end = 1.dp)
+                                            .background(color = Color(250, 250, 250)),
+                                        text = it.getPayloadAsText()
+                                    )
+                                }
+                            }
+                        }
+
+                        is NonVerbosePayload -> {
+                            Text(
+                                modifier = paddingModifier,
+                                fontFamily = FontFamily.Monospace,
+                                fontSize = 11.sp,
+                                text = payload.asText()
                             )
                         }
                     }
