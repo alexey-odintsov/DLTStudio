@@ -45,10 +45,10 @@ fun MemoryView(
             )
         }
 
-        map.entries.forEach { key ->
+        map.entries.forEachIndexed { index, key ->
             val items = map.get<Any, List<MemoryUsageEntry>>(key.key)
-            items?.forEachIndexed { i, entry ->
-                if (i == 0) return@forEachIndexed
+            items?.forEachIndexed memEntriesIteration@{ i, entry ->
+                if (i == 0) return@memEntriesIteration
                 val prev = if (i > 0) items[i - 1] else null
                 val prevX = if (prev != null) {
                     ((prev.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
@@ -61,11 +61,11 @@ fun MemoryView(
                 val prevY = if (prev != null) height - height_1_100 * prev.maxRSS else 0f
                 val curY = height - height_1_100 * entry.maxRSS
                 drawLine(
-                    ColorPalette.getColor(i),
+                    ColorPalette.getColor(index),
                     Offset(offset * secSize.dp.toPx() * scale + prevX * scale, prevY),
                     Offset(offset * secSize.dp.toPx() * scale + curX * scale, curY),
                 )
-                println("${offset * secSize.dp.toPx() * scale + prevX * scale}, $prevY -> ${offset * secSize.dp.toPx() * scale + curX * scale}, $curY")
+//                println("${offset * secSize.dp.toPx() * scale + prevX * scale}, $prevY -> ${offset * secSize.dp.toPx() * scale + curX * scale}, $curY")
             }
 
         }
