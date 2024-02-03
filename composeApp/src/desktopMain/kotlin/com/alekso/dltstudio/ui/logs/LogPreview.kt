@@ -27,114 +27,113 @@ import com.alekso.dltparser.toHex
 @Composable
 fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)
-    SelectionContainer(modifier = modifier) {
-        Divider()
-        Column(modifier = Modifier.then(Modifier.verticalScroll(rememberScrollState()))) {
-            if (dltMessage != null) {
-                Text(
-                    modifier = paddingModifier,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight(600),
-                    fontSize = 11.sp,
-                    text = "Standard header:"
-                )
-                MonoText(
-                    modifier = paddingModifier,
-                    text = "Header Type: ${dltMessage.standardHeader.headerType.originalByte.toHex()} (${
-                        dltMessage.standardHeader.headerType.originalByte.toString(
-                            2
-                        ).padStart(8, '0')
-                    })"
-                )
-                MonoText(
-                    modifier = paddingModifier,
-                    text = "${dltMessage.standardHeader.headerType}"
-                )
-                MonoText(
-                    modifier = paddingModifier,
-                    text = "${dltMessage.standardHeader}"
-                )
-                Divider()
-                Text(
-                    modifier = paddingModifier,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight(600),
-                    fontSize = 11.sp,
-                    text = "Extended header:"
-                )
-                MonoText(
-                    modifier = paddingModifier,
-                    text = "${dltMessage.extendedHeader}"
-                )
-                Divider()
-                Text(
-                    modifier = paddingModifier,
-                    fontFamily = FontFamily.Monospace,
-                    fontWeight = FontWeight(600),
-                    fontSize = 11.sp,
-                    text = "Payload:"
-                )
-                if (dltMessage.payload != null) {
-                    when (val payload = dltMessage.payload) {
-                        is VerbosePayload -> {
-                            Text(
-                                modifier = paddingModifier,
-                                fontFamily = FontFamily.Monospace,
-                                fontSize = 11.sp,
-                                text = "Arguments found: ${payload.arguments.size}"
-                            )
+    Column(modifier = modifier) {
+        SelectionContainer {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                if (dltMessage != null) {
+                    Text(
+                        modifier = paddingModifier,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight(600),
+                        fontSize = 11.sp,
+                        text = "Standard header:"
+                    )
+                    MonoText(
+                        modifier = paddingModifier,
+                        text = "Header Type: ${dltMessage.standardHeader.headerType.originalByte.toHex()} (${
+                            dltMessage.standardHeader.headerType.originalByte.toString(
+                                2
+                            ).padStart(8, '0')
+                        })"
+                    )
+                    MonoText(
+                        modifier = paddingModifier, text = "${dltMessage.standardHeader.headerType}"
+                    )
+                    MonoText(
+                        modifier = paddingModifier, text = "${dltMessage.standardHeader}"
+                    )
+                    Divider()
+                    Text(
+                        modifier = paddingModifier,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight(600),
+                        fontSize = 11.sp,
+                        text = "Extended header:"
+                    )
+                    MonoText(
+                        modifier = paddingModifier, text = "${dltMessage.extendedHeader}"
+                    )
+                    Divider()
+                    Text(
+                        modifier = paddingModifier,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight(600),
+                        fontSize = 11.sp,
+                        text = "Payload:"
+                    )
+                    if (dltMessage.payload != null) {
+                        when (val payload = dltMessage.payload) {
+                            is VerbosePayload -> {
+                                Text(
+                                    modifier = paddingModifier,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    text = "Arguments found: ${payload.arguments.size}"
+                                )
 
-                            Row(modifier = paddingModifier) {
-                                MonoText(
-                                    modifier = Modifier.width(20.dp).padding(end = 1.dp)
-                                        .background(color = Color(250, 250, 250)), text = "#"
-                                )
-                                MonoText(
-                                    modifier = Modifier.width(120.dp).padding(end = 1.dp)
-                                        .background(color = Color(250, 250, 250)), text = "type"
-                                )
-                                MonoText(
-                                    modifier = Modifier.width(40.dp).padding(end = 1.dp)
-                                        .background(color = Color(250, 250, 250)), text = "size"
-                                )
-                                MonoText(
-                                    modifier = Modifier.weight(1f).padding(end = 1.dp)
-                                        .background(color = Color(250, 250, 250)), text = "payload"
-                                )
-                            }
-                            payload.arguments.forEachIndexed { index, it ->
                                 Row(modifier = paddingModifier) {
                                     MonoText(
                                         modifier = Modifier.width(20.dp).padding(end = 1.dp)
-                                            .background(color = Color(250, 250, 250)),
-                                        text = "$index"
+                                            .background(color = Color(250, 250, 250)), text = "#"
                                     )
                                     MonoText(
                                         modifier = Modifier.width(120.dp).padding(end = 1.dp)
-                                            .background(color = Color(250, 250, 250)),
-                                        text = it.typeInfo.getTypeString()
+                                            .background(color = Color(250, 250, 250)), text = "type"
                                     )
                                     MonoText(
                                         modifier = Modifier.width(40.dp).padding(end = 1.dp)
-                                            .background(color = Color(250, 250, 250)),
-                                        text = "${it.payloadSize}"
+                                            .background(color = Color(250, 250, 250)), text = "size"
                                     )
                                     MonoText(
                                         modifier = Modifier.weight(1f).padding(end = 1.dp)
                                             .background(color = Color(250, 250, 250)),
-                                        text = it.getPayloadAsText()
+                                        text = "payload"
                                     )
                                 }
+                                payload.arguments.forEachIndexed { index, it ->
+                                    Row(modifier = paddingModifier) {
+                                        MonoText(
+                                            modifier = Modifier.width(20.dp).padding(end = 1.dp)
+                                                .background(color = Color(250, 250, 250)),
+                                            text = "$index"
+                                        )
+                                        MonoText(
+                                            modifier = Modifier.width(120.dp).padding(end = 1.dp)
+                                                .background(color = Color(250, 250, 250)),
+                                            text = it.typeInfo.getTypeString()
+                                        )
+                                        MonoText(
+                                            modifier = Modifier.width(40.dp).padding(end = 1.dp)
+                                                .background(color = Color(250, 250, 250)),
+                                            text = "${it.payloadSize}"
+                                        )
+                                        MonoText(
+                                            modifier = Modifier.weight(1f).padding(end = 1.dp)
+                                                .background(color = Color(250, 250, 250)),
+                                            text = it.getPayloadAsText()
+                                        )
+                                    }
+                                }
                             }
-                        }
 
-                        is NonVerbosePayload -> {
-                            Text(
-                                modifier = paddingModifier,
-                                fontFamily = FontFamily.Monospace,
-                                fontSize = 11.sp,
-                                text = payload.asText()
-                            )
+                            is NonVerbosePayload -> {
+                                Text(
+                                    modifier = paddingModifier,
+                                    fontFamily = FontFamily.Monospace,
+                                    fontSize = 11.sp,
+                                    text = payload.asText()
+                                )
+                            }
                         }
                     }
                 }

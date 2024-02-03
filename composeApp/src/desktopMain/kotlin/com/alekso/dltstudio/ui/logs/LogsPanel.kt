@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ParseSession
 import java.io.File
 
@@ -36,6 +37,7 @@ fun LogsPanel(
             colorFilters,
             selectedRow = selectedRow,
         ) { i -> selectedRow = i }
+        HorizontalDivider()
         LogPreview(
             Modifier.fillMaxHeight().width(300.dp),
             dltSession?.dltMessages?.getOrNull(selectedRow)
