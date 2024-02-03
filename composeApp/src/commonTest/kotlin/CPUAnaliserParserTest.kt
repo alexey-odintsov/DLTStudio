@@ -48,7 +48,7 @@ class CPUAnalyzerParserTest {
                 ), 1
             )
         )
-        val expected = CPUUsageEntry(1, timestamp, listOf(57.3f, 13f, 9.3f))
+        val expected = CPUUsageEntry(1, timestamp.toLong(), listOf(57.3f, 13f, 9.3f))
         Assert.assertTrue("$actual != $expected", actual == expected)
     }
 }

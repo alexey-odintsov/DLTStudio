@@ -37,7 +37,7 @@ data class VerbosePayload(
 
         fun getPayloadAsText(): String {
             return when {
-                typeInfo.typeString -> String(payload)
+                typeInfo.typeString -> String(payload).replace("\u0000", "")
                 typeInfo.typeUnsigned -> {
                     when (typeInfo.typeLengthBits) {
                         8 -> "${payload[0].toUInt()}"

@@ -20,7 +20,7 @@ object ColorPalette {
         Color.Black
     )
 
-    fun getColor(index: Int): Color {
+    fun getColor(index: Int, alpha: Float = 1f): Color {
         if (index >= colors.size) {
             colors.add(
                 // todo: Exclude existing and similar colors
@@ -31,6 +31,6 @@ object ColorPalette {
                 )
             )
         }
-        return colors[index]
+        return Color(colors[index].red, colors[index].green, colors[index].blue, alpha)
     }
 }
