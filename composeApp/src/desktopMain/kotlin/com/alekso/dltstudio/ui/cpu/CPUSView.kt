@@ -90,6 +90,6 @@ fun PreviewCPUSView() {
                 123123213,
                 listOf(99.6f, 49.3f, 39.4f, 0f, 3.6f, 1.3f, 6f, 0f, 0f, 76.2f, 95.6f, 1.9f)
             ),
-        ), dltSession = ParseSession({}, File(""))
+        ), dltSession = ParseSession({}, listOf(File("")))
     )
 }

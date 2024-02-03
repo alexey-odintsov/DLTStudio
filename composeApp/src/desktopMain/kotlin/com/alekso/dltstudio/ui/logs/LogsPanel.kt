@@ -48,7 +48,7 @@ fun LogsPanel(
 @Preview
 @Composable
 fun PreviewLogsPanel() {
-    val dltSession = ParseSession({}, File(""))
+    val dltSession = ParseSession({}, listOf(File("")))
     dltSession.dltMessages.addAll(SampleData.getSampleDltMessages(20))
 
     Box(modifier = Modifier.width(400.dp).height(500.dp).background(Color.Yellow)) {

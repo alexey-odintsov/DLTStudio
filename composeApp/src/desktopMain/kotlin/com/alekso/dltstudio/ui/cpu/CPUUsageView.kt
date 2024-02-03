@@ -93,6 +93,6 @@ fun PreviewCPUUsageView() {
             CPUUsageEntry(212, 123123220, listOf(84.6f, 99.7f)),
             CPUUsageEntry(247, 123123221, listOf(89.6f, 99.9f)),
             CPUUsageEntry(287, 123123222, listOf(94.6f, 81.3f)),
-        ), dltSession = ParseSession({}, File(""))
+        ), dltSession = ParseSession({}, listOf(File("")))
     )
 }

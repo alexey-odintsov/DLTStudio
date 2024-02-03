@@ -9,7 +9,7 @@ import org.junit.Test
 
 class DLTMessageParsingTest {
     val dltMessage = DLTMessage(
-        1703251206, 316811, "MGUA",
+        1703251206L,"MGUA",
         StandardHeader(
             StandardHeader.HeaderType(61.toByte(), true, false, true, true, true, 1),
             38.toUByte(), 95U, "MGUA", 106, 32422418U

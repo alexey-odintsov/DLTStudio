@@ -9,7 +9,7 @@ import com.alekso.dltstudio.ui.memory.MemoryUsageEntry
 import com.alekso.dltstudio.ui.user.UserStateEntry
 import java.io.File
 
-class ParseSession(private val progressCallback: (Float) -> Unit, val file: File) {
+class ParseSession(private val progressCallback: (Float) -> Unit, val files: List<File>) {
     val dltMessages = mutableStateListOf<DLTMessage>()
     var cpuUsage = mutableListOf<CPUUsageEntry>()
     var cpus = mutableListOf<CPUSEntry>()
@@ -20,6 +20,6 @@ class ParseSession(private val progressCallback: (Float) -> Unit, val file: File
     var totalSeconds: Int = 0
 
     suspend fun start() {
-        dltMessages.addAll(DLTParser.read(progressCallback, file.inputStream()))
+        dltMessages.addAll(DLTParser.read(progressCallback, files))
     }
 }

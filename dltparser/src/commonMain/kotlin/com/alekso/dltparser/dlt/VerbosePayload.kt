@@ -32,7 +32,7 @@ data class VerbosePayload(
         val payload: ByteArray,
     ) {
         fun getSize(): Int {
-            return 4 + additionalSize + payloadSize
+            return 4 + additionalSize + payload.size
         }
 
         fun getPayloadAsText(): String {

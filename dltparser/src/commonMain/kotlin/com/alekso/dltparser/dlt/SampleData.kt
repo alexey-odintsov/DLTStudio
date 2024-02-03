@@ -6,7 +6,7 @@ object SampleData {
 
         for (i in 0..size) {
             val dltMessage = DLTMessage(
-                21142234, 243243, "MGUA",
+                21142234, "MGUA",
                 StandardHeader(
                     StandardHeader.HeaderType(0.toByte(), true, true, true, true, true, 1),
                     10.toUByte(), 10U, "MGUA", 443, 332422U

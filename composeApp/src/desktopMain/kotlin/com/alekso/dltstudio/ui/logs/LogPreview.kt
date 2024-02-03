@@ -36,6 +36,19 @@ fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
                         fontFamily = FontFamily.Monospace,
                         fontWeight = FontWeight(600),
                         fontSize = 11.sp,
+                        text = "DLT Message:"
+                    )
+                    MonoText(
+                        modifier = paddingModifier,
+                        text = "Timestamp: ${dltMessage.timeStampNano}\nEcuID: ${dltMessage.ecuId})"
+                    )
+                    Divider()
+
+                    Text(
+                        modifier = paddingModifier,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight(600),
+                        fontSize = 11.sp,
                         text = "Standard header:"
                     )
                     MonoText(

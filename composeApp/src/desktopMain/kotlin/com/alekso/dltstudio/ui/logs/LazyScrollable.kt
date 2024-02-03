@@ -66,7 +66,7 @@ fun LazyScrollable(
                                     }),
                                 isSelected = (i == selectedRow),
                                 i.toString(),
-                                simpleDateFormat.format(message.timeStampSec * 1000L + message.timeStampUs / 1000),
+                                simpleDateFormat.format(message.getTimeStamp()),
                                 if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-",
                                 message.ecuId,
                                 "${message.standardHeader.ecuId}",

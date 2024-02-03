@@ -320,7 +320,7 @@ fun TimeLinePanel(
 fun PreviewTimeline() {
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
-        dltSession = ParseSession({}, File("")),
+        dltSession = ParseSession({}, listOf(File(""))),
         progressCallback = { },
         offset = 0f,
         offsetUpdate = {},

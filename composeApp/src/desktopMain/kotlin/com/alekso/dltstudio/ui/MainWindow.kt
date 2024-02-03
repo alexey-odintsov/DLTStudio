@@ -60,7 +60,7 @@ fun MainWindow() {
                 // TODO: Add support for multiple files session
                 dltSession = ParseSession(
                     statusBarProgressCallback,
-                    File(URI.create(pathList[0].substring(5)).path)
+                    pathList.map { path -> File(URI.create(path.substring(5)).path) }
                 )
                 newSessionCallback.invoke(dltSession!!)
                 coroutineScope.launch {

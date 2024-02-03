@@ -5,8 +5,11 @@ package com.alekso.dltparser.dlt
  * https://github.com/esrlabs/dlt-core
  */
 data class DLTMessage(
-    val timeStampSec: Int,
-    val timeStampUs: Int,
+    // DLT Signature is skipped for memory consumption reason and should always be the same
+    val timeStampNano: Long,
+    /**
+     * Compounded of timeStampSec and timeStampUs
+     */
     val ecuId: String,
 
     val standardHeader: StandardHeader,
@@ -17,11 +20,11 @@ data class DLTMessage(
 ) {
 
     fun getTimeStamp(): Long {
-        return timeStampSec * 1000L + timeStampUs / 1000
+        return timeStampNano / 1000
     }
 
     override fun toString(): String {
-        return "{$timeStampSec, $timeStampUs, '$ecuId'\n" +
+        return "{$timeStampNano, '$ecuId'\n" +
                 " $standardHeader\n" +
                 " $extendedHeader}\n" +
                 " $payload}\n" +

@@ -7,7 +7,7 @@ import com.alekso.dltparser.dlt.NonVerbosePayload
 import com.alekso.dltparser.dlt.Payload
 import com.alekso.dltparser.dlt.StandardHeader
 import com.alekso.dltparser.dlt.VerbosePayload
-import java.io.InputStream
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -27,54 +27,65 @@ object DLTParser {
      */
     suspend fun read(
         progressCallback: (Float) -> Unit,
-        inputStream: InputStream
+        files: List<File>
     ): List<DLTMessage> {
         progressCallback.invoke(0f)
-        inputStream.use {
-            println(Thread.currentThread())
-            val bytes = it.readBytes() // todo: Max 2GB
-            var logsReadCount = 0
-            var i = 0
-            val messages = mutableListOf<DLTMessage>()
-            var shouldLog: Boolean
-            var skippedBytes = 0
+        val messages = mutableListOf<DLTMessage>()
+        var logsReadCount = 0
+        var skippedBytes = 0
+        val totalSize = files.sumOf { it.length() }
+        var bytesRead: Long = 0
 
-            while (i < bytes.size - DLT_HEADER_SIZE_BYTES && (MAX_BYTES_TO_READ_DEBUG < 0 || i < MAX_BYTES_TO_READ_DEBUG)) {
-                shouldLog = false //logsReadCount == 3
+        // todo: What to do with non-DLT files? silently skip?
+        println("Total ${files.size} file(s) with size: $totalSize bytes")
+        files.forEach { file ->
 
-                // Skip until 'DLT' signature found
-                while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)
-                ) {
-                    i++
-                    skippedBytes++
-                }
+            println("Parsing '$file'")
+            file.inputStream().use {
 
-                progressCallback.invoke(i.toFloat() / bytes.size.toFloat())
-                try {
-                    if (DEBUG_LOG && shouldLog) {
-                        println("#$logsReadCount")
+                val bytes = it.readBytes() // todo: Max 2GB
+                var i = 0
+                var shouldLog: Boolean
+
+                while (i < bytes.size - DLT_HEADER_SIZE_BYTES && (MAX_BYTES_TO_READ_DEBUG < 0 || i < MAX_BYTES_TO_READ_DEBUG)) {
+                    shouldLog = false //logsReadCount == 3
+
+                    // Skip until 'DLT' signature found
+                    while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)
+                    ) {
+                        i++
+                        skippedBytes++
                     }
-                    val dltMessage = parseDLTMessage(bytes, i, shouldLog)
-                    //if (dltMessage.extendedHeader?.applicationId == "PLAT" && dltMessage.extendedHeader?.contextId == "KVSS") {// applicationId=PLAT, contextId=KVSS
+
+                    try {
+                        if (DEBUG_LOG && shouldLog) {
+                            println("#$logsReadCount")
+                        }
+                        val dltMessage = parseDLTMessage(bytes, i, shouldLog)
+                        //if (dltMessage.extendedHeader?.applicationId == "PLAT" && dltMessage.extendedHeader?.contextId == "KVSS") {// applicationId=PLAT, contextId=KVSS
                         messages.add(dltMessage)
-//                    }
-                    i += dltMessage.sizeBytes // skip read bytes
-                    logsReadCount++
-                } catch (e: Exception) {
-                    i++ // move counter to the next byte
-                    skippedBytes++
-                    println(e)
+                        //}
+                        i += dltMessage.sizeBytes // skip read bytes
+                        logsReadCount++
+                    } catch (e: Exception) {
+                        i++ // move counter to the next byte
+                        skippedBytes++
+                        println(e)
+                    }
+                    progressCallback.invoke((bytesRead.toFloat() + i) / totalSize)
                 }
+                bytesRead += i
             }
-            println("Parsing complete with $skippedBytes skipped bytes")
-            return messages
         }
+        println("Parsing complete with $logsReadCount messages; $bytesRead bytes read and $skippedBytes skipped bytes")
+        return messages.sortedBy { it.timeStampNano }
     }
 
     public fun parseDLTMessage(bytes: ByteArray, offset: Int, shouldLog: Boolean): DLTMessage {
         var i = offset
         val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
         val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
+        val timeStampNano = timeStampSec * 1000000L + timeStampUs
         val ecuId = bytes.readString(i + 12, 4)
         i += DLT_HEADER_SIZE_BYTES
 
@@ -132,11 +143,7 @@ object DLTParser {
             println("")
         }
 
-        return DLTMessage(
-            timeStampSec, timeStampUs, ecuId,
-            standardHeader, extendedHeader,
-            payload, i - offset
-        )
+        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload, i - offset)
     }
 
     private fun parseStandardHeader(shouldLog: Boolean, bytes: ByteArray, i: Int): StandardHeader {
