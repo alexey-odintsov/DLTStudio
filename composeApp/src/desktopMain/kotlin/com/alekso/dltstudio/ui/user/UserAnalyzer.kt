@@ -24,16 +24,46 @@ data class UserStateEntry(
     val newState: UserState
 )
 
+enum class ParseType {
+    SPLIT,
+    INDEX_OF
+}
+
 object UserAnalyzer {
-    fun analyzeUserStateChanges(index: Int, dltMessage: DLTMessage): UserStateEntry {
+    fun analyzeUserStateChanges(
+        index: Int,
+        dltMessage: DLTMessage,
+        parseType: ParseType = ParseType.INDEX_OF
+    ): UserStateEntry {
         val payload = (dltMessage.payload as VerbosePayload).asText()
 
-        val values = payload.split("ActivityManager[", "]:", "User", "state changed from", "to")
-        val uid = values[3].trim().toInt()
-        val oldState = UserState.valueOf(values[4].trim())
-        val newState = UserState.valueOf(values[5].trim())
-
-        return UserStateEntry(index, dltMessage.getTimeStamp(), uid, oldState, newState)
+        return when (parseType) {
+            ParseType.SPLIT -> parseUserStateSplit(index, dltMessage.getTimeStamp(), payload)
+            ParseType.INDEX_OF -> parseUserStateIndexOf(index, dltMessage.getTimeStamp(), payload)
+        }
     }
 
+    fun parseUserStateSplit(index: Int, timestamp: Long, payload: String): UserStateEntry {
+        val values = payload.split("ActivityManager[", "]:", "User", "state changed from", "to")
+        val uid: Int = values[3].trim().toInt()
+        val oldState: UserState = UserState.valueOf(values[4].trim())
+        val newState: UserState = UserState.valueOf(values[5].trim())
+        return UserStateEntry(index, timestamp, uid, oldState, newState)
+    }
+
+    fun parseUserStateIndexOf(index: Int, timestamp: Long, payload: String): UserStateEntry {
+        val uid: Int = payload.substring(
+            payload.indexOf(": User ") + ": User ".length..payload.indexOf(" state changed from")
+        ).trim().toInt()
+        val oldState: UserState = UserState.valueOf(
+            payload.substring(
+                payload.indexOf("changed from ") + "changed from ".length..payload.indexOf(" to ")
+            ).trim()
+        )
+        val newState: UserState =
+            UserState.valueOf(
+                payload.substring(payload.indexOf(" to ") + " to ".length).trim()
+            )
+        return UserStateEntry(index, timestamp, uid, oldState, newState)
+    }
 }
