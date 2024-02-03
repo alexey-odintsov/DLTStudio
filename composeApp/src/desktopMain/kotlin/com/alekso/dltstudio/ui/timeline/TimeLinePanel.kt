@@ -36,6 +36,10 @@ import com.alekso.dltstudio.ui.memory.MemoryAnalyzer
 import com.alekso.dltstudio.ui.memory.MemoryLegend
 import com.alekso.dltstudio.ui.memory.MemoryUsageEntry
 import com.alekso.dltstudio.ui.memory.MemoryView
+import com.alekso.dltstudio.ui.user.UserAnalyzer
+import com.alekso.dltstudio.ui.user.UserStateEntry
+import com.alekso.dltstudio.ui.user.UserStateLegend
+import com.alekso.dltstudio.ui.user.UserStateView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -73,6 +77,7 @@ fun TimeLinePanel(
                     val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
                     val _cpus = mutableStateListOf<CPUSEntry>()
                     val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
+                    val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
                     withContext(Dispatchers.IO) {
 
                         println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
@@ -126,6 +131,26 @@ fun TimeLinePanel(
                                     // skip
                                 }
                             }
+
+                            // User state
+                            if (message.ecuId == "MGUA"
+                                && message.extendedHeader?.applicationId?.startsWith("ALD") == true
+                                && message.extendedHeader?.contextId == "SYST"
+                                && message.payload?.asText()?.contains("state changed from") == true
+                            ) {
+                                try {
+                                    val userState =
+                                        UserAnalyzer.analyzeUserStateChanges(index, message)
+                                    if (!_userState.containsKey(userState.uid)) {
+                                        _userState[userState.uid] = mutableListOf()
+                                    }
+                                    (_userState[userState.uid] as MutableList).add(userState)
+//                                    println(userState)
+                                } catch (e: Exception) {
+                                    println(e)
+                                    // skip
+                                }
+                            }
                             progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                         }
                     }
@@ -136,6 +161,7 @@ fun TimeLinePanel(
                         dltSession.cpus.addAll(_cpus)
                         dltSession.memt.clear()
                         dltSession.memt = _memt
+                        dltSession.userStateEntries = _userState
                         dltSession.totalSeconds =
                             (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
                     }
@@ -196,6 +222,24 @@ fun TimeLinePanel(
             val panels = mutableStateListOf<@Composable () -> Unit>(
                 {
                     Row {
+                        UserStateLegend(
+                            modifier = Modifier.width(150.dp).height(100.dp),
+                            map = dltSession.userStateEntries
+                        )
+                        UserStateView(
+                            offset = offset,
+                            scale = scale,
+                            modifier = Modifier.height(100.dp).fillMaxWidth()
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
+                            map = dltSession.userStateEntries,
+                            dltSession = dltSession
+                        )
+                    }
+                },
+                {
+                    Row {
                         CPUCLegend(
                             modifier = Modifier.width(150.dp).height(300.dp),
                             items = dltSession.cpuUsage
@@ -203,7 +247,7 @@ fun TimeLinePanel(
                         CPUUsageView(
                             offset = offset,
                             scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth()
+                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),

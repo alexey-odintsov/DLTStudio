@@ -330,7 +330,6 @@ object DLTParser {
         } else if (typeInfo.typeBool) {
             payloadSize = 1
         } else if (typeInfo.typeFloat) {
-            println()
             payloadSize = typeInfo.typeLengthBits / 8
         } else {
 //            throw IllegalStateException("Can't parse ${typeInfo}")
@@ -348,7 +347,7 @@ object DLTParser {
 
         // Sanity check to fix infinite reading
         if (payloadSize <= 0) {
-            payloadSize = 10
+            payloadSize = 1
         }
 
         val toIndex = i + 4 + additionalSize + payloadSize - 1
