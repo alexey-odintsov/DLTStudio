@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.ui.timeline
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,6 +44,7 @@ import com.alekso.dltstudio.ui.user.UserStateView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -311,4 +313,18 @@ fun TimeLinePanel(
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewTimeline() {
+    TimeLinePanel(
+        Modifier.fillMaxWidth().height(600.dp),
+        dltSession = ParseSession({}, File("")),
+        progressCallback = { },
+        offset = 0f,
+        offsetUpdate = {},
+        scale = 1f,
+        scaleUpdate = {},
+    )
 }

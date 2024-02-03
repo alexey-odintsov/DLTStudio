@@ -36,7 +36,7 @@ fun Cell(
                 } else if (cellStyle != null) {
                     cellStyle.backgroundColor ?: Color(250, 250, 250)
                 } else {
-                    Color(250, 250, 250)
+                    Color.White
                 }
             )
             .then(modifier),

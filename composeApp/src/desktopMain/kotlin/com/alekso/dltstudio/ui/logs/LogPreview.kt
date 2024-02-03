@@ -19,20 +19,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.ExtendedHeader
-import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltparser.dlt.NonVerbosePayload
-import com.alekso.dltparser.dlt.StandardHeader
+import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltparser.dlt.VerbosePayload
 import com.alekso.dltparser.toHex
 
 @Composable
 fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)
-    SelectionContainer {
-
+    SelectionContainer(modifier = modifier) {
         Divider()
-        Column(modifier = modifier.then(Modifier.verticalScroll(rememberScrollState()))) {
+        Column(modifier = Modifier.then(Modifier.verticalScroll(rememberScrollState()))) {
             if (dltMessage != null) {
                 Text(
                     modifier = paddingModifier,
@@ -158,44 +155,7 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 
 @Preview
 @Composable
-fun previewLogPreview() {
-    val dltMessage = DLTMessage(
-        21142234, 243243, "MGUA",
-        StandardHeader(
-            StandardHeader.HeaderType(0.toByte(), true, true, true, true, true, 1),
-            10.toUByte(), 10U, "MGUA", 443, 332422U
-        ),
-        ExtendedHeader(
-            MessageInfo(
-                30.toByte(),
-                true,
-                MessageInfo.MESSAGE_TYPE.DLT_TYPE_APP_TRACE,
-                MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_INFO
-            ), 2U, "APP", "CTX"
-        ),
-        VerbosePayload(
-            listOf(
-                VerbosePayload.Argument(
-                    1,
-                    VerbosePayload.TypeInfo(
-                        1,
-                        false,
-                        false,
-                        false,
-                        false,
-                        false,
-                        false,
-                        true,
-                        false,
-                        false,
-                        false,
-                        false,
-                        VerbosePayload.TypeInfo.STRING_CODING.UTF8
-                    ), 12, 10, "TEST MESSAGE".toByteArray()
-                )
-            )
-        ),
-        122
-    )
-    LogPreview(Modifier, dltMessage = dltMessage)
+fun PreviewLogPreview() {
+    val dltMessage = SampleData.getSampleDltMessages(1)[0]
+    LogPreview(Modifier.width(200.dp), dltMessage = dltMessage)
 }
