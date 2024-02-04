@@ -62,7 +62,8 @@ fun LogsPanel(
             HorizontalDivider()
             LogPreview(
                 Modifier.fillMaxHeight().width(300.dp),
-                dltSession?.dltMessages?.getOrNull(selectedRow)
+                dltSession?.dltMessages?.getOrNull(selectedRow),
+                selectedRow
             )
         }
     }

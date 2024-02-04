@@ -28,7 +28,7 @@ import com.alekso.dltparser.toBinary
 import com.alekso.dltparser.toHex
 
 @Composable
-fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
+fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?, messageIndex: Int) {
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)
     Column(modifier = modifier) {
         SelectionContainer {
@@ -37,7 +37,7 @@ fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
                     val parameterRowWidth = 150
                     Header(
                         modifier = paddingModifier,
-                        text = "DLT Message:"
+                        text = "DLT Message #$messageIndex:"
                     )
                     TableRow(
                         parameterRowWidth, "Timestamp",
@@ -159,48 +159,13 @@ fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
                                     text = "Verbose payload (${payload.arguments.size} arguments):"
                                 )
 
-                                Row(modifier = paddingModifier) {
-                                    MonoText(
-                                        modifier = Modifier.width(20.dp).padding(end = 1.dp)
-                                            .background(color = Color(250, 250, 250)), text = "#"
-                                    )
-                                    MonoText(
-                                        modifier = Modifier.width(120.dp).padding(end = 1.dp)
-                                            .background(color = Color(250, 250, 250)), text = "type"
-                                    )
-                                    MonoText(
-                                        modifier = Modifier.width(40.dp).padding(end = 1.dp)
-                                            .background(color = Color(250, 250, 250)), text = "size"
-                                    )
-                                    MonoText(
-                                        modifier = Modifier.weight(1f).padding(end = 1.dp)
-                                            .background(color = Color(250, 250, 250)),
-                                        text = "payload"
-                                    )
-                                }
                                 payload.arguments.forEachIndexed { index, it ->
-                                    Row(modifier = paddingModifier) {
-                                        MonoText(
-                                            modifier = Modifier.width(20.dp).padding(end = 1.dp)
-                                                .background(color = Color(250, 250, 250)),
-                                            text = "$index"
-                                        )
-                                        MonoText(
-                                            modifier = Modifier.width(120.dp).padding(end = 1.dp)
-                                                .background(color = Color(250, 250, 250)),
-                                            text = it.typeInfo.getTypeString()
-                                        )
-                                        MonoText(
-                                            modifier = Modifier.width(40.dp).padding(end = 1.dp)
-                                                .background(color = Color(250, 250, 250)),
-                                            text = "${it.payloadSize}"
-                                        )
-                                        MonoText(
-                                            modifier = Modifier.weight(1f).padding(end = 1.dp)
-                                                .background(color = Color(250, 250, 250)),
-                                            text = it.getPayloadAsText()
-                                        )
-                                    }
+                                    TableRow(
+                                        0, "",
+                                        "#$index ${it.typeInfo.getTypeString()} ${it.payloadSize} bytes"
+                                    )
+                                    TableRow(0, "", it.getPayloadAsText())
+
                                 }
                             }
 
@@ -227,14 +192,16 @@ fun TableRow(col1Width: Int, col1Value: String, col2Value: String?) {
     val cellBackground = Color(250, 250, 250)
 
     Row(modifier = Modifier.background(Color.LightGray)) {
-        Box(
-            modifier = Modifier.padding(end = 1.dp, bottom = 1.dp)
-                .background(color = cellBackground)
-        ) {
-            MonoText(
-                modifier = Modifier.width(col1Width.dp).padding(start = 2.dp, end = 2.dp),
-                text = col1Value
-            )
+        if (col1Width != 0) {
+            Box(
+                modifier = Modifier.padding(end = 1.dp, bottom = 1.dp)
+                    .background(color = cellBackground)
+            ) {
+                MonoText(
+                    modifier = Modifier.width(col1Width.dp).padding(start = 2.dp, end = 2.dp),
+                    text = col1Value
+                )
+            }
         }
         Box(
             modifier = Modifier.weight(1f).padding(end = 1.dp, bottom = 1.dp)
@@ -274,5 +241,5 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 @Composable
 fun PreviewLogPreview() {
     val dltMessage = SampleData.getSampleDltMessages(1)[0]
-    LogPreview(Modifier.width(200.dp), dltMessage = dltMessage)
+    LogPreview(Modifier.width(200.dp), dltMessage = dltMessage, 0)
 }
