@@ -1,19 +1,13 @@
 package com.alekso.dltstudio.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
-import androidx.compose.material.IconToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -25,7 +19,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExternalDragValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.cpu.CPUPanel
@@ -39,13 +32,11 @@ import com.alekso.dltstudio.ui.timeline.TimeLinePanel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.ExperimentalResourceApi
-import org.jetbrains.compose.resources.painterResource
 import java.io.File
 import java.net.URI
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalResourceApi::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 @Preview
 fun MainWindow() {
@@ -59,7 +50,7 @@ fun MainWindow() {
     var toolbarFatalChecked by remember { mutableStateOf(true) }
     var toolbarErrorChecked by remember { mutableStateOf(true) }
     var toolbarWarningChecked by remember { mutableStateOf(true) }
-    var toolbarDTLInfoChecked by remember { mutableStateOf(true) }
+    var toolbarLogPreviewChecked by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -68,6 +59,14 @@ fun MainWindow() {
     val newSessionCallback: (ParseSession) -> Unit = { newSession -> dltSession = newSession }
     val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset = newOffset }
     val scaleUpdateCallback: (Float) -> Unit = { newScale -> scale = newScale }
+
+    // Logs toolbar
+    val updateToolbarFatalCheck: (Boolean) -> Unit = { checked -> toolbarFatalChecked = checked }
+    val updateToolbarErrorCheck: (Boolean) -> Unit = { checked -> toolbarErrorChecked = checked }
+    val updateToolbarWarningCheck: (Boolean) -> Unit =
+        { checked -> toolbarWarningChecked = checked }
+    val updateToolbarLogPreviewCheck: (Boolean) -> Unit =
+        { checked -> toolbarLogPreviewChecked = checked }
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
         if (it.dragData is DragData.FilesList) {
@@ -98,58 +97,7 @@ fun MainWindow() {
     )
 
     Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
-        // Toolbar
-        Row {
-            IconToggleButton(modifier = Modifier.size(32.dp),
-                checked = toolbarFatalChecked,
-                onCheckedChange = { toolbarFatalChecked = it }) {
-                Image(
-                    painterResource("icon_f.xml"),
-                    contentDescription = "Enable fatal logs highlight",
-                    modifier = Modifier.padding(6.dp),
-                    colorFilter = if (toolbarFatalChecked) ColorFilter.tint(Color.Red) else ColorFilter.tint(
-                        Color.Gray
-                    )
-                )
-            }
-            IconToggleButton(modifier = Modifier.size(32.dp),
-                checked = toolbarErrorChecked,
-                onCheckedChange = { toolbarErrorChecked = it }) {
-                Image(
-                    painterResource("icon_e.xml"),
-                    contentDescription = "Enable error logs highlight",
-                    modifier = Modifier.padding(6.dp),
-                    colorFilter = if (toolbarErrorChecked) ColorFilter.tint(Color.Red) else ColorFilter.tint(
-                        Color.Gray
-                    )
-                )
-            }
-            IconToggleButton(modifier = Modifier.size(32.dp),
-                checked = toolbarWarningChecked,
-                onCheckedChange = { toolbarWarningChecked = it }) {
-                Image(
-                    painterResource("icon_w.xml"),
-                    contentDescription = "Enable warning logs highlight",
-                    modifier = Modifier.padding(6.dp),
-                    colorFilter = if (toolbarWarningChecked)
-                        ColorFilter.tint(
-                            Color(0xE7, 0x62, 0x29)
-                        ) else ColorFilter.tint(Color.Gray)
-                )
-            }
-            HorizontalDivider(modifier = Modifier.height(IntrinsicSize.Max))
-            IconToggleButton(modifier = Modifier.size(32.dp),
-                checked = toolbarDTLInfoChecked,
-                onCheckedChange = { toolbarDTLInfoChecked = it }) {
-                Image(
-                    painterResource("icon_dlt_info.xml"),
-                    contentDescription = "Show log preview panel",
-                    modifier = Modifier.padding(6.dp),
-                    colorFilter = if (toolbarDTLInfoChecked)
-                        ColorFilter.tint(Color.Blue) else ColorFilter.tint(Color.Gray)
-                )
-            }
-        }
+        TabsPanel(tabIndex, listOf("Logs", "CPU", "Timeline"), tabClickListener)
 
         val mergedFilters = mutableListOf<CellColorFilter>()
         mergedFilters.addAll(colorFilters)
@@ -163,16 +111,22 @@ fun MainWindow() {
             mergedFilters.add(ColorFilterFatal)
         }
 
-
-        TabsPanel(tabIndex, listOf("Logs", "CPU", "Timeline"), tabClickListener)
-
         when (tabIndex) {
-            0 -> LogsPanel(
-                modifier = Modifier.weight(1f),
-                dltSession,
-                mergedFilters,
-                toolbarDTLInfoChecked
-            )
+            0 -> {
+                LogsPanel(
+                    modifier = Modifier.weight(1f),
+                    dltSession,
+                    mergedFilters,
+                    toolbarLogPreviewChecked,
+                    toolbarFatalChecked,
+                    toolbarErrorChecked,
+                    toolbarWarningChecked,
+                    updateToolbarFatalCheck,
+                    updateToolbarErrorCheck,
+                    updateToolbarWarningCheck,
+                    updateToolbarLogPreviewCheck,
+                )
+            }
 
             1 -> CPUPanel(modifier = Modifier.weight(1f), dltSession, statusBarProgressCallback)
             2 -> TimeLinePanel(

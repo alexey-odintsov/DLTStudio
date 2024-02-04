@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,8 +29,27 @@ fun LogsPanel(
     dltSession: ParseSession?,
     colorFilters: List<CellColorFilter> = emptyList(),
     logPreviewVisibility: Boolean,
+    toolbarFatalChecked: Boolean,
+    toolbarErrorChecked: Boolean,
+    toolbarWarningChecked: Boolean,
+    updateToolbarFatalCheck: (Boolean) -> Unit,
+    updateToolbarErrorCheck: (Boolean) -> Unit,
+    updateToolbarWarningCheck: (Boolean) -> Unit,
+    updateToolbarLogPreviewCheck: (Boolean) -> Unit,
 ) {
     var selectedRow by remember { mutableStateOf(0) }
+
+    LogsToolbar(
+        toolbarFatalChecked,
+        toolbarErrorChecked,
+        toolbarWarningChecked,
+        logPreviewVisibility,
+        updateToolbarFatalCheck,
+        updateToolbarErrorCheck,
+        updateToolbarWarningCheck,
+        updateToolbarLogPreviewCheck,
+    )
+    Divider()
 
     Row(modifier = modifier.fillMaxWidth()) {
         LazyScrollable(
@@ -59,6 +79,13 @@ fun PreviewLogsPanel() {
             Modifier.fillMaxSize(),
             dltSession = dltSession,
             logPreviewVisibility = true,
+            toolbarFatalChecked = true,
+            toolbarErrorChecked = true,
+            toolbarWarningChecked = true,
+            updateToolbarFatalCheck = { },
+            updateToolbarErrorCheck = { },
+            updateToolbarWarningCheck = { },
+            updateToolbarLogPreviewCheck = {},
         )
     }
 }
