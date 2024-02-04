@@ -1,13 +1,18 @@
 package com.alekso.dltstudio.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
+import androidx.compose.material.IconToggleButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,22 +24,27 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExternalDragValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.ui.cpu.CPUPanel
 import com.alekso.dltstudio.ui.logs.CellColorFilter
 import com.alekso.dltstudio.ui.logs.CellStyle
+import com.alekso.dltstudio.ui.logs.ColorFilterError
+import com.alekso.dltstudio.ui.logs.ColorFilterFatal
+import com.alekso.dltstudio.ui.logs.ColorFilterWarn
 import com.alekso.dltstudio.ui.logs.LogsPanel
 import com.alekso.dltstudio.ui.timeline.TimeLinePanel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.painterResource
 import java.io.File
 import java.net.URI
 
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalResourceApi::class)
 @Composable
 @Preview
 fun MainWindow() {
@@ -43,6 +53,12 @@ fun MainWindow() {
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
     var scale by remember { mutableStateOf(1f) }
+
+    // Toolbar state
+    var toolbarFatalChecked by remember { mutableStateOf(true) }
+    var toolbarErrorChecked by remember { mutableStateOf(true) }
+    var toolbarWarningChecked by remember { mutableStateOf(true) }
+
     val coroutineScope = rememberCoroutineScope()
 
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
@@ -57,7 +73,6 @@ fun MainWindow() {
             val pathList = filesList.readFiles()
             println(pathList)
             if (pathList.isNotEmpty()) {
-                // TODO: Add support for multiple files session
                 dltSession = ParseSession(
                     statusBarProgressCallback,
                     pathList.map { path -> File(URI.create(path.substring(5)).path) }
@@ -72,32 +87,76 @@ fun MainWindow() {
         }
     }
 
-    // Add sample color filters
+    // todo: User color filters goes here.
     val colorFilters = listOf(
         CellColorFilter(
             { msg -> msg.extendedHeader?.applicationId.equals("VSIP") },
             CellStyle(backgroundColor = Color.Green)
         ),
-        CellColorFilter({ msg ->
-            with(msg.extendedHeader?.messageInfo?.messageTypeInfo) {
-                this == MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_FATAL || this == MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_DLT_ERROR
-            }
-        }, CellStyle(backgroundColor = Color(0xE7, 0x62, 0x29), textColor = Color.White)),
-        CellColorFilter({ msg ->
-            msg.extendedHeader?.messageInfo?.messageTypeInfo == MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_WARN
-        }, CellStyle(backgroundColor = Color.Yellow)),
     )
 
-
     Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
-        // TODO: Add toolbox
+        // Toolbar
+        Row {
+            IconToggleButton(modifier = Modifier.size(32.dp),
+                checked = toolbarFatalChecked,
+                onCheckedChange = { toolbarFatalChecked = it }) {
+                Image(
+                    painterResource("icon_f.xml"),
+                    contentDescription = "Enable fatal logs highlight",
+                    modifier = Modifier.padding(6.dp),
+                    colorFilter = if (toolbarFatalChecked) ColorFilter.tint(Color.Red) else ColorFilter.tint(
+                        Color.Gray
+                    )
+                )
+            }
+            IconToggleButton(modifier = Modifier.size(32.dp),
+                checked = toolbarErrorChecked,
+                onCheckedChange = { toolbarErrorChecked = it }) {
+                Image(
+                    painterResource("icon_e.xml"),
+                    contentDescription = "Enable error logs highlight",
+                    modifier = Modifier.padding(6.dp),
+                    colorFilter = if (toolbarErrorChecked) ColorFilter.tint(Color.Red) else ColorFilter.tint(
+                        Color.Gray
+                    )
+                )
+            }
+            IconToggleButton(modifier = Modifier.size(32.dp),
+                checked = toolbarWarningChecked,
+                onCheckedChange = { toolbarWarningChecked = it }) {
+                Image(
+                    painterResource("icon_w.xml"),
+                    contentDescription = "Enable warning logs highlight",
+                    modifier = Modifier.padding(6.dp),
+                    colorFilter = if (toolbarWarningChecked)
+                        ColorFilter.tint(
+                            Color(0xE7, 0x62, 0x29)
+                        ) else ColorFilter.tint(Color.Gray)
+                )
+            }
+        }
+
+        val mergedFilters = mutableListOf<CellColorFilter>()
+        mergedFilters.addAll(colorFilters)
+        if (toolbarWarningChecked) {
+            mergedFilters.add(ColorFilterWarn)
+        }
+        if (toolbarErrorChecked) {
+            mergedFilters.add(ColorFilterError)
+        }
+        if (toolbarFatalChecked) {
+            mergedFilters.add(ColorFilterFatal)
+        }
+
+
         TabsPanel(tabIndex, listOf("Logs", "CPU", "Timeline"), tabClickListener)
 
         when (tabIndex) {
             0 -> LogsPanel(
                 modifier = Modifier.weight(1f),
                 dltSession,
-                colorFilters,
+                mergedFilters,
             )
 
             1 -> CPUPanel(modifier = Modifier.weight(1f), dltSession, statusBarProgressCallback)
