@@ -59,7 +59,8 @@ fun MainWindow() {
     val statusBarProgressCallback: (Float) -> Unit = { i -> progress = i }
     val newSessionCallback: (ParseSession) -> Unit = { newSession -> dltSession = newSession }
     val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset = newOffset }
-    val scaleUpdateCallback: (Float) -> Unit = { newScale -> scale = newScale }
+    val scaleUpdateCallback: (Float) -> Unit =
+        { newScale -> scale = if (newScale > 0f) newScale else 1f }
 
     // Logs toolbar
     val updateToolbarFatalCheck: (Boolean) -> Unit = { checked -> toolbarFatalChecked = checked }
