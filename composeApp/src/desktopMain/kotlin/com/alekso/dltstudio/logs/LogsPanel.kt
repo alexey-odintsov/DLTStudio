@@ -26,12 +26,14 @@ import java.io.File
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
+    searchText: String,
     dltSession: ParseSession?,
     colorFilters: List<CellColorFilter> = emptyList(),
     logPreviewVisibility: Boolean,
     toolbarFatalChecked: Boolean,
     toolbarErrorChecked: Boolean,
     toolbarWarningChecked: Boolean,
+    updateSearchText: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
@@ -40,10 +42,12 @@ fun LogsPanel(
     var selectedRow by remember { mutableStateOf(0) }
 
     LogsToolbar(
+        searchText,
         toolbarFatalChecked,
         toolbarErrorChecked,
         toolbarWarningChecked,
         logPreviewVisibility,
+        updateSearchText,
         updateToolbarFatalCheck,
         updateToolbarErrorCheck,
         updateToolbarWarningCheck,
@@ -78,15 +82,16 @@ fun PreviewLogsPanel() {
     Box(modifier = Modifier.width(400.dp).height(500.dp).background(Color.Yellow)) {
         LogsPanel(
             Modifier.fillMaxSize(),
+            "Search text",
             dltSession = dltSession,
             logPreviewVisibility = true,
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
+            updateSearchText = { },
             updateToolbarFatalCheck = { },
             updateToolbarErrorCheck = { },
             updateToolbarWarningCheck = { },
-            updateToolbarLogPreviewCheck = {},
-        )
+        ) {}
     }
 }

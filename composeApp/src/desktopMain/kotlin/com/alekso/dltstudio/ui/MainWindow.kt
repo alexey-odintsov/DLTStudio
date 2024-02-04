@@ -63,6 +63,11 @@ fun MainWindow() {
         { newScale -> scale = if (newScale > 0f) newScale else 1f }
 
     // Logs toolbar
+    var searchText by remember { mutableStateOf("") }
+    val updateSearchText: (String) -> Unit = { text ->
+        searchText = text
+        println("Searching for $text")
+    }
     val updateToolbarFatalCheck: (Boolean) -> Unit = { checked -> toolbarFatalChecked = checked }
     val updateToolbarErrorCheck: (Boolean) -> Unit = { checked -> toolbarErrorChecked = checked }
     val updateToolbarWarningCheck: (Boolean) -> Unit =
@@ -117,12 +122,14 @@ fun MainWindow() {
             0 -> {
                 LogsPanel(
                     modifier = Modifier.weight(1f),
+                    searchText,
                     dltSession,
                     mergedFilters,
                     toolbarLogPreviewChecked,
                     toolbarFatalChecked,
                     toolbarErrorChecked,
                     toolbarWarningChecked,
+                    updateSearchText,
                     updateToolbarFatalCheck,
                     updateToolbarErrorCheck,
                     updateToolbarWarningCheck,
