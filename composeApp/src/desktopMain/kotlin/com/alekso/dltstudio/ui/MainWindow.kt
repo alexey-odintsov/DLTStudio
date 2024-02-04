@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,6 +59,7 @@ fun MainWindow() {
     var toolbarFatalChecked by remember { mutableStateOf(true) }
     var toolbarErrorChecked by remember { mutableStateOf(true) }
     var toolbarWarningChecked by remember { mutableStateOf(true) }
+    var toolbarDTLInfoChecked by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -135,6 +137,18 @@ fun MainWindow() {
                         ) else ColorFilter.tint(Color.Gray)
                 )
             }
+            HorizontalDivider(modifier = Modifier.height(IntrinsicSize.Max))
+            IconToggleButton(modifier = Modifier.size(32.dp),
+                checked = toolbarDTLInfoChecked,
+                onCheckedChange = { toolbarDTLInfoChecked = it }) {
+                Image(
+                    painterResource("icon_dlt_info.xml"),
+                    contentDescription = "Show log preview panel",
+                    modifier = Modifier.padding(6.dp),
+                    colorFilter = if (toolbarDTLInfoChecked)
+                        ColorFilter.tint(Color.Blue) else ColorFilter.tint(Color.Gray)
+                )
+            }
         }
 
         val mergedFilters = mutableListOf<CellColorFilter>()
@@ -157,6 +171,7 @@ fun MainWindow() {
                 modifier = Modifier.weight(1f),
                 dltSession,
                 mergedFilters,
+                toolbarDTLInfoChecked
             )
 
             1 -> CPUPanel(modifier = Modifier.weight(1f), dltSession, statusBarProgressCallback)

@@ -27,6 +27,7 @@ fun LogsPanel(
     modifier: Modifier = Modifier,
     dltSession: ParseSession?,
     colorFilters: List<CellColorFilter> = emptyList(),
+    logPreviewVisibility: Boolean,
 ) {
     var selectedRow by remember { mutableStateOf(0) }
 
@@ -37,11 +38,13 @@ fun LogsPanel(
             colorFilters,
             selectedRow = selectedRow,
         ) { i -> selectedRow = i }
-        HorizontalDivider()
-        LogPreview(
-            Modifier.fillMaxHeight().width(300.dp),
-            dltSession?.dltMessages?.getOrNull(selectedRow)
-        )
+        if (logPreviewVisibility) {
+            HorizontalDivider()
+            LogPreview(
+                Modifier.fillMaxHeight().width(300.dp),
+                dltSession?.dltMessages?.getOrNull(selectedRow)
+            )
+        }
     }
 }
 
@@ -55,6 +58,7 @@ fun PreviewLogsPanel() {
         LogsPanel(
             Modifier.fillMaxSize(),
             dltSession = dltSession,
+            logPreviewVisibility = true,
         )
     }
 }
