@@ -2,6 +2,7 @@ package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -19,9 +20,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.ExtendedHeader
 import com.alekso.dltparser.dlt.NonVerbosePayload
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltparser.dlt.VerbosePayload
+import com.alekso.dltparser.toBinary
 import com.alekso.dltparser.toHex
 
 @Composable
@@ -31,67 +34,129 @@ fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
         SelectionContainer {
             Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
                 if (dltMessage != null) {
-                    Text(
+                    val parameterRowWidth = 150
+                    Header(
                         modifier = paddingModifier,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight(600),
-                        fontSize = 11.sp,
                         text = "DLT Message:"
                     )
-                    MonoText(
-                        modifier = paddingModifier,
-                        text = "Timestamp: ${dltMessage.timeStampNano}\nEcuID: ${dltMessage.ecuId})"
+                    TableRow(
+                        parameterRowWidth, "Timestamp",
+                        "${dltMessage.timeStampNano}"
                     )
-                    Divider()
+                    TableRow(
+                        parameterRowWidth, "ECU Id",
+                        "'${dltMessage.ecuId}'"
+                    )
 
-                    Text(
+                    Header(
                         modifier = paddingModifier,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight(600),
-                        fontSize = 11.sp,
                         text = "Standard header:"
                     )
-                    MonoText(
-                        modifier = paddingModifier,
-                        text = "Header Type: ${dltMessage.standardHeader.headerType.originalByte.toHex()} (${
-                            dltMessage.standardHeader.headerType.originalByte.toString(
-                                2
-                            ).padStart(8, '0')
-                        })"
+
+                    TableRow(
+                        parameterRowWidth, "Header Type",
+                        "0x${dltMessage.standardHeader.headerType.originalByte.toHex()} " +
+                                "(${dltMessage.standardHeader.headerType.originalByte.toBinary(8)}b)"
                     )
-                    MonoText(
-                        modifier = paddingModifier, text = "${dltMessage.standardHeader.headerType}"
+                    TableRow(
+                        parameterRowWidth, "  Extender header",
+                        "${dltMessage.standardHeader.headerType.useExtendedHeader}"
                     )
-                    MonoText(
-                        modifier = paddingModifier, text = "${dltMessage.standardHeader}"
+                    TableRow(
+                        parameterRowWidth, "  Payload Endian",
+                        if (dltMessage.standardHeader.headerType.payloadBigEndian) "BIG" else "LITTLE"
                     )
-                    Divider()
-                    Text(
-                        modifier = paddingModifier,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight(600),
-                        fontSize = 11.sp,
-                        text = "Extended header:"
+                    TableRow(
+                        parameterRowWidth, "  ECU present",
+                        "${dltMessage.standardHeader.headerType.withEcuId}"
                     )
-                    MonoText(
-                        modifier = paddingModifier, text = "${dltMessage.extendedHeader}"
+                    TableRow(
+                        parameterRowWidth, "  Session present",
+                        "${dltMessage.standardHeader.headerType.withSessionId}"
                     )
-                    Divider()
-                    Text(
-                        modifier = paddingModifier,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight(600),
-                        fontSize = 11.sp,
-                        text = "Payload:"
+                    TableRow(
+                        parameterRowWidth, "  Timestamp present",
+                        "${dltMessage.standardHeader.headerType.withTimestamp}"
                     )
+                    TableRow(
+                        parameterRowWidth, "  Version number",
+                        "0x${dltMessage.standardHeader.headerType.versionNumber.toHex()}"
+                    )
+
+                    TableRow(
+                        parameterRowWidth, "Message counter",
+                        "${dltMessage.standardHeader.messageCounter}"
+                    )
+                    TableRow(
+                        parameterRowWidth, "Length",
+                        "${dltMessage.standardHeader.length}"
+                    )
+                    if (dltMessage.standardHeader.headerType.withEcuId) {
+                        TableRow(
+                            parameterRowWidth, "ECU Id",
+                            "'${dltMessage.standardHeader.ecuId}'"
+                        )
+                    }
+                    if (dltMessage.standardHeader.headerType.withSessionId) {
+                        TableRow(
+                            parameterRowWidth, "Session Id",
+                            "${dltMessage.standardHeader.sessionId}"
+                        )
+                    }
+
+                    if (dltMessage.standardHeader.headerType.withTimestamp) {
+                        TableRow(
+                            parameterRowWidth, "Timestamp",
+                            "${dltMessage.standardHeader.timeStamp}"
+                        )
+                    }
+
+                    if (dltMessage.extendedHeader != null) {
+                        val extendedHeader: ExtendedHeader = dltMessage.extendedHeader!!
+                        Header(
+                            modifier = paddingModifier,
+                            text = "Extended header:"
+                        )
+                        TableRow(
+                            parameterRowWidth, "  Message info",
+                            "0x${extendedHeader.messageInfo.originalByte.toHex()} " +
+                                    "(${extendedHeader.messageInfo.originalByte.toBinary(8)}b)"
+                        )
+                        TableRow(
+                            parameterRowWidth, "  Verbose",
+                            "${extendedHeader.messageInfo.verbose}"
+                        )
+                        TableRow(
+                            parameterRowWidth, "  Message type",
+                            "${extendedHeader.messageInfo.messageType}"
+                        )
+                        TableRow(
+                            parameterRowWidth, "  Message type info",
+                            "${extendedHeader.messageInfo.messageTypeInfo}"
+                        )
+                        TableRow(
+                            parameterRowWidth, "Arguments count",
+                            "${extendedHeader.argumentsCount}"
+                        )
+                        TableRow(
+                            parameterRowWidth, "Application Id",
+                            "'${extendedHeader.applicationId}'"
+                        )
+                        TableRow(
+                            parameterRowWidth, "Context Id",
+                            "'${extendedHeader.contextId}'"
+                        )
+
+                    }
+
+
                     if (dltMessage.payload != null) {
+
                         when (val payload = dltMessage.payload) {
                             is VerbosePayload -> {
-                                Text(
+                                Header(
                                     modifier = paddingModifier,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontSize = 11.sp,
-                                    text = "Arguments found: ${payload.arguments.size}"
+                                    text = "Verbose payload (${payload.arguments.size} arguments):"
                                 )
 
                                 Row(modifier = paddingModifier) {
@@ -140,10 +205,12 @@ fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
                             }
 
                             is NonVerbosePayload -> {
-                                Text(
+                                Header(
                                     modifier = paddingModifier,
-                                    fontFamily = FontFamily.Monospace,
-                                    fontSize = 11.sp,
+                                    text = "Non-Verbose payload:"
+                                )
+                                MonoText(
+                                    modifier = paddingModifier,
                                     text = payload.asText()
                                 )
                             }
@@ -156,9 +223,47 @@ fun LogPreview(modifier: Modifier, dltMessage: DLTMessage?) {
 }
 
 @Composable
+fun TableRow(col1Width: Int, col1Value: String, col2Value: String?) {
+    val cellBackground = Color(250, 250, 250)
+
+    Row(modifier = Modifier.background(Color.LightGray)) {
+        Box(
+            modifier = Modifier.padding(end = 1.dp, bottom = 1.dp)
+                .background(color = cellBackground)
+        ) {
+            MonoText(
+                modifier = Modifier.width(col1Width.dp).padding(start = 2.dp, end = 2.dp),
+                text = col1Value
+            )
+        }
+        Box(
+            modifier = Modifier.weight(1f).padding(end = 1.dp, bottom = 1.dp)
+                .background(color = cellBackground)
+        ) {
+            MonoText(
+                modifier = Modifier.padding(start = 2.dp, end = 2.dp),
+                text = col2Value ?: ""
+            )
+        }
+    }
+}
+
+@Composable
+fun Header(modifier: Modifier = Modifier, text: String) {
+    Text(
+        modifier = modifier.padding(top = 4.dp),
+        fontFamily = FontFamily.Monospace,
+        fontWeight = FontWeight(600),
+        fontSize = 11.sp,
+        text = text
+    )
+    Divider()
+}
+
+@Composable
 fun MonoText(modifier: Modifier = Modifier, text: String) {
     Text(
-        modifier = modifier.then(Modifier),
+        modifier = modifier,
         fontFamily = FontFamily.Monospace,
         fontSize = 11.sp,
         text = text
