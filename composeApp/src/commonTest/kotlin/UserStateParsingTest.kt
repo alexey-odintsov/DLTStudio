@@ -1,6 +1,6 @@
-import com.alekso.dltstudio.ui.user.UserAnalyzer
-import com.alekso.dltstudio.ui.user.UserState
-import com.alekso.dltstudio.ui.user.UserStateEntry
+import com.alekso.dltstudio.user.UserAnalyzer
+import com.alekso.dltstudio.user.UserState
+import com.alekso.dltstudio.user.UserStateEntry
 import org.junit.Assert
 import org.junit.Test
 import kotlin.time.measureTime

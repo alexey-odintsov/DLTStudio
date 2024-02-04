@@ -3,8 +3,8 @@ import com.alekso.dltparser.dlt.ExtendedHeader
 import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltparser.dlt.StandardHeader
 import com.alekso.dltparser.dlt.VerbosePayload
-import com.alekso.dltstudio.ui.cpu.CPUAnalyzer
-import com.alekso.dltstudio.ui.cpu.CPUUsageEntry
+import com.alekso.dltstudio.cpu.CPUAnalyzer
+import com.alekso.dltstudio.cpu.CPUUsageEntry
 import org.junit.Assert
 import org.junit.Test
 
