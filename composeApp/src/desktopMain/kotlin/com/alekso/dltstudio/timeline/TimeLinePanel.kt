@@ -9,15 +9,17 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Button
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -25,6 +27,7 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.cpu.CPUAnalyzer
 import com.alekso.dltstudio.cpu.CPUCLegend
@@ -37,6 +40,8 @@ import com.alekso.dltstudio.memory.MemoryAnalyzer
 import com.alekso.dltstudio.memory.MemoryLegend
 import com.alekso.dltstudio.memory.MemoryUsageEntry
 import com.alekso.dltstudio.memory.MemoryView
+import com.alekso.dltstudio.ui.HorizontalDivider
+import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
 import com.alekso.dltstudio.user.UserStateLegend
@@ -61,6 +66,7 @@ fun TimeLinePanel(
     scale: Float,
     scaleUpdate: (Float) -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
 
     val dragCallback = { pe: PointerEvent, width: Int ->
         if (dltSession != null) {
@@ -71,106 +77,86 @@ fun TimeLinePanel(
     }
 
     Column(modifier = modifier) {
-        if (dltSession != null) {
-            val coroutineScope = rememberCoroutineScope()
+        Row {
+            ImageButton(modifier = Modifier.size(32.dp),
+                iconName = "icon_run.xml",
+                title = "Analyze timeline",
+                onClick = {
+                    if (dltSession != null) {
+                        coroutineScope.launch {
+                            val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
+                            val _cpus = mutableStateListOf<CPUSEntry>()
+                            val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
+                            val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
+                            withContext(Dispatchers.IO) {
 
-            Button(onClick = {
-                coroutineScope.launch {
-                    val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
-                    val _cpus = mutableStateListOf<CPUSEntry>()
-                    val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
-                    val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
-                    withContext(Dispatchers.IO) {
+                                println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
 
-                        println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
-
-                        dltSession.dltMessages.forEachIndexed { index, message ->
-                            // timeStamps
-                            val ts = message.getTimeStamp()
-                            if (ts > dltSession.timeEnd) {
-                                dltSession.timeEnd = ts
-                            }
-                            if (ts < dltSession.timeStart) {
-                                dltSession.timeStart = ts
-                            }
-
-
-                            // CPUC
-                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
-                                    "MON"
-                                ) == true &&
-                                message.extendedHeader?.contextId == "CPUC"
-                            ) {
-                                _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(index, message))
-                            }
-
-                            // CPUS
-                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
-                                    "MON"
-                                ) == true &&
-                                message.extendedHeader?.contextId == "CPUS"
-                            ) {
-                                try {
-                                    _cpus.add(CPUAnalyzer.analyzeCPUS(index, message))
-                                } catch (e: Exception) {
-                                    // skip
-                                }
-                            }
-
-                            // Memory
-                            if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
-                                    "MON"
-                                ) == true &&
-                                message.extendedHeader?.contextId == "MEMT"
-                            ) {
-                                try {
-                                    val memt = MemoryAnalyzer.analyzeMemoryUsage(index, message)
-                                    if (!_memt.containsKey(memt.name)) {
-                                        _memt[memt.name] = mutableListOf()
+                                dltSession.dltMessages.forEachIndexed { index, message ->
+                                    // timeStamps
+                                    val ts = message.getTimeStamp()
+                                    if (ts > dltSession.timeEnd) {
+                                        dltSession.timeEnd = ts
                                     }
-                                    (_memt[memt.name] as MutableList).add(memt)
-                                } catch (e: Exception) {
-                                    // skip
-                                }
-                            }
-
-                            // User state
-                            if (message.ecuId == "MGUA"
-                                && message.extendedHeader?.applicationId?.startsWith("ALD") == true
-                                && message.extendedHeader?.contextId == "SYST"
-                                && message.payload?.asText()?.contains("state changed from") == true
-                            ) {
-                                try {
-                                    val userState =
-                                        UserAnalyzer.analyzeUserStateChanges(index, message)
-                                    if (!_userState.containsKey(userState.uid)) {
-                                        _userState[userState.uid] = mutableListOf()
+                                    if (ts < dltSession.timeStart) {
+                                        dltSession.timeStart = ts
                                     }
-                                    (_userState[userState.uid] as MutableList).add(userState)
-//                                    println(userState)
-                                } catch (e: Exception) {
-                                    println(e)
-                                    // skip
+
+                                    analyzeCPUC(message, _cpuUsage, index)
+                                    analyzeCPUS(message, _cpus, index)
+                                    analyzeMemory(message, index, _memt)
+                                    analyzeUserState(message, index, _userState)
+                                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                                 }
                             }
-                            progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+                            withContext(Dispatchers.Default) {
+                                dltSession.cpuUsage.clear()
+                                dltSession.cpuUsage.addAll(_cpuUsage)
+                                dltSession.cpus.clear()
+                                dltSession.cpus.addAll(_cpus)
+                                dltSession.memt.clear()
+                                dltSession.memt = _memt
+                                dltSession.userStateEntries = _userState
+                                dltSession.totalSeconds =
+                                    (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
+                            }
                         }
                     }
-                    withContext(Dispatchers.Default) {
-                        dltSession.cpuUsage.clear()
-                        dltSession.cpuUsage.addAll(_cpuUsage)
-                        dltSession.cpus.clear()
-                        dltSession.cpus.addAll(_cpus)
-                        dltSession.memt.clear()
-                        dltSession.memt = _memt
-                        dltSession.userStateEntries = _userState
-                        dltSession.totalSeconds =
-                            (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
-                    }
-                }
-            }) {
-                Text("Build timeline")
-            }
+                })
+            HorizontalDivider(modifier = Modifier.height(32.dp))
+
+            ImageButton(modifier = Modifier.size(32.dp),
+                iconName = "icon_left.xml",
+                title = "Move left",
+                onClick = { offsetUpdate(offset + 1f) })
+
+            ImageButton(modifier = Modifier.size(32.dp),
+                iconName = "icon_right.xml",
+                title = "Move right",
+                onClick = { offsetUpdate(offset - 1f) })
+
+            ImageButton(modifier = Modifier.size(32.dp),
+                iconName = "icon_zoom_in.xml",
+                title = "Zoom in",
+                onClick = { scaleUpdate(scale + 1f) })
+
+            ImageButton(modifier = Modifier.size(32.dp),
+                iconName = "icon_zoom_out.xml",
+                title = "Zoom out",
+                onClick = { scaleUpdate(scale - 1f) })
+
+            ImageButton(modifier = Modifier.size(32.dp),
+                iconName = "icon_fit.xml",
+                title = "Fit timeline",
+                onClick = {
+                    scaleUpdate(1f)
+                    offsetUpdate(0f)
+                })
+
+        }
+        Divider()
+
+        if (dltSession != null) {
 
             Text(
                 "Time range: ${simpleDateFormat.format(dltSession.timeStart)} .. ${
@@ -180,35 +166,6 @@ fun TimeLinePanel(
             Text(
                 "Offset: ${"%.2f".format(offset)}; scale: ${"%.2f".format(scale)}"
             )
-            Row {
-                val buttonModifier = Modifier.padding(start = 4.dp, end = 4.dp)
-                Button(
-                    modifier = buttonModifier,
-                    onClick = { offsetUpdate(offset + 1f) }) {
-                    Text("<")
-                }
-                Button(
-                    modifier = buttonModifier,
-                    onClick = { offsetUpdate(offset - 1f) }) {
-                    Text(">")
-                }
-                Button(
-                    modifier = buttonModifier,
-                    onClick = { scaleUpdate(scale - 1f) }) {
-                    Text("-")
-                }
-                Button(
-                    modifier = buttonModifier,
-                    onClick = { scaleUpdate(scale + 1f) }) {
-                    Text("+")
-                }
-                Button(modifier = buttonModifier, onClick = {
-                    scaleUpdate(1f)
-                    offsetUpdate(0f)
-                }) {
-                    Text("Reset")
-                }
-            }
 
             Row {
                 Box(modifier = Modifier.width(150.dp))
@@ -311,6 +268,87 @@ fun TimeLinePanel(
                     )
                 )
             }
+        }
+    }
+}
+
+private fun analyzeCPUC(
+    message: DLTMessage,
+    _cpuUsage: SnapshotStateList<CPUUsageEntry>,
+    index: Int
+) {
+    if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+            "MON"
+        ) == true &&
+        message.extendedHeader?.contextId == "CPUC"
+    ) {
+        try {
+            _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(index, message))
+        } catch (e: Exception) {
+            // skip
+        }
+    }
+}
+
+private fun analyzeCPUS(
+    message: DLTMessage,
+    _cpus: SnapshotStateList<CPUSEntry>,
+    index: Int
+) {
+    if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+            "MON"
+        ) == true &&
+        message.extendedHeader?.contextId == "CPUS"
+    ) {
+        try {
+            _cpus.add(CPUAnalyzer.analyzeCPUS(index, message))
+        } catch (e: Exception) {
+            // skip
+        }
+    }
+}
+
+private fun analyzeUserState(
+    message: DLTMessage,
+    index: Int,
+    _userState: MutableMap<Int, MutableList<UserStateEntry>>
+) {
+    if (message.ecuId == "MGUA"
+        && message.extendedHeader?.applicationId?.startsWith("ALD") == true
+        && message.extendedHeader?.contextId == "SYST"
+        && message.payload?.asText()?.contains("state changed from") == true
+    ) {
+        try {
+            val userState =
+                UserAnalyzer.analyzeUserStateChanges(index, message)
+            if (!_userState.containsKey(userState.uid)) {
+                _userState[userState.uid] = mutableListOf()
+            }
+            (_userState[userState.uid] as MutableList).add(userState)
+        } catch (e: Exception) {
+            // skip
+        }
+    }
+}
+
+private fun analyzeMemory(
+    message: DLTMessage,
+    index: Int,
+    _memt: MutableMap<String, MutableList<MemoryUsageEntry>>
+) {
+    if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
+            "MON"
+        ) == true &&
+        message.extendedHeader?.contextId == "MEMT"
+    ) {
+        try {
+            val memt = MemoryAnalyzer.analyzeMemoryUsage(index, message)
+            if (!_memt.containsKey(memt.name)) {
+                _memt[memt.name] = mutableListOf()
+            }
+            (_memt[memt.name] as MutableList).add(memt)
+        } catch (e: Exception) {
+            // skip
         }
     }
 }
