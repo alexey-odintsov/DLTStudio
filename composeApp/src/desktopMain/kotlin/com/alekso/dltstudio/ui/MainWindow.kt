@@ -66,7 +66,21 @@ fun MainWindow() {
     var searchText by remember { mutableStateOf("") }
     val updateSearchText: (String) -> Unit = { text ->
         searchText = text
-        println("Searching for $text")
+        dltSession?.searchResult?.clear()
+        coroutineScope.launch {
+            withContext(Dispatchers.IO) {
+                println("Searching for $text..")
+                dltSession?.let {
+                    it.dltMessages.forEachIndexed { i, dltMessage ->
+                        val payload = dltMessage.payload
+                        if (payload != null && payload.asText().contains(searchText)) {
+                            it.searchResult.add(dltMessage)
+                        }
+                        statusBarProgressCallback.invoke(i.toFloat() / it.dltMessages.size)
+                    }
+                }
+            }
+        }
     }
     val updateToolbarFatalCheck: (Boolean) -> Unit = { checked -> toolbarFatalChecked = checked }
     val updateToolbarErrorCheck: (Boolean) -> Unit = { checked -> toolbarErrorChecked = checked }
