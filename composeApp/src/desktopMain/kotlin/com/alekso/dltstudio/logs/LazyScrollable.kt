@@ -17,7 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ParseSession
+import com.alekso.dltparser.dlt.DLTMessage
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -26,7 +26,7 @@ private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Local
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
-    dltSession: ParseSession?,
+    dltMessages: List<DLTMessage>,
     colorFilters: List<CellColorFilter>,
     selectedRow: Int,
     selectedRowCallback: (Int) -> Unit,
@@ -52,33 +52,32 @@ fun LazyScrollable(
 
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(Modifier.horizontalScroll(horizontalState).width(2000.dp), state) {
-                if (dltSession != null) {
-                    items(dltSession.dltMessages.size) { i ->
-                        val message = dltSession.dltMessages[i]
-                        RowContextMenu {
-                            val cellStyle =
-                                colorFilters.firstOrNull { it.condition(message) }?.cellStyle
-                            LogRow(
-                                modifier = Modifier.selectable(
-                                    selected = i == selectedRow,// todo: highlight selected row
-                                    onClick = {
-                                        selectedRowCallback.invoke(i)
-                                    }),
-                                isSelected = (i == selectedRow),
-                                i.toString(),
-                                simpleDateFormat.format(message.getTimeStamp()),
-                                if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-",
-                                message.ecuId,
-                                "${message.standardHeader.ecuId}",
-                                "${message.standardHeader.sessionId}",
-                                "${message.extendedHeader?.applicationId}",
-                                "${message.extendedHeader?.contextId}",
-                                "${message.payload?.asText()}",
-                                cellStyle = cellStyle
-                            )
-                        }
+                items(dltMessages.size) { i ->
+                    val message = dltMessages[i]
+                    RowContextMenu {
+                        val cellStyle =
+                            colorFilters.firstOrNull { it.condition(message) }?.cellStyle
+                        LogRow(
+                            modifier = Modifier.selectable(
+                                selected = i == selectedRow,// todo: highlight selected row
+                                onClick = {
+                                    selectedRowCallback.invoke(i)
+                                }),
+                            isSelected = (i == selectedRow),
+                            i.toString(),
+                            simpleDateFormat.format(message.getTimeStamp()),
+                            if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-",
+                            message.ecuId,
+                            "${message.standardHeader.ecuId}",
+                            "${message.standardHeader.sessionId}",
+                            "${message.extendedHeader?.applicationId}",
+                            "${message.extendedHeader?.contextId}",
+                            "${message.payload?.asText()}",
+                            cellStyle = cellStyle
+                        )
                     }
                 }
+
             }
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
