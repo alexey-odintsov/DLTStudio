@@ -4,7 +4,6 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -26,17 +25,17 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.ParseSession
-import com.alekso.dltstudio.ui.HorizontalDivider
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
+import org.jetbrains.compose.splitpane.SplitPaneState
 import org.jetbrains.compose.splitpane.VerticalSplitPane
-import org.jetbrains.compose.splitpane.rememberSplitPaneState
 import org.jetbrains.skiko.Cursor
 import java.io.File
 
 
 private fun Modifier.cursorForHorizontalResize(): Modifier =
     pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
+
 private fun Modifier.cursorForVerticalResize(): Modifier =
     pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
 
@@ -56,13 +55,12 @@ fun LogsPanel(
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
     updateToolbarLogPreviewCheck: (Boolean) -> Unit,
+    vSplitterState: SplitPaneState,
+    hSplitterState: SplitPaneState,
 ) {
     var selectedRow by remember { mutableStateOf(0) }
     val dltMessages = dltSession?.dltMessages ?: emptyList()
     val searchResult = mutableListOf<DLTMessage>()
-
-    val vSplitterState = rememberSplitPaneState()
-    val hSplitterState = rememberSplitPaneState()
 
     Column(modifier = modifier) {
         LogsToolbar(
@@ -84,11 +82,22 @@ fun LogsPanel(
                 HorizontalSplitPane(
                     splitPaneState = hSplitterState
                 ) {
-                    first(200.dp) {
-                        Box(Modifier.background(Color.Red).fillMaxSize())
+                    first(20.dp) {
+                        LazyScrollable(
+                            Modifier.width(1000.dp).fillMaxHeight().background(Color.LightGray),
+                            dltMessages,
+                            colorFilters,
+                            selectedRow = selectedRow,
+                        ) { i -> selectedRow = i }
                     }
-                    second(200.dp) {
-                        Box(Modifier.background(Color.Blue).fillMaxSize())
+                    second(20.dp) {
+                        if (logPreviewVisibility) {
+                            LogPreview(
+                                Modifier.fillMaxHeight().width(300.dp),
+                                dltSession?.dltMessages?.getOrNull(selectedRow),
+                                selectedRow
+                            )
+                        }
                     }
                     splitter {
                         visiblePart {
@@ -112,8 +121,13 @@ fun LogsPanel(
                     }
                 }
             }
-            second(200.dp) {
-                Box(Modifier.background(Color.Green).fillMaxSize())
+            second(20.dp) {
+                LazyScrollable(
+                    Modifier.fillMaxSize().background(Color.LightGray),
+                    searchResult,
+                    colorFilters,
+                    selectedRow = selectedRow,
+                ) { i -> selectedRow = i }
             }
             splitter {
                 visiblePart {
@@ -136,63 +150,10 @@ fun LogsPanel(
                 }
             }
         }
-
-//        VerticalSplitPane(modifier = modifier.fillMaxWidth(), splitPaneState = vSplitterState) {
-//            first(300.dp) {
-//                Row(modifier = modifier.fillMaxSize()) {
-//                    LazyScrollable(
-//                        Modifier.weight(1f).fillMaxHeight().background(Color.LightGray),
-//                        dltMessages,
-//                        colorFilters,
-//                        selectedRow = selectedRow,
-//                    ) { i -> selectedRow = i }
-//
-//                    if (logPreviewVisibility) {
-//                        HorizontalDivider()
-//                        LogPreview(
-//                            Modifier.fillMaxHeight().width(300.dp),
-//                            dltSession?.dltMessages?.getOrNull(selectedRow),
-//                            selectedRow
-//                        )
-//                    }
-//                }
-//            }
-//            second(200.dp) {
-//                Column(modifier = Modifier.fillMaxSize()) {
-//                    Divider()
-//                    LazyScrollable(
-//                        Modifier.height(200.dp).fillMaxWidth().background(Color.LightGray),
-//                        searchResult,
-//                        colorFilters,
-//                        selectedRow = selectedRow,
-//                    ) { i -> selectedRow = i }
-//                }
-//            }
-//            splitter {
-//                visiblePart {
-//                    Box(
-//                        Modifier
-//                            .width(1.dp)
-//                            .fillMaxHeight()
-//                            .background(MaterialTheme.colors.background)
-//                    )
-//                }
-//                handle {
-//                    Box(
-//                        Modifier
-//                            .markAsHandle()
-//                            .cursorForHorizontalResize()
-//                            .background(SolidColor(Color.Gray), alpha = 0.50f)
-//                            .width(9.dp)
-//                            .fillMaxHeight()
-//                    )
-//                }
-//            }
-//        }
-
     }
 }
 
+@OptIn(ExperimentalSplitPaneApi::class)
 @Preview
 @Composable
 fun PreviewLogsPanel() {
@@ -211,6 +172,8 @@ fun PreviewLogsPanel() {
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },
         updateToolbarWarningCheck = { },
-        updateToolbarLogPreviewCheck = { }
+        updateToolbarLogPreviewCheck = { },
+        vSplitterState = SplitPaneState(0.8f, true),
+        hSplitterState = SplitPaneState(0.8f, true),
     )
 }
