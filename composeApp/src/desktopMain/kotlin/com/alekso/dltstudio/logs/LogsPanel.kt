@@ -59,8 +59,9 @@ fun LogsPanel(
     hSplitterState: SplitPaneState,
 ) {
     var selectedRow by remember { mutableStateOf(0) }
+    var searchResultSelectedRow by remember { mutableStateOf(0) }
     val dltMessages = dltSession?.dltMessages ?: emptyList()
-    val searchResult = mutableListOf<DLTMessage>()
+    val searchResult = dltSession?.searchResult ?: emptyList()
 
     Column(modifier = modifier) {
         LogsToolbar(
@@ -126,8 +127,8 @@ fun LogsPanel(
                     Modifier.fillMaxSize().background(Color.LightGray),
                     searchResult,
                     colorFilters,
-                    selectedRow = selectedRow,
-                ) { i -> selectedRow = i }
+                    selectedRow = searchResultSelectedRow,
+                ) { i -> searchResultSelectedRow = i }
             }
             splitter {
                 visiblePart {
