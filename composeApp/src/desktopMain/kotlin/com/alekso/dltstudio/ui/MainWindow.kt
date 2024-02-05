@@ -33,11 +33,13 @@ import com.alekso.dltstudio.timeline.TimeLinePanel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.rememberSplitPaneState
 import java.io.File
 import java.net.URI
 
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalSplitPaneApi::class)
 @Composable
 @Preview
 fun MainWindow() {
@@ -46,6 +48,9 @@ fun MainWindow() {
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
     var scale by remember { mutableStateOf(1f) }
+
+    val vSplitterState = rememberSplitPaneState(0.8f)
+    val hSplitterState = rememberSplitPaneState(0.78f)
 
     // Toolbar state
     var toolbarFatalChecked by remember { mutableStateOf(true) }
@@ -148,6 +153,8 @@ fun MainWindow() {
                     updateToolbarErrorCheck,
                     updateToolbarWarningCheck,
                     updateToolbarLogPreviewCheck,
+                    vSplitterState,
+                    hSplitterState,
                 )
             }
 

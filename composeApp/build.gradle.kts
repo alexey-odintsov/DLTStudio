@@ -18,6 +18,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
+            implementation("org.jetbrains.compose.components:components-splitpane-desktop:1.5.12")
             @OptIn(ExperimentalComposeLibrary::class)
             implementation(compose.components.resources)
         }

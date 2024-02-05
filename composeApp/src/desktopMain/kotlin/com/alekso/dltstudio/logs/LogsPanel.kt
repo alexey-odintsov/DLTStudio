@@ -2,14 +2,15 @@ package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -17,13 +18,28 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.ParseSession
-import com.alekso.dltstudio.ui.HorizontalDivider
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.HorizontalSplitPane
+import org.jetbrains.compose.splitpane.SplitPaneState
+import org.jetbrains.compose.splitpane.VerticalSplitPane
+import org.jetbrains.skiko.Cursor
 import java.io.File
 
+
+private fun Modifier.cursorForHorizontalResize(): Modifier =
+    pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
+
+private fun Modifier.cursorForVerticalResize(): Modifier =
+    pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
+
+@OptIn(ExperimentalSplitPaneApi::class)
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
@@ -39,6 +55,8 @@ fun LogsPanel(
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
     updateToolbarLogPreviewCheck: (Boolean) -> Unit,
+    vSplitterState: SplitPaneState,
+    hSplitterState: SplitPaneState,
 ) {
     var selectedRow by remember { mutableStateOf(0) }
     var searchResultSelectedRow by remember { mutableStateOf(0) }
@@ -60,35 +78,83 @@ fun LogsPanel(
         )
         Divider()
 
-        Row(modifier = modifier.fillMaxWidth()) {
-            LazyScrollable(
-                Modifier.weight(1f).fillMaxHeight().background(Color.LightGray),
-                dltMessages,
-                colorFilters,
-                selectedRow = selectedRow,
-            ) { i -> selectedRow = i }
-
-            if (logPreviewVisibility) {
-                HorizontalDivider()
-                LogPreview(
-                    Modifier.fillMaxHeight().width(300.dp),
-                    dltSession?.dltMessages?.getOrNull(selectedRow),
-                    selectedRow
-                )
+        VerticalSplitPane(splitPaneState = vSplitterState) {
+            first(300.dp) {
+                HorizontalSplitPane(
+                    splitPaneState = hSplitterState
+                ) {
+                    first(20.dp) {
+                        LazyScrollable(
+                            Modifier.width(1000.dp).fillMaxHeight().background(Color.LightGray),
+                            dltMessages,
+                            colorFilters,
+                            selectedRow = selectedRow,
+                        ) { i -> selectedRow = i }
+                    }
+                    second(20.dp) {
+                        if (logPreviewVisibility) {
+                            LogPreview(
+                                Modifier.fillMaxHeight().width(300.dp),
+                                dltSession?.dltMessages?.getOrNull(selectedRow),
+                                selectedRow
+                            )
+                        }
+                    }
+                    splitter {
+                        visiblePart {
+                            Box(
+                                Modifier
+                                    .width(1.dp)
+                                    .fillMaxHeight()
+                                    .background(MaterialTheme.colors.background)
+                            )
+                        }
+                        handle {
+                            Box(
+                                Modifier
+                                    .markAsHandle()
+                                    .cursorForHorizontalResize()
+                                    .background(SolidColor(Color.Gray), alpha = 0.50f)
+                                    .width(4.dp)
+                                    .fillMaxHeight()
+                            )
+                        }
+                    }
+                }
+            }
+            second(20.dp) {
+                LazyScrollable(
+                    Modifier.fillMaxSize().background(Color.LightGray),
+                    searchResult,
+                    colorFilters,
+                    selectedRow = searchResultSelectedRow,
+                ) { i -> searchResultSelectedRow = i }
+            }
+            splitter {
+                visiblePart {
+                    Box(
+                        Modifier
+                            .height(1.dp)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colors.background)
+                    )
+                }
+                handle {
+                    Box(
+                        Modifier
+                            .markAsHandle()
+                            .cursorForVerticalResize()
+                            .background(SolidColor(Color.Gray), alpha = 0.50f)
+                            .height(4.dp)
+                            .fillMaxWidth()
+                    )
+                }
             }
         }
-
-        Divider()
-        LazyScrollable(
-            Modifier.height(200.dp).fillMaxWidth().background(Color.LightGray),
-            searchResult,
-            colorFilters,
-            selectedRow = searchResultSelectedRow,
-        ) { i -> searchResultSelectedRow = i }
-
     }
 }
 
+@OptIn(ExperimentalSplitPaneApi::class)
 @Preview
 @Composable
 fun PreviewLogsPanel() {
@@ -107,6 +173,8 @@ fun PreviewLogsPanel() {
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },
         updateToolbarWarningCheck = { },
-        updateToolbarLogPreviewCheck = { }
+        updateToolbarLogPreviewCheck = { },
+        vSplitterState = SplitPaneState(0.8f, true),
+        hSplitterState = SplitPaneState(0.8f, true),
     )
 }
