@@ -50,7 +50,7 @@ fun MainWindow() {
     var scale by remember { mutableStateOf(1f) }
 
     val vSplitterState = rememberSplitPaneState(0.8f)
-    val hSplitterState = rememberSplitPaneState(0.8f)
+    val hSplitterState = rememberSplitPaneState(0.78f)
 
     // Toolbar state
     var toolbarFatalChecked by remember { mutableStateOf(true) }
