@@ -85,7 +85,7 @@ fun LogsPanel(
                             dltMessages,
                             colorFilters,
                             selectedRow,
-                            selectedRowCallback = { i -> selectedRow = i }
+                            selectedRowCallback = { i, messageIndex -> selectedRow = i }
                         )
                     }
                     second(20.dp) {
@@ -125,8 +125,15 @@ fun LogsPanel(
                     searchResult,
                     searchIndexes,
                     colorFilters,
-                    searchResultSelectedRow
-                ) { i -> searchResultSelectedRow = i }
+                    searchResultSelectedRow,
+                    selectedRowCallback = { i, messageIndex ->
+                        if (searchResultSelectedRow == i) {
+                            selectedRow = messageIndex
+                        } else {
+                            searchResultSelectedRow = i
+                        }
+                    },
+                )
             }
             splitter {
                 visiblePart {

@@ -30,7 +30,7 @@ fun LazyScrollable(
     indexes: List<Int>? = null,
     colorFilters: List<CellColorFilter>,
     selectedRow: Int,
-    selectedRowCallback: (Int) -> Unit,
+    selectedRowCallback: (Int, Int) -> Unit,
 ) {
     Column(modifier = modifier) {
 
@@ -58,8 +58,7 @@ fun LazyScrollable(
                     val cellStyle =
                         colorFilters.firstOrNull { it.condition(message) }?.cellStyle
 
-                    val sIndex: String =
-                        if (indexes != null) indexes[i].toString() else i.toString()
+                    val index: Int = if (indexes != null) indexes[i] else i
                     val sTime: String = simpleDateFormat.format(message.getTimeStamp())
                     val sTimeOffset: String =
                         if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
@@ -73,16 +72,14 @@ fun LazyScrollable(
                     RowContextMenu(
                         i,
                         message,
-                        "$sIndex $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent"
+                        "$index $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent"
                     ) {
                         LogRow(
                             modifier = Modifier.selectable(
-                                selected = i == selectedRow,// todo: highlight selected row
-                                onClick = {
-                                    selectedRowCallback.invoke(i)
-                                }),
+                                selected = i == selectedRow,
+                                onClick = { selectedRowCallback(i, index) }),
                             isSelected = (i == selectedRow),
-                            sIndex,
+                            index.toString(),
                             sTime,
                             sTimeOffset,
                             sEcu,

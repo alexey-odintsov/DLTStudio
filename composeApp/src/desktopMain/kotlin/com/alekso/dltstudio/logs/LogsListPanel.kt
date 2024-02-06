@@ -14,7 +14,7 @@ fun LogsListPanel(
     messages: List<DLTMessage>,
     colorFilters: List<CellColorFilter>,
     selectedRow: Int,
-    selectedRowCallback: (Int) -> Unit
+    selectedRowCallback: (Int, Int) -> Unit
 ) {
     Panel(
         modifier = modifier,

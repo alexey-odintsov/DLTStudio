@@ -15,7 +15,7 @@ fun SearchResultsPanel(
     searchIndexes: List<Int>,
     colorFilters: List<CellColorFilter>,
     searchResultSelectedRow: Int,
-    selectedRowCallback: (Int) -> Unit
+    selectedRowCallback: (Int, Int) -> Unit,
 ) {
     Panel(
         modifier = modifier,
