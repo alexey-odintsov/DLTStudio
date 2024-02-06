@@ -42,7 +42,7 @@ fun Cell(
             .then(modifier),
         maxLines = 1,
         textAlign = textAlign,
-        fontSize = 12.sp,
+        fontSize = 10.sp,
         fontFamily = FontFamily.Monospace,
         fontWeight = FontWeight(if (isHeader) 600 else 400),
         softWrap = false,
