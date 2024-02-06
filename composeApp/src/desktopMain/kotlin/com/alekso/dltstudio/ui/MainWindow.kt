@@ -72,6 +72,8 @@ fun MainWindow() {
     val updateSearchText: (String) -> Unit = { text ->
         searchText = text
         dltSession?.searchResult?.clear()
+        dltSession?.searchIndexes?.clear()
+        
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
                 println("Searching for $text..")
