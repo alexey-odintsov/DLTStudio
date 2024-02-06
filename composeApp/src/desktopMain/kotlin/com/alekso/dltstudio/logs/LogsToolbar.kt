@@ -19,12 +19,30 @@ import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.SearchEditText
 import com.alekso.dltstudio.ui.ToggleImageButton
 
+data class LogsToolbarState(
+    val toolbarFatalChecked: Boolean,
+    val toolbarErrorChecked: Boolean,
+    val toolbarWarningChecked: Boolean,
+) {
+    companion object {
+        fun updateToolbarFatalCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
+            return state.copy(toolbarFatalChecked = newValue)
+        }
+
+        fun updateToolbarErrorCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
+            return state.copy(toolbarErrorChecked = newValue)
+        }
+
+        fun updateToolbarWarnCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
+            return state.copy(toolbarWarningChecked = newValue)
+        }
+    }
+}
+
 @Composable
 fun LogsToolbar(
+    state: LogsToolbarState,
     searchText: String,
-    toolbarFatalChecked: Boolean,
-    toolbarErrorChecked: Boolean,
-    toolbarWarningChecked: Boolean,
     logPreviewChecked: Boolean,
     updateSearchText: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
@@ -35,21 +53,21 @@ fun LogsToolbar(
     // Toolbar
     Row {
         ToggleImageButton(
-            checkedState = toolbarFatalChecked,
+            checkedState = state.toolbarFatalChecked,
             iconName = "icon_f.xml",
             title = "Enable fatal logs highlight",
             checkedTintColor = Color.Red,
             updateCheckedState = updateToolbarFatalCheck
         )
         ToggleImageButton(
-            checkedState = toolbarErrorChecked,
+            checkedState = state.toolbarErrorChecked,
             iconName = "icon_e.xml",
             title = "Enable error logs highlight",
             checkedTintColor = Color.Red,
             updateCheckedState = updateToolbarErrorCheck
         )
         ToggleImageButton(
-            checkedState = toolbarWarningChecked,
+            checkedState = state.toolbarWarningChecked,
             iconName = "icon_w.xml",
             title = "Enable warning logs highlight",
             checkedTintColor = Color(0xE7, 0x62, 0x29),
@@ -89,10 +107,12 @@ fun LogsToolbar(
 @Composable
 fun PreviewLogsToolbar() {
     LogsToolbar(
+        state = LogsToolbarState(
+            toolbarFatalChecked = true,
+            toolbarErrorChecked = true,
+            toolbarWarningChecked = true,
+        ),
         searchText = "Test",
-        toolbarFatalChecked = true,
-        toolbarErrorChecked = true,
-        toolbarWarningChecked = true,
         logPreviewChecked = true,
         updateSearchText = {},
         updateToolbarFatalCheck = {},

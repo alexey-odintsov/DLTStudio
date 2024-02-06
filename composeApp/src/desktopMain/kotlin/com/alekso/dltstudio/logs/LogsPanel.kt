@@ -46,9 +46,7 @@ fun LogsPanel(
     dltSession: ParseSession?,
     colorFilters: List<CellColorFilter> = emptyList(),
     logPreviewVisibility: Boolean,
-    toolbarFatalChecked: Boolean,
-    toolbarErrorChecked: Boolean,
-    toolbarWarningChecked: Boolean,
+    logsToolbarState: LogsToolbarState,
     updateSearchText: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
@@ -65,10 +63,8 @@ fun LogsPanel(
 
     Column(modifier = modifier) {
         LogsToolbar(
+            logsToolbarState,
             searchText,
-            toolbarFatalChecked,
-            toolbarErrorChecked,
-            toolbarWarningChecked,
             logPreviewVisibility,
             updateSearchText,
             updateToolbarFatalCheck,
@@ -168,9 +164,11 @@ fun PreviewLogsPanel() {
         "Search text",
         dltSession = dltSession,
         logPreviewVisibility = true,
-        toolbarFatalChecked = true,
-        toolbarErrorChecked = true,
-        toolbarWarningChecked = true,
+        logsToolbarState = LogsToolbarState(
+            toolbarFatalChecked = true,
+            toolbarErrorChecked = true,
+            toolbarWarningChecked = true,
+        ),
         updateSearchText = { },
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },

@@ -29,6 +29,7 @@ import com.alekso.dltstudio.logs.ColorFilterError
 import com.alekso.dltstudio.logs.ColorFilterFatal
 import com.alekso.dltstudio.logs.ColorFilterWarn
 import com.alekso.dltstudio.logs.LogsPanel
+import com.alekso.dltstudio.logs.LogsToolbarState
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,10 +53,15 @@ fun MainWindow() {
     val vSplitterState = rememberSplitPaneState(0.8f)
     val hSplitterState = rememberSplitPaneState(0.78f)
 
-    // Toolbar state
-    var toolbarFatalChecked by remember { mutableStateOf(true) }
-    var toolbarErrorChecked by remember { mutableStateOf(true) }
-    var toolbarWarningChecked by remember { mutableStateOf(true) }
+    var logsToolbarState by remember {
+        mutableStateOf(
+            LogsToolbarState(
+                toolbarFatalChecked = true,
+                toolbarErrorChecked = true,
+                toolbarWarningChecked = true
+            )
+        )
+    }
     var toolbarLogPreviewChecked by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -73,7 +79,7 @@ fun MainWindow() {
         searchText = text
         dltSession?.searchResult?.clear()
         dltSession?.searchIndexes?.clear()
-        
+
         coroutineScope.launch {
             withContext(Dispatchers.IO) {
                 println("Searching for $text..")
@@ -81,7 +87,9 @@ fun MainWindow() {
                     it.dltMessages.forEachIndexed { i, dltMessage ->
                         val payload = dltMessage.payload
 
-                        if (payload != null && searchText.toRegex().containsMatchIn(payload.asText())) {
+                        if (payload != null && searchText.toRegex()
+                                .containsMatchIn(payload.asText())
+                        ) {
                             it.searchResult.add(dltMessage)
                             it.searchIndexes.add(i)
                         }
@@ -91,10 +99,17 @@ fun MainWindow() {
             }
         }
     }
-    val updateToolbarFatalCheck: (Boolean) -> Unit = { checked -> toolbarFatalChecked = checked }
-    val updateToolbarErrorCheck: (Boolean) -> Unit = { checked -> toolbarErrorChecked = checked }
+    val updateToolbarFatalCheck: (Boolean) -> Unit =
+        { checked ->
+            logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
+        }
+    val updateToolbarErrorCheck: (Boolean) -> Unit = { checked ->
+        logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
+    }
     val updateToolbarWarningCheck: (Boolean) -> Unit =
-        { checked -> toolbarWarningChecked = checked }
+        { checked ->
+            logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
+        }
     val updateToolbarLogPreviewCheck: (Boolean) -> Unit =
         { checked -> toolbarLogPreviewChecked = checked }
 
@@ -131,13 +146,13 @@ fun MainWindow() {
 
         val mergedFilters = mutableListOf<CellColorFilter>()
         mergedFilters.addAll(colorFilters)
-        if (toolbarWarningChecked) {
+        if (logsToolbarState.toolbarWarningChecked) {
             mergedFilters.add(ColorFilterWarn)
         }
-        if (toolbarErrorChecked) {
+        if (logsToolbarState.toolbarErrorChecked) {
             mergedFilters.add(ColorFilterError)
         }
-        if (toolbarFatalChecked) {
+        if (logsToolbarState.toolbarFatalChecked) {
             mergedFilters.add(ColorFilterFatal)
         }
 
@@ -149,9 +164,7 @@ fun MainWindow() {
                     dltSession,
                     mergedFilters,
                     toolbarLogPreviewChecked,
-                    toolbarFatalChecked,
-                    toolbarErrorChecked,
-                    toolbarWarningChecked,
+                    logsToolbarState,
                     updateSearchText,
                     updateToolbarFatalCheck,
                     updateToolbarErrorCheck,
