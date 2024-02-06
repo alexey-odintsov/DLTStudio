@@ -60,7 +60,7 @@ fun LogsToolbar(
 
         var text by rememberSaveable { mutableStateOf(searchText) }
         SearchEditText(
-            modifier = Modifier.width(200.dp).height(32.dp).padding(start = 6.dp),
+            modifier = Modifier.width(600.dp).height(32.dp).padding(start = 6.dp),
             value = text, onValueChange = {
                 text = it
             }

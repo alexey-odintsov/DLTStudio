@@ -78,7 +78,8 @@ fun MainWindow() {
                 dltSession?.let {
                     it.dltMessages.forEachIndexed { i, dltMessage ->
                         val payload = dltMessage.payload
-                        if (payload != null && payload.asText().contains(searchText)) {
+
+                        if (payload != null && searchText.toRegex().containsMatchIn(payload.asText())) {
                             it.searchResult.add(dltMessage)
                         }
                         statusBarProgressCallback.invoke(i.toFloat() / it.dltMessages.size)
