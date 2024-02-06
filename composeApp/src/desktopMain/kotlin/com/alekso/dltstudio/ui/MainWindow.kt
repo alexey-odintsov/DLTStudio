@@ -81,6 +81,7 @@ fun MainWindow() {
 
                         if (payload != null && searchText.toRegex().containsMatchIn(payload.asText())) {
                             it.searchResult.add(dltMessage)
+                            it.searchIndexes.add(i)
                         }
                         statusBarProgressCallback.invoke(i.toFloat() / it.dltMessages.size)
                     }

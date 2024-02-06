@@ -12,6 +12,7 @@ import java.io.File
 class ParseSession(private val progressCallback: (Float) -> Unit, val files: List<File>) {
     val dltMessages = mutableStateListOf<DLTMessage>()
     val searchResult = mutableStateListOf<DLTMessage>()
+    val searchIndexes = mutableStateListOf<Int>()
     var cpuUsage = mutableListOf<CPUUsageEntry>()
     var cpus = mutableListOf<CPUSEntry>()
     var memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()

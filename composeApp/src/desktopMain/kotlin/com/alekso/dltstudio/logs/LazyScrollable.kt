@@ -27,6 +27,7 @@ private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Local
 fun LazyScrollable(
     modifier: Modifier,
     dltMessages: List<DLTMessage>,
+    indexes: List<Int>? = null,
     colorFilters: List<CellColorFilter>,
     selectedRow: Int,
     selectedRowCallback: (Int) -> Unit,
@@ -64,7 +65,7 @@ fun LazyScrollable(
                                     selectedRowCallback.invoke(i)
                                 }),
                             isSelected = (i == selectedRow),
-                            i.toString(),
+                            if (indexes != null) indexes[i].toString() else i.toString(),
                             simpleDateFormat.format(message.getTimeStamp()),
                             if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-",
                             message.ecuId,

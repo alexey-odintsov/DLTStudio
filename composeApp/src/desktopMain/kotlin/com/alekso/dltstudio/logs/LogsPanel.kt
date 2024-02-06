@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.ParseSession
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -62,6 +61,7 @@ fun LogsPanel(
     var searchResultSelectedRow by remember { mutableStateOf(0) }
     val dltMessages = dltSession?.dltMessages ?: emptyList()
     val searchResult = dltSession?.searchResult ?: emptyList()
+    val searchIndexes = dltSession?.searchIndexes ?: emptyList()
 
     Column(modifier = modifier) {
         LogsToolbar(
@@ -84,17 +84,18 @@ fun LogsPanel(
                     splitPaneState = hSplitterState
                 ) {
                     first(20.dp) {
-                        LazyScrollable(
-                            Modifier.width(1000.dp).fillMaxHeight().background(Color.LightGray),
+                        LogsListPanel(
+                            Modifier.fillMaxSize(),
                             dltMessages,
                             colorFilters,
-                            selectedRow = selectedRow,
-                        ) { i -> selectedRow = i }
+                            selectedRow,
+                            selectedRowCallback = { i -> selectedRow = i }
+                        )
                     }
                     second(20.dp) {
                         if (logPreviewVisibility) {
-                            LogPreview(
-                                Modifier.fillMaxHeight().width(300.dp),
+                            LogPreviewPanel(
+                                Modifier.fillMaxSize(),
                                 dltSession?.dltMessages?.getOrNull(selectedRow),
                                 selectedRow
                             )
@@ -123,11 +124,12 @@ fun LogsPanel(
                 }
             }
             second(20.dp) {
-                LazyScrollable(
-                    Modifier.fillMaxSize().background(Color.LightGray),
+                SearchResultsPanel(
+                    Modifier.fillMaxSize(),
                     searchResult,
+                    searchIndexes,
                     colorFilters,
-                    selectedRow = searchResultSelectedRow,
+                    searchResultSelectedRow
                 ) { i -> searchResultSelectedRow = i }
             }
             splitter {
