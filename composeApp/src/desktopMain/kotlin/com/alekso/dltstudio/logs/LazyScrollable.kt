@@ -55,9 +55,26 @@ fun LazyScrollable(
             LazyColumn(Modifier.horizontalScroll(horizontalState).width(2000.dp), state) {
                 items(dltMessages.size) { i ->
                     val message = dltMessages[i]
-                    RowContextMenu {
-                        val cellStyle =
-                            colorFilters.firstOrNull { it.condition(message) }?.cellStyle
+                    val cellStyle =
+                        colorFilters.firstOrNull { it.condition(message) }?.cellStyle
+
+                    val sIndex: String =
+                        if (indexes != null) indexes[i].toString() else i.toString()
+                    val sTime: String = simpleDateFormat.format(message.getTimeStamp())
+                    val sTimeOffset: String =
+                        if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
+                    val sEcu: String = message.ecuId
+                    val sEcuId: String = "${message.standardHeader.ecuId}"
+                    val sSessionId: String = "${message.standardHeader.sessionId}"
+                    val sApplicationId: String = "${message.extendedHeader?.applicationId}"
+                    val sContextId: String = "${message.extendedHeader?.contextId}"
+                    val sContent: String = "${message.payload?.asText()}"
+
+                    RowContextMenu(
+                        i,
+                        message,
+                        "$sIndex $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent"
+                    ) {
                         LogRow(
                             modifier = Modifier.selectable(
                                 selected = i == selectedRow,// todo: highlight selected row
@@ -65,15 +82,15 @@ fun LazyScrollable(
                                     selectedRowCallback.invoke(i)
                                 }),
                             isSelected = (i == selectedRow),
-                            if (indexes != null) indexes[i].toString() else i.toString(),
-                            simpleDateFormat.format(message.getTimeStamp()),
-                            if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-",
-                            message.ecuId,
-                            "${message.standardHeader.ecuId}",
-                            "${message.standardHeader.sessionId}",
-                            "${message.extendedHeader?.applicationId}",
-                            "${message.extendedHeader?.contextId}",
-                            "${message.payload?.asText()}",
+                            sIndex,
+                            sTime,
+                            sTimeOffset,
+                            sEcu,
+                            sEcuId,
+                            sSessionId,
+                            sApplicationId,
+                            sContextId,
+                            sContent,
                             cellStyle = cellStyle
                         )
                     }
