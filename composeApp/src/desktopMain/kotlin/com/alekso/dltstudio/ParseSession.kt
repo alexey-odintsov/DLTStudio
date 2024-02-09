@@ -6,6 +6,7 @@ import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.cpu.CPUSEntry
 import com.alekso.dltstudio.cpu.CPUUsageEntry
 import com.alekso.dltstudio.memory.MemoryUsageEntry
+import com.alekso.dltstudio.timeline.TimelineEntry
 import com.alekso.dltstudio.user.UserStateEntry
 import java.io.File
 
@@ -17,6 +18,8 @@ class ParseSession(private val progressCallback: (Float) -> Unit, val files: Lis
     var cpus = mutableListOf<CPUSEntry>()
     var memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
     var userStateEntries = mutableMapOf<Int, MutableList<UserStateEntry>>()
+    // todo: migrate to map of user defined entries
+    var userEntries = mutableMapOf<String, MutableList<TimelineEntry>>()
     var timeStart = Long.MAX_VALUE
     var timeEnd = Long.MIN_VALUE
     var totalSeconds: Int = 0

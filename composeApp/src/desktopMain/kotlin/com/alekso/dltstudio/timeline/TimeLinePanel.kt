@@ -40,6 +40,7 @@ import com.alekso.dltstudio.memory.MemoryAnalyzer
 import com.alekso.dltstudio.memory.MemoryLegend
 import com.alekso.dltstudio.memory.MemoryUsageEntry
 import com.alekso.dltstudio.memory.MemoryView
+import com.alekso.dltstudio.memory.TimelineAnalyzer
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.user.UserAnalyzer
@@ -67,6 +68,7 @@ fun TimeLinePanel(
     scaleUpdate: (Float) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val legendWidth = 250.dp
 
     val dragCallback = { pe: PointerEvent, width: Int ->
         if (dltSession != null) {
@@ -88,6 +90,8 @@ fun TimeLinePanel(
                             val _cpus = mutableStateListOf<CPUSEntry>()
                             val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
                             val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
+                            val _userEntries = mutableMapOf<String, MutableList<TimelineEntry>>()
+
                             withContext(Dispatchers.IO) {
 
                                 println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
@@ -108,6 +112,21 @@ fun TimeLinePanel(
                                     analyzeUserState(message, index, _userState)
                                     progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                                 }
+
+                                // todo: should be user defined and stored on user side
+                                // todo: try split approach - regexp is too slow
+                                val patters = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\("
+                                dltSession.dltMessages.forEachIndexed { index, message ->
+                                    TimelineAnalyzer.analyzeEntries(
+                                        message,
+                                        appId = "MON",
+                                        contextId = "CPUP",
+                                        regex = patters.toRegex(),
+                                        map = _userEntries
+                                    )
+                                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+
+                                }
                             }
                             withContext(Dispatchers.Default) {
                                 dltSession.cpuUsage.clear()
@@ -117,6 +136,7 @@ fun TimeLinePanel(
                                 dltSession.memt.clear()
                                 dltSession.memt = _memt
                                 dltSession.userStateEntries = _userState
+                                dltSession.userEntries = _userEntries
                                 dltSession.totalSeconds =
                                     (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
                             }
@@ -168,7 +188,7 @@ fun TimeLinePanel(
             )
 
             Row {
-                Box(modifier = Modifier.width(150.dp))
+                Box(modifier = Modifier.width(legendWidth))
                 TimeRuler(
                     Modifier.fillMaxWidth(1f),
                     offset,
@@ -181,8 +201,27 @@ fun TimeLinePanel(
             val panels = mutableStateListOf<@Composable () -> Unit>(
                 {
                     Row {
+                        TimelineLegend(
+                            modifier = Modifier.width(legendWidth).height(200.dp),
+                            title = "CPU usage by process",
+                            map = dltSession.userEntries
+                        )
+                        TimelinePercentageView(
+                            offsetSec = offset,
+                            scale = scale,
+                            modifier = Modifier.height(200.dp).fillMaxWidth()
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
+                            map = dltSession.userEntries,
+                            dltSession = dltSession
+                        )
+                    }
+                },
+                {
+                    Row {
                         UserStateLegend(
-                            modifier = Modifier.width(150.dp).height(100.dp),
+                            modifier = Modifier.width(legendWidth).height(100.dp),
                             map = dltSession.userStateEntries
                         )
                         UserStateView(
@@ -200,13 +239,13 @@ fun TimeLinePanel(
                 {
                     Row {
                         CPUCLegend(
-                            modifier = Modifier.width(150.dp).height(300.dp),
+                            modifier = Modifier.width(legendWidth).height(300.dp),
                             items = dltSession.cpuUsage
                         )
                         CPUUsageView(
                             offset = offset,
                             scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
+                            modifier = Modifier.height(300.dp).fillMaxWidth()
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
@@ -218,13 +257,13 @@ fun TimeLinePanel(
                 {
                     Row {
                         CPUSLegend(
-                            modifier = Modifier.width(150.dp).height(300.dp),
+                            modifier = Modifier.width(legendWidth).height(300.dp),
                             items = dltSession.cpus
                         )
                         CPUSView(
                             offset = offset,
                             scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
+                            modifier = Modifier.height(300.dp).fillMaxWidth()
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
@@ -236,11 +275,11 @@ fun TimeLinePanel(
                 {
                     Row {
                         MemoryLegend(
-                            modifier = Modifier.width(150.dp).height(300.dp),
+                            modifier = Modifier.width(legendWidth).height(300.dp),
                             map = dltSession.memt
                         )
                         MemoryView(
-                            modifier = Modifier.height(300.dp).fillMaxWidth().padding(top = 10.dp)
+                            modifier = Modifier.height(300.dp).fillMaxWidth()
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
@@ -257,6 +296,9 @@ fun TimeLinePanel(
                 LazyColumn(Modifier, state) {
                     if (dltSession != null) {
                         items(panels.size) { i ->
+                            if (i > 0) {
+                                Divider(Modifier.padding(2.dp))
+                            }
                             panels[i].invoke()
                         }
                     }

@@ -3,6 +3,7 @@ import com.alekso.dltstudio.user.UserState
 import com.alekso.dltstudio.user.UserStateEntry
 import org.junit.Assert
 import org.junit.Test
+import kotlin.test.assertTrue
 import kotlin.time.measureTime
 
 class UserStateParsingTest {
@@ -36,4 +37,17 @@ class UserStateParsingTest {
         }
         println("Parsing using indexOf took: $dataClassTime")
     }
+
+    @Test
+    fun `test regex`() {
+        val payload = "3.4 % test.exe pid :3009(cpid:603 node9) UID:4007233"
+        val regex = "(?<value>\\d+.\\d+)\\s+%(.*)pid\\s*:(?<key>\\d+)\\(".toRegex()
+        val matches = regex.find(payload)!!
+        val key: String? = matches.groups["key"]?.value
+        val value: String? = matches.groups["value"]?.value
+        println("Found: key = $key value = $value")
+
+        assertTrue(regex.containsMatchIn(payload))
+    }
+
 }
