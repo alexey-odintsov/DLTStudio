@@ -22,14 +22,17 @@ object ColorPalette {
 
     fun getColor(index: Int, alpha: Float = 1f): Color {
         if (index >= colors.size) {
-            colors.add(
-                // todo: Exclude existing and similar colors
-                Color(
-                    Random.nextInt(0..255),
-                    Random.nextInt(0..255),
-                    Random.nextInt(0..255)
+            // in the upper level index could be increased without calling getColor method.
+            for (i in 0..(index - colors.size)) {
+                colors.add(
+                    // todo: Exclude existing and similar colors
+                    Color(
+                        Random.nextInt(0..255),
+                        Random.nextInt(0..255),
+                        Random.nextInt(0..255)
+                    )
                 )
-            )
+            }
         }
         return Color(colors[index].red, colors[index].green, colors[index].blue, alpha)
     }
