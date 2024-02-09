@@ -229,8 +229,9 @@ object DLTParser {
         return ExtendedHeader(
             messageInfo,
             argumentsCount,
-            applicationId,
-            contextId
+            // todo: check performance, could be done faster when reading bytes
+            applicationId.replace("\u0000", ""),
+            contextId.replace("\u0000", "")
         )
     }
 
