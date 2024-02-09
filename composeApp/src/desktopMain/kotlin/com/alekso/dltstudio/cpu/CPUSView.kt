@@ -53,12 +53,12 @@ fun CPUSView(
         items.forEachIndexed { i, entry ->
             val prev = if (i > 0) items[i - 1] else null
             val prevX = if (prev != null) {
-                ((prev.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+                ((prev.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
             } else {
                 0f
             }
             val curX =
-                ((entry.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+                ((entry.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
 
             for (j in 0..<CPUS_ENTRY.entries.size) {
                 val prevY = if (prev != null) height - height_1_100 * prev.entry[j] else 0f

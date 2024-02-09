@@ -55,7 +55,7 @@ fun CPUUsageView(
 
             for (j in 0..<entry.cpuUsage.size) {
                 val prevX = if (prev != null) {
-                    ((prev.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+                    ((prev.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
                 } else {
                     0f
                 }
@@ -65,7 +65,7 @@ fun CPUUsageView(
                     0f
                 }
                 val curX =
-                    ((entry.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+                    ((entry.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
                 val curY = height - height * entry.cpuUsage[j] / 100f
                 drawLine(
                     ColorPalette.getColor(j),
