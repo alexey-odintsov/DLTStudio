@@ -1,11 +1,13 @@
 package com.alekso.dltstudio.timeline
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -17,15 +19,23 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.ParseSession
@@ -55,6 +65,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
+private val LEGEND_WIDTH_DP = 250.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -62,19 +73,20 @@ fun TimeLinePanel(
     modifier: Modifier,
     dltSession: ParseSession?,
     progressCallback: (Float) -> Unit,
-    offset: Float,
+    offsetSec: Float,
     offsetUpdate: (Float) -> Unit,
     scale: Float,
     scaleUpdate: (Float) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val legendWidth = 250.dp
+    var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
+    var secSizePx by remember { mutableStateOf(1f) }
 
     val dragCallback = { pe: PointerEvent, width: Int ->
         if (dltSession != null) {
             val secSize: Float = width / (dltSession.totalSeconds.toFloat())
             val dragAmount = pe.changes.first().position.x - pe.changes.first().previousPosition.x
-            offsetUpdate(offset + (dragAmount / secSize / scale))
+            offsetUpdate(offsetSec + (dragAmount / secSize / scale))
         }
     }
 
@@ -148,12 +160,12 @@ fun TimeLinePanel(
             ImageButton(modifier = Modifier.size(32.dp),
                 iconName = "icon_left.xml",
                 title = "Move left",
-                onClick = { offsetUpdate(offset + 1f) })
+                onClick = { offsetUpdate(offsetSec + 1f) })
 
             ImageButton(modifier = Modifier.size(32.dp),
                 iconName = "icon_right.xml",
                 title = "Move right",
-                onClick = { offsetUpdate(offset - 1f) })
+                onClick = { offsetUpdate(offsetSec - 1f) })
 
             ImageButton(modifier = Modifier.size(32.dp),
                 iconName = "icon_zoom_in.xml",
@@ -183,15 +195,13 @@ fun TimeLinePanel(
                     simpleDateFormat.format(dltSession.timeEnd)
                 }"
             )
-            Text(
-                "Offset: ${"%.2f".format(offset)}; scale: ${"%.2f".format(scale)}"
-            )
+            Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
 
             Row {
-                Box(modifier = Modifier.width(legendWidth))
+                Box(modifier = Modifier.width(LEGEND_WIDTH_DP))
                 TimeRuler(
                     Modifier.fillMaxWidth(1f),
-                    offset,
+                    offsetSec,
                     scale,
                     dltSession
                 )
@@ -202,12 +212,12 @@ fun TimeLinePanel(
                 {
                     Row {
                         TimelineLegend(
-                            modifier = Modifier.width(legendWidth).height(200.dp),
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                             title = "CPU usage by process",
                             map = dltSession.userEntries
                         )
                         TimelinePercentageView(
-                            offsetSec = offset,
+                            offsetSec = offsetSec,
                             scale = scale,
                             modifier = Modifier.height(200.dp).fillMaxWidth()
                                 .onPointerEvent(
@@ -221,11 +231,11 @@ fun TimeLinePanel(
                 {
                     Row {
                         UserStateLegend(
-                            modifier = Modifier.width(legendWidth).height(100.dp),
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(100.dp),
                             map = dltSession.userStateEntries
                         )
                         UserStateView(
-                            offset = offset,
+                            offset = offsetSec,
                             scale = scale,
                             modifier = Modifier.height(100.dp).fillMaxWidth()
                                 .onPointerEvent(
@@ -239,11 +249,11 @@ fun TimeLinePanel(
                 {
                     Row {
                         CPUCLegend(
-                            modifier = Modifier.width(legendWidth).height(300.dp),
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
                             items = dltSession.cpuUsage
                         )
                         CPUUsageView(
-                            offset = offset,
+                            offset = offsetSec,
                             scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth()
                                 .onPointerEvent(
@@ -257,11 +267,11 @@ fun TimeLinePanel(
                 {
                     Row {
                         CPUSLegend(
-                            modifier = Modifier.width(legendWidth).height(300.dp),
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
                             items = dltSession.cpus
                         )
                         CPUSView(
-                            offset = offset,
+                            offset = offsetSec,
                             scale = scale,
                             modifier = Modifier.height(300.dp).fillMaxWidth()
                                 .onPointerEvent(
@@ -275,7 +285,7 @@ fun TimeLinePanel(
                 {
                     Row {
                         MemoryLegend(
-                            modifier = Modifier.width(legendWidth).height(300.dp),
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
                             map = dltSession.memt
                         )
                         MemoryView(
@@ -285,7 +295,7 @@ fun TimeLinePanel(
                                     onEvent = { dragCallback(it, size.width) }),
 
                             map = dltSession.memt,
-                            offset = offset,
+                            offset = offsetSec,
                             scale = scale,
                             dltSession = dltSession
                         )
@@ -293,7 +303,14 @@ fun TimeLinePanel(
                 }
             )
             Box(modifier = Modifier.weight(1f)) {
-                LazyColumn(Modifier, state) {
+                LazyColumn(Modifier.onPointerEvent(
+                    eventType = PointerEventType.Move,
+                    onEvent = { event ->
+                        cursorPosition = event.changes[0].position
+                    }).onSizeChanged {
+                    secSizePx = (it.width * scale) / (dltSession.totalSeconds)
+                }, state
+                ) {
                     if (dltSession != null) {
                         items(panels.size) { i ->
                             if (i > 0) {
@@ -309,6 +326,15 @@ fun TimeLinePanel(
                         scrollState = state
                     )
                 )
+                Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
+                    if (cursorPosition.x < LEGEND_WIDTH_DP.toPx()) return@Canvas
+
+                    drawLine(
+                        Color(0xFFFFFFc0),
+                        Offset(cursorPosition.x, 0f),
+                        Offset(cursorPosition.x, size.height)
+                    )
+                }
             }
         }
     }
@@ -402,7 +428,7 @@ fun PreviewTimeline() {
         Modifier.fillMaxWidth().height(600.dp),
         dltSession = ParseSession({}, listOf(File(""))),
         progressCallback = { },
-        offset = 0f,
+        offsetSec = 0f,
         offsetUpdate = {},
         scale = 1f,
         scaleUpdate = {},
