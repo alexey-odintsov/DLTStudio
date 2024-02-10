@@ -86,7 +86,7 @@ object DLTParser {
         val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
         val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
         val timeStampNano = timeStampSec * 1000000L + timeStampUs
-        val ecuId = bytes.readString(i + 12, 4)
+        val ecuId = bytes.readString(i + 12, 4).replace("\u0000", "")
         i += DLT_HEADER_SIZE_BYTES
 
         if (DEBUG_LOG && shouldLog) {
@@ -155,7 +155,7 @@ object DLTParser {
         val messageCounter = bytes[p].toUByte(); p += 1
         val length = bytes.readShort(p, STANDARD_HEADER_ENDIAN).toUShort(); p += 2
         val ecuId =
-            if (headerType.withEcuId) bytes.readString(p, 4) else null; p += 4
+            if (headerType.withEcuId) bytes.readString(p, 4).replace("\u0000", "") else null; p += 4
         val sessionId =
             if (headerType.withSessionId) bytes.readInt(p, STANDARD_HEADER_ENDIAN) else null; p += 4
         val timeStamp =
