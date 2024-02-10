@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.memory
+package com.alekso.dltstudio.timeline
 
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.VerbosePayload

@@ -49,7 +49,6 @@ import com.alekso.dltstudio.memory.MemoryAnalyzer
 import com.alekso.dltstudio.memory.MemoryLegend
 import com.alekso.dltstudio.memory.MemoryUsageEntry
 import com.alekso.dltstudio.memory.MemoryView
-import com.alekso.dltstudio.memory.TimelineAnalyzer
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
 import com.alekso.dltstudio.user.UserStateLegend
