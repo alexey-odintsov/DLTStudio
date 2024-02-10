@@ -46,13 +46,13 @@ fun LogsPanel(
     searchText: String,
     dltSession: ParseSession?,
     colorFilters: List<CellColorFilter> = emptyList(),
-    logPreviewVisibility: Boolean,
+    searchUseRegex: Boolean,
     logsToolbarState: LogsToolbarState,
     updateSearchText: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateToolbarLogPreviewCheck: (Boolean) -> Unit,
+    updateSearchUseRegexCheck: (Boolean) -> Unit,
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
 ) {
@@ -66,12 +66,12 @@ fun LogsPanel(
         LogsToolbar(
             logsToolbarState,
             searchText,
-            logPreviewVisibility,
+            searchUseRegex,
             updateSearchText,
             updateToolbarFatalCheck,
             updateToolbarErrorCheck,
             updateToolbarWarningCheck,
-            updateToolbarLogPreviewCheck,
+            updateSearchUseRegexCheck,
         )
         Divider()
 
@@ -90,13 +90,11 @@ fun LogsPanel(
                         )
                     }
                     second(20.dp) {
-                        if (logPreviewVisibility) {
-                            LogPreviewPanel(
-                                Modifier.fillMaxSize(),
-                                dltSession?.dltMessages?.getOrNull(selectedRow),
-                                selectedRow
-                            )
-                        }
+                        LogPreviewPanel(
+                            Modifier.fillMaxSize(),
+                            dltSession?.dltMessages?.getOrNull(selectedRow),
+                            selectedRow
+                        )
                     }
                     splitter {
                         visiblePart {
@@ -171,7 +169,7 @@ fun PreviewLogsPanel() {
         Modifier.fillMaxSize(),
         "Search text",
         dltSession = dltSession,
-        logPreviewVisibility = true,
+        searchUseRegex = true,
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
@@ -181,7 +179,7 @@ fun PreviewLogsPanel() {
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },
         updateToolbarWarningCheck = { },
-        updateToolbarLogPreviewCheck = { },
+        updateSearchUseRegexCheck = { },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
     )

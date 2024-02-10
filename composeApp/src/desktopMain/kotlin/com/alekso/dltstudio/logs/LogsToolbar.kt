@@ -43,12 +43,12 @@ data class LogsToolbarState(
 fun LogsToolbar(
     state: LogsToolbarState,
     searchText: String,
-    logPreviewChecked: Boolean,
+    searchUseRegex: Boolean,
     updateSearchText: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateToolbarLogPreviewCheck: (Boolean) -> Unit
+    updateSearchUseRegexCheck: (Boolean) -> Unit
 ) {
     // Toolbar
     Row {
@@ -77,8 +77,16 @@ fun LogsToolbar(
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
         var text by rememberSaveable { mutableStateOf(searchText) }
+        ToggleImageButton(
+            checkedState = searchUseRegex,
+            iconName = "icon_regex.xml",
+            title = "Use Regex or Plain text search",
+            checkedTintColor = Color.Blue,
+            updateCheckedState = updateSearchUseRegexCheck
+        )
+
         SearchEditText(
-            modifier = Modifier.width(600.dp).height(32.dp).padding(start = 6.dp),
+            modifier = Modifier.width(600.dp).height(32.dp),
             value = text, onValueChange = {
                 text = it
             }
@@ -93,13 +101,6 @@ fun LogsToolbar(
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
-        ToggleImageButton(
-            checkedState = logPreviewChecked,
-            iconName = "icon_dlt_info.xml",
-            title = "Enable error logs highlight",
-            checkedTintColor = Color.Blue,
-            updateCheckedState = updateToolbarLogPreviewCheck
-        )
     }
 }
 
@@ -113,11 +114,11 @@ fun PreviewLogsToolbar() {
             toolbarWarningChecked = true,
         ),
         searchText = "Test",
-        logPreviewChecked = true,
+        searchUseRegex = true,
         updateSearchText = {},
         updateToolbarFatalCheck = {},
         updateToolbarErrorCheck = {},
         updateToolbarWarningCheck = {},
-        updateToolbarLogPreviewCheck = {}
+        updateSearchUseRegexCheck = {}
     )
 }

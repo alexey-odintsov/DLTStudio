@@ -62,7 +62,7 @@ fun MainWindow() {
             )
         )
     }
-    var toolbarLogPreviewChecked by remember { mutableStateOf(true) }
+    var searchUseRegex by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -87,13 +87,16 @@ fun MainWindow() {
                     it.dltMessages.forEachIndexed { i, dltMessage ->
                         val payload = dltMessage.payload
 
-                        if (payload != null && searchText.toRegex()
-                                .containsMatchIn(payload.asText())
-                        ) {
-                            it.searchResult.add(dltMessage)
-                            it.searchIndexes.add(i)
+                        if (payload != null) {
+                            if ((searchUseRegex && searchText.toRegex()
+                                    .containsMatchIn(payload.asText()))
+                                || (payload.asText().contains(searchText))
+                            ) {
+                                it.searchResult.add(dltMessage)
+                                it.searchIndexes.add(i)
+                            }
+                            statusBarProgressCallback.invoke(i.toFloat() / it.dltMessages.size)
                         }
-                        statusBarProgressCallback.invoke(i.toFloat() / it.dltMessages.size)
                     }
                 }
             }
@@ -110,8 +113,8 @@ fun MainWindow() {
         { checked ->
             logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
         }
-    val updateToolbarLogPreviewCheck: (Boolean) -> Unit =
-        { checked -> toolbarLogPreviewChecked = checked }
+    val updateSearchUseRegexCheck: (Boolean) -> Unit =
+        { checked -> searchUseRegex = checked }
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
         if (it.dragData is DragData.FilesList) {
@@ -163,13 +166,13 @@ fun MainWindow() {
                     searchText,
                     dltSession,
                     mergedFilters,
-                    toolbarLogPreviewChecked,
+                    searchUseRegex,
                     logsToolbarState,
                     updateSearchText,
                     updateToolbarFatalCheck,
                     updateToolbarErrorCheck,
                     updateToolbarWarningCheck,
-                    updateToolbarLogPreviewCheck,
+                    updateSearchUseRegexCheck,
                     vSplitterState,
                     hSplitterState,
                 )
