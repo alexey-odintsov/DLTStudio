@@ -24,6 +24,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.ParseSession
+import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
