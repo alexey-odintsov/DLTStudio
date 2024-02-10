@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -51,8 +50,6 @@ import com.alekso.dltstudio.memory.MemoryLegend
 import com.alekso.dltstudio.memory.MemoryUsageEntry
 import com.alekso.dltstudio.memory.MemoryView
 import com.alekso.dltstudio.memory.TimelineAnalyzer
-import com.alekso.dltstudio.ui.HorizontalDivider
-import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
 import com.alekso.dltstudio.user.UserStateLegend
@@ -91,101 +88,76 @@ fun TimeLinePanel(
     }
 
     Column(modifier = modifier) {
-        Row {
-            ImageButton(modifier = Modifier.size(32.dp),
-                iconName = "icon_run.xml",
-                title = "Analyze timeline",
-                onClick = {
-                    if (dltSession != null) {
-                        coroutineScope.launch {
-                            val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
-                            val _cpus = mutableStateListOf<CPUSEntry>()
-                            val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
-                            val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
-                            val _userEntries = mutableMapOf<String, MutableList<TimelineEntry>>()
+        TimelineToolbar(
+            leftClick = { offsetUpdate(offsetSec + 1f) },
+            rightClick = { offsetUpdate(offsetSec - 1f) },
+            zoomInClick = { scaleUpdate(scale + 1f) },
+            zoomOutClick = { scaleUpdate(scale - 1f) },
+            zoomFitClick = {
+                scaleUpdate(1f)
+                offsetUpdate(0f)
+            },
+            runClick = {
+                if (dltSession != null) {
+                    coroutineScope.launch {
+                        val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
+                        val _cpus = mutableStateListOf<CPUSEntry>()
+                        val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
+                        val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
+                        val _userEntries = mutableMapOf<String, MutableList<TimelineEntry>>()
 
-                            withContext(Dispatchers.IO) {
+                        withContext(Dispatchers.IO) {
 
-                                println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
+                            println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
 
-                                dltSession.dltMessages.forEachIndexed { index, message ->
-                                    // timeStamps
-                                    val ts = message.getTimeStamp()
-                                    if (ts > dltSession.timeEnd) {
-                                        dltSession.timeEnd = ts
-                                    }
-                                    if (ts < dltSession.timeStart) {
-                                        dltSession.timeStart = ts
-                                    }
-
-                                    analyzeCPUC(message, _cpuUsage, index)
-                                    analyzeCPUS(message, _cpus, index)
-                                    analyzeMemory(message, index, _memt)
-                                    analyzeUserState(message, index, _userState)
-                                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+                            dltSession.dltMessages.forEachIndexed { index, message ->
+                                // timeStamps
+                                val ts = message.getTimeStamp()
+                                if (ts > dltSession.timeEnd) {
+                                    dltSession.timeEnd = ts
+                                }
+                                if (ts < dltSession.timeStart) {
+                                    dltSession.timeStart = ts
                                 }
 
-                                // todo: should be user defined and stored on user side
-                                // todo: try split approach - regexp is too slow
-                                val patters = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\("
-                                dltSession.dltMessages.forEachIndexed { index, message ->
-                                    TimelineAnalyzer.analyzeEntries(
-                                        message,
-                                        appId = "MON",
-                                        contextId = "CPUP",
-                                        regex = patters.toRegex(),
-                                        map = _userEntries
-                                    )
-                                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
-
-                                }
+                                analyzeCPUC(message, _cpuUsage, index)
+                                analyzeCPUS(message, _cpus, index)
+                                analyzeMemory(message, index, _memt)
+                                analyzeUserState(message, index, _userState)
+                                progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
                             }
-                            withContext(Dispatchers.Default) {
-                                dltSession.cpuUsage.clear()
-                                dltSession.cpuUsage.addAll(_cpuUsage)
-                                dltSession.cpus.clear()
-                                dltSession.cpus.addAll(_cpus)
-                                dltSession.memt.clear()
-                                dltSession.memt = _memt
-                                dltSession.userStateEntries = _userState
-                                dltSession.userEntries = _userEntries
-                                dltSession.totalSeconds =
-                                    (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
+
+                            // todo: should be user defined and stored on user side
+                            // todo: try split approach - regexp is too slow
+                            val patters = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\("
+                            dltSession.dltMessages.forEachIndexed { index, message ->
+                                TimelineAnalyzer.analyzeEntries(
+                                    message,
+                                    appId = "MON",
+                                    contextId = "CPUP",
+                                    regex = patters.toRegex(),
+                                    map = _userEntries
+                                )
+                                progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+
                             }
                         }
+                        withContext(Dispatchers.Default) {
+                            dltSession.cpuUsage.clear()
+                            dltSession.cpuUsage.addAll(_cpuUsage)
+                            dltSession.cpus.clear()
+                            dltSession.cpus.addAll(_cpus)
+                            dltSession.memt.clear()
+                            dltSession.memt = _memt
+                            dltSession.userStateEntries = _userState
+                            dltSession.userEntries = _userEntries
+                            dltSession.totalSeconds =
+                                (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
+                        }
                     }
-                })
-            HorizontalDivider(modifier = Modifier.height(32.dp))
+                }
+            })
 
-            ImageButton(modifier = Modifier.size(32.dp),
-                iconName = "icon_left.xml",
-                title = "Move left",
-                onClick = { offsetUpdate(offsetSec + 1f) })
-
-            ImageButton(modifier = Modifier.size(32.dp),
-                iconName = "icon_right.xml",
-                title = "Move right",
-                onClick = { offsetUpdate(offsetSec - 1f) })
-
-            ImageButton(modifier = Modifier.size(32.dp),
-                iconName = "icon_zoom_in.xml",
-                title = "Zoom in",
-                onClick = { scaleUpdate(scale + 1f) })
-
-            ImageButton(modifier = Modifier.size(32.dp),
-                iconName = "icon_zoom_out.xml",
-                title = "Zoom out",
-                onClick = { scaleUpdate(scale - 1f) })
-
-            ImageButton(modifier = Modifier.size(32.dp),
-                iconName = "icon_fit.xml",
-                title = "Fit timeline",
-                onClick = {
-                    scaleUpdate(1f)
-                    offsetUpdate(0f)
-                })
-
-        }
         Divider()
 
         if (dltSession != null) {
@@ -311,13 +283,11 @@ fun TimeLinePanel(
                     secSizePx = (it.width * scale) / (dltSession.totalSeconds)
                 }, state
                 ) {
-                    if (dltSession != null) {
-                        items(panels.size) { i ->
-                            if (i > 0) {
-                                Divider(Modifier.padding(2.dp))
-                            }
-                            panels[i].invoke()
+                    items(panels.size) { i ->
+                        if (i > 0) {
+                            Divider(Modifier.padding(2.dp))
                         }
+                        panels[i].invoke()
                     }
                 }
                 VerticalScrollbar(
