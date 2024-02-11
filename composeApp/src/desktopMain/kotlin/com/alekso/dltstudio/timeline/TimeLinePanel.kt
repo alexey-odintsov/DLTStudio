@@ -126,7 +126,7 @@ fun TimeLinePanel(
                         TimelineLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                             title = "CPU usage by process",
-                            map = dltSession.userEntries
+                            entries = dltSession.userEntries["CPU_PER_PID"]
                         )
                         TimelinePercentageView(
                             offsetSec = offsetSec,
@@ -135,8 +135,28 @@ fun TimeLinePanel(
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
-                            map = dltSession.userEntries,
+                            entries = dltSession.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
                             dltSession = dltSession
+                        )
+                    }
+                },
+                {
+                    Row {
+                        TimelineLegend(
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
+                            title = "Memory usage",
+                            entries = dltSession.userEntries["MEMT"]
+                        )
+                        TimelineMinMaxValueView(
+                            offsetSec = offsetSec,
+                            scale = scale,
+                            modifier = Modifier.height(200.dp).fillMaxWidth()
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
+                            entries = dltSession.userEntries["MEMT"] as TimelineMinMaxEntries?,
+                            dltSession = dltSession,
+                            seriesPostfix = " Mb"
                         )
                     }
                 },

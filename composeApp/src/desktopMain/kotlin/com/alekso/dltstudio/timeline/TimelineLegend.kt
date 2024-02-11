@@ -22,8 +22,9 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.colors.ColorPalette
 
 @Composable
-fun TimelineLegend(modifier: Modifier, title: String, map: Map<String, List<TimelineEntry>>) {
+fun TimelineLegend(modifier: Modifier, title: String, entries: TimelineEntries?) {
     val state = rememberLazyListState()
+    val map = entries?.getEntriesMap()
 
     Box(modifier = modifier.padding(start = 4.dp, end = 4.dp)) {
         Column(Modifier.fillMaxSize()) {
@@ -32,7 +33,7 @@ fun TimelineLegend(modifier: Modifier, title: String, map: Map<String, List<Time
                 fontWeight = FontWeight(600),
                 modifier = Modifier.padding(bottom = 4.dp)
             )
-            if (map.isNotEmpty()) {
+            if (!map.isNullOrEmpty()) {
                 LazyColumn(Modifier, state) {
                     val keys = map.keys.toList()
 

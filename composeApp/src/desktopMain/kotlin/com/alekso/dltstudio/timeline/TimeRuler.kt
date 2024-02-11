@@ -94,7 +94,7 @@ fun PreviewTimeRuler() {
     val ts = 1707602400000 //23:00:00.000 // Instant.now().toEpochMilli()
 
     dltSession.timeStart = ts
-    dltSession.timeEnd = ts + 100_000
+    dltSession.timeEnd = ts + 300_000
 
     Column {
         Text(text = "start: ${simpleDateFormat.format(dltSession.timeStart)} (${dltSession.timeStart})")

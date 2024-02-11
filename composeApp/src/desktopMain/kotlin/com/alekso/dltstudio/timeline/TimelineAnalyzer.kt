@@ -19,12 +19,12 @@ import kotlin.time.measureTime
 
 object TimelineAnalyzer {
 
-    fun analyzeEntriesRegex(
+    private fun analyzeEntriesRegex(
         message: DLTMessage,
         appId: String? = null,
         contextId: String? = null,
         regex: Regex,
-        map: MutableMap<String, MutableList<TimelineEntry>>
+        entries: TimelineEntries
     ) {
         if (message.payload !is VerbosePayload) return
         val payload = (message.payload as VerbosePayload).asText()
@@ -36,11 +36,7 @@ object TimelineAnalyzer {
                 val value: String? = matches.groups["value"]?.value
 
                 if (key != null && value != null) {
-                    val entry = TimelineEntry(message.getTimeStamp(), key, value)
-                    if (!map.containsKey(key)) {
-                        map[key] = mutableListOf()
-                    }
-                    (map[key] as MutableList).add(entry)
+                    entries.addEntry(TimelineEntry(message.getTimeStamp(), key, value))
                 }
             }
         } catch (e: Exception) {
@@ -48,13 +44,13 @@ object TimelineAnalyzer {
         }
     }
 
-    fun analyzeEntriesIndexOf(
+    private fun analyzeEntriesIndexOf(
         message: DLTMessage,
         appId: String? = null,
         contextId: String? = null,
         keyDelimiters: Pair<String, String>,
         valueDelimiters: Pair<String, String>,
-        map: MutableMap<String, MutableList<TimelineEntry>>
+        entries: TimelineEntries
     ) {
         if (message.payload !is VerbosePayload) return
         val payload = (message.payload as VerbosePayload).asText()
@@ -71,11 +67,7 @@ object TimelineAnalyzer {
                 )
 
                 if (key != null && value != null) {
-                    val entry = TimelineEntry(message.getTimeStamp(), key, value)
-                    if (!map.containsKey(key)) {
-                        map[key] = mutableListOf()
-                    }
-                    (map[key] as MutableList).add(entry)
+                    entries.addEntry(TimelineEntry(message.getTimeStamp(), key, value))
                 }
             }
         } catch (e: Exception) {
@@ -84,15 +76,19 @@ object TimelineAnalyzer {
     }
 
     suspend fun analyzeTimeline(dltSession: ParseSession, progressCallback: (Float) -> Unit) {
+        // we need copies of ParseSession's collections to prevent ConcurrentModificationException
         val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
         val _cpus = mutableStateListOf<CPUSEntry>()
         val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
         val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
-        val _userEntries = mutableMapOf<String, MutableList<TimelineEntry>>()
+        val _userEntries = mutableMapOf<String, TimelineEntries>()
 
         withContext(Dispatchers.IO) {
 
             println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
+
+            _userEntries["CPU_PER_PID"] = TimelinePercentageEntries()
+            _userEntries["MEMT"] = TimelineMinMaxEntries()
 
             dltSession.dltMessages.forEachIndexed { index, message ->
                 // timeStamps
@@ -108,43 +104,25 @@ object TimelineAnalyzer {
                 analyzeCPUS(message, _cpus, index)
                 analyzeMemory(message, index, _memt)
                 analyzeUserState(message, index, _userState)
+                val pattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(".toRegex()
+                analyzeEntriesRegex(
+                    message,
+                    appId = "MON",
+                    contextId = "CPUP",
+                    regex = pattern,
+                    entries = _userEntries["CPU_PER_PID"]!!
+                )
+
+                analyzeEntriesIndexOf(
+                    message,
+                    appId = "MON",
+                    contextId = "MEMT",
+                    valueDelimiters = Pair("MaxRSS(MB): ", " increase:"),
+                    keyDelimiters = Pair("", "(cpid:"),
+                    entries = _userEntries["MEMT"]!!,
+                )
                 progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
             }
-
-            // todo: should be user defined and stored on user side
-            // todo: try split approach - regexp is too slow
-//            val dataClassTime = measureTime {
-//                _userEntries.clear()
-//                val pattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(".toRegex()
-//                dltSession.dltMessages.forEachIndexed { index, message ->
-//                    analyzeEntriesRegex(
-//                        message,
-//                        appId = "MON",
-//                        contextId = "CPUP",
-//                        regex = pattern,
-//                        map = _userEntries
-//                    )
-//                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
-//                }
-//            }
-//            println("Search regex: $dataClassTime found ${_userEntries.size}")
-
-            val dataClassTime2 = measureTime {
-                _userEntries.clear()
-                dltSession.dltMessages.forEachIndexed { index, message ->
-                    analyzeEntriesIndexOf(
-                        message,
-                        appId = "MON",
-                        contextId = "CPUP",
-                        valueDelimiters = Pair("", " %"),
-                        keyDelimiters = Pair("%", "(cpid:"),
-                        map = _userEntries
-                    )
-                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
-                }
-            }
-            println("Search indexOf: $dataClassTime2 found ${_userEntries.size}")
-
         }
         withContext(Dispatchers.Default) {
             dltSession.cpuUsage.clear()
