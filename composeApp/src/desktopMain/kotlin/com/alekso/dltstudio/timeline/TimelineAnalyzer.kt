@@ -77,18 +77,18 @@ object TimelineAnalyzer {
 
             // todo: should be user defined and stored on user side
             // todo: try split approach - regexp is too slow
-            val patters = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\("
-            dltSession.dltMessages.forEachIndexed { index, message ->
-                analyzeEntries(
-                    message,
-                    appId = "MON",
-                    contextId = "CPUP",
-                    regex = patters.toRegex(),
-                    map = _userEntries
-                )
-                progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
-
-            }
+//            val patters = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\("
+//            dltSession.dltMessages.forEachIndexed { index, message ->
+//                analyzeEntries(
+//                    message,
+//                    appId = "MON",
+//                    contextId = "CPUP",
+//                    regex = patters.toRegex(),
+//                    map = _userEntries
+//                )
+//                progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+//
+//            }
         }
         withContext(Dispatchers.Default) {
             dltSession.cpuUsage.clear()
@@ -99,8 +99,6 @@ object TimelineAnalyzer {
             dltSession.memt = _memt
             dltSession.userStateEntries = _userState
             dltSession.userEntries = _userEntries
-            dltSession.totalSeconds =
-                (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
         }
     }
 

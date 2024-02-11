@@ -34,6 +34,9 @@ import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.cpu.CPUCLegend
@@ -50,6 +53,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
+private val simpleTimeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.ENGLISH)
 private val LEGEND_WIDTH_DP = 250.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -215,7 +219,7 @@ fun TimeLinePanel(
                     onEvent = { event ->
                         cursorPosition = event.changes[0].position
                     }).onSizeChanged {
-                    secSizePx = (it.width * scale) / (dltSession.totalSeconds)
+                    //secSizePx = ((it.width - LEGEND_WIDTH_DP) * scale) / (dltSession.totalSeconds)
                 }, state
                 ) {
                     items(panels.size) { i ->
@@ -231,14 +235,33 @@ fun TimeLinePanel(
                         scrollState = state
                     )
                 )
+                val textMeasurer = rememberTextMeasurer()
                 Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
                     if (cursorPosition.x < LEGEND_WIDTH_DP.toPx()) return@Canvas
+                    secSizePx =
+                        ((size.width - LEGEND_WIDTH_DP.toPx()) * scale) / dltSession.totalSeconds.toFloat()
 
                     drawLine(
                         Color(0xFFFFFFc0),
                         Offset(cursorPosition.x, 0f),
                         Offset(cursorPosition.x, size.height)
                     )
+                    val cursorOffsetSec: Float =
+                        ((cursorPosition.x - LEGEND_WIDTH_DP.toPx()) / secSizePx) - offsetSec
+                    val cursorTimestamp: Long =
+                        (1000L * cursorOffsetSec).toLong() + dltSession.timeStart
+
+                    drawText(
+                        textMeasurer,
+                        text = "${simpleTimeFormat.format(cursorTimestamp)} (${
+                            "%+.2f".format(
+                                cursorOffsetSec
+                            )
+                        })",
+                        topLeft = Offset(cursorPosition.x, 20f),
+                        style = TextStyle(color = Color.Black)
+                    )
+
                 }
             }
         }

@@ -22,7 +22,8 @@ class ParseSession(private val progressCallback: (Float) -> Unit, val files: Lis
     var userEntries = mutableMapOf<String, MutableList<TimelineEntry>>()
     var timeStart = Long.MAX_VALUE
     var timeEnd = Long.MIN_VALUE
-    var totalSeconds: Int = 0
+    val totalSeconds: Int
+        get() = if (timeEnd > 0 && timeStart > 0) (timeEnd - timeStart).toInt() / 1000 else 0
 
     suspend fun start() {
         dltMessages.addAll(DLTParser.read(progressCallback, files))

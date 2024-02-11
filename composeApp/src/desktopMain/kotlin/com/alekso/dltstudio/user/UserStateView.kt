@@ -141,7 +141,6 @@ fun PreviewUserStateView() {
     val dltSession = ParseSession({}, listOf(File("")))
     dltSession.timeStart = 1705410528156
     dltSession.timeEnd = 1705410544163
-    dltSession.totalSeconds = 50
 
     UserStateView(
         offset = 0f,

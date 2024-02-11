@@ -93,7 +93,6 @@ fun PreviewTimelineView() {
 
     dltSession.timeStart = ts
     dltSession.timeEnd = ts + 7000
-    dltSession.totalSeconds = (dltSession.timeEnd - dltSession.timeStart).toInt() / 1000
 
 
     val map = mutableMapOf<String, List<TimelineEntry>>(
