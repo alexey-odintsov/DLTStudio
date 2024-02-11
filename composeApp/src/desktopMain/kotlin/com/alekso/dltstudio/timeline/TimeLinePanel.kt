@@ -38,6 +38,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.cpu.CPUCLegend
 import com.alekso.dltstudio.cpu.CPUSLegend
@@ -253,15 +254,10 @@ fun TimeLinePanel(
 
                     drawText(
                         textMeasurer,
-                        text = "${simpleTimeFormat.format(cursorTimestamp)} (${
-                            "%+.2f".format(
-                                cursorOffsetSec
-                            )
-                        })",
-                        topLeft = Offset(cursorPosition.x, 20f),
-                        style = TextStyle(color = Color.Black)
+                        text = "${simpleTimeFormat.format(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
+                        topLeft = Offset(cursorPosition.x + 4.dp.toPx(), 4.dp.toPx()),
+                        style = TextStyle(color = Color.Yellow, fontSize = 10.sp, background = Color(0x80808080))
                     )
-
                 }
             }
         }
