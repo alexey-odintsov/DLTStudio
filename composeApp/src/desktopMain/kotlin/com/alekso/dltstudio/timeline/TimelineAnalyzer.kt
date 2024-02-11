@@ -14,11 +14,12 @@ import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlin.time.measureTime
 
 
 object TimelineAnalyzer {
 
-    fun analyzeEntries(
+    fun analyzeEntriesRegex(
         message: DLTMessage,
         appId: String? = null,
         contextId: String? = null,
@@ -33,6 +34,41 @@ object TimelineAnalyzer {
                 val matches = regex.find(payload)!!
                 val key: String? = matches.groups["key"]?.value
                 val value: String? = matches.groups["value"]?.value
+
+                if (key != null && value != null) {
+                    val entry = TimelineEntry(message.getTimeStamp(), key, value)
+                    if (!map.containsKey(key)) {
+                        map[key] = mutableListOf()
+                    }
+                    (map[key] as MutableList).add(entry)
+                }
+            }
+        } catch (e: Exception) {
+            // ignore
+        }
+    }
+
+    fun analyzeEntriesIndexOf(
+        message: DLTMessage,
+        appId: String? = null,
+        contextId: String? = null,
+        keyDelimiters: Pair<String, String>,
+        valueDelimiters: Pair<String, String>,
+        map: MutableMap<String, MutableList<TimelineEntry>>
+    ) {
+        if (message.payload !is VerbosePayload) return
+        val payload = (message.payload as VerbosePayload).asText()
+
+        try {
+            if (message.extendedHeader?.applicationId == appId && message.extendedHeader?.contextId == contextId) {
+                val key: String? = payload.substring(
+                    payload.indexOf(keyDelimiters.first) + keyDelimiters.first.length,
+                    payload.indexOf(keyDelimiters.second)
+                )
+                val value: String? = payload.substring(
+                    payload.indexOf(valueDelimiters.first) + valueDelimiters.first.length,
+                    payload.indexOf(valueDelimiters.second)
+                )
 
                 if (key != null && value != null) {
                     val entry = TimelineEntry(message.getTimeStamp(), key, value)
@@ -77,18 +113,38 @@ object TimelineAnalyzer {
 
             // todo: should be user defined and stored on user side
             // todo: try split approach - regexp is too slow
-//            val patters = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\("
-//            dltSession.dltMessages.forEachIndexed { index, message ->
-//                analyzeEntries(
-//                    message,
-//                    appId = "MON",
-//                    contextId = "CPUP",
-//                    regex = patters.toRegex(),
-//                    map = _userEntries
-//                )
-//                progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
-//
+//            val dataClassTime = measureTime {
+//                _userEntries.clear()
+//                val pattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(".toRegex()
+//                dltSession.dltMessages.forEachIndexed { index, message ->
+//                    analyzeEntriesRegex(
+//                        message,
+//                        appId = "MON",
+//                        contextId = "CPUP",
+//                        regex = pattern,
+//                        map = _userEntries
+//                    )
+//                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+//                }
 //            }
+//            println("Search regex: $dataClassTime found ${_userEntries.size}")
+
+            val dataClassTime2 = measureTime {
+                _userEntries.clear()
+                dltSession.dltMessages.forEachIndexed { index, message ->
+                    analyzeEntriesIndexOf(
+                        message,
+                        appId = "MON",
+                        contextId = "CPUP",
+                        valueDelimiters = Pair("", " %"),
+                        keyDelimiters = Pair("%", "(cpid:"),
+                        map = _userEntries
+                    )
+                    progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+                }
+            }
+            println("Search indexOf: $dataClassTime2 found ${_userEntries.size}")
+
         }
         withContext(Dispatchers.Default) {
             dltSession.cpuUsage.clear()
