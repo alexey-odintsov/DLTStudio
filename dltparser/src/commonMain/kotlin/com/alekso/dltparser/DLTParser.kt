@@ -153,7 +153,7 @@ object DLTParser {
         var p = i
         val headerType = parseStandardHeaderType(shouldLog, bytes[p]); p += 1
         val messageCounter = bytes[p].toUByte(); p += 1
-        val length = bytes.readShort(p, STANDARD_HEADER_ENDIAN).toUShort(); p += 2
+        val length = bytes.readUShort(p, STANDARD_HEADER_ENDIAN); p += 2
         val ecuId =
             if (headerType.withEcuId) bytes.readString(p, 4).replace("\u0000", "") else null; p += 4
         val sessionId =
