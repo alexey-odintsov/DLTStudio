@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +23,13 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.colors.ColorPalette
 
 @Composable
-fun TimelineLegend(modifier: Modifier, title: String, entries: TimelineEntries?) {
+fun TimelineLegend(
+    modifier: Modifier,
+    title: String,
+    entries: TimelineEntries? = null,
+    updateHighlightedKey: (String?) -> Unit,
+    highlightedKey: String? = null,
+) {
     val state = rememberLazyListState()
     val map = entries?.getEntriesMap()
 
@@ -39,15 +46,21 @@ fun TimelineLegend(modifier: Modifier, title: String, entries: TimelineEntries?)
 
                     items(keys.size) { i ->
                         val key = keys[i]
-                        Row {
+                        Row(
+                            Modifier.selectable(
+                                selected = highlightedKey == key,
+                                onClick = { updateHighlightedKey(if (highlightedKey != key) key else null) })
+                        ) {
                             Box(
                                 modifier = Modifier.width(30.dp).height(6.dp).padding(end = 4.dp)
-                                    .align(
-                                        Alignment.CenterVertically
-                                    )
+                                    .align(Alignment.CenterVertically)
                                     .background(ColorPalette.getColor(i))
                             )
-                            Text(text = key)
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = key,
+                                fontWeight = FontWeight(if (highlightedKey == key) 600 else 400)
+                            )
                         }
                     }
                 }

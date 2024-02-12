@@ -48,7 +48,6 @@ import com.alekso.dltstudio.user.UserStateLegend
 import com.alekso.dltstudio.user.UserStateView
 import kotlinx.coroutines.launch
 import java.io.File
-import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -70,6 +69,8 @@ fun TimeLinePanel(
     val coroutineScope = rememberCoroutineScope()
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
+    var memtHighlight by remember { mutableStateOf<String?>(null) }
+    var cpuppidHighlight by remember { mutableStateOf<String?>(null) }
 
     val dragCallback = { pe: PointerEvent, width: Int ->
         if (dltSession != null) {
@@ -78,6 +79,9 @@ fun TimeLinePanel(
             offsetUpdate(offsetSec + (dragAmount / secSize / scale))
         }
     }
+    val legendsHighlight = mutableMapOf<String, (String?) -> Unit>()
+    legendsHighlight["MEMT"] = { key -> memtHighlight = key }
+    legendsHighlight["CPU_PER_PID"] = { key -> cpuppidHighlight = key }
 
     Column(modifier = modifier) {
         TimelineToolbar(
@@ -185,7 +189,9 @@ fun TimeLinePanel(
                         TimelineLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                             title = "CPU usage by process",
-                            entries = dltSession.userEntries["CPU_PER_PID"]
+                            entries = dltSession.userEntries["CPU_PER_PID"],
+                            { key -> legendsHighlight["CPU_PER_PID"]?.invoke(key) },
+                            highlightedKey = cpuppidHighlight
                         )
                         TimelinePercentageView(
                             modifier = Modifier.height(200.dp).fillMaxWidth()
@@ -194,6 +200,7 @@ fun TimeLinePanel(
                                     onEvent = { dragCallback(it, size.width) }),
                             entries = dltSession.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
                             timeFrame = timeFrame,
+                            highlightedKey = cpuppidHighlight
                         )
                     }
                 },
@@ -202,7 +209,9 @@ fun TimeLinePanel(
                         TimelineLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                             title = "Memory usage",
-                            entries = dltSession.userEntries["MEMT"]
+                            entries = dltSession.userEntries["MEMT"],
+                            { key -> legendsHighlight["MEMT"]?.invoke(key) },
+                            highlightedKey = memtHighlight
                         )
                         TimelineMinMaxValueView(
                             modifier = Modifier.height(200.dp).fillMaxWidth()
@@ -211,7 +220,8 @@ fun TimeLinePanel(
                                     onEvent = { dragCallback(it, size.width) }),
                             entries = dltSession.userEntries["MEMT"] as TimelineMinMaxEntries?,
                             timeFrame = timeFrame,
-                            seriesPostfix = " Mb"
+                            seriesPostfix = " Mb",
+                            highlightedKey = memtHighlight
                         )
                     }
                 },

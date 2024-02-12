@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -33,7 +34,8 @@ fun TimelineMinMaxValueView(
     timeFrame: TimeFrame,
     splitTimeSec: Float = 999f,
     seriesPostfix: String = "",
-    showVerticalSeries: Boolean = false
+    showVerticalSeries: Boolean = false,
+    highlightedKey: String? = null,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val seriesTextStyle = remember { TextStyle(color = Color.LightGray, fontSize = 10.sp) }
@@ -70,29 +72,68 @@ fun TimelineMinMaxValueView(
         val map = entries.getEntriesMap()
         map.keys.forEachIndexed { index, key ->
             val items = map[key]
-            items?.forEachIndexed entriesIteration@{ i, entry ->
-                if (i == 0) return@entriesIteration
-
-                val prev = items[i - 1]
-                val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000f
-                // split lines if difference is too big
-                if (prevDiffSec > splitTimeSec) {
-                    return@entriesIteration
-                }
-                val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000f * secSizePx
-                val prevY = height - height * prev.value.toFloat() / entries.maxValue
-
-                val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000f * secSizePx)
-                val curY = height - height * entry.value.toFloat() / entries.maxValue
-
-                drawLine(
-                    ColorPalette.getColor(index),
-                    Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY),
-                    Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
-                    strokeWidth = 1.dp.toPx(),
-                )
-            }
+            renderLines(
+                items,
+                splitTimeSec,
+                timeFrame,
+                secSizePx,
+                height,
+                entries,
+                ColorPalette.getColor(index),
+                highlightedKey,
+                key
+            )
         }
+
+        if (highlightedKey != null) {
+            val items = map[highlightedKey]
+            renderLines(
+                items,
+                splitTimeSec,
+                timeFrame,
+                secSizePx,
+                height,
+                entries,
+                Color.Green,
+                highlightedKey,
+                highlightedKey
+            )
+        }
+    }
+}
+
+private fun DrawScope.renderLines(
+    items: MutableList<TimelineEntry>?,
+    splitTimeSec: Float,
+    timeFrame: TimeFrame,
+    secSizePx: Float,
+    height: Float,
+    entries: TimelineMinMaxEntries,
+    color: Color,
+    highlightedKey: String?,
+    key: String
+) {
+    items?.forEachIndexed entriesIteration@{ i, entry ->
+        if (i == 0) return@entriesIteration
+
+        val prev = items[i - 1]
+        val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000f
+        // split lines if difference is too big
+        if (prevDiffSec > splitTimeSec) {
+            return@entriesIteration
+        }
+        val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000f * secSizePx
+        val prevY = height - height * prev.value.toFloat() / entries.maxValue
+
+        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000f * secSizePx)
+        val curY = height - height * entry.value.toFloat() / entries.maxValue
+
+        drawLine(
+            color,
+            Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY),
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+            strokeWidth = if (highlightedKey != null && highlightedKey == key) 2.dp.toPx() else 1f
+        )
     }
 }
 
@@ -139,7 +180,8 @@ fun PreviewTimelineMinMaxValueView() {
                 modifier = Modifier.fillMaxWidth().height(200.dp),
                 entries = entries,
                 timeFrame = timeFrame,
-                seriesPostfix = " Mb"
+                seriesPostfix = " Mb",
+                highlightedKey = "1325"
             )
         }
     }
