@@ -43,13 +43,6 @@ fun TimelineMinMaxValueView(
         //val secSizePx: Float = (size.width / dltSession.totalSeconds) * scale
         val secSize: Float = width / (dltSession.totalSeconds * 1.dp.toPx())
 
-        drawText(
-            textMeasurer,
-            text = "SecSize: $secSize; -> ${secSize.dp.toPx()};",
-            topLeft = Offset(3.dp.toPx(), 3.dp.toPx()),
-            style = TextStyle(color = Color.LightGray, fontSize = 12.sp)
-        )
-
         if (entries == null) return@Canvas
         entries.minValue = 0f
         val step = (entries.maxValue - entries.minValue) / SERIES_COUNT
