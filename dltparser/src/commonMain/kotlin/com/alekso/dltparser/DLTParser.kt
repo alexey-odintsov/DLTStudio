@@ -126,7 +126,7 @@ object DLTParser {
                             shouldLog,
                             j,
                             bytes,
-                            i,
+                            i + payloadSelfSize,
                             if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
                         )
                         arguments.add(verbosePayloadArgument)
