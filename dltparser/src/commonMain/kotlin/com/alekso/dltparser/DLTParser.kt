@@ -116,8 +116,12 @@ object DLTParser {
                         "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
                     )
                 }
-                for (j in 0..<extendedHeader.argumentsCount.toInt()) {
-                    try {
+                val payloadSize =
+                    (standardHeader.length.toLong() - standardHeader.getSize() - extendedHeader.getSize()).toInt()
+                var payloadSelfSize = 0
+                try {
+                    for (j in 0..<extendedHeader.argumentsCount.toInt()) {
+
                         val verbosePayloadArgument = parseVerbosePayload(
                             shouldLog,
                             j,
@@ -126,11 +130,16 @@ object DLTParser {
                             if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
                         )
                         arguments.add(verbosePayloadArgument)
-                        i += verbosePayloadArgument.getSize()
-                    } catch (e: Exception) {
-                        println("SH: $standardHeader; EH: $extendedHeader; PL: $arguments")
+                        payloadSelfSize += verbosePayloadArgument.getSize()
                     }
+                } catch (e: Exception) {
+                    println("$e SH: $standardHeader; EH: $extendedHeader; PL: $arguments")
                 }
+
+//                if (payloadSize != payloadSelfSize) {
+//                    println("$payloadSize != $payloadSelfSize")
+//                }
+                i += payloadSize
                 payload = VerbosePayload(arguments)
             } else {
                 // todo: Parse NonVerbose data
