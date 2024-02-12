@@ -48,6 +48,7 @@ import com.alekso.dltstudio.user.UserStateLegend
 import com.alekso.dltstudio.user.UserStateView
 import kotlinx.coroutines.launch
 import java.io.File
+import java.sql.Time
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -99,6 +100,12 @@ fun TimeLinePanel(
         Divider()
 
         if (dltSession != null) {
+            val timeFrame = TimeFrame(
+                timestampStart = dltSession.timeStart,
+                timestampEnd = dltSession.timeEnd,
+                scale = scale,
+                offsetSeconds = offsetSec
+            )
 
             Text(
                 "Time range: ${simpleDateFormat.format(dltSession.timeStart)} .. ${
@@ -146,14 +153,12 @@ fun TimeLinePanel(
                             entries = dltSession.userEntries["MEMT"]
                         )
                         TimelineMinMaxValueView(
-                            offsetSec = offsetSec,
-                            scale = scale,
                             modifier = Modifier.height(200.dp).fillMaxWidth()
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
                             entries = dltSession.userEntries["MEMT"] as TimelineMinMaxEntries?,
-                            dltSession = dltSession,
+                            timeFrame = timeFrame,
                             seriesPostfix = " Mb"
                         )
                     }
