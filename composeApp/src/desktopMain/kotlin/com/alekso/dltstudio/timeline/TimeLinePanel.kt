@@ -44,8 +44,6 @@ import com.alekso.dltstudio.cpu.CPUCLegend
 import com.alekso.dltstudio.cpu.CPUSLegend
 import com.alekso.dltstudio.cpu.CPUSView
 import com.alekso.dltstudio.cpu.CPUUsageView
-import com.alekso.dltstudio.memory.MemoryLegend
-import com.alekso.dltstudio.memory.MemoryView
 import com.alekso.dltstudio.user.UserStateLegend
 import com.alekso.dltstudio.user.UserStateView
 import kotlinx.coroutines.launch
@@ -214,25 +212,6 @@ fun TimeLinePanel(
                         )
                     }
                 },
-                {
-                    Row {
-                        MemoryLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
-                            map = dltSession.memt
-                        )
-                        MemoryView(
-                            modifier = Modifier.height(300.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-
-                            map = dltSession.memt,
-                            offset = offsetSec,
-                            scale = scale,
-                            dltSession = dltSession
-                        )
-                    }
-                }
             )
             Box(modifier = Modifier.weight(1f)) {
                 LazyColumn(Modifier.onPointerEvent(
@@ -274,9 +253,17 @@ fun TimeLinePanel(
 
                     drawText(
                         textMeasurer,
-                        text = "${simpleTimeFormat.format(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
+                        text = "${simpleTimeFormat.format(cursorTimestamp)} (${
+                            "%+.2f".format(
+                                cursorOffsetSec
+                            )
+                        })",
                         topLeft = Offset(cursorPosition.x + 4.dp.toPx(), 4.dp.toPx()),
-                        style = TextStyle(color = Color.Yellow, fontSize = 10.sp, background = Color(0x80808080))
+                        style = TextStyle(
+                            color = Color.Yellow,
+                            fontSize = 10.sp,
+                            background = Color(0x80808080)
+                        )
                     )
                 }
             }

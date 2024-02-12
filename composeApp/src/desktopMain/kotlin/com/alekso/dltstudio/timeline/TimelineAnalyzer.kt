@@ -8,13 +8,10 @@ import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.cpu.CPUAnalyzer
 import com.alekso.dltstudio.cpu.CPUSEntry
 import com.alekso.dltstudio.cpu.CPUUsageEntry
-import com.alekso.dltstudio.memory.MemoryAnalyzer
-import com.alekso.dltstudio.memory.MemoryUsageEntry
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlin.time.measureTime
 
 
 object TimelineAnalyzer {
@@ -79,7 +76,6 @@ object TimelineAnalyzer {
         // we need copies of ParseSession's collections to prevent ConcurrentModificationException
         val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
         val _cpus = mutableStateListOf<CPUSEntry>()
-        val _memt = mutableMapOf<String, MutableList<MemoryUsageEntry>>()
         val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
         val _userEntries = mutableMapOf<String, TimelineEntries>()
 
@@ -102,7 +98,6 @@ object TimelineAnalyzer {
 
                 analyzeCPUC(message, _cpuUsage, index)
                 analyzeCPUS(message, _cpus, index)
-                analyzeMemory(message, index, _memt)
                 analyzeUserState(message, index, _userState)
                 val pattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(".toRegex()
                 analyzeEntriesRegex(
@@ -129,8 +124,6 @@ object TimelineAnalyzer {
             dltSession.cpuUsage.addAll(_cpuUsage)
             dltSession.cpus.clear()
             dltSession.cpus.addAll(_cpus)
-            dltSession.memt.clear()
-            dltSession.memt = _memt
             dltSession.userStateEntries = _userState
             dltSession.userEntries = _userEntries
         }
@@ -195,25 +188,4 @@ object TimelineAnalyzer {
         }
     }
 
-    private fun analyzeMemory(
-        message: DLTMessage,
-        index: Int,
-        _memt: MutableMap<String, MutableList<MemoryUsageEntry>>
-    ) {
-        if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
-                "MON"
-            ) == true &&
-            message.extendedHeader?.contextId == "MEMT"
-        ) {
-            try {
-                val memt = MemoryAnalyzer.analyzeMemoryUsage(index, message)
-                if (!_memt.containsKey(memt.name)) {
-                    _memt[memt.name] = mutableListOf()
-                }
-                (_memt[memt.name] as MutableList).add(memt)
-            } catch (e: Exception) {
-                // skip
-            }
-        }
-    }
 }
