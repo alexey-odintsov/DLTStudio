@@ -134,14 +134,12 @@ fun TimeLinePanel(
                             entries = dltSession.userEntries["CPU_PER_PID"]
                         )
                         TimelinePercentageView(
-                            offsetSec = offsetSec,
-                            scale = scale,
                             modifier = Modifier.height(200.dp).fillMaxWidth()
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
                             entries = dltSession.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
-                            dltSession = dltSession
+                            timeFrame = timeFrame,
                         )
                     }
                 },

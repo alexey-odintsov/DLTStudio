@@ -4,9 +4,11 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
@@ -15,7 +17,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ParseSession
+import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.colors.ColorPalette
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -25,17 +27,19 @@ import java.util.Locale
 fun TimelinePercentageView(
     modifier: Modifier,
     entries: TimelinePercentageEntries?,
-    offsetSec: Float = 0f,
-    scale: Float = 1f,
-    dltSession: ParseSession,
-    splitTimeSec: Float = 5f,
+    timeFrame: TimeFrame,
+    splitTimeSec: Float = 999f,
+    showVerticalSeries: Boolean = false
 ) {
     val textMeasurer = rememberTextMeasurer()
+    val seriesTextStyle = remember { TextStyle(color = Color.LightGray, fontSize = 10.sp) }
 
     Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
         val height = size.height
         val width = size.width
-        val secSize: Float = width / (dltSession.totalSeconds * 1.dp.toPx())
+        val secSizePx: Float = timeFrame.calculateSecSizePx(width)
+
+        if (entries == null) return@Canvas
 
         for (i in 0..100 step 10) {
             drawLine(
@@ -48,35 +52,41 @@ fun TimelinePercentageView(
                 textMeasurer,
                 text = "${100 - i}%",
                 topLeft = Offset(3.dp.toPx(), height * i / 100f),
-                style = TextStyle(color = Color.LightGray)
+                style = seriesTextStyle
             )
         }
 
-        val map = entries?.getEntriesMap()
-        map?.keys?.forEachIndexed { index, key ->
+        if (showVerticalSeries) {
+            for (i in 0..timeFrame.getTotalSeconds()) {
+                val x = timeFrame.offsetSeconds * secSizePx + i * secSizePx
+                drawLine(Color.LightGray, Offset(x, 0f), Offset(x, height), alpha = 0.2f)
+            }
+        }
+
+        val map = entries.getEntriesMap()
+        map.keys.forEachIndexed { index, key ->
             val items = map[key]
             items?.forEachIndexed memEntriesIteration@{ i, entry ->
                 if (i == 0) return@memEntriesIteration
-                val prev = if (i > 0) items[i - 1] else null
 
-                val prevX = if (prev != null) {
-                    val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000f
-                    // split lines if difference is too big
-                    if (prevDiffSec > splitTimeSec) {
-                        return@memEntriesIteration
-                    } else (prev.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx()
-                } else {
-                    0f
+                val prev = items[i - 1]
+                val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000f
+                // split lines if difference is too big
+                if (prevDiffSec > splitTimeSec) {
+                    return@memEntriesIteration
                 }
-                val curX = ((entry.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
 
+                val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000f * secSizePx
+                val prevY = height - height * prev.value.toFloat() / 100f
 
-                val prevY = if (prev != null) height - height * prev.value.toFloat() / 100f else 0f
+                val curX = (entry.timestamp - timeFrame.timestampStart) / 1000f * secSizePx
                 val curY = height - height * entry.value.toFloat() / 100f
+
                 drawLine(
                     ColorPalette.getColor(index),
-                    Offset(offsetSec * secSize.dp.toPx() * scale + prevX * scale, prevY),
-                    Offset(offsetSec * secSize.dp.toPx() * scale + curX * scale, curY),
+                    Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY),
+                    Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+                    strokeWidth = 1.dp.toPx(),
                 )
             }
         }
@@ -88,11 +98,9 @@ private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Local
 @Preview
 @Composable
 fun PreviewTimelineView() {
-    val dltSession = ParseSession({}, emptyList())
+    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
     val ts = Instant.now().toEpochMilli()
-
-    dltSession.timeStart = ts
-    dltSession.timeEnd = ts + 7000
+    val te = ts + 7000
 
     val entries = TimelinePercentageEntries()
     entries.entries["1325"] = mutableListOf(
@@ -112,15 +120,21 @@ fun PreviewTimelineView() {
     )
 
     Column {
-        Text(text = "start: ${simpleDateFormat.format(dltSession.timeStart)} (${dltSession.timeStart})")
-        Text(text = "end: ${simpleDateFormat.format(dltSession.timeEnd)} (${dltSession.timeEnd})")
-        Text(text = "seconds: ${dltSession.totalSeconds}")
-        TimelinePercentageView(
-            modifier = Modifier.fillMaxSize(),
-            entries = entries,
-            offsetSec = 0f,
-            dltSession = dltSession,
-            scale = 1f
-        )
+        for (i in 1..3) {
+            val timeFrame = TimeFrame(
+                timestampStart = ts,
+                timestampEnd = te,
+                scale = i.toFloat(),
+                offsetSeconds = 0f
+            )
+            Text(text = "start: ${simpleDateFormat.format(ts)}")
+            Text(text = "end: ${simpleDateFormat.format(te)}")
+            Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
+            TimelinePercentageView(
+                modifier = Modifier.fillMaxWidth().height(200.dp),
+                entries = entries,
+                timeFrame = timeFrame,
+            )
+        }
     }
 }
