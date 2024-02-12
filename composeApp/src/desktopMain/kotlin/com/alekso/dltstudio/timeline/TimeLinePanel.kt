@@ -128,41 +128,6 @@ fun TimeLinePanel(
             val panels = mutableStateListOf<@Composable () -> Unit>(
                 {
                     Row {
-                        TimelineLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
-                            title = "CPU usage by process",
-                            entries = dltSession.userEntries["CPU_PER_PID"]
-                        )
-                        TimelinePercentageView(
-                            modifier = Modifier.height(200.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-                            entries = dltSession.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
-                            timeFrame = timeFrame,
-                        )
-                    }
-                },
-                {
-                    Row {
-                        TimelineLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
-                            title = "Memory usage",
-                            entries = dltSession.userEntries["MEMT"]
-                        )
-                        TimelineMinMaxValueView(
-                            modifier = Modifier.height(200.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-                            entries = dltSession.userEntries["MEMT"] as TimelineMinMaxEntries?,
-                            timeFrame = timeFrame,
-                            seriesPostfix = " Mb"
-                        )
-                    }
-                },
-                {
-                    Row {
                         UserStateLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(100.dp),
                             map = dltSession.userStateEntries
@@ -212,6 +177,41 @@ fun TimeLinePanel(
                                     onEvent = { dragCallback(it, size.width) }),
                             items = dltSession.cpus,
                             dltSession = dltSession
+                        )
+                    }
+                },
+                {
+                    Row {
+                        TimelineLegend(
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
+                            title = "CPU usage by process",
+                            entries = dltSession.userEntries["CPU_PER_PID"]
+                        )
+                        TimelinePercentageView(
+                            modifier = Modifier.height(200.dp).fillMaxWidth()
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
+                            entries = dltSession.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
+                            timeFrame = timeFrame,
+                        )
+                    }
+                },
+                {
+                    Row {
+                        TimelineLegend(
+                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
+                            title = "Memory usage",
+                            entries = dltSession.userEntries["MEMT"]
+                        )
+                        TimelineMinMaxValueView(
+                            modifier = Modifier.height(200.dp).fillMaxWidth()
+                                .onPointerEvent(
+                                    PointerEventType.Move,
+                                    onEvent = { dragCallback(it, size.width) }),
+                            entries = dltSession.userEntries["MEMT"] as TimelineMinMaxEntries?,
+                            timeFrame = timeFrame,
+                            seriesPostfix = " Mb"
                         )
                     }
                 },
