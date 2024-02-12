@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ParseSession
-import com.alekso.dltstudio.cpu.CPUPanel
 import com.alekso.dltstudio.logs.CellColorFilter
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.ColorFilterError
@@ -145,7 +144,7 @@ fun MainWindow() {
     )
 
     Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
-        TabsPanel(tabIndex, listOf("Logs", "CPU", "Timeline"), tabClickListener)
+        TabsPanel(tabIndex, listOf("Logs", "Timeline"), tabClickListener)
 
         val mergedFilters = mutableListOf<CellColorFilter>()
         mergedFilters.addAll(colorFilters)
@@ -178,8 +177,7 @@ fun MainWindow() {
                 )
             }
 
-            1 -> CPUPanel(modifier = Modifier.weight(1f), dltSession, statusBarProgressCallback)
-            2 -> TimeLinePanel(
+            1 -> TimeLinePanel(
                 modifier = Modifier.weight(1f),
                 dltSession,
                 statusBarProgressCallback,
