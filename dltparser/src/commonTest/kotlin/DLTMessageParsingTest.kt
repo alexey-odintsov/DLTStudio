@@ -80,7 +80,43 @@ class DLTMessageParsingTest {
         // @formatter:on
 
         val data = raw.map { it.toByte() }.toByteArray()
-        val actual = DLTParser.parseDLTMessage(data, 0, false)
+        val actual = DLTParser.parseDLTMessage(data, 0, true)
+        val expected = actual
+        Assert.assertTrue("$actual != $expected", actual == expected)
+    }
+
+    @Test
+    fun parseBrokenDLTMessage3() {
+        // @formatter:off
+        val raw = listOf(
+            0x44, 0x4C, 0x54, 0x01, // DLT
+            0x25, 0x83, 0xB6, 0x65, // TS Sec
+            0x42, 0xFC, 0x09, 0x00, // TS Nano
+            0x55, 0x48, 0x01, 0x01, // ECUID 'UH..'
+            // Standard header
+            0x3D, // HTYP
+            0x19, // MCNT
+            0x00, 0x44, // LEN (68)
+            0x55, 0x48, 0x01, 0x01, // ECU ID 'UH..'
+            0x00, 0x00, 0x00, 0x3D, // Session ID
+            0x0B, 0x00, 0x41, 0x45, // Timestamp
+            // Extended header
+            0x43, // MSIN
+            // U
+            0x55, // NOAR
+            // 1
+            0x31, 0x00, 0x00, 0x5E, // App ID
+            0xDD, 0x01, 0xBC, 0x84, // Context ID
+            //    !           C     H     D     D     C     D     0
+            0x82, 0x21, 0x01, 0x43, 0x48, 0x44, 0x44, 0x43, 0x44, 0x48, 0x00, 0x00, 0x02, 0x00, 0x00,
+            //          F     i     l     e     ' '   s     y     s     t     e     m     ' '   p
+            0x21, 0x00, 0x46, 0x69, 0x6C, 0x65, 0x20, 0x73, 0x79, 0x73, 0x74, 0x65, 0x6D, 0x20, 0x70,
+            // a  t     h     ' '   l     e     n     g     h     t     ' '   t
+            0x61, 0x74, 0x68, 0x20, 0x6C, 0x65, 0x6E, 0x67, 0x68, 0x74, 0x20, 0x74 )
+        // @formatter:on
+
+        val data = raw.map { it.toByte() }.toByteArray()
+        val actual = DLTParser.parseDLTMessage(data, 0, true)
         val expected = actual
         Assert.assertTrue("$actual != $expected", actual == expected)
     }
