@@ -42,7 +42,11 @@ data class VerbosePayload(
                     when (typeInfo.typeLengthBits) {
                         8 -> "${payload[0].toUInt()}"
                         16 -> "${payload.readShort(0, Endian.LITTLE).toUShort()}"
-                        else -> "${payload.readInt(0, Endian.LITTLE).toUInt()}"
+                        else -> try {
+                            "${payload.readInt(0, Endian.LITTLE).toUInt()}"
+                        } catch (e: Exception) {
+                            e.toString()
+                        }
                     }
                 }
 
@@ -50,7 +54,11 @@ data class VerbosePayload(
                     when (typeInfo.typeLengthBits) {
                         8 -> "${payload[0].toInt()}"
                         16 -> "${payload.readShort(0, Endian.LITTLE).toInt()}"
-                        else -> "${payload.readInt(0, Endian.LITTLE).toUInt()}"
+                        else -> try {
+                            "${payload.readInt(0, Endian.LITTLE).toUInt()}"
+                        } catch (e: Exception) {
+                            e.toString()
+                        }
                     }
 
                 typeInfo.typeBool -> if (payload[0] == 0.toByte()) "FALSE" else "TRUE"
