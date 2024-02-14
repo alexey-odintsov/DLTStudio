@@ -60,6 +60,7 @@ fun LogsPanel(
     updateSearchUseRegexCheck: (Boolean) -> Unit,
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
+    onFilterUpdate: (Int, ColorFilter) -> Unit
 ) {
     var selectedRow by remember { mutableStateOf(0) }
     var searchResultSelectedRow by remember { mutableStateOf(0) }
@@ -81,11 +82,14 @@ fun LogsPanel(
             { dialogState.value = true }
         )
 
-        ColorFiltersDialog(
-            visible = dialogState.value,
-            onDialogClosed = { dialogState.value = false },
-            colorFilters = colorFilters
-        )
+        if (dialogState.value) {
+            ColorFiltersDialog(
+                visible = dialogState.value,
+                onDialogClosed = { dialogState.value = false },
+                colorFilters = colorFilters,
+                onFilterUpdate = onFilterUpdate
+            )
+        }
 
         Divider()
         val mergedFilters = mutableListOf<ColorFilter>()
@@ -208,5 +212,6 @@ fun PreviewLogsPanel() {
         updateSearchUseRegexCheck = { },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
+        onFilterUpdate = { i, f -> }
     )
 }

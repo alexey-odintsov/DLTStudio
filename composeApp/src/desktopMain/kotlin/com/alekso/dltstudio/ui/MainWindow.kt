@@ -59,6 +59,20 @@ fun MainWindow() {
             )
         )
     }
+
+    // todo: User color filters goes here.
+    val colorFilters by remember {
+        mutableStateOf(
+            mutableListOf(
+                ColorFilter(
+                    "SIP",
+                    mapOf(FilterParameter.ContextId to "TC"),
+                    CellStyle(backgroundColor = Color.Green, textColor = Color.White)
+                ),
+            )
+        )
+    }
+
     var searchUseRegex by remember { mutableStateOf(true) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -133,15 +147,6 @@ fun MainWindow() {
         }
     }
 
-    // todo: User color filters goes here.
-    val colorFilters = listOf(
-        ColorFilter(
-            "SIP",
-            mapOf(FilterParameter.ContextId to "TC"),
-            CellStyle(backgroundColor = Color.Green, textColor = Color.White)
-        ),
-    )
-
     Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
         TabsPanel(tabIndex, listOf("Logs", "Timeline"), tabClickListener)
 
@@ -161,6 +166,11 @@ fun MainWindow() {
                     updateSearchUseRegexCheck,
                     vSplitterState,
                     hSplitterState,
+                    onFilterUpdate = { index, updatedFilter ->
+                        if (index < 0 || index > colorFilters.size) {
+                            colorFilters.add(updatedFilter)
+                        } else colorFilters[index] = updatedFilter
+                    }
                 )
             }
 

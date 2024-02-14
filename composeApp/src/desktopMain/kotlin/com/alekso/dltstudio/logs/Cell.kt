@@ -16,7 +16,11 @@ import androidx.compose.ui.unit.sp
 data class CellStyle(
     val backgroundColor: Color? = null,
     val textColor: Color? = null
-)
+) {
+    companion object {
+        val Default = CellStyle()
+    }
+}
 
 @Composable
 @Preview

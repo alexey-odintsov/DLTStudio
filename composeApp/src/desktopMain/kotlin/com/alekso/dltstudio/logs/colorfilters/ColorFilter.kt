@@ -48,6 +48,10 @@ data class ColorFilter(
         }
 
     }
+
+    companion object {
+        val Empty = ColorFilter("New filter", mutableMapOf(), CellStyle.Default)
+    }
 }
 
 val ColorFilterWarn = ColorFilter(
