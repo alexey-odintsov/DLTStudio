@@ -6,13 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.ui.Panel
 
 @Composable
 fun LogsListPanel(
     modifier: Modifier = Modifier,
     messages: List<DLTMessage>,
-    colorFilters: List<CellColorFilter>,
+    colorFilters: List<ColorFilter>,
     selectedRow: Int,
     selectedRowCallback: (Int, Int) -> Unit
 ) {

@@ -48,7 +48,8 @@ fun LogsToolbar(
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateSearchUseRegexCheck: (Boolean) -> Unit
+    updateSearchUseRegexCheck: (Boolean) -> Unit,
+    onColorFiltersClicked: () -> Unit,
 ) {
     // Toolbar
     Row {
@@ -73,6 +74,11 @@ fun LogsToolbar(
             checkedTintColor = Color(0xE7, 0x62, 0x29),
             updateCheckedState = updateToolbarWarningCheck
         )
+
+        ImageButton(modifier = Modifier.size(32.dp),
+            iconName = "icon_color_filters.xml",
+            title = "Color filters",
+            onClick = onColorFiltersClicked)
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
@@ -119,6 +125,7 @@ fun PreviewLogsToolbar() {
         updateToolbarFatalCheck = {},
         updateToolbarErrorCheck = {},
         updateToolbarWarningCheck = {},
-        updateSearchUseRegexCheck = {}
+        updateSearchUseRegexCheck = {},
+        onColorFiltersClicked = {},
     )
 }

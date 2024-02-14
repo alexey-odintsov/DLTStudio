@@ -24,6 +24,11 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.ParseSession
+import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
+import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
+import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
+import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
@@ -45,7 +50,7 @@ fun LogsPanel(
     modifier: Modifier = Modifier,
     searchText: String,
     dltSession: ParseSession?,
-    colorFilters: List<CellColorFilter> = emptyList(),
+    colorFilters: List<ColorFilter> = emptyList(),
     searchUseRegex: Boolean,
     logsToolbarState: LogsToolbarState,
     updateSearchText: (String) -> Unit,
@@ -61,6 +66,7 @@ fun LogsPanel(
     val dltMessages = dltSession?.dltMessages ?: emptyList()
     val searchResult = dltSession?.searchResult ?: emptyList()
     val searchIndexes = dltSession?.searchIndexes ?: emptyList()
+    val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         LogsToolbar(
@@ -72,8 +78,28 @@ fun LogsPanel(
             updateToolbarErrorCheck,
             updateToolbarWarningCheck,
             updateSearchUseRegexCheck,
+            { dialogState.value = true }
         )
+
+        ColorFiltersDialog(
+            visible = dialogState.value,
+            onDialogClosed = { dialogState.value = false },
+            colorFilters = colorFilters
+        )
+
         Divider()
+        val mergedFilters = mutableListOf<ColorFilter>()
+        mergedFilters.addAll(colorFilters)
+        if (logsToolbarState.toolbarWarningChecked) {
+            mergedFilters.add(ColorFilterWarn)
+        }
+        if (logsToolbarState.toolbarErrorChecked) {
+            mergedFilters.add(ColorFilterError)
+        }
+        if (logsToolbarState.toolbarFatalChecked) {
+            mergedFilters.add(ColorFilterFatal)
+        }
+
 
         VerticalSplitPane(splitPaneState = vSplitterState) {
             first(300.dp) {
@@ -84,7 +110,7 @@ fun LogsPanel(
                         LogsListPanel(
                             Modifier.fillMaxSize(),
                             dltMessages,
-                            colorFilters,
+                            mergedFilters,
                             selectedRow,
                             selectedRowCallback = { i, messageIndex -> selectedRow = i }
                         )
@@ -123,7 +149,7 @@ fun LogsPanel(
                     Modifier.fillMaxSize(),
                     searchResult,
                     searchIndexes,
-                    colorFilters,
+                    mergedFilters,
                     searchResultSelectedRow,
                     selectedRowCallback = { i, messageIndex ->
                         if (searchResultSelectedRow == i) {

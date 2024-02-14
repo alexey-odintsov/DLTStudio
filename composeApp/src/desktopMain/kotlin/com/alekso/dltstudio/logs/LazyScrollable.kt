@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -28,7 +29,7 @@ fun LazyScrollable(
     modifier: Modifier,
     dltMessages: List<DLTMessage>,
     indexes: List<Int>? = null,
-    colorFilters: List<CellColorFilter>,
+    colorFilters: List<ColorFilter>,
     selectedRow: Int,
     selectedRowCallback: (Int, Int) -> Unit,
 ) {
@@ -56,7 +57,7 @@ fun LazyScrollable(
                 items(dltMessages.size) { i ->
                     val message = dltMessages[i]
                     val cellStyle =
-                        colorFilters.firstOrNull { it.condition(message) }?.cellStyle
+                        colorFilters.firstOrNull { filter -> filter.assess(message) }?.cellStyle
 
                     val index: Int = if (indexes != null) indexes[i] else i
                     val sTime: String = simpleDateFormat.format(message.getTimeStamp())

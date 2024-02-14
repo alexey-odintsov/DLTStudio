@@ -22,13 +22,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ParseSession
-import com.alekso.dltstudio.logs.CellColorFilter
 import com.alekso.dltstudio.logs.CellStyle
-import com.alekso.dltstudio.logs.ColorFilterError
-import com.alekso.dltstudio.logs.ColorFilterFatal
-import com.alekso.dltstudio.logs.ColorFilterWarn
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -137,26 +135,15 @@ fun MainWindow() {
 
     // todo: User color filters goes here.
     val colorFilters = listOf(
-        CellColorFilter(
-            { msg -> msg.extendedHeader?.applicationId.equals("VSIP") },
-            CellStyle(backgroundColor = Color.Green)
+        ColorFilter(
+            "SIP",
+            mapOf(FilterParameter.ContextId to "TC"),
+            CellStyle(backgroundColor = Color.Green, textColor = Color.White)
         ),
     )
 
     Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
         TabsPanel(tabIndex, listOf("Logs", "Timeline"), tabClickListener)
-
-        val mergedFilters = mutableListOf<CellColorFilter>()
-        mergedFilters.addAll(colorFilters)
-        if (logsToolbarState.toolbarWarningChecked) {
-            mergedFilters.add(ColorFilterWarn)
-        }
-        if (logsToolbarState.toolbarErrorChecked) {
-            mergedFilters.add(ColorFilterError)
-        }
-        if (logsToolbarState.toolbarFatalChecked) {
-            mergedFilters.add(ColorFilterFatal)
-        }
 
         when (tabIndex) {
             0 -> {
@@ -164,7 +151,7 @@ fun MainWindow() {
                     modifier = Modifier.weight(1f),
                     searchText,
                     dltSession,
-                    mergedFilters,
+                    colorFilters,
                     searchUseRegex,
                     logsToolbarState,
                     updateSearchText,
