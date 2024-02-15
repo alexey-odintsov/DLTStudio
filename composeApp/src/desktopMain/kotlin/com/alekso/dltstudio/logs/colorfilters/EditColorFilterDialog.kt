@@ -41,7 +41,7 @@ fun EditColorFilterDialog(
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
-        title = "Color Filters",
+        title = if (colorFilterIndex >= 0) "Edit Color Filter" else "Add new color filter",
         state = DialogState(width = 700.dp, height = 500.dp)
     ) {
         EditColorFilterPanel(colorFilter, colorFilterIndex, onFilterUpdate, onDialogClosed)
@@ -163,7 +163,7 @@ fun EditColorFilterPanel(
             )
             onDialogClosed()
         }) {
-            Text(text = "Update")
+            Text(text = if (colorFilterIndex >= 0) "Update" else "Add")
         }
 
     }
