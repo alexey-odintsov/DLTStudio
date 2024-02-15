@@ -63,6 +63,7 @@ fun EditColorFilterPanel(
     var ecuId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.EcuId]) }
     var appId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.AppId]) }
     var contextId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.ContextId]) }
+    var sessionId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.SessionId]) }
     var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
@@ -130,6 +131,16 @@ fun EditColorFilterPanel(
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(modifier = colNameStyle, text = "Session ID")
+            SearchEditText(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
+                value = sessionId ?: "", onValueChange = {
+                    sessionId = it
+                }
+            )
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Payload")
             SearchEditText(
                 modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
@@ -149,6 +160,9 @@ fun EditColorFilterPanel(
             }
             contextId?.let {
                 map[FilterParameter.ContextId] = it
+            }
+            sessionId?.let {
+                map[FilterParameter.SessionId] = it
             }
             payload?.let {
                 map[FilterParameter.Payload] = it
