@@ -67,7 +67,14 @@ fun MainWindow() {
                 ColorFilter(
                     "SIP",
                     mapOf(FilterParameter.ContextId to "TC"),
-                    CellStyle(backgroundColor = Color.Green, textColor = Color.White)
+                    CellStyle(backgroundColor = Color.Green, textColor = Color.White),
+                    enabled = false,
+                ),
+                ColorFilter(
+                    "Logcat",
+                    mapOf(FilterParameter.AppId to "ALD", FilterParameter.ContextId to "LCAT"),
+                    CellStyle(backgroundColor = Color.Magenta, textColor = Color.White),
+                    enabled = true,
                 ),
             )
         )

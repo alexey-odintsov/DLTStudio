@@ -18,11 +18,12 @@ enum class FilterParameter {
 data class ColorFilter(
     val name: String,
     val filters: Map<FilterParameter, String>,
-    val cellStyle: CellStyle
+    val cellStyle: CellStyle,
+    val enabled: Boolean = true,
 ) {
     fun assess(message: DLTMessage): Boolean {
         return filters.all {
-            return@all when (it.key) {
+            return@all enabled && when (it.key) {
                 FilterParameter.MessageType -> {
                     message.extendedHeader?.messageInfo?.messageType?.name == it.value
                 }
