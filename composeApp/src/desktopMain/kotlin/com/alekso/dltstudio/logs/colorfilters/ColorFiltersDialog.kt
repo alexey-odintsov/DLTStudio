@@ -54,14 +54,15 @@ fun ColorFiltersDialog(
 
         ColorFiltersPanel(colorFilters, { i, filter ->
             editDialogState.value = EditDialogState(true, filter, i)
-        })
+        }, onFilterUpdate)
     }
 }
 
 @Composable
 fun ColorFiltersPanel(
     colorFilters: List<ColorFilter>,
-    onEditFilterClick: (Int, ColorFilter) -> Unit
+    onEditFilterClick: (Int, ColorFilter) -> Unit,
+    onFilterUpdate: (Int, ColorFilter) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(4.dp)) {
@@ -72,11 +73,14 @@ fun ColorFiltersPanel(
                     Modifier.padding(horizontal = 4.dp, vertical = 0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    var checked by remember { mutableStateOf(true) }
+                    var checked by remember { mutableStateOf(filter.enabled) }
                     CustomCheckbox(
                         checked = checked,
                         modifier = Modifier.padding(horizontal = 8.dp),
-                        onCheckedChange = { checked = !checked }
+                        onCheckedChange = {
+                            checked = !checked
+                            onFilterUpdate(i, filter.copy(enabled = checked))
+                        }
                     )
 
                     Box(
@@ -125,5 +129,5 @@ fun PreviewColorFiltersDialog() {
         ),
     )
 
-    ColorFiltersPanel(colorFilters, { i, f -> })
+    ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> })
 }
