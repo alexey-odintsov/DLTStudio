@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
 import com.alekso.dltstudio.logs.CellStyle
+import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.EditText
 
 
@@ -68,7 +69,7 @@ fun EditColorFilterPanel(
     var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
-    Column(Modifier.width(1000.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(Modifier.width(1000.dp).padding(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Name")
@@ -158,7 +159,7 @@ fun EditColorFilterPanel(
             )
         }
 
-        TextButton(onClick = {
+        CustomButton(onClick = {
             val map = mutableMapOf<FilterParameter, String>()
             ecuId?.let {
                 map[FilterParameter.EcuId] = it

@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.ButtonDefaults.textButtonColors
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
 import com.alekso.dltstudio.logs.CellStyle
+import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.ImageButton
 
 private val COL_FILTER_NAME_WIDTH_DP = 200.dp
@@ -62,7 +61,7 @@ fun ColorFiltersPanel(
     onEditFilterClick: (Int, ColorFilter) -> Unit
 ) {
 
-    Column {
+    Column(modifier = Modifier.padding(4.dp)) {
         LazyColumn {
             items(colorFilters.size) { i ->
                 val filter = colorFilters[i]
@@ -90,15 +89,14 @@ fun ColorFiltersPanel(
                 }
             }
         }
-        TextButton(
+
+        CustomButton(
             onClick = {
                 onEditFilterClick(
                     -1,
                     ColorFilter("New filter", mutableMapOf(), CellStyle.Default)
                 )
             },
-            modifier = Modifier,
-            colors = textButtonColors(backgroundColor = Color.LightGray)
         ) {
             Text("Add filter")
         }
