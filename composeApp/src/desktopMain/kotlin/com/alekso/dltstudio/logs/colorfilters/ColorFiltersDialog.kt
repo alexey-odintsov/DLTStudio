@@ -83,7 +83,7 @@ fun ColorFiltersPanel(
                         text = filter.name,
                         Modifier.width(COL_FILTER_NAME_WIDTH_DP).padding(horizontal = 4.dp)
                     )
-                    ImageButton(modifier = Modifier.size(24.dp),
+                    ImageButton(modifier = Modifier.size(28.dp),
                         iconName = "icon_edit.xml",
                         title = "Edit",
                         onClick = { onEditFilterClick(i, filter) })
