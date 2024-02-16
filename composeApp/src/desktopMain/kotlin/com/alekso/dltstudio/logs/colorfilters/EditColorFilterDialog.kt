@@ -2,6 +2,7 @@ package com.alekso.dltstudio.logs.colorfilters
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -22,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
 import com.alekso.dltstudio.logs.CellStyle
-import com.alekso.dltstudio.ui.SearchEditText
+import com.alekso.dltstudio.ui.EditText
 
 
 class EditDialogState(
@@ -67,12 +68,12 @@ fun EditColorFilterPanel(
     var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
-    Column(Modifier.width(1000.dp)) {
+    Column(Modifier.width(1000.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Name")
-            SearchEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
+            EditText(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = filterName, onValueChange = {
                     filterName = it
                 }
@@ -80,15 +81,22 @@ fun EditColorFilterPanel(
         }
         Row {
             Text(modifier = colNameStyle, text = "Color")
-            Text(
-                text = "Color",
-                modifier = Modifier.width(40.dp).height(20.dp)
-                    .background(
-                        color = filter.cellStyle.backgroundColor ?: Color.Transparent
-                    ),
-                textAlign = TextAlign.Center,
-                color = filter.cellStyle.textColor ?: Color.Black
-            )
+            val backgroundColor = filter.cellStyle.backgroundColor ?: Color.Transparent
+            val textColor = filter.cellStyle.textColor ?: Color.Black
+
+            TextButton(onClick = {
+                // todo: Show color picker
+            }) {
+                Text(
+                    text = "Color",
+                    modifier = Modifier.width(40.dp).height(20.dp)
+                        .background(
+                            color = backgroundColor
+                        ),
+                    textAlign = TextAlign.Center,
+                    color = textColor,
+                )
+            }
         }
         Row {
             Text(modifier = colNameStyle, text = "Message Type")
@@ -102,8 +110,8 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "ECU ID")
-            SearchEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
+            EditText(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = ecuId ?: "", onValueChange = {
                     ecuId = it
                 }
@@ -112,8 +120,8 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "App ID")
-            SearchEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
+            EditText(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = appId ?: "", onValueChange = {
                     appId = it
                 }
@@ -122,8 +130,8 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Context ID")
-            SearchEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
+            EditText(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = contextId ?: "", onValueChange = {
                     contextId = it
                 }
@@ -132,8 +140,8 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Session ID")
-            SearchEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
+            EditText(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = sessionId ?: "", onValueChange = {
                     sessionId = it
                 }
@@ -142,8 +150,8 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Payload")
-            SearchEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).height(32.dp),
+            EditText(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = payload ?: "", onValueChange = {
                     payload = it
                 }

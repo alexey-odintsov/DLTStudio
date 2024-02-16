@@ -3,7 +3,6 @@ package com.alekso.dltstudio.logs
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -11,12 +10,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.ui.EditText
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
-import com.alekso.dltstudio.ui.SearchEditText
 import com.alekso.dltstudio.ui.ToggleImageButton
 
 data class LogsToolbarState(
@@ -52,7 +52,7 @@ fun LogsToolbar(
     onColorFiltersClicked: () -> Unit,
 ) {
     // Toolbar
-    Row {
+    Row(verticalAlignment = Alignment.CenterVertically) {
         ToggleImageButton(
             checkedState = state.toolbarFatalChecked,
             iconName = "icon_f.xml",
@@ -75,10 +75,12 @@ fun LogsToolbar(
             updateCheckedState = updateToolbarWarningCheck
         )
 
-        ImageButton(modifier = Modifier.size(32.dp),
+        ImageButton(
+            modifier = Modifier.size(32.dp),
             iconName = "icon_color_filters.xml",
             title = "Color filters",
-            onClick = onColorFiltersClicked)
+            onClick = onColorFiltersClicked
+        )
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
@@ -91,12 +93,10 @@ fun LogsToolbar(
             updateCheckedState = updateSearchUseRegexCheck
         )
 
-        SearchEditText(
-            modifier = Modifier.width(600.dp).height(32.dp),
+        EditText(modifier = Modifier.width(500.dp).height(20.dp),
             value = text, onValueChange = {
                 text = it
-            }
-        )
+            })
 
         ImageButton(modifier = Modifier.size(32.dp),
             iconName = "icon_search.xml",
