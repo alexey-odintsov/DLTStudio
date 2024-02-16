@@ -35,7 +35,7 @@ fun EditText(
 ) {
 
     BasicTextField(
-        modifier = modifier.background(Color.White, RoundedCornerShape(8.dp)).padding(0.dp),
+        modifier = modifier.padding(start = 4.dp, top = 0.dp, end = 2.dp, bottom = 0.dp),
         singleLine = singleLine,
         decorationBox = { innerTextField ->
 
@@ -49,23 +49,17 @@ fun EditText(
                 contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
                     top = 0.dp,
                     bottom = 0.dp,
-                    start = 2.dp,
+                    start = 4.dp,
                     end = 2.dp
-                ),
-
-                colors = TextFieldDefaults.textFieldColors(
-                    placeholderColor = Color.Green,
-                    backgroundColor = Color.Green,
-                    textColor = Color.Red
                 ),
                 border = {
                     Box(
-                        modifier = Modifier.border(
-                            1.dp,
-                            Color.Gray,
-                            RoundedCornerShape(4.dp)
-                        )
-                    )
+                        modifier = Modifier.border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+                            .background(Color.White, RoundedCornerShape(4.dp))
+                            .padding(horizontal = 4.dp)
+                    ) {
+                        innerTextField()
+                    }
                 }
             )
         },

@@ -200,5 +200,7 @@ fun PreviewEditColorFilterDialog() {
         CellStyle(backgroundColor = Color.Gray, textColor = Color.White)
     )
 
-    EditColorFilterPanel(filter, 0, { i, f -> }) {}
+    Column(Modifier.background(Color(238, 238, 238))) {
+        EditColorFilterPanel(filter, 0, { i, f -> }) {}
+    }
 }
