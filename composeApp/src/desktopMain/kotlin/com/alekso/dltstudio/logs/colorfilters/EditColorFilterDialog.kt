@@ -13,6 +13,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
 import com.alekso.dltparser.dlt.MessageInfo
+import com.alekso.dltstudio.colors.ColorPickerDialog
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
@@ -73,6 +75,24 @@ fun EditColorFilterPanel(
     var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
+
+    val colorPickerDialogState = remember { mutableStateOf(false) }
+
+    if (colorPickerDialogState.value) {
+        ColorPickerDialog(
+            visible = colorPickerDialogState.value,
+            onDialogClosed = { colorPickerDialogState.value = false },
+            initialColor = filter.cellStyle.backgroundColor ?: Color.Green,
+            onColorUpdate = { newColor ->
+                onFilterUpdate(
+                    colorFilterIndex,
+                    filter.copy(cellStyle = filter.cellStyle.copy(backgroundColor = newColor))
+                )
+                colorPickerDialogState.value = false
+            }
+        )
+    }
+
     Column(
         Modifier.width(1000.dp).padding(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -93,7 +113,7 @@ fun EditColorFilterPanel(
             val textColor = filter.cellStyle.textColor ?: Color.Black
 
             TextButton(onClick = {
-                // todo: Show color picker
+                colorPickerDialogState.value = true
             }) {
                 Text(
                     text = "Color",
@@ -109,7 +129,8 @@ fun EditColorFilterPanel(
         Row {
             val items = mutableListOf("Any")
             items.addAll(MessageInfo.MESSAGE_TYPE.entries.map { it.name })
-            var initialSelection = items.indexOfFirst { it == filter.filters[FilterParameter.MessageType] }
+            var initialSelection =
+                items.indexOfFirst { it == filter.filters[FilterParameter.MessageType] }
             if (initialSelection == -1) initialSelection = 0
 
             Text(modifier = colNameStyle, text = "Message Type")
@@ -128,7 +149,8 @@ fun EditColorFilterPanel(
         Row {
             val items = mutableListOf("Any")
             items.addAll(MessageInfo.MESSAGE_TYPE_INFO.entries.map { it.name })
-            var initialSelection = items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo] }
+            var initialSelection =
+                items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo] }
             if (initialSelection == -1) initialSelection = 0
 
             Text(modifier = colNameStyle, text = "Message Type Info")

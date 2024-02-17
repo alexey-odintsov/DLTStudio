@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.CustomButton
 
 @Composable
-fun ColorPicker() {
+fun ColorPicker(initialColor: Color, onColorUpdate: (Color) -> Unit) {
 
-    val color by remember { mutableStateOf(Color.Green) }
+    val color by remember { mutableStateOf(initialColor) }
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -53,7 +53,7 @@ fun ColorPicker() {
 
         Spacer(Modifier.height(4.dp))
         CustomButton(
-            onClick = {},
+            onClick = { onColorUpdate(color) },
         ) {
             Text("Select")
         }
@@ -65,6 +65,6 @@ fun ColorPicker() {
 @Composable
 fun PreviewColorPicker() {
     Column {
-        ColorPicker()
+        ColorPicker(Color.Blue, {})
     }
 }
