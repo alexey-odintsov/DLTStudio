@@ -65,7 +65,6 @@ fun EditColorFilterPanel(
     onFilterUpdate: (Int, ColorFilter) -> Unit,
     onDialogClosed: () -> Unit
 ) {
-    println("$colorFilterIndex $filter")
     var filterName by rememberSaveable { mutableStateOf(filter.name) }
     var messageType by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageType]) }
     var messageTypeInfo by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageTypeInfo]) }
@@ -75,22 +74,31 @@ fun EditColorFilterPanel(
     var sessionId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.SessionId]) }
     var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
+    var filterCellStyle by remember { mutableStateOf(filter.cellStyle) }
 
+    val backgroundColorPickerDialogState = remember { mutableStateOf(false) }
+    val textColorPickerDialogState = remember { mutableStateOf(false) }
 
-    val colorPickerDialogState = remember { mutableStateOf(false) }
-
-    if (colorPickerDialogState.value) {
+    if (backgroundColorPickerDialogState.value) {
         ColorPickerDialog(
-            visible = colorPickerDialogState.value,
-            onDialogClosed = { colorPickerDialogState.value = false },
-            initialColor = filter.cellStyle.backgroundColor ?: Color.Green,
+            visible = backgroundColorPickerDialogState.value,
+            onDialogClosed = { backgroundColorPickerDialogState.value = false },
+            initialColor = filterCellStyle.backgroundColor ?: Color.Green,
             onColorUpdate = { newColor ->
-                println("Color $colorFilterIndex update: $newColor")
-                onFilterUpdate(
-                    colorFilterIndex,
-                    filter.copy(cellStyle = filter.cellStyle.copy(backgroundColor = newColor))
-                )
-                colorPickerDialogState.value = false
+                filterCellStyle = filterCellStyle.copy(backgroundColor = newColor)
+                backgroundColorPickerDialogState.value = false
+            }
+        )
+    }
+
+    if (textColorPickerDialogState.value) {
+        ColorPickerDialog(
+            visible = textColorPickerDialogState.value,
+            onDialogClosed = { textColorPickerDialogState.value = false },
+            initialColor = filterCellStyle.textColor ?: Color.Black,
+            onColorUpdate = { newColor ->
+                filterCellStyle = filterCellStyle.copy(textColor = newColor)
+                textColorPickerDialogState.value = false
             }
         )
     }
@@ -111,19 +119,21 @@ fun EditColorFilterPanel(
         }
         Row {
             Text(modifier = colNameStyle, text = "Color")
-            val backgroundColor = filter.cellStyle.backgroundColor ?: Color.Transparent
-            val textColor = filter.cellStyle.textColor ?: Color.Black
-            println("ColorBox $backgroundColor")
+            val backgroundColor = filterCellStyle.backgroundColor ?: Color.Transparent
+            val textColor = filterCellStyle.textColor ?: Color.Black
 
-            TextButton(onClick = {
-                colorPickerDialogState.value = true
-            }) {
+            TextButton(onClick = { backgroundColorPickerDialogState.value = true }) {
                 Text(
-                    text = "Color",
-                    modifier = Modifier.width(40.dp).height(20.dp)
-                        .background(
-                            color = backgroundColor
-                        ),
+                    text = "Background color",
+                    modifier = Modifier.height(20.dp).background(color = backgroundColor),
+                    textAlign = TextAlign.Center,
+                    color = textColor,
+                )
+            }
+            TextButton(onClick = { textColorPickerDialogState.value = true }) {
+                Text(
+                    text = "Text color",
+                    modifier = Modifier.height(20.dp).background(color = backgroundColor),
                     textAlign = TextAlign.Center,
                     color = textColor,
                 )
@@ -247,7 +257,7 @@ fun EditColorFilterPanel(
                 ColorFilter(
                     name = filterName,
                     filters = map,
-                    cellStyle = filter.cellStyle
+                    cellStyle = filterCellStyle
                 )
             )
             onDialogClosed()
