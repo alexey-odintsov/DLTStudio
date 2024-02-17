@@ -15,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.CustomButton
@@ -27,7 +28,17 @@ fun ColorPicker(initialColor: Color, onColorUpdate: (Color) -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
         Canvas(modifier = Modifier.size(100.dp)) {
-            drawRect(color, Offset(0f, 0f), size)
+            for (x in 0..<size.width.toInt()) {
+                val saturation = x / size.width
+                for (y in 0..<size.height.toInt()) {
+                    val brightness = y / size.height
+                    drawRect(
+                        Color.hsv(1f, saturation = saturation, value = brightness, alpha = 1f),
+                        Offset(x.toFloat(), y.toFloat()),
+                        size = Size(1f, 1f)
+                    )
+                }
+            }
         }
 
         Spacer(Modifier.height(4.dp))
