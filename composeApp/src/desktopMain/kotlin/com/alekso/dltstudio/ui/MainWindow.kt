@@ -27,7 +27,9 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
+import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,14 +69,25 @@ fun MainWindow() {
         0, listOf(
             ColorFilter(
                 "SIP",
-                mapOf(FilterParameter.ContextId to "TC"),
+                mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
                 CellStyle(backgroundColor = Color.Green, textColor = Color.White),
                 enabled = false,
             ),
             ColorFilter(
                 "Logcat",
-                mapOf(FilterParameter.AppId to "ALD", FilterParameter.ContextId to "LCAT"),
+                mapOf(
+                    FilterParameter.AppId to FilterCriteria("ALD", TextCriteria.PlainText),
+                    FilterParameter.ContextId to FilterCriteria("LCAT", TextCriteria.PlainText)
+                ),
                 CellStyle(backgroundColor = Color.Magenta, textColor = Color.White),
+                enabled = true,
+            ),
+            ColorFilter(
+                "Regex test",
+                mapOf(
+                    FilterParameter.Payload to FilterCriteria("(\\d+%)", TextCriteria.Regex)
+                ),
+                CellStyle(backgroundColor = Color.Blue, textColor = Color.White),
                 enabled = true,
             ),
         )

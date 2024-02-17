@@ -27,6 +27,7 @@ import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.colors.ColorPickerDialog
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
+import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
 
@@ -57,6 +58,7 @@ fun EditColorFilterDialog(
 
 private val COL_NAME_SIZE_DP = 150.dp
 private val SEARCH_INPUT_SIZE_DP = 250.dp
+private val FILTER_TYPE = 150.dp
 
 @Composable
 fun EditColorFilterPanel(
@@ -66,13 +68,14 @@ fun EditColorFilterPanel(
     onDialogClosed: () -> Unit
 ) {
     var filterName by rememberSaveable { mutableStateOf(filter.name) }
-    var messageType by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageType]) }
-    var messageTypeInfo by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageTypeInfo]) }
-    var ecuId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.EcuId]) }
-    var appId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.AppId]) }
-    var contextId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.ContextId]) }
-    var sessionId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.SessionId]) }
-    var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]) }
+    var messageType by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageType]?.value) }
+    var messageTypeInfo by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageTypeInfo]?.value) }
+    var ecuId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.EcuId]?.value) }
+    var appId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.AppId]?.value) }
+    var contextId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.ContextId]?.value) }
+    var sessionId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.SessionId]?.value) }
+    var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]?.value) }
+    var payloadCriteria by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]?.textCriteria) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
     var filterCellStyle by remember { mutableStateOf(filter.cellStyle) }
 
@@ -143,7 +146,7 @@ fun EditColorFilterPanel(
             val items = mutableListOf("Any")
             items.addAll(MessageInfo.MESSAGE_TYPE.entries.map { it.name })
             var initialSelection =
-                items.indexOfFirst { it == filter.filters[FilterParameter.MessageType] }
+                items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
             if (initialSelection == -1) initialSelection = 0
 
             Text(modifier = colNameStyle, text = "Message Type")
@@ -163,7 +166,7 @@ fun EditColorFilterPanel(
             val items = mutableListOf("Any")
             items.addAll(MessageInfo.MESSAGE_TYPE_INFO.entries.map { it.name })
             var initialSelection =
-                items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo] }
+                items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
             if (initialSelection == -1) initialSelection = 0
 
             Text(modifier = colNameStyle, text = "Message Type Info")
@@ -227,30 +230,47 @@ fun EditColorFilterPanel(
                     payload = it
                 }
             )
+            val items = mutableListOf<String>()
+            items.addAll(TextCriteria.entries.map { it.name })
+            var initialSelection = items.indexOfFirst { it == payloadCriteria?.name }
+            if (initialSelection == -1) initialSelection = 0
+
+            CustomDropDown(
+                modifier = Modifier.width(FILTER_TYPE).padding(horizontal = 4.dp),
+                items = items,
+                initialSelectedIndex = initialSelection,
+                onItemsSelected = { i ->
+                    payloadCriteria = if (i > 0) {
+                        TextCriteria.valueOf(items[i])
+                    } else null
+                }
+            )
+
         }
 
         CustomButton(onClick = {
-            val map = mutableMapOf<FilterParameter, String>()
+            val map = mutableMapOf<FilterParameter, FilterCriteria>()
             messageType?.let {
-                map[FilterParameter.MessageType] = it
+                map[FilterParameter.MessageType] = FilterCriteria(it, TextCriteria.PlainText)
             }
             messageTypeInfo?.let {
-                map[FilterParameter.MessageTypeInfo] = it
+                map[FilterParameter.MessageTypeInfo] = FilterCriteria(it, TextCriteria.PlainText)
             }
             ecuId?.let {
-                map[FilterParameter.EcuId] = it
+                map[FilterParameter.EcuId] = FilterCriteria(it, TextCriteria.PlainText)
             }
             appId?.let {
-                map[FilterParameter.AppId] = it
+                map[FilterParameter.AppId] = FilterCriteria(it, TextCriteria.PlainText)
             }
             contextId?.let {
-                map[FilterParameter.ContextId] = it
+                map[FilterParameter.ContextId] = FilterCriteria(it, TextCriteria.PlainText)
             }
             sessionId?.let {
-                map[FilterParameter.SessionId] = it
+                map[FilterParameter.SessionId] = FilterCriteria(it, TextCriteria.PlainText)
             }
             payload?.let {
-                map[FilterParameter.Payload] = it
+                map[FilterParameter.Payload] =
+                    FilterCriteria(it, payloadCriteria ?: TextCriteria.PlainText)
             }
             onFilterUpdate(
                 colorFilterIndex,
@@ -273,7 +293,7 @@ fun EditColorFilterPanel(
 fun PreviewEditColorFilterDialog() {
     val filter = ColorFilter(
         "SIP",
-        mapOf(FilterParameter.ContextId to "TC"),
+        mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
         CellStyle(backgroundColor = Color.Gray, textColor = Color.White)
     )
 

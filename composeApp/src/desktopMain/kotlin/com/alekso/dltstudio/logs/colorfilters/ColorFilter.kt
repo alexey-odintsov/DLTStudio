@@ -15,48 +15,71 @@ enum class FilterParameter {
     MessageTypeInfo,
 }
 
+enum class TextCriteria {
+    PlainText,
+    LowerCase,
+    Regex
+}
+
+data class FilterCriteria(
+    val value: String,
+    val textCriteria: TextCriteria
+)
+
 data class ColorFilter(
     val name: String,
-    val filters: Map<FilterParameter, String>,
+    val filters: Map<FilterParameter, FilterCriteria>,
     val cellStyle: CellStyle,
     val enabled: Boolean = true,
 ) {
     fun assess(message: DLTMessage): Boolean {
         return filters.all {
+            val criteria = it.value
             return@all enabled && when (it.key) {
                 FilterParameter.MessageType -> {
-                    message.extendedHeader?.messageInfo?.messageType?.name == it.value
+                    checkTextCriteria(
+                        criteria,
+                        message.extendedHeader?.messageInfo?.messageType?.name
+                    )
                 }
 
                 FilterParameter.MessageTypeInfo -> {
-                    message.extendedHeader?.messageInfo?.messageTypeInfo?.name == it.value
+                    checkTextCriteria(
+                        criteria,
+                        message.extendedHeader?.messageInfo?.messageTypeInfo?.name
+                    )
                 }
 
                 FilterParameter.EcuId -> {
-                    message.standardHeader.ecuId == it.value
+                    checkTextCriteria(criteria, message.standardHeader.ecuId)
                 }
 
                 FilterParameter.ContextId -> {
-                    message.extendedHeader?.contextId == it.value
+                    checkTextCriteria(criteria, message.extendedHeader?.contextId)
                 }
 
                 FilterParameter.AppId -> {
-                    message.extendedHeader?.applicationId == it.value
+                    checkTextCriteria(criteria, message.extendedHeader?.applicationId)
                 }
 
                 FilterParameter.SessionId -> {
-                    message.standardHeader.sessionId == it.value.toInt()
+                    message.standardHeader.sessionId == criteria.value.toInt()
                 }
 
                 FilterParameter.Payload -> {
-                    message.payload?.asText()?.contains(it.value) ?: false
+                    checkTextCriteria(criteria, message.payload?.asText())
                 }
-
-                else -> false
             }
         }
 
     }
+
+    private fun checkTextCriteria(criteria: FilterCriteria, message: String?) =
+        when (criteria.textCriteria) {
+            TextCriteria.PlainText -> message == criteria.value
+            TextCriteria.LowerCase -> message?.lowercase() == criteria.value
+            TextCriteria.Regex -> message?.contains(criteria.value.toRegex()) ?: false
+        }
 
     companion object {
         val Empty = ColorFilter("New filter", mutableMapOf(), CellStyle.Default)
@@ -65,16 +88,31 @@ data class ColorFilter(
 
 val ColorFilterWarn = ColorFilter(
     "Warn",
-    mapOf(FilterParameter.MessageTypeInfo to MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_WARN.name),
+    mapOf(
+        FilterParameter.MessageTypeInfo to FilterCriteria(
+            MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_WARN.name,
+            TextCriteria.PlainText
+        )
+    ),
     CellStyle(backgroundColor = Color.Yellow)
 )
 val ColorFilterError = ColorFilter(
     "Error",
-    mapOf(FilterParameter.MessageTypeInfo to MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_DLT_ERROR.name),
+    mapOf(
+        FilterParameter.MessageTypeInfo to FilterCriteria(
+            MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_DLT_ERROR.name,
+            TextCriteria.PlainText
+        )
+    ),
     CellStyle(backgroundColor = Color(0xE7, 0x62, 0x29), textColor = Color.White)
 )
 val ColorFilterFatal = ColorFilter(
     "Fatal",
-    mapOf(FilterParameter.MessageTypeInfo to MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_FATAL.name),
+    mapOf(
+        FilterParameter.MessageTypeInfo to FilterCriteria(
+            MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_FATAL.name,
+            TextCriteria.PlainText
+        )
+    ),
     CellStyle(backgroundColor = Color(0xE7, 0x62, 0x29), textColor = Color.White)
 )

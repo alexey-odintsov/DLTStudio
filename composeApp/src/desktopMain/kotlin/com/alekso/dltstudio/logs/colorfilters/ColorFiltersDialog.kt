@@ -136,7 +136,7 @@ fun PreviewColorFiltersDialog() {
         ColorFilter("Memory", mapOf(), CellStyle(backgroundColor = Color.Green)),
         ColorFilter(
             "SIP",
-            mapOf(FilterParameter.ContextId to "TC"),
+            mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
             CellStyle(backgroundColor = Color.Gray, textColor = Color.White)
         ),
     )
