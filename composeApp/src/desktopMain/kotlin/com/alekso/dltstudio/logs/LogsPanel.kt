@@ -60,7 +60,8 @@ fun LogsPanel(
     updateSearchUseRegexCheck: (Boolean) -> Unit,
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
-    onFilterUpdate: (Int, ColorFilter) -> Unit
+    onFilterUpdate: (Int, ColorFilter) -> Unit,
+    onFilterDelete: (Int) -> Unit
 ) {
     var selectedRow by remember { mutableStateOf(0) }
     var searchResultSelectedRow by remember { mutableStateOf(0) }
@@ -87,7 +88,8 @@ fun LogsPanel(
                 visible = dialogState.value,
                 onDialogClosed = { dialogState.value = false },
                 colorFilters = colorFilters,
-                onFilterUpdate = onFilterUpdate
+                onFilterUpdate = onFilterUpdate,
+                onFilterDelete = onFilterDelete
             )
         }
 
@@ -212,6 +214,7 @@ fun PreviewLogsPanel() {
         updateSearchUseRegexCheck = { },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
-        onFilterUpdate = { i, f -> }
+        onFilterUpdate = { i, f -> },
+        onFilterDelete = { i -> }
     )
 }

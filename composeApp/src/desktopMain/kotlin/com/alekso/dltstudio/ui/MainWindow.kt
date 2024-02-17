@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -60,25 +61,24 @@ fun MainWindow() {
         )
     }
 
+    val colorFilters = mutableStateListOf<ColorFilter>()
     // todo: User color filters goes here.
-    val colorFilters by remember {
-        mutableStateOf(
-            mutableListOf(
-                ColorFilter(
-                    "SIP",
-                    mapOf(FilterParameter.ContextId to "TC"),
-                    CellStyle(backgroundColor = Color.Green, textColor = Color.White),
-                    enabled = false,
-                ),
-                ColorFilter(
-                    "Logcat",
-                    mapOf(FilterParameter.AppId to "ALD", FilterParameter.ContextId to "LCAT"),
-                    CellStyle(backgroundColor = Color.Magenta, textColor = Color.White),
-                    enabled = true,
-                ),
-            )
+    colorFilters.addAll(
+        0, listOf(
+            ColorFilter(
+                "SIP",
+                mapOf(FilterParameter.ContextId to "TC"),
+                CellStyle(backgroundColor = Color.Green, textColor = Color.White),
+                enabled = false,
+            ),
+            ColorFilter(
+                "Logcat",
+                mapOf(FilterParameter.AppId to "ALD", FilterParameter.ContextId to "LCAT"),
+                CellStyle(backgroundColor = Color.Magenta, textColor = Color.White),
+                enabled = true,
+            ),
         )
-    }
+    )
 
     var searchUseRegex by remember { mutableStateOf(true) }
 
@@ -177,6 +177,9 @@ fun MainWindow() {
                         if (index < 0 || index > colorFilters.size) {
                             colorFilters.add(updatedFilter)
                         } else colorFilters[index] = updatedFilter
+                    },
+                    onFilterDelete = { index ->
+                        colorFilters.removeAt(index)
                     }
                 )
             }

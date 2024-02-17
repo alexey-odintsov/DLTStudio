@@ -5,9 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -33,12 +33,13 @@ fun ColorFiltersDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
     colorFilters: List<ColorFilter>,
-    onFilterUpdate: (Int, ColorFilter) -> Unit
+    onFilterUpdate: (Int, ColorFilter) -> Unit,
+    onFilterDelete: (Int) -> Unit
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Color Filters",
-        state = DialogState(width = 700.dp, height = 500.dp)
+        state = DialogState(width = 500.dp, height = 500.dp)
     ) {
         val editDialogState = remember { mutableStateOf(EditDialogState(false)) }
 
@@ -54,7 +55,7 @@ fun ColorFiltersDialog(
 
         ColorFiltersPanel(colorFilters, { i, filter ->
             editDialogState.value = EditDialogState(true, filter, i)
-        }, onFilterUpdate)
+        }, onFilterUpdate, onFilterDelete)
     }
 }
 
@@ -62,7 +63,8 @@ fun ColorFiltersDialog(
 fun ColorFiltersPanel(
     colorFilters: List<ColorFilter>,
     onEditFilterClick: (Int, ColorFilter) -> Unit,
-    onFilterUpdate: (Int, ColorFilter) -> Unit
+    onFilterUpdate: (Int, ColorFilter) -> Unit,
+    onFilterDelete: (Int) -> Unit
 ) {
 
     Column(modifier = Modifier.padding(4.dp)) {
@@ -84,13 +86,15 @@ fun ColorFiltersPanel(
                     )
 
                     Box(
-                        modifier = Modifier.background(
-                            color = filter.cellStyle.backgroundColor ?: Color.Transparent
-                        ).padding(horizontal = 4.dp)
+                        modifier = Modifier.weight(1f)
+                            .background(
+                                color = filter.cellStyle.backgroundColor ?: Color.Transparent
+                            )
+                            .padding(horizontal = 4.dp)
                     ) {
                         Text(
                             text = filter.name,
-                            modifier = Modifier.width(COL_FILTER_NAME_WIDTH_DP),
+                            modifier = Modifier.fillMaxWidth(),
                             color = filter.cellStyle.textColor ?: Color.Black
                         )
                     }
@@ -99,6 +103,11 @@ fun ColorFiltersPanel(
                         iconName = "icon_edit.xml",
                         title = "Edit",
                         onClick = { onEditFilterClick(i, filter) })
+
+                    ImageButton(modifier = Modifier.size(28.dp),
+                        iconName = "icon_delete.xml",
+                        title = "Delete",
+                        onClick = { onFilterDelete(i) })
                 }
             }
         }
@@ -129,5 +138,5 @@ fun PreviewColorFiltersDialog() {
         ),
     )
 
-    ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> })
+    ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> }, { i -> })
 }
