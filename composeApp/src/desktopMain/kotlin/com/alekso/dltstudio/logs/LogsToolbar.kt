@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ui.EditText
+import com.alekso.dltstudio.ui.CustomEditText
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.ToggleImageButton
@@ -93,7 +93,7 @@ fun LogsToolbar(
             updateCheckedState = updateSearchUseRegexCheck
         )
 
-        EditText(modifier = Modifier.width(500.dp).height(20.dp),
+        CustomEditText(modifier = Modifier.width(500.dp).height(20.dp),
             value = text, onValueChange = {
                 text = it
             })

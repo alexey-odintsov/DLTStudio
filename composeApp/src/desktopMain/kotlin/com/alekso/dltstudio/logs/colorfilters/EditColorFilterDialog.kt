@@ -26,7 +26,7 @@ import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
-import com.alekso.dltstudio.ui.EditText
+import com.alekso.dltstudio.ui.CustomEditText
 
 
 class EditDialogState(
@@ -80,7 +80,7 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Name")
-            EditText(
+            CustomEditText(
                 modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = filterName, onValueChange = {
                     filterName = it
@@ -146,7 +146,7 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "ECU ID")
-            EditText(
+            CustomEditText(
                 modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = ecuId ?: "", onValueChange = {
                     ecuId = it
@@ -156,7 +156,7 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "App ID")
-            EditText(
+            CustomEditText(
                 modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = appId ?: "", onValueChange = {
                     appId = it
@@ -166,7 +166,7 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Context ID")
-            EditText(
+            CustomEditText(
                 modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = contextId ?: "", onValueChange = {
                     contextId = it
@@ -176,7 +176,7 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Session ID")
-            EditText(
+            CustomEditText(
                 modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = sessionId ?: "", onValueChange = {
                     sessionId = it
@@ -186,7 +186,7 @@ fun EditColorFilterPanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Payload")
-            EditText(
+            CustomEditText(
                 modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 value = payload ?: "", onValueChange = {
                     payload = it

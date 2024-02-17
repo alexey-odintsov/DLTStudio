@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.ExperimentalMaterialApi
@@ -26,7 +27,7 @@ import org.jetbrains.skia.impl.Stats
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EditText(
+fun CustomEditText(
     value: String,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
@@ -47,8 +48,8 @@ fun EditText(
                 visualTransformation = VisualTransformation.None,
                 interactionSource = interactionSource,
                 contentPadding = TextFieldDefaults.textFieldWithoutLabelPadding(
-                    top = 0.dp,
-                    bottom = 0.dp,
+                    top = 2.dp,
+                    bottom = 2.dp,
                     start = 4.dp,
                     end = 2.dp
                 ),
@@ -56,7 +57,7 @@ fun EditText(
                     Box(
                         modifier = Modifier.border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
                             .background(Color.White, RoundedCornerShape(4.dp))
-                            .padding(horizontal = 4.dp)
+                            .padding(horizontal = 4.dp).wrapContentHeight()
                     ) {
                         innerTextField()
                     }
@@ -73,11 +74,11 @@ fun EditText(
 @Composable
 fun PreviewDesktopEditText() {
     Column(modifier = Modifier.background(Color.Gray).padding(10.dp)) {
-        EditText("Hello", {})
+        CustomEditText("Hello", {})
         for (i in 6..15) {
             Row {
                 Text(text = "${i * 2}")
-                EditText(
+                CustomEditText(
                     modifier = Modifier.width(100.dp).height((i * 2).dp),
                     value = "Hello2", onValueChange = {}
                 )
