@@ -22,8 +22,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
+import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
+import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.EditText
 
 
@@ -62,6 +64,8 @@ fun EditColorFilterPanel(
 ) {
     println("$colorFilterIndex $filter")
     var filterName by rememberSaveable { mutableStateOf(filter.name) }
+    var messageType by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageType]) }
+    var messageTypeInfo by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageTypeInfo]) }
     var ecuId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.EcuId]) }
     var appId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.AppId]) }
     var contextId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.ContextId]) }
@@ -69,7 +73,10 @@ fun EditColorFilterPanel(
     var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
-    Column(Modifier.width(1000.dp).padding(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        Modifier.width(1000.dp).padding(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Name")
@@ -100,13 +107,41 @@ fun EditColorFilterPanel(
             }
         }
         Row {
+            val items = mutableListOf("Any")
+            items.addAll(MessageInfo.MESSAGE_TYPE.entries.map { it.name })
+            var initialSelection = items.indexOfFirst { it == filter.filters[FilterParameter.MessageType] }
+            if (initialSelection == -1) initialSelection = 0
+
             Text(modifier = colNameStyle, text = "Message Type")
-            Text(modifier = colNameStyle, text = "Message Type")
+            CustomDropDown(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                items = items,
+                initialSelectedIndex = initialSelection,
+                onItemsSelected = { i ->
+                    messageType = if (i > 0) {
+                        items[i]
+                    } else null
+                }
+            )
         }
 
         Row {
+            val items = mutableListOf("Any")
+            items.addAll(MessageInfo.MESSAGE_TYPE_INFO.entries.map { it.name })
+            var initialSelection = items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo] }
+            if (initialSelection == -1) initialSelection = 0
+
             Text(modifier = colNameStyle, text = "Message Type Info")
-            Text(modifier = colNameStyle, text = "Message Type Info")
+            CustomDropDown(
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                items = items,
+                initialSelectedIndex = initialSelection,
+                onItemsSelected = { i ->
+                    messageTypeInfo = if (i > 0) {
+                        items[i]
+                    } else null
+                }
+            )
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -161,6 +196,12 @@ fun EditColorFilterPanel(
 
         CustomButton(onClick = {
             val map = mutableMapOf<FilterParameter, String>()
+            messageType?.let {
+                map[FilterParameter.MessageType] = it
+            }
+            messageTypeInfo?.let {
+                map[FilterParameter.MessageTypeInfo] = it
+            }
             ecuId?.let {
                 map[FilterParameter.EcuId] = it
             }
