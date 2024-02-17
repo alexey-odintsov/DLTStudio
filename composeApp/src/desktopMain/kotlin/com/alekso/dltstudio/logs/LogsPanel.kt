@@ -80,7 +80,7 @@ fun LogsPanel(
             updateToolbarErrorCheck,
             updateToolbarWarningCheck,
             updateSearchUseRegexCheck,
-            { dialogState.value = true }
+            onColorFiltersClicked = { dialogState.value = true }
         )
 
         if (dialogState.value) {

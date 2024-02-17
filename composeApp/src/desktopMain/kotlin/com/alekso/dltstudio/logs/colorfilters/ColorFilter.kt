@@ -44,6 +44,14 @@ data class ColorFilter(
                     message.extendedHeader?.applicationId == it.value
                 }
 
+                FilterParameter.SessionId -> {
+                    message.standardHeader.sessionId == it.value.toInt()
+                }
+
+                FilterParameter.Payload -> {
+                    message.payload?.asText()?.contains(it.value) ?: false
+                }
+
                 else -> false
             }
         }

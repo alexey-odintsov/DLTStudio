@@ -49,7 +49,10 @@ fun ColorFiltersDialog(
                 onDialogClosed = { editDialogState.value = EditDialogState(false) },
                 colorFilter = editDialogState.value.filter,
                 colorFilterIndex = editDialogState.value.filterIndex,
-                onFilterUpdate = onFilterUpdate
+                onFilterUpdate = { i, filter ->
+                    editDialogState.value.filter = filter
+                    onFilterUpdate(i, filter)
+                }
             )
         }
 

@@ -174,6 +174,7 @@ fun MainWindow() {
                     vSplitterState,
                     hSplitterState,
                     onFilterUpdate = { index, updatedFilter ->
+                        println("onFilterUpdate $index $updatedFilter")
                         if (index < 0 || index > colorFilters.size) {
                             colorFilters.add(updatedFilter)
                         } else colorFilters[index] = updatedFilter

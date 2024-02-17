@@ -45,6 +45,7 @@ fun EditColorFilterDialog(
     onFilterUpdate: (Int, ColorFilter) -> Unit,
     colorFilterIndex: Int,
 ) {
+    println("EditColorFilterDialog $colorFilter")
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (colorFilterIndex >= 0) "Edit Color Filter" else "Add new color filter",
@@ -84,6 +85,7 @@ fun EditColorFilterPanel(
             onDialogClosed = { colorPickerDialogState.value = false },
             initialColor = filter.cellStyle.backgroundColor ?: Color.Green,
             onColorUpdate = { newColor ->
+                println("Color $colorFilterIndex update: $newColor")
                 onFilterUpdate(
                     colorFilterIndex,
                     filter.copy(cellStyle = filter.cellStyle.copy(backgroundColor = newColor))
@@ -111,6 +113,7 @@ fun EditColorFilterPanel(
             Text(modifier = colNameStyle, text = "Color")
             val backgroundColor = filter.cellStyle.backgroundColor ?: Color.Transparent
             val textColor = filter.cellStyle.textColor ?: Color.Black
+            println("ColorBox $backgroundColor")
 
             TextButton(onClick = {
                 colorPickerDialogState.value = true
