@@ -1,7 +1,6 @@
 package com.alekso.dltstudio.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.DragData
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -22,7 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ParseSession
+import com.alekso.dltparser.DLTParser
+import com.alekso.dltstudio.ParseSessionViewModel
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
@@ -31,9 +30,7 @@ import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.timeline.TimeLinePanel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import com.alekso.dltstudio.timeline.TimelineViewModel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.rememberSplitPaneState
 import java.io.File
@@ -43,8 +40,9 @@ import java.net.URI
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalSplitPaneApi::class)
 @Composable
 @Preview
-fun MainWindow() {
-    var dltSession by remember { mutableStateOf<ParseSession?>(null) }
+fun MainWindow(parseSessionViewModel: ParseSessionViewModel) {
+    val timelineViewModel = remember { TimelineViewModel() }
+
     var progress by remember { mutableStateOf(0f) }
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
@@ -95,11 +93,8 @@ fun MainWindow() {
 
     var searchUseRegex by remember { mutableStateOf(true) }
 
-    val coroutineScope = rememberCoroutineScope()
-
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
     val statusBarProgressCallback: (Float) -> Unit = { i -> progress = i }
-    val newSessionCallback: (ParseSession) -> Unit = { newSession -> dltSession = newSession }
     val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset = newOffset }
     val scaleUpdateCallback: (Float) -> Unit =
         { newScale -> scale = if (newScale > 0f) newScale else 1f }
@@ -108,30 +103,7 @@ fun MainWindow() {
     var searchText by remember { mutableStateOf("") }
     val updateSearchText: (String) -> Unit = { text ->
         searchText = text
-        dltSession?.searchResult?.clear()
-        dltSession?.searchIndexes?.clear()
-
-        coroutineScope.launch {
-            withContext(Dispatchers.IO) {
-                println("Searching for $text..")
-                dltSession?.let {
-                    it.dltMessages.forEachIndexed { i, dltMessage ->
-                        val payload = dltMessage.payload
-
-                        if (payload != null) {
-                            if ((searchUseRegex && searchText.toRegex()
-                                    .containsMatchIn(payload.asText()))
-                                || (payload.asText().contains(searchText))
-                            ) {
-                                it.searchResult.add(dltMessage)
-                                it.searchIndexes.add(i)
-                            }
-                            statusBarProgressCallback.invoke(i.toFloat() / it.dltMessages.size)
-                        }
-                    }
-                }
-            }
-        }
+        parseSessionViewModel.search(text, searchUseRegex)
     }
     val updateToolbarFatalCheck: (Boolean) -> Unit =
         { checked ->
@@ -149,20 +121,12 @@ fun MainWindow() {
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
         if (it.dragData is DragData.FilesList) {
-            val filesList = it.dragData as DragData.FilesList
-            val pathList = filesList.readFiles()
-            println(pathList)
+            val dragFilesList = it.dragData as DragData.FilesList
+            val pathList = dragFilesList.readFiles()
+
             if (pathList.isNotEmpty()) {
-                dltSession = ParseSession(
-                    statusBarProgressCallback,
-                    pathList.map { path -> File(URI.create(path.substring(5)).path) }
-                )
-                newSessionCallback.invoke(dltSession!!)
-                coroutineScope.launch {
-                    withContext(Dispatchers.IO) {
-                        dltSession?.start()
-                    }
-                }
+                val filesList = pathList.map { path -> File(URI.create(path.substring(5)).path) }
+                parseSessionViewModel.parseFile(filesList)
             }
         }
     }
@@ -175,7 +139,9 @@ fun MainWindow() {
                 LogsPanel(
                     modifier = Modifier.weight(1f),
                     searchText,
-                    dltSession,
+                    dltMessages = parseSessionViewModel.dltMessages,
+                    searchResult = parseSessionViewModel.searchResult,
+                    searchIndexes = parseSessionViewModel.searchIndexes,
                     colorFilters,
                     searchUseRegex,
                     logsToolbarState,
@@ -200,7 +166,8 @@ fun MainWindow() {
 
             1 -> TimeLinePanel(
                 modifier = Modifier.weight(1f),
-                dltSession,
+                timelineViewModel = timelineViewModel,
+                parseSessionViewModel.dltMessages,
                 statusBarProgressCallback,
                 offset,
                 offsetUpdateCallback,
@@ -209,14 +176,19 @@ fun MainWindow() {
             )
         }
         Divider()
-        StatusBar(modifier = Modifier.fillMaxWidth(), progress, dltSession)
+        val statusText = if (parseSessionViewModel.dltMessages.isNotEmpty()) {
+            "Messages: ${"%,d".format(parseSessionViewModel.dltMessages.size)}"
+        } else {
+            "No file loaded"
+        }
+        StatusBar(modifier = Modifier.fillMaxWidth(), progress, statusText)
     }
 }
 
 @Preview
 @Composable
 fun PreviewMainWindow() {
-    Box(modifier = Modifier.width(400.dp).height(500.dp).background(Color.Yellow)) {
-        MainWindow()
+    Box(modifier = Modifier.width(400.dp).height(500.dp)) {
+        MainWindow(ParseSessionViewModel(DLTParser))
     }
 }

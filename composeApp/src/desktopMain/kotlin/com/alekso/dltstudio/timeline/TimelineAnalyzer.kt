@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.VerbosePayload
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.cpu.CPUAnalyzer
 import com.alekso.dltstudio.cpu.CPUSEntry
 import com.alekso.dltstudio.cpu.CPUUsageEntry
@@ -72,7 +71,9 @@ object TimelineAnalyzer {
         }
     }
 
-    suspend fun analyzeTimeline(dltSession: ParseSession, progressCallback: (Float) -> Unit) {
+    suspend fun analyzeTimeline(dltMessages: List<DLTMessage>,
+                                timelineViewModel: TimelineViewModel,
+                                progressCallback: (Float) -> Unit) {
         // we need copies of ParseSession's collections to prevent ConcurrentModificationException
         val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
         val _cpus = mutableStateListOf<CPUSEntry>()
@@ -81,19 +82,19 @@ object TimelineAnalyzer {
 
         withContext(Dispatchers.IO) {
 
-            println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
+            println("Start Timeline building .. ${dltMessages.size} messages")
 
             _userEntries["CPU_PER_PID"] = TimelinePercentageEntries()
             _userEntries["MEMT"] = TimelineMinMaxEntries()
 
-            dltSession.dltMessages.forEachIndexed { index, message ->
+            dltMessages.forEachIndexed { index, message ->
                 // timeStamps
                 val ts = message.getTimeStamp()
-                if (ts > dltSession.timeEnd) {
-                    dltSession.timeEnd = ts
+                if (ts > timelineViewModel.timeEnd) {
+                    timelineViewModel.timeEnd = ts
                 }
-                if (ts < dltSession.timeStart) {
-                    dltSession.timeStart = ts
+                if (ts < timelineViewModel.timeStart) {
+                    timelineViewModel.timeStart = ts
                 }
 
                 analyzeCPUC(message, _cpuUsage, index)
@@ -116,16 +117,16 @@ object TimelineAnalyzer {
                     keyDelimiters = Pair("", "(cpid:"),
                     entries = _userEntries["MEMT"]!!,
                 )
-                progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
+                progressCallback.invoke((index.toFloat() / dltMessages.size))
             }
         }
         withContext(Dispatchers.Default) {
-            dltSession.cpuUsage.clear()
-            dltSession.cpuUsage.addAll(_cpuUsage)
-            dltSession.cpus.clear()
-            dltSession.cpus.addAll(_cpus)
-            dltSession.userStateEntries = _userState
-            dltSession.userEntries = _userEntries
+            timelineViewModel.cpuUsage.clear()
+            timelineViewModel.cpuUsage.addAll(_cpuUsage)
+            timelineViewModel.cpus.clear()
+            timelineViewModel.cpus.addAll(_cpus)
+            timelineViewModel.userStateEntries = _userState
+            timelineViewModel.userEntries = _userEntries
         }
     }
 

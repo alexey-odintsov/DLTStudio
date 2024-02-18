@@ -16,24 +16,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.ParseSession
-import java.io.File
 
 @Composable
-fun StatusBar(modifier: Modifier = Modifier, progress: Float, dltSession: ParseSession?) {
+fun StatusBar(modifier: Modifier = Modifier, progress: Float, statusText: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier.height(30.dp).padding(4.dp)
     ) {
-        if (dltSession != null) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = "File: ${dltSession.files[0].name}"
-            )
-            Text(text = "Messages: ${"%,d".format(dltSession.dltMessages.size)}")
-        } else {
-            Text(text = "No file loaded")
-        }
+        Text(modifier = Modifier.weight(1f), text = statusText)
         if (progress > 0f) {
             Box(Modifier.width(300.dp)) {
                 LinearProgressIndicator(
@@ -57,7 +47,7 @@ fun StatusBar(modifier: Modifier = Modifier, progress: Float, dltSession: ParseS
 @Preview
 @Composable
 fun PreviewStatusBarNoSession() {
-    StatusBar(Modifier.background(Color.LightGray), 0f, null)
+    StatusBar(Modifier.background(Color.LightGray), 0f, "File1.dlt")
 }
 
 @Preview
@@ -66,6 +56,6 @@ fun PreviewStatusBarInProgress() {
     StatusBar(
         Modifier.background(Color.LightGray),
         0.4f,
-        ParseSession({ i -> }, listOf(File("/user/test/file.dlt")))
+        "/user/test/file.dlt"
     )
 }

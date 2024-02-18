@@ -39,7 +39,8 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.ParseSession
+import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.cpu.CPUCLegend
 import com.alekso.dltstudio.cpu.CPUSLegend
 import com.alekso.dltstudio.cpu.CPUSView
@@ -47,7 +48,6 @@ import com.alekso.dltstudio.cpu.CPUUsageView
 import com.alekso.dltstudio.user.UserStateLegend
 import com.alekso.dltstudio.user.UserStateView
 import kotlinx.coroutines.launch
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -59,7 +59,8 @@ private val LEGEND_WIDTH_DP = 250.dp
 @Composable
 fun TimeLinePanel(
     modifier: Modifier,
-    dltSession: ParseSession?,
+    timelineViewModel: TimelineViewModel,
+    dltMessages: List<DLTMessage>,
     progressCallback: (Float) -> Unit,
     offsetSec: Float,
     offsetUpdate: (Float) -> Unit,
@@ -73,8 +74,8 @@ fun TimeLinePanel(
     var cpuppidHighlight by remember { mutableStateOf<String?>(null) }
 
     val dragCallback = { pe: PointerEvent, width: Int ->
-        if (dltSession != null) {
-            val secSize: Float = width / (dltSession.totalSeconds.toFloat())
+        if (dltMessages.isNotEmpty()) {
+            val secSize: Float = width / (timelineViewModel.totalSeconds.toFloat())
             val dragAmount = pe.changes.first().position.x - pe.changes.first().previousPosition.x
             offsetUpdate(offsetSec + (dragAmount / secSize / scale))
         }
@@ -94,26 +95,30 @@ fun TimeLinePanel(
                 offsetUpdate(0f)
             },
             runClick = {
-                if (dltSession != null) {
+                if (dltMessages.isNotEmpty()) {
                     coroutineScope.launch {
-                        TimelineAnalyzer.analyzeTimeline(dltSession, progressCallback)
+                        TimelineAnalyzer.analyzeTimeline(
+                            dltMessages,
+                            timelineViewModel,
+                            progressCallback
+                        )
                     }
                 }
             })
 
         Divider()
 
-        if (dltSession != null) {
+        if (dltMessages.isNotEmpty()) {
             val timeFrame = TimeFrame(
-                timestampStart = dltSession.timeStart,
-                timestampEnd = dltSession.timeEnd,
+                timestampStart = timelineViewModel.timeStart,
+                timestampEnd = timelineViewModel.timeEnd,
                 scale = scale,
                 offsetSeconds = offsetSec
             )
 
             Text(
-                "Time range: ${simpleDateFormat.format(dltSession.timeStart)} .. ${
-                    simpleDateFormat.format(dltSession.timeEnd)
+                "Time range: ${simpleDateFormat.format(timelineViewModel.timeStart)} .. ${
+                    simpleDateFormat.format(timelineViewModel.timeEnd)
                 }"
             )
             Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
@@ -124,7 +129,9 @@ fun TimeLinePanel(
                     Modifier.fillMaxWidth(1f),
                     offsetSec,
                     scale,
-                    dltSession
+                    timeStart = timelineViewModel.timeStart,
+                    timeEnd = timelineViewModel.timeEnd,
+                    totalSeconds = timelineViewModel.totalSeconds
                 )
             }
 
@@ -134,7 +141,7 @@ fun TimeLinePanel(
                     Row {
                         UserStateLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(100.dp),
-                            map = dltSession.userStateEntries
+                            map = timelineViewModel.userStateEntries
                         )
                         UserStateView(
                             offset = offsetSec,
@@ -143,8 +150,10 @@ fun TimeLinePanel(
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
-                            map = dltSession.userStateEntries,
-                            dltSession = dltSession
+                            map = timelineViewModel.userStateEntries,
+                            timeStart = timelineViewModel.timeStart,
+                            timeEnd = timelineViewModel.timeEnd,
+                            totalSeconds = timelineViewModel.totalSeconds
                         )
                     }
                 },
@@ -152,7 +161,7 @@ fun TimeLinePanel(
                     Row {
                         CPUCLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
-                            items = dltSession.cpuUsage
+                            items = timelineViewModel.cpuUsage
                         )
                         CPUUsageView(
                             offset = offsetSec,
@@ -161,8 +170,10 @@ fun TimeLinePanel(
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
-                            items = dltSession.cpuUsage,
-                            dltSession = dltSession
+                            items = timelineViewModel.cpuUsage,
+                            timeStart = timelineViewModel.timeStart,
+                            timeEnd = timelineViewModel.timeEnd,
+                            totalSeconds = timelineViewModel.totalSeconds
                         )
                     }
                 },
@@ -170,7 +181,7 @@ fun TimeLinePanel(
                     Row {
                         CPUSLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
-                            items = dltSession.cpus
+                            items = timelineViewModel.cpus
                         )
                         CPUSView(
                             offset = offsetSec,
@@ -179,8 +190,10 @@ fun TimeLinePanel(
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
-                            items = dltSession.cpus,
-                            dltSession = dltSession
+                            items = timelineViewModel.cpus,
+                            timeStart = timelineViewModel.timeStart,
+                            timeEnd = timelineViewModel.timeEnd,
+                            totalSeconds = timelineViewModel.totalSeconds
                         )
                     }
                 },
@@ -189,7 +202,7 @@ fun TimeLinePanel(
                         TimelineLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                             title = "CPU usage by process",
-                            entries = dltSession.userEntries["CPU_PER_PID"],
+                            entries = timelineViewModel.userEntries["CPU_PER_PID"],
                             { key -> legendsHighlight["CPU_PER_PID"]?.invoke(key) },
                             highlightedKey = cpuppidHighlight
                         )
@@ -198,7 +211,7 @@ fun TimeLinePanel(
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
-                            entries = dltSession.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
+                            entries = timelineViewModel.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
                             timeFrame = timeFrame,
                             highlightedKey = cpuppidHighlight
                         )
@@ -209,7 +222,7 @@ fun TimeLinePanel(
                         TimelineLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                             title = "Memory usage",
-                            entries = dltSession.userEntries["MEMT"],
+                            entries = timelineViewModel.userEntries["MEMT"],
                             { key -> legendsHighlight["MEMT"]?.invoke(key) },
                             highlightedKey = memtHighlight
                         )
@@ -218,7 +231,7 @@ fun TimeLinePanel(
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
-                            entries = dltSession.userEntries["MEMT"] as TimelineMinMaxEntries?,
+                            entries = timelineViewModel.userEntries["MEMT"] as TimelineMinMaxEntries?,
                             timeFrame = timeFrame,
                             seriesPostfix = " Mb",
                             highlightedKey = memtHighlight
@@ -252,7 +265,7 @@ fun TimeLinePanel(
                 Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
                     if (cursorPosition.x < LEGEND_WIDTH_DP.toPx()) return@Canvas
                     secSizePx =
-                        ((size.width - LEGEND_WIDTH_DP.toPx()) * scale) / dltSession.totalSeconds.toFloat()
+                        ((size.width - LEGEND_WIDTH_DP.toPx()) * scale) / timelineViewModel.totalSeconds.toFloat()
 
                     drawLine(
                         Color(0xFFFFFFc0),
@@ -262,7 +275,7 @@ fun TimeLinePanel(
                     val cursorOffsetSec: Float =
                         ((cursorPosition.x - LEGEND_WIDTH_DP.toPx()) / secSizePx) - offsetSec
                     val cursorTimestamp: Long =
-                        (1000L * cursorOffsetSec).toLong() + dltSession.timeStart
+                        (1000L * cursorOffsetSec).toLong() + timelineViewModel.timeStart
 
                     drawText(
                         textMeasurer,
@@ -289,7 +302,8 @@ fun TimeLinePanel(
 fun PreviewTimeline() {
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
-        dltSession = ParseSession({}, listOf(File(""))),
+        dltMessages = SampleData.getSampleDltMessages(20),
+        timelineViewModel = TimelineViewModel(),
         progressCallback = { },
         offsetSec = 0f,
         offsetUpdate = {},

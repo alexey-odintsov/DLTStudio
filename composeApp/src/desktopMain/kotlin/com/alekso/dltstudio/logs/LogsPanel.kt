@@ -22,8 +22,8 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
@@ -35,7 +35,6 @@ import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
 import org.jetbrains.compose.splitpane.VerticalSplitPane
 import org.jetbrains.skiko.Cursor
-import java.io.File
 
 
 private fun Modifier.cursorForHorizontalResize(): Modifier =
@@ -49,7 +48,9 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 fun LogsPanel(
     modifier: Modifier = Modifier,
     searchText: String,
-    dltSession: ParseSession?,
+    dltMessages: List<DLTMessage>,
+    searchResult: List<DLTMessage>,
+    searchIndexes: List<Int>,
     colorFilters: List<ColorFilter> = emptyList(),
     searchUseRegex: Boolean,
     logsToolbarState: LogsToolbarState,
@@ -65,9 +66,6 @@ fun LogsPanel(
 ) {
     var selectedRow by remember { mutableStateOf(0) }
     var searchResultSelectedRow by remember { mutableStateOf(0) }
-    val dltMessages = dltSession?.dltMessages ?: emptyList()
-    val searchResult = dltSession?.searchResult ?: emptyList()
-    val searchIndexes = dltSession?.searchIndexes ?: emptyList()
     val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -124,7 +122,7 @@ fun LogsPanel(
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            dltSession?.dltMessages?.getOrNull(selectedRow),
+                            dltMessages.getOrNull(selectedRow),
                             selectedRow
                         )
                     }
@@ -194,13 +192,12 @@ fun LogsPanel(
 @Preview
 @Composable
 fun PreviewLogsPanel() {
-    val dltSession = ParseSession({}, listOf(File("")))
-    dltSession.dltMessages.addAll(SampleData.getSampleDltMessages(20))
-
     LogsPanel(
         Modifier.fillMaxSize(),
         "Search text",
-        dltSession = dltSession,
+        dltMessages = SampleData.getSampleDltMessages(20),
+        searchResult = emptyList(),
+        searchIndexes = emptyList(),
         searchUseRegex = true,
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,

@@ -8,6 +8,8 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import com.alekso.dltparser.DLTParser
+import com.alekso.dltstudio.ParseSessionViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.MainWindow
 
@@ -17,11 +19,12 @@ fun main() = application {
         title = "DTL Studio",
         state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
-        MaterialTheme(
-            colors = MaterialTheme.colors,
-            typography = MaterialTheme.typography,
-            shapes = MaterialTheme.shapes
-        ) {
+//        MaterialTheme(
+//            colors = MaterialTheme.colors,
+//            typography = MaterialTheme.typography, // todo: Default font size is too big
+//            shapes = MaterialTheme.shapes
+//        ) {
+            val parseSessionViewModel = remember { ParseSessionViewModel(DLTParser) }
             val stateIsOpenFileDialog = remember { mutableStateOf(false) }
 
             MenuBar {
@@ -30,23 +33,25 @@ fun main() = application {
                 }
             }
 
-
             if (stateIsOpenFileDialog.value) {
                 FileChooserDialog(
                     title = "Open file",
-                    onFileSelected = {
+                    onFileSelected = { file ->
                         stateIsOpenFileDialog.value = false
-                        println("Result $it")
+                        file?.let {
+                            parseSessionViewModel.parseFile(listOf(it))
+                        }
                     },
                 )
             }
-            MainWindow()
-        }
+
+            MainWindow(parseSessionViewModel)
+//        }
     }
 }
 
 @Preview
 @Composable
 fun AppDesktopPreview() {
-    MainWindow()
+    MainWindow(ParseSessionViewModel(DLTParser))
 }

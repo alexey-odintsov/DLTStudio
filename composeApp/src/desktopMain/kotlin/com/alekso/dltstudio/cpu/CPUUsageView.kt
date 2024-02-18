@@ -14,9 +14,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.colors.ColorPalette
-import java.io.File
+import java.time.Instant
 
 
 @Composable
@@ -25,14 +24,16 @@ fun CPUUsageView(
     items: List<CPUUsageEntry>,
     offset: Float = 0f,
     scale: Float = 1f,
-    dltSession: ParseSession
+    totalSeconds: Int,
+    timeStart: Long,
+    timeEnd: Long
 ) {
     val textMeasurer = rememberTextMeasurer()
 
     Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
         val height = size.height
         val width = size.width
-        val secSize: Float = size.width / (dltSession.totalSeconds * 1.dp.toPx())
+        val secSize: Float = size.width / (totalSeconds * 1.dp.toPx())
 
         for (i in 0..100 step 10) {
             drawLine(
@@ -55,7 +56,7 @@ fun CPUUsageView(
 
             for (j in 0..<entry.cpuUsage.size) {
                 val prevX = if (prev != null) {
-                    ((prev.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
+                    ((prev.timestamp - timeStart) / 1000f * secSize.dp.toPx())
                 } else {
                     0f
                 }
@@ -65,7 +66,7 @@ fun CPUUsageView(
                     0f
                 }
                 val curX =
-                    ((entry.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
+                    ((entry.timestamp - timeStart) / 1000f * secSize.dp.toPx())
                 val curY = height - height * entry.cpuUsage[j] / 100f
                 drawLine(
                     ColorPalette.getColor(j),
@@ -81,6 +82,10 @@ fun CPUUsageView(
 @Preview
 @Composable
 fun PreviewCPUUsageView() {
+    val ts = Instant.now().toEpochMilli()
+    val te = ts + 7000
+    val totalSeconds = (te - ts).toInt() / 1000
+
     CPUUsageView(
         modifier = Modifier.width(200.dp).height(200.dp), items = listOf(
             CPUUsageEntry(23, 123123213, listOf(60.3f, 50.0f)),
@@ -93,6 +98,6 @@ fun PreviewCPUUsageView() {
             CPUUsageEntry(212, 123123220, listOf(84.6f, 99.7f)),
             CPUUsageEntry(247, 123123221, listOf(89.6f, 99.9f)),
             CPUUsageEntry(287, 123123222, listOf(94.6f, 81.3f)),
-        ), dltSession = ParseSession({}, listOf(File("")))
+        ), timeStart = ts, timeEnd = te, totalSeconds = totalSeconds
     )
 }
