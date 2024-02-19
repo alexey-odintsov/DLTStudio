@@ -40,10 +40,13 @@ import java.net.URI
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalSplitPaneApi::class)
 @Composable
 @Preview
-fun MainWindow(parseSessionViewModel: ParseSessionViewModel) {
+fun MainWindow(
+    parseSessionViewModel: ParseSessionViewModel,
+    progress: Float,
+    onProgressUpdate: (Float) -> Unit
+) {
     val timelineViewModel = remember { TimelineViewModel() }
 
-    var progress by remember { mutableStateOf(0f) }
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
     var scale by remember { mutableStateOf(1f) }
@@ -94,7 +97,6 @@ fun MainWindow(parseSessionViewModel: ParseSessionViewModel) {
     var searchUseRegex by remember { mutableStateOf(true) }
 
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
-    val statusBarProgressCallback: (Float) -> Unit = { i -> progress = i }
     val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset = newOffset }
     val scaleUpdateCallback: (Float) -> Unit =
         { newScale -> scale = if (newScale > 0f) newScale else 1f }
@@ -168,7 +170,7 @@ fun MainWindow(parseSessionViewModel: ParseSessionViewModel) {
                 modifier = Modifier.weight(1f),
                 timelineViewModel = timelineViewModel,
                 parseSessionViewModel.dltMessages,
-                statusBarProgressCallback,
+                onProgressUpdate,
                 offset,
                 offsetUpdateCallback,
                 scale,
@@ -189,6 +191,6 @@ fun MainWindow(parseSessionViewModel: ParseSessionViewModel) {
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(ParseSessionViewModel(DLTParser))
+        MainWindow(ParseSessionViewModel(DLTParser, {}), 1f, {})
     }
 }

@@ -11,7 +11,8 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 class ParseSessionViewModel(
-    private val dltParser: DLTParser
+    private val dltParser: DLTParser,
+    private val onProgressChanged: (Float) -> Unit
 ) {
 
     private val _dltMessages = mutableStateListOf<DLTMessage>()
@@ -21,9 +22,9 @@ class ParseSessionViewModel(
     val searchResult = mutableStateListOf<DLTMessage>()
     val searchIndexes = mutableStateListOf<Int>()
 
-
     private var parseJob: Job? = null
     private var searchJob: Job? = null
+
     fun parseFile(dltFiles: List<File>) {
         searchJob?.cancel()
         parseJob?.cancel()
@@ -33,9 +34,7 @@ class ParseSessionViewModel(
         _dltMessages.clear()
 
         parseJob = CoroutineScope(IO).launch {
-            _dltMessages.addAll(dltParser.read({
-                // todo
-            }, dltFiles))
+            _dltMessages.addAll(dltParser.read(onProgressChanged, dltFiles))
         }
     }
 
@@ -43,19 +42,18 @@ class ParseSessionViewModel(
         parseJob = CoroutineScope(IO).launch {
             searchResult.clear()
             searchIndexes.clear()
-            println("Searching for $searchText..")
+
             _dltMessages.forEachIndexed { i, dltMessage ->
                 val payload = dltMessage.payload
 
                 if (payload != null) {
-                    if ((searchUseRegex && searchText.toRegex()
-                            .containsMatchIn(payload.asText()))
+                    if ((searchUseRegex && searchText.toRegex().containsMatchIn(payload.asText()))
                         || (payload.asText().contains(searchText))
                     ) {
                         searchResult.add(dltMessage)
                         searchIndexes.add(i)
                     }
-//                    statusBarProgressCallback.invoke(i.toFloat() / dltMessages.size)
+                    onProgressChanged(i.toFloat() / dltMessages.size)
                 }
             }
         }

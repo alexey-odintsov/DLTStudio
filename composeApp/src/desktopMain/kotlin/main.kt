@@ -1,8 +1,7 @@
-import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
@@ -24,7 +23,11 @@ fun main() = application {
 //            typography = MaterialTheme.typography, // todo: Default font size is too big
 //            shapes = MaterialTheme.shapes
 //        ) {
-            val parseSessionViewModel = remember { ParseSessionViewModel(DLTParser) }
+        var progress by remember { mutableStateOf(0f) }
+        val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
+
+
+        val parseSessionViewModel = remember { ParseSessionViewModel(DLTParser, onProgressUpdate) }
             val stateIsOpenFileDialog = remember { mutableStateOf(false) }
 
             MenuBar {
@@ -45,13 +48,7 @@ fun main() = application {
                 )
             }
 
-            MainWindow(parseSessionViewModel)
+            MainWindow(parseSessionViewModel, progress, onProgressUpdate)
 //        }
     }
-}
-
-@Preview
-@Composable
-fun AppDesktopPreview() {
-    MainWindow(ParseSessionViewModel(DLTParser))
 }
