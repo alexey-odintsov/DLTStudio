@@ -45,7 +45,7 @@ fun MainWindow(
     progress: Float,
     onProgressUpdate: (Float) -> Unit
 ) {
-    val timelineViewModel = remember { TimelineViewModel() }
+    val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
 
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
@@ -170,7 +170,6 @@ fun MainWindow(
                 modifier = Modifier.weight(1f),
                 timelineViewModel = timelineViewModel,
                 parseSessionViewModel.dltMessages,
-                onProgressUpdate,
                 offset,
                 offsetUpdateCallback,
                 scale,

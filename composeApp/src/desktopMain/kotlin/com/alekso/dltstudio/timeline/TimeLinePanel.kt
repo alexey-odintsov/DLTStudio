@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -33,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -47,7 +45,6 @@ import com.alekso.dltstudio.cpu.CPUSView
 import com.alekso.dltstudio.cpu.CPUUsageView
 import com.alekso.dltstudio.user.UserStateLegend
 import com.alekso.dltstudio.user.UserStateView
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -61,13 +58,11 @@ fun TimeLinePanel(
     modifier: Modifier,
     timelineViewModel: TimelineViewModel,
     dltMessages: List<DLTMessage>,
-    progressCallback: (Float) -> Unit,
     offsetSec: Float,
     offsetUpdate: (Float) -> Unit,
     scale: Float,
     scaleUpdate: (Float) -> Unit,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
     var memtHighlight by remember { mutableStateOf<String?>(null) }
@@ -94,17 +89,7 @@ fun TimeLinePanel(
                 scaleUpdate(1f)
                 offsetUpdate(0f)
             },
-            runClick = {
-                if (dltMessages.isNotEmpty()) {
-                    coroutineScope.launch {
-                        TimelineAnalyzer.analyzeTimeline(
-                            dltMessages,
-                            timelineViewModel,
-                            progressCallback
-                        )
-                    }
-                }
-            })
+            runClick = { timelineViewModel.analyzeTimeline(dltMessages) })
 
         Divider()
 
@@ -240,13 +225,12 @@ fun TimeLinePanel(
                 },
             )
             Box(modifier = Modifier.weight(1f)) {
-                LazyColumn(Modifier.onPointerEvent(
-                    eventType = PointerEventType.Move,
-                    onEvent = { event ->
-                        cursorPosition = event.changes[0].position
-                    }).onSizeChanged {
-                    //secSizePx = ((it.width - LEGEND_WIDTH_DP) * scale) / (dltSession.totalSeconds)
-                }, state
+                LazyColumn(
+                    Modifier.onPointerEvent(
+                        eventType = PointerEventType.Move,
+                        onEvent = { event ->
+                            cursorPosition = event.changes[0].position
+                        }), state
                 ) {
                     items(panels.size) { i ->
                         if (i > 0) {
@@ -303,8 +287,7 @@ fun PreviewTimeline() {
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
         dltMessages = SampleData.getSampleDltMessages(20),
-        timelineViewModel = TimelineViewModel(),
-        progressCallback = { },
+        timelineViewModel = TimelineViewModel({}),
         offsetSec = 0f,
         offsetUpdate = {},
         scale = 1f,
