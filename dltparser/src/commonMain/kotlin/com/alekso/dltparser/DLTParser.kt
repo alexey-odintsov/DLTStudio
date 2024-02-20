@@ -142,10 +142,13 @@ object DLTParser {
                 i += payloadSize
                 payload = VerbosePayload(arguments)
             } else {
-                // todo: Parse NonVerbose data
                 val payloadSize =
                     standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
-                payload = NonVerbosePayload(bytes.sliceArray(i..<i + payloadSize))
+                val messageId: UInt = bytes.readInt(i, Endian.LITTLE).toUInt()
+                payload = NonVerbosePayload(
+                    messageId,
+                    bytes.sliceArray(i + NonVerbosePayload.MESSAGE_ID_SIZE_BYTES..<i + payloadSize)
+                )
             }
         }
         if (DEBUG_LOG && shouldLog) {
