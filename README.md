@@ -22,6 +22,7 @@ IntelliJ IDEA / Android Studio
 1. New -> Project from Version Control -> Specify clone Url
 
 2. Add new Gradle configuration and specify run task
+<img src="doc/gradle_configuration.png" width="400">
 
 3. Click 'Run'
 
