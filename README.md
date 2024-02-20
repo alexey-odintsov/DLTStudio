@@ -16,9 +16,20 @@ A very simple desktop DLT logs analyzing app written with Compose Multiplatform.
 Just drag and drop your dlt files to the app.
 
 # Run
+
+IntelliJ IDEA / Android Studio
+
+1. New -> Project from Version Control -> Specify clone Url
+
+2. Add new Gradle configuration and specify run task
+
+3. Click 'Run'
+
+or in terminal run command:
 ```
 ./gradlew :composeApp:run
 ```
+
 
 # Distribute
 ```
