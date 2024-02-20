@@ -39,17 +39,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.cpu.CPUCLegend
 import com.alekso.dltstudio.cpu.CPUSLegend
 import com.alekso.dltstudio.cpu.CPUSView
 import com.alekso.dltstudio.cpu.CPUUsageView
 import com.alekso.dltstudio.user.UserStateLegend
 import com.alekso.dltstudio.user.UserStateView
-import java.text.SimpleDateFormat
-import java.util.Locale
 
-private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
-private val simpleTimeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.ENGLISH)
 private val LEGEND_WIDTH_DP = 250.dp
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -102,8 +99,8 @@ fun TimeLinePanel(
             )
 
             Text(
-                "Time range: ${simpleDateFormat.format(timelineViewModel.timeStart)} .. ${
-                    simpleDateFormat.format(timelineViewModel.timeEnd)
+                "Time range: ${TimeFormatter.formatDateTime(timelineViewModel.timeStart)} .. ${
+                    TimeFormatter.formatDateTime(timelineViewModel.timeEnd)
                 }"
             )
             Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
@@ -259,11 +256,11 @@ fun TimeLinePanel(
                     val cursorOffsetSec: Float =
                         ((cursorPosition.x - LEGEND_WIDTH_DP.toPx()) / secSizePx) - offsetSec
                     val cursorTimestamp: Long =
-                        (1000L * cursorOffsetSec).toLong() + timelineViewModel.timeStart
+                        (1000000L * cursorOffsetSec).toLong() + timelineViewModel.timeStart
 
                     drawText(
                         textMeasurer,
-                        text = "${simpleTimeFormat.format(cursorTimestamp)} (${
+                        text = "${TimeFormatter.formatTime(cursorTimestamp)} (${
                             "%+.2f".format(
                                 cursorOffsetSec
                             )

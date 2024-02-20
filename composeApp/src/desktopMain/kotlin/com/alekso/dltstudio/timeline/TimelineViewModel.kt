@@ -27,7 +27,7 @@ class TimelineViewModel(
     var timeStart = Long.MAX_VALUE
     var timeEnd = Long.MIN_VALUE
     val totalSeconds: Int
-        get() = if (timeEnd > 0 && timeStart > 0) (timeEnd - timeStart).toInt() / 1000 else 0
+        get() = if (timeEnd > 0 && timeStart > 0) ((timeEnd - timeStart) / 1000000).toInt() else 0
 
 
     fun analyzeTimeline(dltMessages: List<DLTMessage>) {
@@ -48,7 +48,7 @@ class TimelineViewModel(
 
                 dltMessages.forEachIndexed { index, message ->
                     // timeStamps
-                    val ts = message.getTimeStamp()
+                    val ts = message.timeStampNano
                     if (ts > timeEnd) {
                         timeEnd = ts
                     }
@@ -109,7 +109,7 @@ class TimelineViewModel(
                 val value: String? = matches.groups["value"]?.value
 
                 if (key != null && value != null) {
-                    entries.addEntry(TimelineEntry(message.getTimeStamp(), key, value))
+                    entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
                 }
             }
         } catch (e: Exception) {
@@ -140,7 +140,7 @@ class TimelineViewModel(
                 )
 
                 if (key != null && value != null) {
-                    entries.addEntry(TimelineEntry(message.getTimeStamp(), key, value))
+                    entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
                 }
             }
         } catch (e: Exception) {

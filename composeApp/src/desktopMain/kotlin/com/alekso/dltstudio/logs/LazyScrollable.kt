@@ -18,11 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import java.text.SimpleDateFormat
-import java.util.Locale
 
-private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
 @Composable
 fun LazyScrollable(
@@ -60,7 +58,7 @@ fun LazyScrollable(
                         colorFilters.firstOrNull { filter -> filter.assess(message) }?.cellStyle
 
                     val index: Int = if (indexes != null) indexes[i] else i
-                    val sTime: String = simpleDateFormat.format(message.getTimeStamp())
+                    val sTime: String = TimeFormatter.formatDateTime(message.timeStampNano)
                     val sTimeOffset: String =
                         if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
                     val sEcu: String = message.ecuId

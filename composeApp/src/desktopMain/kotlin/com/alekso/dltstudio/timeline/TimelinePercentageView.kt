@@ -19,10 +19,9 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
-import java.text.SimpleDateFormat
 import java.time.Instant
-import java.util.Locale
 
 @Composable
 fun TimelinePercentageView(
@@ -110,16 +109,16 @@ private fun DrawScope.renderLines(
         if (i == 0) return@memEntriesIteration
 
         val prev = items[i - 1]
-        val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000f
+        val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000000f
         // split lines if difference is too big
         if (prevDiffSec > splitTimeSec) {
             return@memEntriesIteration
         }
 
-        val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000f * secSizePx
+        val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx
         val prevY = height - height * prev.value.toFloat() / 100f
 
-        val curX = (entry.timestamp - timeFrame.timestampStart) / 1000f * secSizePx
+        val curX = (entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx
         val curY = height - height * entry.value.toFloat() / 100f
 
         drawLine(
@@ -134,25 +133,24 @@ private fun DrawScope.renderLines(
 @Preview
 @Composable
 fun PreviewTimelineView() {
-    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
-    val ts = Instant.now().toEpochMilli()
-    val te = ts + 7000
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
 
     val entries = TimelinePercentageEntries()
     entries.entries["1325"] = mutableListOf(
-        TimelineEntry(ts + 1450, "key1", "5.3"),
-        TimelineEntry(ts + 2000, "key1", "43"),
-        TimelineEntry(ts + 2300, "key1", "83"),
-        TimelineEntry(ts + 2400, "key1", "43"),
+        TimelineEntry(ts + 1450000, "key1", "5.3"),
+        TimelineEntry(ts + 2000000, "key1", "43"),
+        TimelineEntry(ts + 2300000, "key1", "83"),
+        TimelineEntry(ts + 2400000, "key1", "43"),
     )
     entries.entries["435"] = mutableListOf(
-        TimelineEntry(ts + 200, "435", "13"),
-        TimelineEntry(ts + 2100, "435", "2"),
-        TimelineEntry(ts + 2700, "435", "4"),
-        TimelineEntry(ts + 3400, "435", "2"),
-        TimelineEntry(ts + 3560, "435", "23"),
-        TimelineEntry(ts + 4000, "435", "72"),
-        TimelineEntry(ts + 6900, "435", "5"),
+        TimelineEntry(ts + 200000, "435", "13"),
+        TimelineEntry(ts + 2100000, "435", "2"),
+        TimelineEntry(ts + 2700000, "435", "4"),
+        TimelineEntry(ts + 3400000, "435", "2"),
+        TimelineEntry(ts + 3560000, "435", "23"),
+        TimelineEntry(ts + 4000000, "435", "72"),
+        TimelineEntry(ts + 6900000, "435", "5"),
     )
 
     Column {
@@ -163,8 +161,8 @@ fun PreviewTimelineView() {
                 scale = i.toFloat(),
                 offsetSeconds = 0f
             )
-            Text(text = "start: ${simpleDateFormat.format(ts)}")
-            Text(text = "end: ${simpleDateFormat.format(te)}")
+            Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
+            Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
             Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
             TimelinePercentageView(
                 modifier = Modifier.fillMaxWidth().height(200.dp),

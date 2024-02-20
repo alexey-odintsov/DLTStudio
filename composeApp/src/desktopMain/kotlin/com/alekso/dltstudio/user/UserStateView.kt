@@ -57,11 +57,11 @@ fun UserStateView(
                 val prev = if (i > 0) items[i - 1] else null
 
                 val prevX = if (prev != null) {
-                    ((prev.timestamp - timeStart) / 1000 * secSize.dp.toPx())
+                    ((prev.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
                 } else {
                     0f
                 }
-                val curX = ((entry.timestamp - timeStart) / 1000 * secSize.dp.toPx())
+                val curX = ((entry.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
 
                 val curOldY = entry.oldState.ordinal * itemHeight + topOffset
                 val curY = entry.newState.ordinal * itemHeight + topOffset
@@ -91,29 +91,29 @@ fun UserStateView(
 @Preview
 @Composable
 fun PreviewUserStateView() {
-    val ts = Instant.now().toEpochMilli()
-    val te = ts + 7000
-    val totalSeconds = (te - ts).toInt() / 1000
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
+    val totalSeconds = (te - ts).toInt() / 1000000
 
     val userStateEntries = mutableMapOf(
         0 to mutableListOf(
             UserStateEntry(
                 index = 150740,
-                timestamp = 1705410539667,
+                timestamp = ts + 1000000,
                 uid = 0,
                 oldState = UserState.BOOTING,
                 newState = UserState.RUNNING_LOCKED
             ),
             UserStateEntry(
                 index = 162146,
-                timestamp = 1705410541567,
+                timestamp = ts + 2000000,
                 uid = 0,
                 oldState = UserState.RUNNING_LOCKED,
                 newState = UserState.RUNNING_UNLOCKING
             ),
             UserStateEntry(
                 index = 162438,
-                timestamp = 1705410544739,
+                timestamp = ts + 3000000,
                 uid = 0,
                 oldState = UserState.RUNNING_UNLOCKING,
                 newState = UserState.RUNNING_UNLOCKED
@@ -122,21 +122,21 @@ fun PreviewUserStateView() {
         10 to mutableListOf(
             UserStateEntry(
                 index = 157066,
-                timestamp = 1705410540536,
+                timestamp = ts + 1500000,
                 uid = 10,
                 oldState = UserState.BOOTING,
                 newState = UserState.RUNNING_LOCKED
             ),
             UserStateEntry(
                 index = 165899,
-                timestamp = 1705410542435,
+                timestamp = ts + 2000000,
                 uid = 10,
                 oldState = UserState.RUNNING_LOCKED,
                 newState = UserState.RUNNING_UNLOCKING
             ),
             UserStateEntry(
                 index = 176028,
-                timestamp = 1705410544163,
+                timestamp = ts + 4500000,
                 uid = 10,
                 oldState = UserState.RUNNING_UNLOCKING,
                 newState = UserState.RUNNING_UNLOCKED

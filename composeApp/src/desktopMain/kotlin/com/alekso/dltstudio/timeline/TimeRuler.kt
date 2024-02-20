@@ -17,10 +17,9 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.alekso.dltstudio.TimeFormatter
+import java.time.Instant
 
-private val TimeRulerTimeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.ENGLISH)
 private const val TIME_MARK_SIZE_PX = 100
 private const val DEBUG = true
 
@@ -55,7 +54,7 @@ fun TimeRuler(
                 try {
                     drawText(
                         textMeasurer,
-                        text = TimeRulerTimeFormat.format(timeStart + i * 1000),
+                        text = TimeFormatter.formatTime(timeStart + i * 1000000),
                         topLeft = Offset(
                             offsetSec * secSizePx + i * secSizePx,
                             30f
@@ -86,18 +85,17 @@ fun TimeRuler(
     }
 }
 
-private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
 @Preview
 @Composable
 fun PreviewTimeRuler() {
-    val ts = 1707602400000 //23:00:00.000 // Instant.now().toEpochMilli()
-    val te = ts + 300_000
-    val totalSeconds = (te - ts).toInt() / 1000
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
+    val totalSeconds = (te - ts).toInt() / 1000000
 
     Column {
-        Text(text = "start: ${simpleDateFormat.format(ts)} (${ts})")
-        Text(text = "end: ${simpleDateFormat.format(te)} (${te})")
+        Text(text = "start: ${TimeFormatter.formatDateTime(ts)} (${ts})")
+        Text(text = "end: ${TimeFormatter.formatDateTime(te)} (${te})")
         Text(text = "seconds: $totalSeconds")
         Divider()
 

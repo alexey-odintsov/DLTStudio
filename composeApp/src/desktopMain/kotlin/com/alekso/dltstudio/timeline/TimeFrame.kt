@@ -6,7 +6,7 @@ data class TimeFrame(
     val offsetSeconds: Float,
     val scale: Float,
 ) {
-    fun getTotalSeconds(): Int = (timestampEnd - timestampStart).toInt() / 1000
+    fun getTotalSeconds(): Int = ((timestampEnd - timestampStart) / 1000000).toInt()
 
     fun calculateSecSizePx(widthPx: Float) = (widthPx / getTotalSeconds()) * scale
 }
