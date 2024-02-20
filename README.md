@@ -1,4 +1,4 @@
-A very simple desktop DLT logs analizing app written with Compose Multiplatform.
+A very simple desktop DLT logs analyzing app written with Compose Multiplatform.
 <img src="doc/preview_logs.png" width="600"> <img src="doc/preview_timeline.png" width="600">
 
 # Features
@@ -6,7 +6,7 @@ A very simple desktop DLT logs analizing app written with Compose Multiplatform.
   - Plain text and regex search by Payload (so far)
   - DLT message Simple and Detailed info panel
   - Warn, Error and Fatal messages color filters with toggle buttons
-  - Custom color filters (soon will be customizable with UI)
+  - Customisable color filters
 - Zoomable and movable timeline screen
   - Users switch state view
   - CPUC and CPUS views which show CPU usage
