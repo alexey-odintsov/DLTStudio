@@ -1,5 +1,6 @@
 package com.alekso.dltparser
 
+import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.ExtendedHeader
 import com.alekso.dltparser.dlt.MessageInfo
@@ -26,8 +27,7 @@ object DLTParser {
      * https://www.autosar.org/fileadmin/standards/R22-11/FO/AUTOSAR_PRS_LogAndTraceProtocol.pdf - Header Type for protocol version "2"
      */
     suspend fun read(
-        progressCallback: (Float) -> Unit,
-        files: List<File>
+        progressCallback: (Float) -> Unit, files: List<File>
     ): List<DLTMessage> {
         progressCallback.invoke(0f)
         val messages = mutableListOf<DLTMessage>()
@@ -51,8 +51,7 @@ object DLTParser {
                     shouldLog = false //logsReadCount == 3
 
                     // Skip until 'DLT' signature found
-                    while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)
-                    ) {
+                    while (!(bytes[i].toInt() == 0x44 && bytes[i + 1].toInt() == 0x4C && bytes[i + 2].toInt() == 0x54 && bytes[i + 3].toInt() == 0x01) && i < (bytes.size - 17)) {
                         i++
                         skippedBytes++
                     }
@@ -141,13 +140,23 @@ object DLTParser {
 //                }
                 i += payloadSize
                 payload = VerbosePayload(arguments)
+
+            } else if (extendedHeader.messageInfo.messageType == MessageInfo.MESSAGE_TYPE.DLT_TYPE_CONTROL) {
+                val payloadSize =
+                    standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
+                val messageId: UByte = bytes[i].toUByte()
+                val payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
+                payload = ControlMessagePayload(
+                    messageId, bytes.sliceArray(i + payloadOffset..<i + payloadSize)
+                )
+
             } else {
                 val payloadSize =
                     standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
                 val messageId: UInt = bytes.readInt(i, Endian.LITTLE).toUInt()
+                val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
                 payload = NonVerbosePayload(
-                    messageId,
-                    bytes.sliceArray(i + NonVerbosePayload.MESSAGE_ID_SIZE_BYTES..<i + payloadSize)
+                    messageId, bytes.sliceArray(i + payloadOffset..<i + payloadSize)
                 )
             }
         }
@@ -170,9 +179,8 @@ object DLTParser {
             if (headerType.withEcuId) bytes.readString(p, 4).replace("\u0000", "") else null; p += 4
         val sessionId =
             if (headerType.withSessionId) bytes.readInt(p, STANDARD_HEADER_ENDIAN) else null; p += 4
-        val timeStamp =
-            if (headerType.withTimestamp) bytes.readInt(p, STANDARD_HEADER_ENDIAN)
-                .toUInt() else null; p += 4
+        val timeStamp = if (headerType.withTimestamp) bytes.readInt(p, STANDARD_HEADER_ENDIAN)
+            .toUInt() else null; p += 4
 
         if (DEBUG_LOG && shouldLog) {
             println(
@@ -183,12 +191,7 @@ object DLTParser {
         }
 
         return StandardHeader(
-            headerType,
-            messageCounter,
-            length,
-            ecuId,
-            sessionId,
-            timeStamp
+            headerType, messageCounter, length, ecuId, sessionId, timeStamp
         )
     }
 
@@ -202,9 +205,9 @@ object DLTParser {
 
         if (DEBUG_LOG && shouldLog) {
             println(
-                "   HeaderType.parse: " +
-                        "${byte.toHex()} (${byte.toString(2).padStart(8, '0')}) " +
-                        "extendedHeader: $useExtendedHeader, payloadBigEndian: $payloadBigEndian, withEcuId: $withEcuId, withSessionId: $withSessionId, withTimestamp: $withTimestamp, versionNumber: $versionNumber)"
+                "   HeaderType.parse: " + "${byte.toHex()} (${
+                    byte.toString(2).padStart(8, '0')
+                }) " + "extendedHeader: $useExtendedHeader, payloadBigEndian: $payloadBigEndian, withEcuId: $withEcuId, withSessionId: $withSessionId, withTimestamp: $withTimestamp, versionNumber: $versionNumber)"
             )
         }
 
@@ -239,11 +242,9 @@ object DLTParser {
         }
 
         return ExtendedHeader(
-            messageInfo,
-            argumentsCount,
+            messageInfo, argumentsCount,
             // todo: check performance, could be done faster when reading bytes
-            applicationId.replace("\u0000", ""),
-            contextId.replace("\u0000", "")
+            applicationId.replace("\u0000", ""), contextId.replace("\u0000", "")
         )
     }
 
@@ -270,8 +271,7 @@ object DLTParser {
     }
 
     private fun parseMessageTypeInfo(
-        byte: Byte,
-        messageType: MessageInfo.MESSAGE_TYPE
+        byte: Byte, messageType: MessageInfo.MESSAGE_TYPE
     ): MessageInfo.MESSAGE_TYPE_INFO {
         val mask = 0b00001111
         val result = (byte.toInt()).shr(4) and mask
@@ -317,11 +317,7 @@ object DLTParser {
 
 
     fun parseVerbosePayload(
-        shouldLog: Boolean,
-        j: Int,
-        bytes: ByteArray,
-        i: Int,
-        payloadEndian: Endian
+        shouldLog: Boolean, j: Int, bytes: ByteArray, i: Int, payloadEndian: Endian
     ): VerbosePayload.Argument {
         if (DEBUG_LOG && shouldLog) {
             println(
@@ -375,11 +371,7 @@ object DLTParser {
             bytes.sliceArray(i + 4 + additionalSize..if (toIndex < bytes.size) toIndex else bytes.size - 1)
 
         val argument = VerbosePayload.Argument(
-            typeInfoInt,
-            typeInfo,
-            additionalSize,
-            payloadSize,
-            payload
+            typeInfoInt, typeInfo, additionalSize, payloadSize, payload
         )
 
         if (DEBUG_LOG && shouldLog) {
@@ -392,9 +384,7 @@ object DLTParser {
     }
 
     fun parseVerbosePayloadTypeInfo(
-        shouldLog: Boolean,
-        typeInfoInt: Int,
-        payloadEndian: Endian
+        shouldLog: Boolean, typeInfoInt: Int, payloadEndian: Endian
     ): VerbosePayload.TypeInfo {
         val typeLengthBits = when (typeInfoInt and 0b1111) {
             0b0001 -> 8

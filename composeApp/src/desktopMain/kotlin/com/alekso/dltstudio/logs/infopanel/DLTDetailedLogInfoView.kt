@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.ExtendedHeader
 import com.alekso.dltparser.dlt.NonVerbosePayload
@@ -165,6 +166,17 @@ fun DLTDetailedInfoView(
                             Header(
                                 modifier = paddingModifier,
                                 text = "Non-Verbose payload:"
+                            )
+                            MonoText(
+                                modifier = paddingModifier,
+                                text = payload.asText()
+                            )
+                        }
+
+                        is ControlMessagePayload -> {
+                            Header(
+                                modifier = paddingModifier,
+                                text = "Control Message payload:"
                             )
                             MonoText(
                                 modifier = paddingModifier,
