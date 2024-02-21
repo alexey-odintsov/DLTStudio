@@ -13,6 +13,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.ui.CustomEditText
 import com.alekso.dltstudio.ui.HorizontalDivider
@@ -93,7 +96,15 @@ fun LogsToolbar(
             updateCheckedState = updateSearchUseRegexCheck
         )
 
-        CustomEditText(modifier = Modifier.width(500.dp).height(20.dp),
+        CustomEditText(modifier = Modifier.width(500.dp).height(20.dp)
+            .onKeyEvent { e ->
+                if (e.key == Key.Enter) {
+                    updateSearchText(text)
+                    true
+                } else {
+                    false
+                }
+            },
             value = text, onValueChange = {
                 text = it
             })
