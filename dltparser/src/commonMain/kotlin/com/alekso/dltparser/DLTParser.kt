@@ -144,10 +144,20 @@ object DLTParser {
             } else if (extendedHeader.messageInfo.messageType == MessageInfo.MESSAGE_TYPE.DLT_TYPE_CONTROL) {
                 val payloadSize =
                     standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
-                val messageId: UByte = bytes[i].toUByte()
-                val payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
+                val messageId: Int = bytes.readInt(
+                    i,
+                    if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
+                )
+                var response: Int? = null
+                var payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
+                if (extendedHeader.messageInfo.messageTypeInfo == MessageInfo.MESSAGE_TYPE_INFO.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
+                    response = bytes[i + payloadOffset].toInt()
+                    payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
+                }
                 payload = ControlMessagePayload(
-                    messageId, bytes.sliceArray(i + payloadOffset..<i + payloadSize)
+                    messageId,
+                    response,
+                    bytes.sliceArray(i + payloadOffset..<i + payloadSize)
                 )
 
             } else {
