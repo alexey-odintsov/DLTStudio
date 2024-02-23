@@ -7,7 +7,7 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.alekso.dltparser.DLTParser
+import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltstudio.ParseSessionViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.MainWindow
@@ -27,7 +27,7 @@ fun main() = application {
         val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
 
-        val parseSessionViewModel = remember { ParseSessionViewModel(DLTParser, onProgressUpdate) }
+        val parseSessionViewModel = remember { ParseSessionViewModel(DLTParserV1(), onProgressUpdate) }
             val stateIsOpenFileDialog = remember { mutableStateOf(false) }
 
             MenuBar {

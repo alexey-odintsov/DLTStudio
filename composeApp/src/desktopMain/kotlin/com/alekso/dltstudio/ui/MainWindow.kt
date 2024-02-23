@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.DLTParser
+import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltstudio.ParseSessionViewModel
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.LogsPanel
@@ -190,6 +190,6 @@ fun MainWindow(
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(ParseSessionViewModel(DLTParser, {}), 1f, {})
+        MainWindow(ParseSessionViewModel(DLTParserV1(), {}), 1f, {})
     }
 }
