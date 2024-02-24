@@ -16,10 +16,7 @@ import com.alekso.dltparser.dlt.NonVerbosePayload
 import com.alekso.dltparser.dlt.Payload
 import com.alekso.dltparser.dlt.StandardHeader
 import com.alekso.dltparser.dlt.VerbosePayload
-import java.io.DataInputStream
 import java.io.File
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
 
 
 class DLTParserV2 : DLTParser {
@@ -43,7 +40,7 @@ class DLTParserV2 : DLTParser {
         files.forEach { file ->
             val fileSize = file.length()
             println("Parsing '$file'")
-            DataInputStream(file.inputStream().buffered()).use { stream ->
+            ParserInputStream(file.inputStream().buffered()).use { stream ->
                 var i = 0
                 var shouldLog: Boolean
                 var bufByte: Byte
@@ -92,16 +89,15 @@ class DLTParserV2 : DLTParser {
     }
 
     private fun parseDLTMessage(
-        stream: DataInputStream,
+        stream: ParserInputStream,
         offset: Int,
         shouldLog: Boolean
     ): DLTMessage {
         var i = offset
-        val bufferLE = ByteBuffer.wrap(stream.readNBytes(8)).order(ByteOrder.LITTLE_ENDIAN)
-        val timeStampSec = bufferLE.getInt()
-        val timeStampUs = bufferLE.getInt()
+        val timeStampSec = stream.readIntLittle()
+        val timeStampUs = stream.readIntLittle()
         val timeStampNano = timeStampSec * 1000000L + timeStampUs
-        val ecuId = stream.readNBytes(4).decodeToString()
+        val ecuId = String(stream.readNBytes(4))//.decodeToString()
         i += DLT_HEADER_SIZE_BYTES
 
         if (DEBUG_LOG && shouldLog) {
@@ -158,9 +154,11 @@ class DLTParserV2 : DLTParser {
             } else if (extendedHeader.messageInfo.messageType == MessageInfo.MESSAGE_TYPE.DLT_TYPE_CONTROL) {
                 val payloadSize =
                     standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
-                val bufferLE = ByteBuffer.wrap(stream.readNBytes(4))
-                    .order(if (standardHeader.headerType.payloadBigEndian) ByteOrder.BIG_ENDIAN else ByteOrder.LITTLE_ENDIAN)
-                val messageId: Int = bufferLE.getInt()
+                val messageId: Int = if (standardHeader.headerType.payloadBigEndian) {
+                    stream.readInt()
+                } else {
+                    stream.readIntLittle()
+                }
                 var response: Int? = null
                 var payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
                 if (extendedHeader.messageInfo.messageTypeInfo == MessageInfo.MESSAGE_TYPE_INFO.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
@@ -178,8 +176,7 @@ class DLTParserV2 : DLTParser {
             } else {
                 val payloadSize =
                     standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
-                val bufferLE = ByteBuffer.wrap(stream.readNBytes(4)).order(ByteOrder.LITTLE_ENDIAN)
-                val messageId: UInt = bufferLE.getInt().toUInt()
+                val messageId: UInt = stream.readIntLittle().toUInt()
                 val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
 
                 if ((payloadSize - payloadOffset) > 0) {
@@ -197,7 +194,7 @@ class DLTParserV2 : DLTParser {
 
     private fun parseStandardHeader(
         shouldLog: Boolean,
-        stream: DataInputStream,
+        stream: ParserInputStream,
     ): StandardHeader {
         if (DEBUG_LOG && shouldLog) {
             println("StandardHeader.parse")
@@ -254,7 +251,7 @@ class DLTParserV2 : DLTParser {
 
     private fun parseExtendedHeader(
         shouldLog: Boolean,
-        stream: DataInputStream,
+        stream: ParserInputStream,
     ): ExtendedHeader {
         if (DEBUG_LOG && shouldLog) {
             println("ExtendedHeader.parse:")
@@ -346,12 +343,14 @@ class DLTParserV2 : DLTParser {
 
 
     private fun parseVerbosePayload(
-        shouldLog: Boolean, stream: DataInputStream, payloadEndian: Endian
+        shouldLog: Boolean, stream: ParserInputStream, payloadEndian: Endian
     ): VerbosePayload.Argument {
-        val bufferLE = ByteBuffer.wrap(stream.readNBytes(4))
-            .order(if (payloadEndian == Endian.BIG) ByteOrder.BIG_ENDIAN else ByteOrder.LITTLE_ENDIAN)
+        val typeInfoInt = if (payloadEndian == Endian.LITTLE) {
+            stream.readIntLittle()
+        } else {
+            stream.readInt()
+        }
 
-        val typeInfoInt = bufferLE.getInt()
         val typeInfo = parseVerbosePayloadTypeInfo(shouldLog, typeInfoInt, payloadEndian)
         if (DEBUG_LOG && shouldLog) {
             println("       typeInfo: $typeInfo")
@@ -360,15 +359,19 @@ class DLTParserV2 : DLTParser {
         var payloadSize: Int
         var additionalSize = 0
         if (typeInfo.typeString) {
-            val bufferLE = ByteBuffer.wrap(stream.readNBytes(2))
-                .order(if (payloadEndian == Endian.BIG) ByteOrder.BIG_ENDIAN else ByteOrder.LITTLE_ENDIAN)
-            payloadSize = bufferLE.getShort().toUShort().toInt()
+            payloadSize = if (payloadEndian == Endian.BIG) {
+                stream.readUnsignedShort()
+            } else {
+                stream.readUnsignedShortLittle()
+            }
             additionalSize =
                 2 // PRS_Dlt_00156 - 16-bit unsigned integer specifies the length of the string
         } else if (typeInfo.typeRaw) {
-            val bufferLE = ByteBuffer.wrap(stream.readNBytes(2))
-                .order(if (payloadEndian == Endian.BIG) ByteOrder.BIG_ENDIAN else ByteOrder.LITTLE_ENDIAN)
-            payloadSize = bufferLE.getShort().toUShort().toInt()
+            payloadSize = if (payloadEndian == Endian.BIG) {
+                stream.readUnsignedShort()
+            } else {
+                stream.readUnsignedShortLittle()
+            }
             additionalSize =
                 2 // PRS_Dlt_00160 - 16-bit unsigned integer shall specify the length of the raw data in byte
         } else if (typeInfo.typeUnsigned || typeInfo.typeSigned) {
