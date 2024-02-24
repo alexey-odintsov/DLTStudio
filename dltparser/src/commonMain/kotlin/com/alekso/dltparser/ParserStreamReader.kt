@@ -5,7 +5,7 @@ import java.io.DataInputStream
 import java.io.EOFException
 import java.io.InputStream
 
-class ParserInputStream(inputStream: InputStream): DataInputStream(inputStream), DataInput {
+class ParserInputStream(inputStream: InputStream) : DataInputStream(inputStream), DataInput {
     fun readIntLittle(): Int {
         val var1 = `in`.read()
         val var2 = `in`.read()
@@ -26,5 +26,16 @@ class ParserInputStream(inputStream: InputStream): DataInputStream(inputStream),
         } else {
             return ((var2 shl 8) + (var1 shl 0)).toShort().toInt()
         }
+    }
+
+    fun readString(size: Int): String {
+        val bytes = mutableListOf<Byte>()
+        for (i in 0..<size) {
+            val b = readByte()
+            if (b in 32..126) {
+                bytes.add(b)
+            }
+        }
+        return String(bytes.toByteArray())
     }
 }

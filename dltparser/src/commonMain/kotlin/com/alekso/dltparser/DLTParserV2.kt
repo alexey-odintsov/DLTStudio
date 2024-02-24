@@ -97,7 +97,7 @@ class DLTParserV2 : DLTParser {
         val timeStampSec = stream.readIntLittle()
         val timeStampUs = stream.readIntLittle()
         val timeStampNano = timeStampSec * 1000000L + timeStampUs
-        val ecuId = String(stream.readNBytes(4))//.decodeToString()
+        val ecuId = stream.readString(4)
         i += DLT_HEADER_SIZE_BYTES
 
         if (DEBUG_LOG && shouldLog) {
@@ -203,9 +203,7 @@ class DLTParserV2 : DLTParser {
         val headerType = parseStandardHeaderType(shouldLog, stream.readByte())
         val messageCounter = stream.readUnsignedByte().toUByte()
         val length = stream.readUnsignedShort().toUShort()
-        val ecuId =
-            if (headerType.withEcuId) stream.readNBytes(4).decodeToString()
-                .replace("\u0000", "") else null
+        val ecuId = if (headerType.withEcuId) stream.readString(4) else null
         val sessionId = if (headerType.withSessionId) stream.readInt() else null
         val timeStamp = if (headerType.withTimestamp) stream.readInt().toUInt() else null
 
@@ -258,8 +256,8 @@ class DLTParserV2 : DLTParser {
         }
         val messageInfo = parseMessageInfo(stream.readByte())
         val argumentsCount = stream.readUnsignedByte().toUByte()
-        val applicationId = stream.readNBytes(4).decodeToString()
-        val contextId = stream.readNBytes(4).decodeToString()
+        val applicationId = stream.readString(4)
+        val contextId = stream.readString(4)
 
         if (DEBUG_LOG && shouldLog) {
             println(
@@ -269,8 +267,7 @@ class DLTParserV2 : DLTParser {
 
         return ExtendedHeader(
             messageInfo, argumentsCount,
-            // todo: check performance, could be done faster when reading bytes
-            applicationId.replace("\u0000", ""), contextId.replace("\u0000", "")
+            applicationId, contextId
         )
     }
 
