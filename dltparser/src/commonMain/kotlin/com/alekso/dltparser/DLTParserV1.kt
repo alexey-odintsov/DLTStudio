@@ -24,10 +24,10 @@ class DLTParserV1: DLTParser {
     ): List<DLTMessage> {
         progressCallback.invoke(0f)
         val messages = mutableListOf<DLTMessage>()
-        var logsReadCount = 0
         var skippedBytes = 0
         val totalSize = files.sumOf { it.length() }
         var bytesRead: Long = 0
+        val startMs = System.currentTimeMillis()
 
         // todo: What to do with non-DLT files? silently skip?
         println("Total ${files.size} file(s) with size: $totalSize bytes")
@@ -50,15 +50,11 @@ class DLTParserV1: DLTParser {
                     }
 
                     try {
-                        if (DEBUG_LOG && shouldLog) {
-                            println("#$logsReadCount")
-                        }
                         val dltMessage = parseDLTMessage(bytes, i, shouldLog)
                         //if (dltMessage.extendedHeader?.applicationId == "PLAT" && dltMessage.extendedHeader?.contextId == "KVSS") {// applicationId=PLAT, contextId=KVSS
                         messages.add(dltMessage)
                         //}
                         i += dltMessage.sizeBytes // skip read bytes
-                        logsReadCount++
                     } catch (e: Exception) {
                         i++ // move counter to the next byte
                         skippedBytes++
@@ -69,11 +65,11 @@ class DLTParserV1: DLTParser {
                 bytesRead += i
             }
         }
-        println("Parsing complete with $logsReadCount messages; $bytesRead bytes read and $skippedBytes skipped bytes")
+        println("Parsing complete in ${(System.currentTimeMillis() - startMs) / 1000} sec. Parsed ${messages.size} messages; $bytesRead bytes read and $skippedBytes skipped bytes")
         return messages.sortedBy { it.timeStampNano }
     }
 
-    public fun parseDLTMessage(bytes: ByteArray, offset: Int, shouldLog: Boolean): DLTMessage {
+    private fun parseDLTMessage(bytes: ByteArray, offset: Int, shouldLog: Boolean): DLTMessage {
         var i = offset
         val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
         val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
@@ -252,7 +248,7 @@ class DLTParserV1: DLTParser {
     }
 
 
-    fun parseMessageInfo(byte: Byte): MessageInfo {
+    private fun parseMessageInfo(byte: Byte): MessageInfo {
         val messageType = MessageInfo.messageTypeInfoFromByte(byte)
 
         return MessageInfo(
@@ -263,7 +259,7 @@ class DLTParserV1: DLTParser {
         )
     }
 
-    fun parseVerbosePayload(
+    private fun parseVerbosePayload(
         shouldLog: Boolean, j: Int, bytes: ByteArray, i: Int, payloadEndian: Endian
     ): VerbosePayload.Argument {
         if (DEBUG_LOG && shouldLog) {
@@ -330,7 +326,7 @@ class DLTParserV1: DLTParser {
         return argument
     }
 
-    fun parseVerbosePayloadTypeInfo(
+    private fun parseVerbosePayloadTypeInfo(
         shouldLog: Boolean, typeInfoInt: Int, payloadEndian: Endian
     ): VerbosePayload.TypeInfo {
         val typeLengthBits = when (typeInfoInt and 0b1111) {
