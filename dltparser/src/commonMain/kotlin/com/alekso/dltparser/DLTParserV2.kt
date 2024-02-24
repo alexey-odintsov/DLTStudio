@@ -16,6 +16,7 @@ import com.alekso.dltparser.dlt.NonVerbosePayload
 import com.alekso.dltparser.dlt.Payload
 import com.alekso.dltparser.dlt.StandardHeader
 import com.alekso.dltparser.dlt.VerbosePayload
+import java.io.EOFException
 import java.io.File
 
 
@@ -40,44 +41,44 @@ class DLTParserV2 : DLTParser {
         files.forEach { file ->
             val fileSize = file.length()
             println("Parsing '$file'")
-            ParserInputStream(file.inputStream().buffered()).use { stream ->
-                var i = 0
+            ParserInputStream(file.inputStream().buffered(64 * 1024 * 1024)).use { stream ->
+                var i = 0L
                 var shouldLog: Boolean
                 var bufByte: Byte
 
-                while (stream.available() > 4) {
-                    if (i > fileSize) {
-                        throw IllegalStateException("$i is beyond file size $fileSize (Stream available bytes ${stream.available()})")
-                    }
+                while (i < fileSize) { // while (stream.available() > 4) is twice slow and unreliable in some implementations
+                    try {
+                        // Skip until 'DLT' signature found
+                        bufByte = stream.readByte()
+                        if (bufByte != SIGNATURE_D) {
+                            i++; skippedBytes++
+                            continue
+                        }
+                        bufByte = stream.readByte()
+                        if (bufByte != SIGNATURE_L) {
+                            i++; skippedBytes++
+                            continue
+                        }
+                        bufByte = stream.readByte()
+                        if (bufByte != SIGNATURE_T) {
+                            i++; skippedBytes++
+                            continue
+                        }
+                        bufByte = stream.readByte()
+                        if (bufByte != SIGNATURE_01) {
+                            i++; skippedBytes++
+                            continue
+                        }
+                        shouldLog = false //logsReadCount == 3
 
-                    // Skip until 'DLT' signature found
-                    bufByte = stream.readByte()
-                    if (bufByte != SIGNATURE_D) {
-                        i++; skippedBytes++
-                        continue
+                        // DLT signature was matched, now we can try to parse DLT message
+                        val dltMessage = parseDLTMessage(stream, i, shouldLog)
+                        messages.add(dltMessage)
+                        i += dltMessage.sizeBytes
+                    } catch (e: EOFException) {
+                        i = fileSize
                     }
-                    bufByte = stream.readByte()
-                    if (bufByte != SIGNATURE_L) {
-                        i++; skippedBytes++
-                        continue
-                    }
-                    bufByte = stream.readByte()
-                    if (bufByte != SIGNATURE_T) {
-                        i++; skippedBytes++
-                        continue
-                    }
-                    bufByte = stream.readByte()
-                    if (bufByte != SIGNATURE_01) {
-                        i++; skippedBytes++
-                        continue
-                    }
-                    shouldLog = false //logsReadCount == 3
-
-                    // DLT signature was matched, now we can try to parse DLT message
-                    val dltMessage = parseDLTMessage(stream, i, shouldLog)
-                    messages.add(dltMessage)
-                    i += dltMessage.sizeBytes
-
+                    // todo: progress update adds 2 sec from 5 sec parsing,
                     progressCallback.invoke((bytesRead.toFloat() + i) / totalSize)
                 }
 
@@ -90,7 +91,7 @@ class DLTParserV2 : DLTParser {
 
     private fun parseDLTMessage(
         stream: ParserInputStream,
-        offset: Int,
+        offset: Long,
         shouldLog: Boolean
     ): DLTMessage {
         var i = offset
@@ -189,7 +190,7 @@ class DLTParserV2 : DLTParser {
             println("")
         }
 
-        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload, i - offset)
+        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload, (i - offset).toInt())
     }
 
     private fun parseStandardHeader(

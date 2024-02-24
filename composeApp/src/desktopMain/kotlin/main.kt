@@ -28,7 +28,7 @@ fun main() = application {
         val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
 
-        val parseSessionViewModel = remember { ParseSessionViewModel(DLTParserV1(), onProgressUpdate) }
+        val parseSessionViewModel = remember { ParseSessionViewModel(DLTParserV2(), onProgressUpdate) }
             val stateIsOpenFileDialog = remember { mutableStateOf(false) }
 
             MenuBar {
