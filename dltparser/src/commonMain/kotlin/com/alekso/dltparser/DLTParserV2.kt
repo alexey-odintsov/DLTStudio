@@ -273,71 +273,15 @@ class DLTParserV2 : DLTParser {
 
 
     private fun parseMessageInfo(byte: Byte): MessageInfo {
-        val messageType = parseMessageType(byte)
+        val messageType = MessageInfo.messageTypeInfoFromByte(byte)
 
         return MessageInfo(
             originalByte = byte,
             verbose = byte.isBitSet(0),
             messageType = messageType,
-            messageTypeInfo = parseMessageTypeInfo(byte, messageType)
+            messageTypeInfo = MessageInfo.messageTypeInfoFromByte(byte, messageType)
         )
     }
-
-    /**
-     * MSIN
-     * ----|xxx-
-     */
-    private fun parseMessageType(byte: Byte): MessageInfo.MESSAGE_TYPE {
-        val mask = 0b00000111
-        val result = (byte.toInt()).shr(1) and mask
-        return MessageInfo.MESSAGE_TYPE.entries.first { it.i == result }
-    }
-
-    private fun parseMessageTypeInfo(
-        byte: Byte, messageType: MessageInfo.MESSAGE_TYPE
-    ): MessageInfo.MESSAGE_TYPE_INFO {
-        val mask = 0b00001111
-        val result = (byte.toInt()).shr(4) and mask
-        return when (messageType) {
-            MessageInfo.MESSAGE_TYPE.DLT_TYPE_LOG -> when (result) {
-                1 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_FATAL
-                2 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_DLT_ERROR
-                3 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_WARN
-                4 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_INFO
-                5 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_DEBUG
-                6 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_VERBOSE
-                else -> MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_RESERVED
-            }
-
-            MessageInfo.MESSAGE_TYPE.DLT_TYPE_APP_TRACE -> when (result) {
-                1 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_TRACE_VARIABLE
-                2 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_TRACE_FUNCTION_IN
-                3 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_TRACE_FUNCTION_OUT
-                4 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_TRACE_STATE
-                5 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_TRACE_VFB
-                else -> MessageInfo.MESSAGE_TYPE_INFO.DLT_TRACE_RESERVED
-            }
-
-            MessageInfo.MESSAGE_TYPE.DLT_TYPE_NW_TRACE -> when (result) {
-                1 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_NW_TRACE_IPC
-                2 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_NW_TRACE_CAN
-                3 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_NW_TRACE_FLEXRAY
-                4 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_NW_TRACE_MOST
-                5 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_NW_TRACE_ETHERNET
-                6 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_NW_TRACE_SOMEIP
-                else -> MessageInfo.MESSAGE_TYPE_INFO.DLT_NW_TRACE_USER_DEFINED
-            }
-
-            MessageInfo.MESSAGE_TYPE.DLT_TYPE_CONTROL -> when (result) {
-                1 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_CONTROL_REQUEST
-                2 -> MessageInfo.MESSAGE_TYPE_INFO.DLT_CONTROL_RESPONSE
-                else -> MessageInfo.MESSAGE_TYPE_INFO.DLT_CONTROL_RESERVED
-            }
-
-            else -> MessageInfo.MESSAGE_TYPE_INFO.UNKNOWN
-        }
-    }
-
 
     private fun parseVerbosePayload(
         shouldLog: Boolean, stream: ParserInputStream, payloadEndian: Endian
