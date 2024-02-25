@@ -27,7 +27,6 @@ import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.colors.ColorPickerDialog
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
-import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
 
@@ -144,7 +143,7 @@ fun EditColorFilterPanel(
         }
         Row {
             val items = mutableListOf("Any")
-            items.addAll(MessageInfo.MESSAGE_TYPE.entries.map { it.name })
+            items.addAll(MessageInfo.MessageType.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
             if (initialSelection == -1) initialSelection = 0
@@ -164,7 +163,7 @@ fun EditColorFilterPanel(
 
         Row {
             val items = mutableListOf("Any")
-            items.addAll(MessageInfo.MESSAGE_TYPE_INFO.entries.map { it.name })
+            items.addAll(MessageInfo.MessageTypeInfo.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
             if (initialSelection == -1) initialSelection = 0

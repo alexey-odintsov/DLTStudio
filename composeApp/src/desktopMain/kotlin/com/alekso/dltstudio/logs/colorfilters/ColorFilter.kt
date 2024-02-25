@@ -90,7 +90,7 @@ val ColorFilterWarn = ColorFilter(
     "Warn",
     mapOf(
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_WARN.name,
+            MessageInfo.MessageTypeInfo.DLT_LOG_WARN.name,
             TextCriteria.PlainText
         )
     ),
@@ -100,7 +100,7 @@ val ColorFilterError = ColorFilter(
     "Error",
     mapOf(
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_DLT_ERROR.name,
+            MessageInfo.MessageTypeInfo.DLT_LOG_DLT_ERROR.name,
             TextCriteria.PlainText
         )
     ),
@@ -110,7 +110,7 @@ val ColorFilterFatal = ColorFilter(
     "Fatal",
     mapOf(
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_FATAL.name,
+            MessageInfo.MessageTypeInfo.DLT_LOG_FATAL.name,
             TextCriteria.PlainText
         )
     ),

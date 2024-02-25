@@ -103,9 +103,9 @@ data class VerbosePayload(
         val fixedPoint: Boolean = false,
         val traceInfo: Boolean = false,
         val typeStruct: Boolean = false,
-        val stringCoding: STRING_CODING = STRING_CODING.ASCII,
+        val stringCoding: StringCoding = StringCoding.ASCII,
     ) {
-        enum class STRING_CODING {
+        enum class StringCoding {
             ASCII,
             UTF8,
             RESERVED
