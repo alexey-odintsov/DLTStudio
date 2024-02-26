@@ -7,7 +7,6 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltstudio.ParseSessionViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
@@ -28,28 +27,29 @@ fun main() = application {
         val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
 
-        val parseSessionViewModel = remember { ParseSessionViewModel(DLTParserV2(), onProgressUpdate) }
-            val stateIsOpenFileDialog = remember { mutableStateOf(false) }
+        val parseSessionViewModel =
+            remember { ParseSessionViewModel(DLTParserV2(), onProgressUpdate) }
+        val stateIsOpenFileDialog = remember { mutableStateOf(false) }
 
-            MenuBar {
-                Menu("File") {
-                    Item("Open", onClick = { stateIsOpenFileDialog.value = true })
-                }
+        MenuBar {
+            Menu("File") {
+                Item("Open", onClick = { stateIsOpenFileDialog.value = true })
             }
+        }
 
-            if (stateIsOpenFileDialog.value) {
-                FileChooserDialog(
-                    title = "Open file",
-                    onFileSelected = { file ->
-                        stateIsOpenFileDialog.value = false
-                        file?.let {
-                            parseSessionViewModel.parseFile(listOf(it))
-                        }
-                    },
-                )
-            }
+        if (stateIsOpenFileDialog.value) {
+            FileChooserDialog(
+                title = "Open file",
+                onFileSelected = { file ->
+                    stateIsOpenFileDialog.value = false
+                    file?.let {
+                        parseSessionViewModel.parseFile(listOf(it))
+                    }
+                },
+            )
+        }
 
-            MainWindow(parseSessionViewModel, progress, onProgressUpdate)
+        MainWindow(parseSessionViewModel, progress, onProgressUpdate)
 //        }
     }
 }
