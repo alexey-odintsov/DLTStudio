@@ -47,7 +47,7 @@ class MainViewModel(
     val searchState: StateFlow<SearchState> = _searchState
 
     fun onSearchUseRegexChanged(checked: Boolean) {
-        _searchState.value = SearchState.updateSearchUseRegex(_searchState.value, checked)
+        _searchState.value = _searchState.value.copy(searchUseRegex = checked)
     }
 
     fun onSearchClicked(searchText: String) {
