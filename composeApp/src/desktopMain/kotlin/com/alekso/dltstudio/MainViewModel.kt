@@ -10,7 +10,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.io.File
 
-class ParseSessionViewModel(
+class MainViewModel(
     private val dltParser: DLTParser,
     private val onProgressChanged: (Float) -> Unit
 ) {

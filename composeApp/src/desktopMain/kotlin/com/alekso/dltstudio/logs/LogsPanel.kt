@@ -30,6 +30,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
+import com.alekso.dltstudio.logs.search.SearchState
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
@@ -47,18 +48,17 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    searchText: String,
+    searchState: SearchState,
     dltMessages: List<DLTMessage>,
     searchResult: List<DLTMessage>,
     searchIndexes: List<Int>,
     colorFilters: List<ColorFilter> = emptyList(),
-    searchUseRegex: Boolean,
     logsToolbarState: LogsToolbarState,
     updateSearchText: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateSearchUseRegexCheck: (Boolean) -> Unit,
+    onSearchUseRegexChanged: (Boolean) -> Unit,
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
     onFilterUpdate: (Int, ColorFilter) -> Unit,
@@ -71,13 +71,12 @@ fun LogsPanel(
     Column(modifier = modifier) {
         LogsToolbar(
             logsToolbarState,
-            searchText,
-            searchUseRegex,
+            searchState,
             updateSearchText,
             updateToolbarFatalCheck,
             updateToolbarErrorCheck,
             updateToolbarWarningCheck,
-            updateSearchUseRegexCheck,
+            onSearchUseRegexChanged,
             onColorFiltersClicked = { dialogState.value = true }
         )
 
@@ -194,11 +193,10 @@ fun LogsPanel(
 fun PreviewLogsPanel() {
     LogsPanel(
         Modifier.fillMaxSize(),
-        "Search text",
+        SearchState(searchText = "Search text"),
         dltMessages = SampleData.getSampleDltMessages(20),
         searchResult = emptyList(),
         searchIndexes = emptyList(),
-        searchUseRegex = true,
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
@@ -208,10 +206,9 @@ fun PreviewLogsPanel() {
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },
         updateToolbarWarningCheck = { },
-        updateSearchUseRegexCheck = { },
+        onSearchUseRegexChanged = { },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
-        onFilterUpdate = { i, f -> },
-        onFilterDelete = { i -> }
-    )
+        onFilterUpdate = { i, f -> }
+    ) { i -> }
 }

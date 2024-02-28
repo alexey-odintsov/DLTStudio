@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
-import com.alekso.dltstudio.ParseSessionViewModel
+import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
@@ -29,6 +29,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
+import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -41,7 +42,7 @@ import java.net.URI
 @Composable
 @Preview
 fun MainWindow(
-    parseSessionViewModel: ParseSessionViewModel,
+    mainViewModel: MainViewModel,
     progress: Float,
     onProgressUpdate: (Float) -> Unit
 ) {
@@ -94,7 +95,6 @@ fun MainWindow(
         )
     )
 
-    var searchUseRegex by remember { mutableStateOf(true) }
 
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
     val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset = newOffset }
@@ -102,10 +102,11 @@ fun MainWindow(
         { newScale -> scale = if (newScale > 0f) newScale else 1f }
 
     // Logs toolbar
-    var searchText by remember { mutableStateOf("") }
-    val updateSearchText: (String) -> Unit = { text ->
-        searchText = text
-        parseSessionViewModel.search(text, searchUseRegex)
+
+    var searchState by remember { mutableStateOf(SearchState()) }
+    val onSearchButtonClicked: (String) -> Unit = { text ->
+        searchState = SearchState.updateSearchText(searchState, text)
+        mainViewModel.search(text, searchState.searchUseRegex)
     }
     val updateToolbarFatalCheck: (Boolean) -> Unit =
         { checked ->
@@ -118,8 +119,8 @@ fun MainWindow(
         { checked ->
             logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
         }
-    val updateSearchUseRegexCheck: (Boolean) -> Unit =
-        { checked -> searchUseRegex = checked }
+    val onSearchUseRegexChanged: (Boolean) -> Unit =
+        { checked -> searchState = SearchState.updateSearchUseRegex(searchState, checked) }
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
         if (it.dragData is DragData.FilesList) {
@@ -128,7 +129,7 @@ fun MainWindow(
 
             if (pathList.isNotEmpty()) {
                 val filesList = pathList.map { path -> File(URI.create(path.substring(5)).path) }
-                parseSessionViewModel.parseFile(filesList)
+                mainViewModel.parseFile(filesList)
             }
         }
     }
@@ -140,18 +141,17 @@ fun MainWindow(
             0 -> {
                 LogsPanel(
                     modifier = Modifier.weight(1f),
-                    searchText,
-                    dltMessages = parseSessionViewModel.dltMessages,
-                    searchResult = parseSessionViewModel.searchResult,
-                    searchIndexes = parseSessionViewModel.searchIndexes,
+                    searchState,
+                    dltMessages = mainViewModel.dltMessages,
+                    searchResult = mainViewModel.searchResult,
+                    searchIndexes = mainViewModel.searchIndexes,
                     colorFilters,
-                    searchUseRegex,
                     logsToolbarState,
-                    updateSearchText,
+                    onSearchButtonClicked,
                     updateToolbarFatalCheck,
                     updateToolbarErrorCheck,
                     updateToolbarWarningCheck,
-                    updateSearchUseRegexCheck,
+                    onSearchUseRegexChanged,
                     vSplitterState,
                     hSplitterState,
                     onFilterUpdate = { index, updatedFilter ->
@@ -159,17 +159,16 @@ fun MainWindow(
                         if (index < 0 || index > colorFilters.size) {
                             colorFilters.add(updatedFilter)
                         } else colorFilters[index] = updatedFilter
-                    },
-                    onFilterDelete = { index ->
-                        colorFilters.removeAt(index)
                     }
-                )
+                ) { index ->
+                    colorFilters.removeAt(index)
+                }
             }
 
             1 -> TimeLinePanel(
                 modifier = Modifier.weight(1f),
                 timelineViewModel = timelineViewModel,
-                parseSessionViewModel.dltMessages,
+                mainViewModel.dltMessages,
                 offset,
                 offsetUpdateCallback,
                 scale,
@@ -177,8 +176,8 @@ fun MainWindow(
             )
         }
         Divider()
-        val statusText = if (parseSessionViewModel.dltMessages.isNotEmpty()) {
-            "Messages: ${"%,d".format(parseSessionViewModel.dltMessages.size)}"
+        val statusText = if (mainViewModel.dltMessages.isNotEmpty()) {
+            "Messages: ${"%,d".format(mainViewModel.dltMessages.size)}"
         } else {
             "No file loaded"
         }
@@ -190,6 +189,6 @@ fun MainWindow(
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(ParseSessionViewModel(DLTParserV1(), {}), 1f, {})
+        MainWindow(MainViewModel(DLTParserV1(), {}), 1f, {})
     }
 }
