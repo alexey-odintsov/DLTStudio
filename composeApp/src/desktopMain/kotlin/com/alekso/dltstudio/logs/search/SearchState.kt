@@ -6,17 +6,24 @@ data class SearchState(
     val searchUseRegex: Boolean = false,
     val state: State = State.IDLE
 ) {
+    enum class State {
+        IDLE,
+        SEARCHING
+    }
     companion object {
-        enum class State {
-            IDLE,
-            SEARCHING
-        }
 
         fun updateSearchText(
             currentState: SearchState,
             searchText: String,
         ): SearchState {
             return currentState.copy(searchText = searchText)
+        }
+
+        fun updateState(
+            currentState: SearchState,
+            state: State,
+        ): SearchState {
+            return currentState.copy(state = state)
         }
 
         fun updateSearchUseRegex(

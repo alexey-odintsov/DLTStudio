@@ -110,7 +110,11 @@ fun LogsToolbar(
             })
 
         ImageButton(modifier = Modifier.size(32.dp),
-            iconName = "icon_search.xml",
+            iconName = if (searchState.state == SearchState.State.IDLE) {
+                "icon_search.xml"
+            } else {
+                "icon_stop.xml"
+            },
             title = "Search",
             onClick = {
                 onSearchButtonClicked(text)
