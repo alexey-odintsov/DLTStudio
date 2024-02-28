@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,6 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
-import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -102,12 +102,8 @@ fun MainWindow(
         { newScale -> scale = if (newScale > 0f) newScale else 1f }
 
     // Logs toolbar
+    val searchState by mainViewModel.searchState.collectAsState()
 
-    var searchState by remember { mutableStateOf(SearchState()) }
-    val onSearchButtonClicked: (String) -> Unit = { text ->
-        searchState = SearchState.updateSearchText(searchState, text)
-        mainViewModel.search(text, searchState.searchUseRegex)
-    }
     val updateToolbarFatalCheck: (Boolean) -> Unit =
         { checked ->
             logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
@@ -119,8 +115,6 @@ fun MainWindow(
         { checked ->
             logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
         }
-    val onSearchUseRegexChanged: (Boolean) -> Unit =
-        { checked -> searchState = SearchState.updateSearchUseRegex(searchState, checked) }
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
         if (it.dragData is DragData.FilesList) {
@@ -145,15 +139,15 @@ fun MainWindow(
                     dltMessages = mainViewModel.dltMessages,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
-                    colorFilters,
-                    logsToolbarState,
-                    onSearchButtonClicked,
-                    updateToolbarFatalCheck,
-                    updateToolbarErrorCheck,
-                    updateToolbarWarningCheck,
-                    onSearchUseRegexChanged,
-                    vSplitterState,
-                    hSplitterState,
+                    colorFilters = colorFilters,
+                    logsToolbarState = logsToolbarState,
+                    onSearchButtonClicked = { mainViewModel.onSearchClicked(it) },
+                    updateToolbarFatalCheck = updateToolbarFatalCheck,
+                    updateToolbarErrorCheck = updateToolbarErrorCheck,
+                    updateToolbarWarningCheck = updateToolbarWarningCheck,
+                    onSearchUseRegexChanged = { mainViewModel.onSearchUseRegexChanged(it) },
+                    vSplitterState = vSplitterState,
+                    hSplitterState = hSplitterState,
                     onFilterUpdate = { index, updatedFilter ->
                         println("onFilterUpdate $index $updatedFilter")
                         if (index < 0 || index > colorFilters.size) {

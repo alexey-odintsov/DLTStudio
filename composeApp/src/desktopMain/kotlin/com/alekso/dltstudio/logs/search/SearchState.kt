@@ -16,11 +16,7 @@ data class SearchState(
             currentState: SearchState,
             searchText: String,
         ): SearchState {
-            return if (searchText == currentState.searchText) {
-                currentState
-            } else {
-                currentState.copy(searchText = searchText)
-            }
+            return currentState.copy(searchText = searchText)
         }
 
         fun updateSearchUseRegex(
