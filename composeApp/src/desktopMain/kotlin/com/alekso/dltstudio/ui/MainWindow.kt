@@ -10,7 +10,6 @@ import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -18,18 +17,12 @@ import androidx.compose.ui.DragData
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExternalDragValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.onExternalDrag
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltstudio.MainViewModel
-import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
-import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
-import com.alekso.dltstudio.logs.colorfilters.FilterParameter
-import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -64,37 +57,6 @@ fun MainWindow(
             )
         )
     }
-
-    val colorFilters = mutableStateListOf<ColorFilter>()
-    // todo: User color filters goes here.
-    colorFilters.addAll(
-        0, listOf(
-            ColorFilter(
-                "SIP",
-                mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
-                CellStyle(backgroundColor = Color.Green, textColor = Color.White),
-                enabled = false,
-            ),
-            ColorFilter(
-                "Logcat",
-                mapOf(
-                    FilterParameter.AppId to FilterCriteria("ALD", TextCriteria.PlainText),
-                    FilterParameter.ContextId to FilterCriteria("LCAT", TextCriteria.PlainText)
-                ),
-                CellStyle(backgroundColor = Color.Magenta, textColor = Color.White),
-                enabled = true,
-            ),
-            ColorFilter(
-                "Regex test",
-                mapOf(
-                    FilterParameter.Payload to FilterCriteria("(\\d+%)", TextCriteria.Regex)
-                ),
-                CellStyle(backgroundColor = Color.Blue, textColor = Color.White),
-                enabled = true,
-            ),
-        )
-    )
-
 
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
     val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset = newOffset }
@@ -139,7 +101,7 @@ fun MainWindow(
                     dltMessages = mainViewModel.dltMessages,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
-                    colorFilters = colorFilters,
+                    colorFilters = mainViewModel.colorFilters,
                     logsToolbarState = logsToolbarState,
                     onSearchButtonClicked = { mainViewModel.onSearchClicked(it) },
                     updateToolbarFatalCheck = updateToolbarFatalCheck,
@@ -149,14 +111,9 @@ fun MainWindow(
                     vSplitterState = vSplitterState,
                     hSplitterState = hSplitterState,
                     onFilterUpdate = { index, updatedFilter ->
-                        println("onFilterUpdate $index $updatedFilter")
-                        if (index < 0 || index > colorFilters.size) {
-                            colorFilters.add(updatedFilter)
-                        } else colorFilters[index] = updatedFilter
-                    }
-                ) { index ->
-                    colorFilters.removeAt(index)
-                }
+                        mainViewModel.onColorFilterUpdate(index, updatedFilter)
+                    }, onFilterDelete = { mainViewModel.onColorFilterDelete(it) }
+                )
             }
 
             1 -> TimeLinePanel(
