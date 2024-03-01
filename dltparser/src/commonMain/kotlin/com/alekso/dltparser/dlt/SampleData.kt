@@ -15,8 +15,8 @@ object SampleData {
                     MessageInfo(
                         30.toByte(),
                         true,
-                        MessageInfo.MESSAGE_TYPE.DLT_TYPE_APP_TRACE,
-                        MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_INFO
+                        MessageInfo.MessageType.DLT_TYPE_APP_TRACE,
+                        MessageInfo.MessageTypeInfo.DLT_LOG_INFO
                     ), 2U, "APP", "CTX"
                 ),
                 VerbosePayload(
@@ -36,7 +36,7 @@ object SampleData {
                                 false,
                                 false,
                                 false,
-                                VerbosePayload.TypeInfo.STRING_CODING.UTF8
+                                VerbosePayload.TypeInfo.StringCoding.UTF8
                             ), 12, 10, "TEST MESSAGE".toByteArray()
                         )
                     )

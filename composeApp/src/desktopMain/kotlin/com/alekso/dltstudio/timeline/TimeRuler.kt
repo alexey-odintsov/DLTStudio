@@ -17,11 +17,9 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.ParseSession
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.alekso.dltstudio.TimeFormatter
+import java.time.Instant
 
-private val TimeRulerTimeFormat = SimpleDateFormat("HH:mm:ss.SSS", Locale.ENGLISH)
 private const val TIME_MARK_SIZE_PX = 100
 private const val DEBUG = true
 
@@ -30,31 +28,33 @@ fun TimeRuler(
     modifier: Modifier = Modifier,
     offsetSec: Float,
     scale: Float,
-    dltSession: ParseSession,
+    totalSeconds: Int,
+    timeStart: Long,
+    timeEnd: Long
 ) {
 
 
     val textMeasurer = rememberTextMeasurer()
 
     Canvas(modifier = modifier.height(40.dp).clipToBounds()) {
-        val secSizePx: Float = (size.width / dltSession.totalSeconds) * scale
+        val secSizePx: Float = (size.width / totalSeconds) * scale
         val timeMarksCount = (size.width / TIME_MARK_SIZE_PX).toInt()
 
         if (DEBUG) {
             drawText(
                 textMeasurer,
-                text = "${dltSession.totalSeconds} seconds; Width: ${size.width}; Sec size: $secSizePx",
+                text = "${totalSeconds} seconds; Width: ${size.width}; Sec size: $secSizePx",
                 topLeft = Offset(3.dp.toPx(), 0f),
                 style = TextStyle(color = Color.LightGray, fontSize = 10.sp)
             )
         }
 
         if (secSizePx < Float.POSITIVE_INFINITY) {
-            for (i in 0..dltSession.totalSeconds step timeMarksCount) {
+            for (i in 0..totalSeconds step timeMarksCount) {
                 try {
                     drawText(
                         textMeasurer,
-                        text = TimeRulerTimeFormat.format(dltSession.timeStart + i * 1000),
+                        text = TimeFormatter.formatTime(timeStart + i * 1000000),
                         topLeft = Offset(
                             offsetSec * secSizePx + i * secSizePx,
                             30f
@@ -69,7 +69,7 @@ fun TimeRuler(
         }
 
         // seconds lines
-        for (i in 0..dltSession.totalSeconds) {
+        for (i in 0..totalSeconds) {
             drawLine(
                 Color.Gray,
                 Offset(
@@ -85,21 +85,18 @@ fun TimeRuler(
     }
 }
 
-private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 
 @Preview
 @Composable
 fun PreviewTimeRuler() {
-    val dltSession = ParseSession({}, emptyList())
-    val ts = 1707602400000 //23:00:00.000 // Instant.now().toEpochMilli()
-
-    dltSession.timeStart = ts
-    dltSession.timeEnd = ts + 300_000
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
+    val totalSeconds = (te - ts).toInt() / 1000000
 
     Column {
-        Text(text = "start: ${simpleDateFormat.format(dltSession.timeStart)} (${dltSession.timeStart})")
-        Text(text = "end: ${simpleDateFormat.format(dltSession.timeEnd)} (${dltSession.timeEnd})")
-        Text(text = "seconds: ${dltSession.totalSeconds}")
+        Text(text = "start: ${TimeFormatter.formatDateTime(ts)} (${ts})")
+        Text(text = "end: ${TimeFormatter.formatDateTime(te)} (${te})")
+        Text(text = "seconds: $totalSeconds")
         Divider()
 
         for (i in 1..15) {
@@ -108,7 +105,9 @@ fun PreviewTimeRuler() {
                 modifier = Modifier.fillMaxWidth(),
                 offsetSec = 0f,
                 scale = 2 * i.toFloat(),
-                dltSession = dltSession
+                timeStart = ts,
+                timeEnd = te,
+                totalSeconds = totalSeconds,
             )
         }
     }

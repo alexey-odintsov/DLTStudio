@@ -38,8 +38,8 @@ object UserAnalyzer {
         val payload = (dltMessage.payload as VerbosePayload).asText()
 
         return when (parseType) {
-            ParseType.SPLIT -> parseUserStateSplit(index, dltMessage.getTimeStamp(), payload)
-            ParseType.INDEX_OF -> parseUserStateIndexOf(index, dltMessage.getTimeStamp(), payload)
+            ParseType.SPLIT -> parseUserStateSplit(index, dltMessage.timeStampNano, payload)
+            ParseType.INDEX_OF -> parseUserStateIndexOf(index, dltMessage.timeStampNano, payload)
         }
     }
 

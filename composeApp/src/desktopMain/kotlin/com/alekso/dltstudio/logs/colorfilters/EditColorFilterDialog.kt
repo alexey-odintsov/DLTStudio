@@ -21,13 +21,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
+import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.colors.ColorPickerDialog
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
-import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
 
@@ -50,7 +49,7 @@ fun EditColorFilterDialog(
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (colorFilterIndex >= 0) "Edit Color Filter" else "Add new color filter",
-        state = DialogState(width = 700.dp, height = 500.dp)
+        state = rememberDialogState(width = 700.dp, height = 500.dp)
     ) {
         EditColorFilterPanel(colorFilter, colorFilterIndex, onFilterUpdate, onDialogClosed)
     }
@@ -144,7 +143,7 @@ fun EditColorFilterPanel(
         }
         Row {
             val items = mutableListOf("Any")
-            items.addAll(MessageInfo.MESSAGE_TYPE.entries.map { it.name })
+            items.addAll(MessageInfo.MessageType.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
             if (initialSelection == -1) initialSelection = 0
@@ -164,7 +163,7 @@ fun EditColorFilterPanel(
 
         Row {
             val items = mutableListOf("Any")
-            items.addAll(MessageInfo.MESSAGE_TYPE_INFO.entries.map { it.name })
+            items.addAll(MessageInfo.MessageTypeInfo.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
             if (initialSelection == -1) initialSelection = 0

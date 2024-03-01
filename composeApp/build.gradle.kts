@@ -49,3 +49,5 @@ compose.desktop {
         }
     }
 }
+
+task("testClasses")

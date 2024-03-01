@@ -4,17 +4,93 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.VerbosePayload
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.cpu.CPUAnalyzer
 import com.alekso.dltstudio.cpu.CPUSEntry
 import com.alekso.dltstudio.cpu.CPUUsageEntry
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+class TimelineViewModel(
+    private val onProgressChanged: (Float) -> Unit
+) {
+    private var analyzeJob: Job? = null
 
-object TimelineAnalyzer {
+    var cpuUsage = mutableListOf<CPUUsageEntry>()
+    var cpus = mutableListOf<CPUSEntry>()
+    var userStateEntries = mutableMapOf<Int, MutableList<UserStateEntry>>()
+    var userEntries = mutableMapOf<String, TimelineEntries>()
+    var timeStart = Long.MAX_VALUE
+    var timeEnd = Long.MIN_VALUE
+    val totalSeconds: Int
+        get() = if (timeEnd > 0 && timeStart > 0) ((timeEnd - timeStart) / 1000000).toInt() else 0
+
+
+    fun analyzeTimeline(dltMessages: List<DLTMessage>) {
+        analyzeJob?.cancel()
+        analyzeJob = CoroutineScope(Dispatchers.IO).launch {
+            if (dltMessages.isNotEmpty()) {
+                // we need copies of ParseSession's collections to prevent ConcurrentModificationException
+                val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
+                val _cpus = mutableStateListOf<CPUSEntry>()
+                val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
+                val _userEntries = mutableMapOf<String, TimelineEntries>()
+
+
+                println("Start Timeline building .. ${dltMessages.size} messages")
+
+                _userEntries["CPU_PER_PID"] = TimelinePercentageEntries()
+                _userEntries["MEMT"] = TimelineMinMaxEntries()
+
+                dltMessages.forEachIndexed { index, message ->
+                    // timeStamps
+                    val ts = message.timeStampNano
+                    if (ts > timeEnd) {
+                        timeEnd = ts
+                    }
+                    if (ts < timeStart) {
+                        timeStart = ts
+                    }
+
+                    analyzeCPUC(message, _cpuUsage, index)
+                    analyzeCPUS(message, _cpus, index)
+                    analyzeUserState(message, index, _userState)
+                    val pattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(".toRegex()
+                    analyzeEntriesRegex(
+                        message,
+                        appId = "MON",
+                        contextId = "CPUP",
+                        regex = pattern,
+                        entries = _userEntries["CPU_PER_PID"]!!
+                    )
+
+                    analyzeEntriesIndexOf(
+                        message,
+                        appId = "MON",
+                        contextId = "MEMT",
+                        valueDelimiters = Pair("MaxRSS(MB): ", " increase:"),
+                        keyDelimiters = Pair("", "(cpid:"),
+                        entries = _userEntries["MEMT"]!!,
+                    )
+                    onProgressChanged(index.toFloat() / dltMessages.size)
+                }
+
+                withContext(Dispatchers.Default) {
+                    cpuUsage.clear()
+                    cpuUsage.addAll(_cpuUsage)
+                    cpus.clear()
+                    cpus.addAll(_cpus)
+                    userStateEntries = _userState
+                    userEntries = _userEntries
+                }
+            }
+        }
+    }
+
 
     private fun analyzeEntriesRegex(
         message: DLTMessage,
@@ -33,7 +109,7 @@ object TimelineAnalyzer {
                 val value: String? = matches.groups["value"]?.value
 
                 if (key != null && value != null) {
-                    entries.addEntry(TimelineEntry(message.getTimeStamp(), key, value))
+                    entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
                 }
             }
         } catch (e: Exception) {
@@ -64,7 +140,7 @@ object TimelineAnalyzer {
                 )
 
                 if (key != null && value != null) {
-                    entries.addEntry(TimelineEntry(message.getTimeStamp(), key, value))
+                    entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
                 }
             }
         } catch (e: Exception) {
@@ -72,62 +148,6 @@ object TimelineAnalyzer {
         }
     }
 
-    suspend fun analyzeTimeline(dltSession: ParseSession, progressCallback: (Float) -> Unit) {
-        // we need copies of ParseSession's collections to prevent ConcurrentModificationException
-        val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
-        val _cpus = mutableStateListOf<CPUSEntry>()
-        val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
-        val _userEntries = mutableMapOf<String, TimelineEntries>()
-
-        withContext(Dispatchers.IO) {
-
-            println("Start Timeline building .. ${dltSession.dltMessages.size} messages")
-
-            _userEntries["CPU_PER_PID"] = TimelinePercentageEntries()
-            _userEntries["MEMT"] = TimelineMinMaxEntries()
-
-            dltSession.dltMessages.forEachIndexed { index, message ->
-                // timeStamps
-                val ts = message.getTimeStamp()
-                if (ts > dltSession.timeEnd) {
-                    dltSession.timeEnd = ts
-                }
-                if (ts < dltSession.timeStart) {
-                    dltSession.timeStart = ts
-                }
-
-                analyzeCPUC(message, _cpuUsage, index)
-                analyzeCPUS(message, _cpus, index)
-                analyzeUserState(message, index, _userState)
-                val pattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(".toRegex()
-                analyzeEntriesRegex(
-                    message,
-                    appId = "MON",
-                    contextId = "CPUP",
-                    regex = pattern,
-                    entries = _userEntries["CPU_PER_PID"]!!
-                )
-
-                analyzeEntriesIndexOf(
-                    message,
-                    appId = "MON",
-                    contextId = "MEMT",
-                    valueDelimiters = Pair("MaxRSS(MB): ", " increase:"),
-                    keyDelimiters = Pair("", "(cpid:"),
-                    entries = _userEntries["MEMT"]!!,
-                )
-                progressCallback.invoke((index.toFloat() / dltSession.dltMessages.size))
-            }
-        }
-        withContext(Dispatchers.Default) {
-            dltSession.cpuUsage.clear()
-            dltSession.cpuUsage.addAll(_cpuUsage)
-            dltSession.cpus.clear()
-            dltSession.cpus.addAll(_cpus)
-            dltSession.userStateEntries = _userState
-            dltSession.userEntries = _userEntries
-        }
-    }
 
     private fun analyzeCPUC(
         message: DLTMessage,
@@ -187,5 +207,4 @@ object TimelineAnalyzer {
             }
         }
     }
-
 }

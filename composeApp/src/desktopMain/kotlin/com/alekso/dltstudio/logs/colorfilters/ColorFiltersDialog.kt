@@ -19,27 +19,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
+import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.ImageButton
 
-private val COL_FILTER_NAME_WIDTH_DP = 200.dp
 
 @Composable
 fun ColorFiltersDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
     colorFilters: List<ColorFilter>,
-    onFilterUpdate: (Int, ColorFilter) -> Unit,
-    onFilterDelete: (Int) -> Unit
+    onColorFilterUpdate: (Int, ColorFilter) -> Unit,
+    onColorFilterDelete: (Int) -> Unit,
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Color Filters",
-        state = DialogState(width = 500.dp, height = 500.dp)
+        state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
         val editDialogState = remember { mutableStateOf(EditDialogState(false)) }
 
@@ -51,14 +50,16 @@ fun ColorFiltersDialog(
                 colorFilterIndex = editDialogState.value.filterIndex,
                 onFilterUpdate = { i, filter ->
                     editDialogState.value.filter = filter
-                    onFilterUpdate(i, filter)
+                    onColorFilterUpdate(i, filter)
                 }
             )
         }
 
-        ColorFiltersPanel(colorFilters, { i, filter ->
-            editDialogState.value = EditDialogState(true, filter, i)
-        }, onFilterUpdate, onFilterDelete)
+        ColorFiltersPanel(
+            colorFilters,
+            { i, filter -> editDialogState.value = EditDialogState(true, filter, i) },
+            { i, f -> onColorFilterUpdate(i, f) },
+            { i -> onColorFilterDelete(i) })
     }
 }
 

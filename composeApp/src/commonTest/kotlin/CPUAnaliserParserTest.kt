@@ -27,8 +27,8 @@ class CPUAnalyzerParserTest {
                     MessageInfo(
                         1,
                         true,
-                        MessageInfo.MESSAGE_TYPE.DLT_TYPE_LOG,
-                        MessageInfo.MESSAGE_TYPE_INFO.DLT_LOG_INFO
+                        MessageInfo.MessageType.DLT_TYPE_LOG,
+                        MessageInfo.MessageTypeInfo.DLT_LOG_INFO
                     ), 1U, "MON", "CPUC"
                 ),
                 VerbosePayload(
@@ -38,7 +38,7 @@ class CPUAnalyzerParserTest {
                             VerbosePayload.TypeInfo(
                                 typeLengthBits = 1,
                                 typeString = true,
-                                stringCoding = VerbosePayload.TypeInfo.STRING_CODING.UTF8
+                                stringCoding = VerbosePayload.TypeInfo.StringCoding.UTF8
                             ),
                             1,
                             2,

@@ -8,7 +8,7 @@ class ByteArrayConversionTests {
 
     @Test
     fun testUIntL() {
-        val data = byteArrayOf(0x9b.toByte(), 0x13.toByte(), 0x00.toByte(), 0x00.toByte())
+        val data = listOf(0x9b, 0x13, 0x00, 0x00).map { it.toByte() }.toByteArray()
         val actual = data.readInt(0, Endian.LITTLE).toUInt()
         val expected = 5019U
         Assert.assertTrue("$actual != $expected", actual == expected)
@@ -16,7 +16,7 @@ class ByteArrayConversionTests {
 
     @Test
     fun testUShortB() {
-        val data = byteArrayOf(0x00.toByte(), 0xa4.toByte(), 0x00.toByte(), 0x00.toByte())
+        val data = listOf(0x00, 0xa4, 0x00, 0x00).map { it.toByte() }.toByteArray()
         val actual = data.readUShort(0, Endian.BIG)
         val expected = 164U.toUShort()
         Assert.assertTrue("$actual != $expected", actual == expected)

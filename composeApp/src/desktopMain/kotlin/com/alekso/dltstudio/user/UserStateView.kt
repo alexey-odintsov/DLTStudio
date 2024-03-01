@@ -16,9 +16,8 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.colors.ColorPalette
-import java.io.File
+import java.time.Instant
 
 @Composable
 fun UserStateView(
@@ -26,14 +25,16 @@ fun UserStateView(
     map: Map<Int, List<UserStateEntry>>,
     offset: Float = 0f,
     scale: Float = 1f,
-    dltSession: ParseSession
+    totalSeconds: Int,
+    timeStart: Long,
+    timeEnd: Long
 ) {
     val textMeasurer = rememberTextMeasurer()
 
     Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
         val height = size.height
         val width = size.width
-        val secSize: Float = size.width / (dltSession.totalSeconds * 1.dp.toPx())
+        val secSize: Float = size.width / (totalSeconds * 1.dp.toPx())
         val itemHeight = height / UserState.entries.size.toFloat()
         val topOffset = itemHeight / 3f
 
@@ -56,11 +57,11 @@ fun UserStateView(
                 val prev = if (i > 0) items[i - 1] else null
 
                 val prevX = if (prev != null) {
-                    ((prev.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+                    ((prev.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
                 } else {
                     0f
                 }
-                val curX = ((entry.timestamp - dltSession.timeStart) / 1000 * secSize.dp.toPx())
+                val curX = ((entry.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
 
                 val curOldY = entry.oldState.ordinal * itemHeight + topOffset
                 val curY = entry.newState.ordinal * itemHeight + topOffset
@@ -90,25 +91,29 @@ fun UserStateView(
 @Preview
 @Composable
 fun PreviewUserStateView() {
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
+    val totalSeconds = (te - ts).toInt() / 1000000
+
     val userStateEntries = mutableMapOf(
         0 to mutableListOf(
             UserStateEntry(
                 index = 150740,
-                timestamp = 1705410539667,
+                timestamp = ts + 1000000,
                 uid = 0,
                 oldState = UserState.BOOTING,
                 newState = UserState.RUNNING_LOCKED
             ),
             UserStateEntry(
                 index = 162146,
-                timestamp = 1705410541567,
+                timestamp = ts + 2000000,
                 uid = 0,
                 oldState = UserState.RUNNING_LOCKED,
                 newState = UserState.RUNNING_UNLOCKING
             ),
             UserStateEntry(
                 index = 162438,
-                timestamp = 1705410544739,
+                timestamp = ts + 3000000,
                 uid = 0,
                 oldState = UserState.RUNNING_UNLOCKING,
                 newState = UserState.RUNNING_UNLOCKED
@@ -117,36 +122,33 @@ fun PreviewUserStateView() {
         10 to mutableListOf(
             UserStateEntry(
                 index = 157066,
-                timestamp = 1705410540536,
+                timestamp = ts + 1500000,
                 uid = 10,
                 oldState = UserState.BOOTING,
                 newState = UserState.RUNNING_LOCKED
             ),
             UserStateEntry(
                 index = 165899,
-                timestamp = 1705410542435,
+                timestamp = ts + 2000000,
                 uid = 10,
                 oldState = UserState.RUNNING_LOCKED,
                 newState = UserState.RUNNING_UNLOCKING
             ),
             UserStateEntry(
                 index = 176028,
-                timestamp = 1705410544163,
+                timestamp = ts + 4500000,
                 uid = 10,
                 oldState = UserState.RUNNING_UNLOCKING,
                 newState = UserState.RUNNING_UNLOCKED
             ),
         )
     )
-    val dltSession = ParseSession({}, listOf(File("")))
-    dltSession.timeStart = 1705410528156
-    dltSession.timeEnd = 1705410544163
 
     UserStateView(
         offset = 0f,
         scale = 1f,
         modifier = Modifier.height(300.dp).fillMaxWidth().padding(start = 10.dp),
         map = userStateEntries,
-        dltSession = dltSession
+        timeStart = ts, timeEnd = te, totalSeconds = totalSeconds
     )
 }

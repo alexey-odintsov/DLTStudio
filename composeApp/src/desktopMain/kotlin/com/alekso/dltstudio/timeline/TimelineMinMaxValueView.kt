@@ -19,10 +19,9 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
-import java.text.SimpleDateFormat
 import java.time.Instant
-import java.util.Locale
 
 
 private const val SERIES_COUNT = 10
@@ -117,15 +116,15 @@ private fun DrawScope.renderLines(
         if (i == 0) return@entriesIteration
 
         val prev = items[i - 1]
-        val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000f
+        val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000000f
         // split lines if difference is too big
         if (prevDiffSec > splitTimeSec) {
             return@entriesIteration
         }
-        val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000f * secSizePx
+        val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx
         val prevY = height - height * prev.value.toFloat() / entries.maxValue
 
-        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000f * secSizePx)
+        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
         val curY = height - height * entry.value.toFloat() / entries.maxValue
 
         drawLine(
@@ -141,27 +140,26 @@ private fun DrawScope.renderLines(
 @Preview
 @Composable
 fun PreviewTimelineMinMaxValueView() {
-    val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
-    val ts = Instant.now().toEpochMilli()
-    val te = ts + 7000
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
 
     val entries = TimelineMinMaxEntries()
     entries.maxValue = 151f
     entries.minValue = 33f
     entries.entries["1325"] = mutableListOf(
-        TimelineEntry(ts + 1450, "1325", "110"),
-        TimelineEntry(ts + 2000, "1325", "83"),
-        TimelineEntry(ts + 3300, "1325", "127"),
-        TimelineEntry(ts + 4400, "1325", "89"),
+        TimelineEntry(ts + 1450000, "1325", "110"),
+        TimelineEntry(ts + 2000000, "1325", "83"),
+        TimelineEntry(ts + 3300000, "1325", "127"),
+        TimelineEntry(ts + 4400000, "1325", "89"),
     )
     entries.entries["435"] = mutableListOf(
-        TimelineEntry(ts + 200, "435", "133"),
-        TimelineEntry(ts + 2100, "435", "151"),
-        TimelineEntry(ts + 2700, "435", "104"),
-        TimelineEntry(ts + 3400, "435", "42"),
-        TimelineEntry(ts + 3560, "435", "63"),
-        TimelineEntry(ts + 4000, "435", "72"),
-        TimelineEntry(ts + 6800, "435", "111"),
+        TimelineEntry(ts + 200000, "435", "133"),
+        TimelineEntry(ts + 2100000, "435", "151"),
+        TimelineEntry(ts + 2700000, "435", "104"),
+        TimelineEntry(ts + 3400000, "435", "42"),
+        TimelineEntry(ts + 3560000, "435", "63"),
+        TimelineEntry(ts + 4000000, "435", "72"),
+        TimelineEntry(ts + 6800000, "435", "111"),
     )
 
     Column {
@@ -173,8 +171,8 @@ fun PreviewTimelineMinMaxValueView() {
                 offsetSeconds = 0f
             )
 
-            Text(text = "start: ${simpleDateFormat.format(ts)}")
-            Text(text = "end: ${simpleDateFormat.format(te)}")
+            Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
+            Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
             Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
             TimelineMinMaxValueView(
                 modifier = Modifier.fillMaxWidth().height(200.dp),

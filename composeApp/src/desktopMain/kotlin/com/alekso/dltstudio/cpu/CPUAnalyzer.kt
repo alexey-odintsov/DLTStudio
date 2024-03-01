@@ -38,7 +38,7 @@ object CPUAnalyzer {
             idx++
         }
 
-        return CPUUsageEntry(index, dltMessage.getTimeStamp(), cpuUsageList)
+        return CPUUsageEntry(index, dltMessage.timeStampNano, cpuUsageList)
     }
 
     fun analyzeCPUS(index: Int, dltMessage: DLTMessage): CPUSEntry {
@@ -77,6 +77,6 @@ object CPUAnalyzer {
             payload.substring(payload.indexOf(" kernelthread: ") + 15, payload.lastIndexOf("%"))
                 .toFloat()
 
-        return CPUSEntry(index, dltMessage.getTimeStamp(), entries)
+        return CPUSEntry(index, dltMessage.timeStampNano, entries)
     }
 }

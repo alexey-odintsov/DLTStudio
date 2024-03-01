@@ -14,9 +14,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.colors.ColorPalette
-import java.io.File
+import java.time.Instant
 
 
 @Composable
@@ -25,14 +24,16 @@ fun CPUUsageView(
     items: List<CPUUsageEntry>,
     offset: Float = 0f,
     scale: Float = 1f,
-    dltSession: ParseSession
+    totalSeconds: Int,
+    timeStart: Long,
+    timeEnd: Long
 ) {
     val textMeasurer = rememberTextMeasurer()
 
     Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
         val height = size.height
         val width = size.width
-        val secSize: Float = size.width / (dltSession.totalSeconds * 1.dp.toPx())
+        val secSize: Float = size.width / (totalSeconds * 1.dp.toPx())
 
         for (i in 0..100 step 10) {
             drawLine(
@@ -55,7 +56,7 @@ fun CPUUsageView(
 
             for (j in 0..<entry.cpuUsage.size) {
                 val prevX = if (prev != null) {
-                    ((prev.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
+                    ((prev.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
                 } else {
                     0f
                 }
@@ -65,7 +66,7 @@ fun CPUUsageView(
                     0f
                 }
                 val curX =
-                    ((entry.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
+                    ((entry.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
                 val curY = height - height * entry.cpuUsage[j] / 100f
                 drawLine(
                     ColorPalette.getColor(j),
@@ -81,18 +82,22 @@ fun CPUUsageView(
 @Preview
 @Composable
 fun PreviewCPUUsageView() {
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
+    val totalSeconds = (te - ts).toInt() / 1000000
+
     CPUUsageView(
         modifier = Modifier.width(200.dp).height(200.dp), items = listOf(
-            CPUUsageEntry(23, 123123213, listOf(60.3f, 50.0f)),
-            CPUUsageEntry(54, 123123214, listOf(49.8f, 55.2f)),
-            CPUUsageEntry(76, 123123215, listOf(11.3f, 35.2f)),
-            CPUUsageEntry(91, 123123216, listOf(8.0f, 50.5f)),
-            CPUUsageEntry(107, 123123217, listOf(34.9f, 70.3f)),
-            CPUUsageEntry(167, 123123218, listOf(55.1f, 80.4f)),
-            CPUUsageEntry(197, 123123219, listOf(80.6f, 96.4f)),
-            CPUUsageEntry(212, 123123220, listOf(84.6f, 99.7f)),
-            CPUUsageEntry(247, 123123221, listOf(89.6f, 99.9f)),
-            CPUUsageEntry(287, 123123222, listOf(94.6f, 81.3f)),
-        ), dltSession = ParseSession({}, listOf(File("")))
+            CPUUsageEntry(23, ts + 1450000, listOf(60.3f, 50.0f)),
+            CPUUsageEntry(54, ts + 1550000, listOf(49.8f, 55.2f)),
+            CPUUsageEntry(76, ts + 2500000, listOf(11.3f, 35.2f)),
+            CPUUsageEntry(91, ts + 3000000, listOf(8.0f, 50.5f)),
+            CPUUsageEntry(107, ts + 3200000, listOf(34.9f, 70.3f)),
+            CPUUsageEntry(167, ts + 3911123, listOf(55.1f, 80.4f)),
+            CPUUsageEntry(197, ts + 4040000, listOf(80.6f, 96.4f)),
+            CPUUsageEntry(212, ts + 4040004, listOf(84.6f, 99.7f)),
+            CPUUsageEntry(247, ts + 5000000, listOf(89.6f, 99.9f)),
+            CPUUsageEntry(287, ts + 7000000, listOf(94.6f, 81.3f)),
+        ), timeStart = ts, timeEnd = te, totalSeconds = totalSeconds
     )
 }

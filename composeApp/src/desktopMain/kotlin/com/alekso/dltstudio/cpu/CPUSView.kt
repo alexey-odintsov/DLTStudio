@@ -14,9 +14,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.colors.ColorPalette
-import java.io.File
+import java.time.Instant
 
 @Composable
 fun CPUSView(
@@ -24,7 +23,9 @@ fun CPUSView(
     items: List<CPUSEntry>,
     offset: Float = 0f,
     scale: Float = 1f,
-    dltSession: ParseSession
+    totalSeconds: Int,
+    timeStart: Long,
+    timeEnd: Long
 ) {
     val textMeasurer = rememberTextMeasurer()
 
@@ -32,7 +33,7 @@ fun CPUSView(
         val height = size.height
         val height_1_100 = size.height / 100
         val width = size.width
-        val secSize: Float = size.width / (dltSession.totalSeconds * 1.dp.toPx())
+        val secSize: Float = size.width / (totalSeconds * 1.dp.toPx())
 
         for (i in 0..100 step 10) {
             drawLine(
@@ -53,12 +54,12 @@ fun CPUSView(
         items.forEachIndexed { i, entry ->
             val prev = if (i > 0) items[i - 1] else null
             val prevX = if (prev != null) {
-                ((prev.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
+                ((prev.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
             } else {
                 0f
             }
             val curX =
-                ((entry.timestamp - dltSession.timeStart) / 1000f * secSize.dp.toPx())
+                ((entry.timestamp - timeStart) / 1000000f * secSize.dp.toPx())
 
             for (j in 0..<CPUS_ENTRY.entries.size) {
                 val prevY = if (prev != null) height - height_1_100 * prev.entry[j] else 0f
@@ -78,18 +79,22 @@ fun CPUSView(
 @Preview
 @Composable
 fun PreviewCPUSView() {
+    val ts = Instant.now().toEpochMilli() * 1000L
+    val te = ts + 7000000L
+    val totalSeconds = (te - ts).toInt() / 1000000
+
     CPUSView(
         modifier = Modifier.width(200.dp).height(200.dp), items = listOf(
             CPUSEntry(
                 0,
-                123123213,
+                ts + 3000000,
                 listOf(99.8f, 52.9f, 37.3f, 0f, 3.6f, 1.4f, 4.4f, 0f, 0f, 75.4f, 94.6f, 1.9f)
             ),
             CPUSEntry(
                 1,
-                123123213,
+                ts + 6000000,
                 listOf(99.6f, 49.3f, 39.4f, 0f, 3.6f, 1.3f, 6f, 0f, 0f, 76.2f, 95.6f, 1.9f)
             ),
-        ), dltSession = ParseSession({}, listOf(File("")))
+        ), timeStart = ts, timeEnd = te, totalSeconds = totalSeconds
     )
 }

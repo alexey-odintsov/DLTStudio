@@ -22,20 +22,20 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
-import com.alekso.dltstudio.ParseSession
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
+import com.alekso.dltstudio.logs.search.SearchState
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
 import org.jetbrains.compose.splitpane.VerticalSplitPane
 import org.jetbrains.skiko.Cursor
-import java.io.File
 
 
 private fun Modifier.cursorForHorizontalResize(): Modifier =
@@ -48,38 +48,39 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    searchText: String,
-    dltSession: ParseSession?,
-    colorFilters: List<ColorFilter> = emptyList(),
-    searchUseRegex: Boolean,
+    dltMessages: List<DLTMessage>,
+    // search
+    searchState: SearchState,
+    searchResult: List<DLTMessage>,
+    searchIndexes: List<Int>,
+    onSearchButtonClicked: (String) -> Unit,
+    onSearchUseRegexChanged: (Boolean) -> Unit,
+    // color filters
+    colorFilters: List<ColorFilter>,
+    onColorFilterUpdate: (Int, ColorFilter) -> Unit,
+    onColorFilterDelete: (Int) -> Unit,
+    // toolbar
     logsToolbarState: LogsToolbarState,
-    updateSearchText: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateSearchUseRegexCheck: (Boolean) -> Unit,
+    // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
-    onFilterUpdate: (Int, ColorFilter) -> Unit,
-    onFilterDelete: (Int) -> Unit
 ) {
     var selectedRow by remember { mutableStateOf(0) }
     var searchResultSelectedRow by remember { mutableStateOf(0) }
-    val dltMessages = dltSession?.dltMessages ?: emptyList()
-    val searchResult = dltSession?.searchResult ?: emptyList()
-    val searchIndexes = dltSession?.searchIndexes ?: emptyList()
     val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         LogsToolbar(
             logsToolbarState,
-            searchText,
-            searchUseRegex,
-            updateSearchText,
+            searchState,
+            onSearchButtonClicked,
             updateToolbarFatalCheck,
             updateToolbarErrorCheck,
             updateToolbarWarningCheck,
-            updateSearchUseRegexCheck,
+            onSearchUseRegexChanged,
             onColorFiltersClicked = { dialogState.value = true }
         )
 
@@ -88,8 +89,8 @@ fun LogsPanel(
                 visible = dialogState.value,
                 onDialogClosed = { dialogState.value = false },
                 colorFilters = colorFilters,
-                onFilterUpdate = onFilterUpdate,
-                onFilterDelete = onFilterDelete
+                onColorFilterUpdate = onColorFilterUpdate,
+                onColorFilterDelete = onColorFilterDelete,
             )
         }
 
@@ -124,7 +125,7 @@ fun LogsPanel(
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            dltSession?.dltMessages?.getOrNull(selectedRow),
+                            dltMessages.getOrNull(selectedRow),
                             selectedRow
                         )
                     }
@@ -194,27 +195,26 @@ fun LogsPanel(
 @Preview
 @Composable
 fun PreviewLogsPanel() {
-    val dltSession = ParseSession({}, listOf(File("")))
-    dltSession.dltMessages.addAll(SampleData.getSampleDltMessages(20))
-
     LogsPanel(
         Modifier.fillMaxSize(),
-        "Search text",
-        dltSession = dltSession,
-        searchUseRegex = true,
+        searchState = SearchState(searchText = "Search text"),
+        dltMessages = SampleData.getSampleDltMessages(20),
+        searchResult = emptyList(),
+        searchIndexes = emptyList(),
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
         ),
-        updateSearchText = { },
+        onSearchButtonClicked = { },
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },
         updateToolbarWarningCheck = { },
-        updateSearchUseRegexCheck = { },
+        onSearchUseRegexChanged = { },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
-        onFilterUpdate = { i, f -> },
-        onFilterDelete = { i -> }
+        colorFilters = emptyList(),
+        onColorFilterDelete = { i -> },
+        onColorFilterUpdate = { i, f -> }
     )
 }

@@ -9,10 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.alekso.dltstudio.TimeFormatter
 
-private val simpleDateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH)
 @Composable
 fun DLTSimplifiedInfoView(
     modifier: Modifier = Modifier,
@@ -28,7 +26,7 @@ fun DLTSimplifiedInfoView(
                     modifier = paddingModifier,
                     text = "DLT Message #$messageIndex:"
                 )
-                val headerText = "${simpleDateFormat.format(dltMessage.getTimeStamp())} " +
+                val headerText = "${TimeFormatter.formatDateTime(dltMessage.timeStampNano)} " +
                         "${dltMessage.extendedHeader?.applicationId} " +
                         "${dltMessage.extendedHeader?.contextId} "
                 TableRow(0, "", headerText)

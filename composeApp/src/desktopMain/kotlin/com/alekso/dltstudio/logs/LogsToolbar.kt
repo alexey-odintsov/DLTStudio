@@ -13,7 +13,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.ui.CustomEditText
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
@@ -42,13 +46,12 @@ data class LogsToolbarState(
 @Composable
 fun LogsToolbar(
     state: LogsToolbarState,
-    searchText: String,
-    searchUseRegex: Boolean,
-    updateSearchText: (String) -> Unit,
+    searchState: SearchState,
+    onSearchButtonClicked: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateSearchUseRegexCheck: (Boolean) -> Unit,
+    onSearchUseRegexChanged: (Boolean) -> Unit,
     onColorFiltersClicked: () -> Unit,
 ) {
     // Toolbar
@@ -84,25 +87,37 @@ fun LogsToolbar(
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
-        var text by rememberSaveable { mutableStateOf(searchText) }
+        var text by rememberSaveable { mutableStateOf(searchState.searchText) }
         ToggleImageButton(
-            checkedState = searchUseRegex,
+            checkedState = searchState.searchUseRegex,
             iconName = "icon_regex.xml",
             title = "Use Regex or Plain text search",
             checkedTintColor = Color.Blue,
-            updateCheckedState = updateSearchUseRegexCheck
+            updateCheckedState = onSearchUseRegexChanged
         )
 
-        CustomEditText(modifier = Modifier.width(500.dp).height(20.dp),
+        CustomEditText(modifier = Modifier.width(500.dp).height(20.dp)
+            .onKeyEvent { e ->
+                if (e.key == Key.Enter) {
+                    onSearchButtonClicked(text)
+                    true
+                } else {
+                    false
+                }
+            },
             value = text, onValueChange = {
                 text = it
             })
 
         ImageButton(modifier = Modifier.size(32.dp),
-            iconName = "icon_search.xml",
+            iconName = if (searchState.state == SearchState.State.IDLE) {
+                "icon_search.xml"
+            } else {
+                "icon_stop.xml"
+            },
             title = "Search",
             onClick = {
-                updateSearchText(text)
+                onSearchButtonClicked(text)
             })
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
@@ -119,13 +134,12 @@ fun PreviewLogsToolbar() {
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
         ),
-        searchText = "Test",
-        searchUseRegex = true,
-        updateSearchText = {},
+        searchState = SearchState(),
+        onSearchButtonClicked = {},
         updateToolbarFatalCheck = {},
         updateToolbarErrorCheck = {},
         updateToolbarWarningCheck = {},
-        updateSearchUseRegexCheck = {},
+        onSearchUseRegexChanged = {},
         onColorFiltersClicked = {},
     )
 }
