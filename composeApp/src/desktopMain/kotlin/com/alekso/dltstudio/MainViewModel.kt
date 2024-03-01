@@ -7,6 +7,7 @@ import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
-import java.io.FileOutputStream
 
 class MainViewModel(
     private val dltParser: DLTParser,
@@ -141,8 +141,13 @@ class MainViewModel(
     }
 
     fun saveColorFilters(file: File) {
-        FileOutputStream(file).use {
-            it.write("My Saved filter".toByteArray())
+        ColorFilterManager().saveToFile(colorFilters, file)
+    }
+
+    fun loadColorFilters(file: File) {
+        colorFilters.clear()
+        ColorFilterManager().loadFromFile(file)?.let {
+            colorFilters.addAll(it)
         }
     }
 }

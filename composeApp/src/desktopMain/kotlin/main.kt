@@ -80,7 +80,9 @@ fun main() = application {
                         }
 
                         FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> {
-
+                            file?.let {
+                                mainViewModel.loadColorFilters(it)
+                            }
                         }
 
                         FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> {
