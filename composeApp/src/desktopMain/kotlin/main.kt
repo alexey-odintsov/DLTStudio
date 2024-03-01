@@ -10,6 +10,7 @@ import androidx.compose.ui.window.application
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
+import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
 
 fun main() = application {
@@ -28,22 +29,68 @@ fun main() = application {
 
 
         val mainViewModel = remember { MainViewModel(DLTParserV2(), onProgressUpdate) }
-        val stateIsOpenFileDialog = remember { mutableStateOf(false) }
+        var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
         MenuBar {
             Menu("File") {
-                Item("Open", onClick = { stateIsOpenFileDialog.value = true })
+                Item(
+                    "Open",
+                    onClick = {
+                        stateIOpenFileDialog = FileChooserDialogState(
+                            true,
+                            FileChooserDialogState.DialogContext.OPEN_DLT_FILE
+                        )
+                    })
+            }
+            Menu("Filters") {
+                Item(
+                    "Open",
+                    onClick = {
+                        stateIOpenFileDialog = FileChooserDialogState(
+                            true,
+                            FileChooserDialogState.DialogContext.OPEN_FILTER_FILE
+                        )
+                    })
+                Item(
+                    "Save",
+                    onClick = {
+                        stateIOpenFileDialog = FileChooserDialogState(
+                            true,
+                            FileChooserDialogState.DialogContext.SAVE_FILTER_FILE
+                        )
+                    })
             }
         }
 
-        if (stateIsOpenFileDialog.value) {
+        if (stateIOpenFileDialog.visibility) {
             FileChooserDialog(
-                title = "Open file",
+                title = when (stateIOpenFileDialog.dialogContext) {
+                    FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> "Open DLT file"
+                    FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
+                    FileChooserDialogState.DialogContext.UNKNOWN -> "Open file"
+                    FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
+                },
                 onFileSelected = { file ->
-                    stateIsOpenFileDialog.value = false
-                    file?.let {
-                        mainViewModel.parseFile(listOf(it))
+                    when (stateIOpenFileDialog.dialogContext) {
+                        FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> {
+                            file?.let {
+                                mainViewModel.parseFile(listOf(it))
+                            }
+                        }
+
+                        FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> {
+
+                        }
+
+                        FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> {
+
+                        }
+
+                        FileChooserDialogState.DialogContext.UNKNOWN -> {
+
+                        }
                     }
+                    stateIOpenFileDialog = stateIOpenFileDialog.copy(visibility = false)
                 },
             )
         }

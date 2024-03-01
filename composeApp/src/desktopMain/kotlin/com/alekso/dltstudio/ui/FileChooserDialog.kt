@@ -6,6 +6,19 @@ import javax.swing.JFileChooser
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
 
+
+data class FileChooserDialogState(
+    val visibility: Boolean = false,
+    val dialogContext: DialogContext = DialogContext.UNKNOWN
+) {
+    enum class DialogContext {
+        OPEN_DLT_FILE,
+        OPEN_FILTER_FILE,
+        SAVE_FILTER_FILE,
+        UNKNOWN
+    }
+}
+
 @Composable
 fun FileChooserDialog(
     title: String,
