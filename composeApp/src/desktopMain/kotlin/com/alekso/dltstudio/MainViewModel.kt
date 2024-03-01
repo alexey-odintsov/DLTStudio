@@ -2,15 +2,10 @@ package com.alekso.dltstudio
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.graphics.Color
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
-import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
-import com.alekso.dltstudio.logs.colorfilters.FilterParameter
-import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.logs.search.SearchState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -103,31 +98,7 @@ class MainViewModel(
     }
 
 
-    val colorFilters = mutableStateListOf<ColorFilter>(
-        ColorFilter(
-            "SIP",
-            mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
-            CellStyle(backgroundColor = Color.Green, textColor = Color.White),
-            enabled = false,
-        ),
-        ColorFilter(
-            "Logcat",
-            mapOf(
-                FilterParameter.AppId to FilterCriteria("ALD", TextCriteria.PlainText),
-                FilterParameter.ContextId to FilterCriteria("LCAT", TextCriteria.PlainText)
-            ),
-            CellStyle(backgroundColor = Color.Magenta, textColor = Color.White),
-            enabled = true,
-        ),
-        ColorFilter(
-            "Regex test",
-            mapOf(
-                FilterParameter.Payload to FilterCriteria("(\\d+%)", TextCriteria.Regex)
-            ),
-            CellStyle(backgroundColor = Color.Blue, textColor = Color.White),
-            enabled = true,
-        ),
-    )
+    val colorFilters = mutableStateListOf<ColorFilter>()
 
     fun onColorFilterUpdate(index: Int, updatedFilter: ColorFilter) {
         println("onFilterUpdate $index $updatedFilter")
