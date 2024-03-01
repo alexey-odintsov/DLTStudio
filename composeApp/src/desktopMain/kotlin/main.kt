@@ -64,6 +64,7 @@ fun main() = application {
 
         if (stateIOpenFileDialog.visibility) {
             FileChooserDialog(
+                dialogContext = stateIOpenFileDialog.dialogContext,
                 title = when (stateIOpenFileDialog.dialogContext) {
                     FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> "Open DLT file"
                     FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
@@ -83,7 +84,9 @@ fun main() = application {
                         }
 
                         FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> {
-
+                            file?.let {
+                                mainViewModel.saveColorFilters(it)
+                            }
                         }
 
                         FileChooserDialogState.DialogContext.UNKNOWN -> {

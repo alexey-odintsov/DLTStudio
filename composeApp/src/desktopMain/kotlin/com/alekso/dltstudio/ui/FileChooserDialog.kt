@@ -22,7 +22,8 @@ data class FileChooserDialogState(
 @Composable
 fun FileChooserDialog(
     title: String,
-    onFileSelected: (File?) -> Unit
+    onFileSelected: (File?) -> Unit,
+    dialogContext: Any
 ) {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
     val fileChooser = JFileChooser(FileSystemView.getFileSystemView())
@@ -32,12 +33,24 @@ fun FileChooserDialog(
     fileChooser.isAcceptAllFileFilterUsed = true
     fileChooser.selectedFile = null
     fileChooser.currentDirectory = null
-    if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-        val file = fileChooser.selectedFile
-        println("choose file or folder is: $file")
-        onFileSelected(file)
+
+    if (dialogContext == FileChooserDialogState.DialogContext.SAVE_FILTER_FILE) {
+        if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            val file = fileChooser.selectedFile
+            println("choose file or folder is: $file")
+            onFileSelected(file)
+        } else {
+            println("No Selection ")
+            onFileSelected(null)
+        }
     } else {
-        println("No Selection ")
-        onFileSelected(null)
+        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            val file = fileChooser.selectedFile
+            println("choose file or folder is: $file")
+            onFileSelected(file)
+        } else {
+            println("No Selection ")
+            onFileSelected(null)
+        }
     }
 }

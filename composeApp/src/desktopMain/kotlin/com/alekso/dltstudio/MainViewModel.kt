@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
+import java.io.FileOutputStream
 
 class MainViewModel(
     private val dltParser: DLTParser,
@@ -137,5 +138,11 @@ class MainViewModel(
 
     fun onColorFilterDelete(index: Int) {
         colorFilters.removeAt(index)
+    }
+
+    fun saveColorFilters(file: File) {
+        FileOutputStream(file).use {
+            it.write("My Saved filter".toByteArray())
+        }
     }
 }
