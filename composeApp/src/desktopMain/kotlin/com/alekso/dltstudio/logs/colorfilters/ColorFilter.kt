@@ -4,7 +4,6 @@ import androidx.compose.ui.graphics.Color
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.logs.CellStyle
-import kotlinx.serialization.Serializable
 
 enum class FilterParameter {
     Payload,
@@ -16,20 +15,17 @@ enum class FilterParameter {
     MessageTypeInfo,
 }
 
-@Serializable
 enum class TextCriteria {
     PlainText,
     LowerCase,
     Regex
 }
 
-@Serializable
 data class FilterCriteria(
     val value: String,
     val textCriteria: TextCriteria
 )
 
-@Serializable
 data class ColorFilter(
     val name: String,
     val filters: Map<FilterParameter, FilterCriteria>,
