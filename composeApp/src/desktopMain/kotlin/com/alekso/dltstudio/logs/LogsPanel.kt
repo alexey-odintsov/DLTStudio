@@ -48,21 +48,25 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    searchState: SearchState,
     dltMessages: List<DLTMessage>,
+    // search
+    searchState: SearchState,
     searchResult: List<DLTMessage>,
     searchIndexes: List<Int>,
-    colorFilters: List<ColorFilter> = emptyList(),
-    logsToolbarState: LogsToolbarState,
     onSearchButtonClicked: (String) -> Unit,
+    onSearchUseRegexChanged: (Boolean) -> Unit,
+    // color filters
+    colorFilters: List<ColorFilter>,
+    onColorFilterUpdate: (Int, ColorFilter) -> Unit,
+    onColorFilterDelete: (Int) -> Unit,
+    // toolbar
+    logsToolbarState: LogsToolbarState,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
-    onSearchUseRegexChanged: (Boolean) -> Unit,
+    // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
-    onFilterUpdate: (Int, ColorFilter) -> Unit,
-    onFilterDelete: (Int) -> Unit
 ) {
     var selectedRow by remember { mutableStateOf(0) }
     var searchResultSelectedRow by remember { mutableStateOf(0) }
@@ -85,8 +89,8 @@ fun LogsPanel(
                 visible = dialogState.value,
                 onDialogClosed = { dialogState.value = false },
                 colorFilters = colorFilters,
-                onFilterUpdate = onFilterUpdate,
-                onFilterDelete = onFilterDelete
+                onColorFilterUpdate = onColorFilterUpdate,
+                onColorFilterDelete = onColorFilterDelete,
             )
         }
 
@@ -193,7 +197,7 @@ fun LogsPanel(
 fun PreviewLogsPanel() {
     LogsPanel(
         Modifier.fillMaxSize(),
-        SearchState(searchText = "Search text"),
+        searchState = SearchState(searchText = "Search text"),
         dltMessages = SampleData.getSampleDltMessages(20),
         searchResult = emptyList(),
         searchIndexes = emptyList(),
@@ -209,6 +213,8 @@ fun PreviewLogsPanel() {
         onSearchUseRegexChanged = { },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
-        onFilterUpdate = { i, f -> }
-    ) { i -> }
+        colorFilters = emptyList(),
+        onColorFilterDelete = { i -> },
+        onColorFilterUpdate = { i, f -> }
+    )
 }

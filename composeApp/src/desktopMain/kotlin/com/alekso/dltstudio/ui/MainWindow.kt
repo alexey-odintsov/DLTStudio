@@ -97,7 +97,7 @@ fun MainWindow(
             0 -> {
                 LogsPanel(
                     modifier = Modifier.weight(1f),
-                    searchState,
+                    searchState = searchState,
                     dltMessages = mainViewModel.dltMessages,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
@@ -110,9 +110,8 @@ fun MainWindow(
                     onSearchUseRegexChanged = { mainViewModel.onSearchUseRegexChanged(it) },
                     vSplitterState = vSplitterState,
                     hSplitterState = hSplitterState,
-                    onFilterUpdate = { index, updatedFilter ->
-                        mainViewModel.onColorFilterUpdate(index, updatedFilter)
-                    }, onFilterDelete = { mainViewModel.onColorFilterDelete(it) }
+                    onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
+                    onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f)}
                 )
             }
 

@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
+import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltparser.dlt.MessageInfo
 import com.alekso.dltstudio.colors.ColorPickerDialog
 import com.alekso.dltstudio.logs.CellStyle
@@ -49,7 +49,7 @@ fun EditColorFilterDialog(
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (colorFilterIndex >= 0) "Edit Color Filter" else "Add new color filter",
-        state = DialogState(width = 700.dp, height = 500.dp)
+        state = rememberDialogState(width = 700.dp, height = 500.dp)
     ) {
         EditColorFilterPanel(colorFilter, colorFilterIndex, onFilterUpdate, onDialogClosed)
     }

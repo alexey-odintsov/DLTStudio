@@ -27,8 +27,7 @@ fun main() = application {
         val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
 
-        val mainViewModel =
-            remember { MainViewModel(DLTParserV2(), onProgressUpdate) }
+        val mainViewModel = remember { MainViewModel(DLTParserV2(), onProgressUpdate) }
         val stateIsOpenFileDialog = remember { mutableStateOf(false) }
 
         MenuBar {
