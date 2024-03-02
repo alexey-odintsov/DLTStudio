@@ -107,6 +107,14 @@ class MainViewModel(
         } else colorFilters[index] = updatedFilter
     }
 
+    fun onColorFilterMove(index: Int, offset: Int) {
+        if (index + offset in 0..<colorFilters.size) {
+            val temp = colorFilters[index]
+            colorFilters[index] = colorFilters[index + offset]
+            colorFilters[index + offset] = temp
+        }
+    }
+
     fun onColorFilterDelete(index: Int) {
         colorFilters.removeAt(index)
     }

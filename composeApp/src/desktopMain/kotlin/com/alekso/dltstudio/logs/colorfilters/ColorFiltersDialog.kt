@@ -34,6 +34,7 @@ fun ColorFiltersDialog(
     colorFilters: List<ColorFilter>,
     onColorFilterUpdate: (Int, ColorFilter) -> Unit,
     onColorFilterDelete: (Int) -> Unit,
+    onColorFilterMove: (Int, Int) -> Unit,
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
@@ -59,7 +60,9 @@ fun ColorFiltersDialog(
             colorFilters,
             { i, filter -> editDialogState.value = EditDialogState(true, filter, i) },
             { i, f -> onColorFilterUpdate(i, f) },
-            { i -> onColorFilterDelete(i) })
+            { i -> onColorFilterDelete(i) },
+            { i, o -> onColorFilterMove(i, o) },
+        )
     }
 }
 
@@ -68,7 +71,8 @@ fun ColorFiltersPanel(
     colorFilters: List<ColorFilter>,
     onEditFilterClick: (Int, ColorFilter) -> Unit,
     onFilterUpdate: (Int, ColorFilter) -> Unit,
-    onFilterDelete: (Int) -> Unit
+    onFilterDelete: (Int) -> Unit,
+    onColorFilterMove: (Int, Int) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(4.dp)) {
@@ -79,6 +83,17 @@ fun ColorFiltersPanel(
                     Modifier.padding(horizontal = 4.dp, vertical = 0.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+
+                    ImageButton(modifier = Modifier.size(28.dp),
+                        iconName = "icon_up.xml",
+                        title = "Move Up",
+                        onClick = { onColorFilterMove(i, -1) })
+
+                    ImageButton(modifier = Modifier.size(28.dp),
+                        iconName = "icon_down.xml",
+                        title = "Move Down",
+                        onClick = { onColorFilterMove(i, 1) })
+
                     var checked by remember { mutableStateOf(filter.enabled) }
                     CustomCheckbox(
                         checked = checked,
@@ -142,5 +157,5 @@ fun PreviewColorFiltersDialog() {
         ),
     )
 
-    ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> }, { i -> })
+    ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> }, { i -> }, { i, o -> })
 }

@@ -111,7 +111,8 @@ fun MainWindow(
                     vSplitterState = vSplitterState,
                     hSplitterState = hSplitterState,
                     onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
-                    onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f)}
+                    onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
+                    onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
                 )
             }
 

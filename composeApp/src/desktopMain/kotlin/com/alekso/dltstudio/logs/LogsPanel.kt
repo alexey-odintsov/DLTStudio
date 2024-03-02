@@ -59,6 +59,7 @@ fun LogsPanel(
     colorFilters: List<ColorFilter>,
     onColorFilterUpdate: (Int, ColorFilter) -> Unit,
     onColorFilterDelete: (Int) -> Unit,
+    onColorFilterMove: (Int, Int) -> Unit,
     // toolbar
     logsToolbarState: LogsToolbarState,
     updateToolbarFatalCheck: (Boolean) -> Unit,
@@ -91,6 +92,7 @@ fun LogsPanel(
                 colorFilters = colorFilters,
                 onColorFilterUpdate = onColorFilterUpdate,
                 onColorFilterDelete = onColorFilterDelete,
+                onColorFilterMove = onColorFilterMove,
             )
         }
 
@@ -215,6 +217,7 @@ fun PreviewLogsPanel() {
         hSplitterState = SplitPaneState(0.8f, true),
         colorFilters = emptyList(),
         onColorFilterDelete = { i -> },
-        onColorFilterUpdate = { i, f -> }
+        onColorFilterUpdate = { i, f -> },
+        onColorFilterMove = { i, o -> },
     )
 }
