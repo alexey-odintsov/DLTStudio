@@ -129,4 +129,8 @@ class MainViewModel(
             colorFilters.addAll(it)
         }
     }
+
+    fun clearColorFilters() {
+        colorFilters.clear()
+    }
 }

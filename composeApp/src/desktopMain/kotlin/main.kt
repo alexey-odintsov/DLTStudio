@@ -59,6 +59,9 @@ fun main() = application {
                             FileChooserDialogState.DialogContext.SAVE_FILTER_FILE
                         )
                     })
+                Item(
+                    "Clear",
+                    onClick = { mainViewModel.clearColorFilters() })
             }
         }
 
