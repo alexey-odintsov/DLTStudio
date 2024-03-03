@@ -44,6 +44,7 @@ import com.alekso.dltstudio.cpu.CPUCLegend
 import com.alekso.dltstudio.cpu.CPUSLegend
 import com.alekso.dltstudio.cpu.CPUSView
 import com.alekso.dltstudio.cpu.CPUUsageView
+import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
 import com.alekso.dltstudio.user.UserStateLegend
 import com.alekso.dltstudio.user.UserStateView
 
@@ -75,6 +76,7 @@ fun TimeLinePanel(
     val legendsHighlight = mutableMapOf<String, (String?) -> Unit>()
     legendsHighlight["MEMT"] = { key -> memtHighlight = key }
     legendsHighlight["CPU_PER_PID"] = { key -> cpuppidHighlight = key }
+    val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         TimelineToolbar(
@@ -86,7 +88,20 @@ fun TimeLinePanel(
                 scaleUpdate(1f)
                 offsetUpdate(0f)
             },
-            runClick = { timelineViewModel.analyzeTimeline(dltMessages) })
+            runClick = { timelineViewModel.analyzeTimeline(dltMessages) },
+            onTimelineFiltersClicked = { dialogState.value = true },
+        )
+
+        if (dialogState.value) {
+            TimelineFiltersDialog(
+                visible = dialogState.value,
+                onDialogClosed = { dialogState.value = false },
+                timelineFilters = timelineViewModel.timelineFilters,
+                onTimelineFilterUpdate = { i, f -> timelineViewModel.onTimelineFilterUpdate(i, f) },
+                onTimelineFilterDelete = { timelineViewModel.onTimelineFilterDelete(it) },
+                onTimelineFilterMove = { i, o -> timelineViewModel.onTimelineFilterMove(i, o) },
+            )
+        }
 
         Divider()
 

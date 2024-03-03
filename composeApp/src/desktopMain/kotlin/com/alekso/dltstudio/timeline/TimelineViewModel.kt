@@ -7,6 +7,7 @@ import com.alekso.dltparser.dlt.VerbosePayload
 import com.alekso.dltstudio.cpu.CPUAnalyzer
 import com.alekso.dltstudio.cpu.CPUSEntry
 import com.alekso.dltstudio.cpu.CPUUsageEntry
+import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +25,9 @@ class TimelineViewModel(
     var cpus = mutableListOf<CPUSEntry>()
     var userStateEntries = mutableMapOf<Int, MutableList<UserStateEntry>>()
     var userEntries = mutableMapOf<String, TimelineEntries>()
+
+    val timelineFilters = mutableStateListOf<TimelineFilter>()
+
     var timeStart = Long.MAX_VALUE
     var timeEnd = Long.MIN_VALUE
     val totalSeconds: Int
@@ -207,4 +211,23 @@ class TimelineViewModel(
             }
         }
     }
+
+    fun onTimelineFilterUpdate(index: Int, filter: TimelineFilter) {
+        if (index < 0 || index > timelineFilters.size) {
+            timelineFilters.add(filter)
+        } else timelineFilters[index] = filter
+    }
+
+    fun onTimelineFilterDelete(index: Int) {
+        timelineFilters.removeAt(index)
+    }
+
+    fun onTimelineFilterMove(index: Int, offset: Int) {
+        if (index + offset in 0..<timelineFilters.size) {
+            val temp = timelineFilters[index]
+            timelineFilters[index] = timelineFilters[index + offset]
+            timelineFilters[index + offset] = temp
+        }
+    }
+
 }

@@ -17,9 +17,18 @@ fun TimelineToolbar(
     zoomInClick: () -> Unit,
     zoomOutClick: () -> Unit,
     zoomFitClick: () -> Unit,
+    onTimelineFiltersClicked: () -> Unit,
 ) {
 
     Row {
+
+        ImageButton(
+            modifier = Modifier.size(32.dp),
+            iconName = "icon_color_filters.xml",
+            title = "Color filters",
+            onClick = onTimelineFiltersClicked
+        )
+
         ImageButton(
             modifier = Modifier.size(32.dp),
             iconName = "icon_run.xml",
