@@ -133,109 +133,113 @@ fun TimeLinePanel(
             }
 
             val state = rememberLazyListState()
-            val panels = mutableStateListOf<@Composable () -> Unit>(
-                {
-                    Row {
-                        UserStateLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(100.dp),
-                            map = timelineViewModel.userStateEntries
-                        )
-                        UserStateView(
-                            offset = offsetSec,
-                            scale = scale,
-                            modifier = Modifier.height(100.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-                            map = timelineViewModel.userStateEntries,
-                            timeStart = timelineViewModel.timeStart,
-                            timeEnd = timelineViewModel.timeEnd,
-                            totalSeconds = timelineViewModel.totalSeconds
-                        )
-                    }
-                },
-                {
-                    Row {
-                        CPUCLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
-                            items = timelineViewModel.cpuUsage
-                        )
-                        CPUUsageView(
-                            offset = offsetSec,
-                            scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-                            items = timelineViewModel.cpuUsage,
-                            timeStart = timelineViewModel.timeStart,
-                            timeEnd = timelineViewModel.timeEnd,
-                            totalSeconds = timelineViewModel.totalSeconds
-                        )
-                    }
-                },
-                {
-                    Row {
-                        CPUSLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
-                            items = timelineViewModel.cpus
-                        )
-                        CPUSView(
-                            offset = offsetSec,
-                            scale = scale,
-                            modifier = Modifier.height(300.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-                            items = timelineViewModel.cpus,
-                            timeStart = timelineViewModel.timeStart,
-                            timeEnd = timelineViewModel.timeEnd,
-                            totalSeconds = timelineViewModel.totalSeconds
-                        )
-                    }
-                },
-                {
+            val panels = mutableStateListOf<@Composable () -> Unit>()
+//                {
+//                    Row {
+//                        UserStateLegend(
+//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(100.dp),
+//                            map = timelineViewModel.userStateEntries
+//                        )
+//                        UserStateView(
+//                            offset = offsetSec,
+//                            scale = scale,
+//                            modifier = Modifier.height(100.dp).fillMaxWidth()
+//                                .onPointerEvent(
+//                                    PointerEventType.Move,
+//                                    onEvent = { dragCallback(it, size.width) }),
+//                            map = timelineViewModel.userStateEntries,
+//                            timeStart = timelineViewModel.timeStart,
+//                            timeEnd = timelineViewModel.timeEnd,
+//                            totalSeconds = timelineViewModel.totalSeconds
+//                        )
+//                    }
+//                },
+//                {
+//                    Row {
+//                        CPUCLegend(
+//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
+//                            items = timelineViewModel.cpuUsage
+//                        )
+//                        CPUUsageView(
+//                            offset = offsetSec,
+//                            scale = scale,
+//                            modifier = Modifier.height(300.dp).fillMaxWidth()
+//                                .onPointerEvent(
+//                                    PointerEventType.Move,
+//                                    onEvent = { dragCallback(it, size.width) }),
+//                            items = timelineViewModel.cpuUsage,
+//                            timeStart = timelineViewModel.timeStart,
+//                            timeEnd = timelineViewModel.timeEnd,
+//                            totalSeconds = timelineViewModel.totalSeconds
+//                        )
+//                    }
+//                },
+//                {
+//                    Row {
+//                        CPUSLegend(
+//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
+//                            items = timelineViewModel.cpus
+//                        )
+//                        CPUSView(
+//                            offset = offsetSec,
+//                            scale = scale,
+//                            modifier = Modifier.height(300.dp).fillMaxWidth()
+//                                .onPointerEvent(
+//                                    PointerEventType.Move,
+//                                    onEvent = { dragCallback(it, size.width) }),
+//                            items = timelineViewModel.cpus,
+//                            timeStart = timelineViewModel.timeStart,
+//                            timeEnd = timelineViewModel.timeEnd,
+//                            totalSeconds = timelineViewModel.totalSeconds
+//                        )
+//                    }
+//                },
+            timelineViewModel.timelineFilters.forEachIndexed { index, timelineFilter ->
+                panels.add {
                     Row {
                         TimelineLegend(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
-                            title = "CPU usage by process",
-                            entries = timelineViewModel.userEntries["CPU_PER_PID"],
-                            { key -> legendsHighlight["CPU_PER_PID"]?.invoke(key) },
-                            highlightedKey = cpuppidHighlight
+                            title = timelineFilter.name,
+                            entries = timelineViewModel.userEntries.getOrNull(index),
+                            { key -> //legendsHighlight[index]?.invoke(key)
+                                 },
+//                            highlightedKey = cpuppidHighlight
                         )
+                        // TODO: distinguish diagram type
                         TimelinePercentageView(
                             modifier = Modifier.height(200.dp).fillMaxWidth()
                                 .onPointerEvent(
                                     PointerEventType.Move,
                                     onEvent = { dragCallback(it, size.width) }),
-                            entries = timelineViewModel.userEntries["CPU_PER_PID"] as TimelinePercentageEntries?,
+                            entries = timelineViewModel.userEntries.getOrNull(index) as TimelinePercentageEntries?,
                             timeFrame = timeFrame,
                             highlightedKey = cpuppidHighlight
                         )
                     }
-                },
-                {
-                    Row {
-                        TimelineLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
-                            title = "Memory usage",
-                            entries = timelineViewModel.userEntries["MEMT"],
-                            { key -> legendsHighlight["MEMT"]?.invoke(key) },
-                            highlightedKey = memtHighlight
-                        )
-                        TimelineMinMaxValueView(
-                            modifier = Modifier.height(200.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-                            entries = timelineViewModel.userEntries["MEMT"] as TimelineMinMaxEntries?,
-                            timeFrame = timeFrame,
-                            seriesPostfix = " Mb",
-                            highlightedKey = memtHighlight
-                        )
-                    }
-                },
-            )
+                }
+            }
+//                {
+//                    Row {
+//                        TimelineLegend(
+//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
+//                            title = "Memory usage",
+//                            entries = timelineViewModel.userEntries["MEMT"],
+//                            { key -> legendsHighlight["MEMT"]?.invoke(key) },
+//                            highlightedKey = memtHighlight
+//                        )
+//                        TimelineMinMaxValueView(
+//                            modifier = Modifier.height(200.dp).fillMaxWidth()
+//                                .onPointerEvent(
+//                                    PointerEventType.Move,
+//                                    onEvent = { dragCallback(it, size.width) }),
+//                            entries = timelineViewModel.userEntries["MEMT"] as TimelineMinMaxEntries?,
+//                            timeFrame = timeFrame,
+//                            seriesPostfix = " Mb",
+//                            highlightedKey = memtHighlight
+//                        )
+//                    }
+//                },
+
             Box(modifier = Modifier.weight(1f)) {
                 LazyColumn(
                     Modifier.onPointerEvent(

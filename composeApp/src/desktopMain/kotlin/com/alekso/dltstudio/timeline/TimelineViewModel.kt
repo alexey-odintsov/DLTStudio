@@ -7,6 +7,9 @@ import com.alekso.dltparser.dlt.VerbosePayload
 import com.alekso.dltstudio.cpu.CPUAnalyzer
 import com.alekso.dltstudio.cpu.CPUSEntry
 import com.alekso.dltstudio.cpu.CPUUsageEntry
+import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
+import com.alekso.dltstudio.logs.colorfilters.FilterParameter
+import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
@@ -21,12 +24,23 @@ class TimelineViewModel(
 ) {
     private var analyzeJob: Job? = null
 
-    var cpuUsage = mutableListOf<CPUUsageEntry>()
-    var cpus = mutableListOf<CPUSEntry>()
-    var userStateEntries = mutableMapOf<Int, MutableList<UserStateEntry>>()
-    var userEntries = mutableMapOf<String, TimelineEntries>()
+//    var cpuUsage = mutableListOf<CPUUsageEntry>()
+//    var cpus = mutableListOf<CPUSEntry>()
+//    var userStateEntries = mutableMapOf<Int, MutableList<UserStateEntry>>()
+    var userEntries = mutableStateListOf<TimelineEntries>()
 
-    val timelineFilters = mutableStateListOf<TimelineFilter>()
+    val timelineFilters = mutableStateListOf<TimelineFilter>(
+        TimelineFilter(
+            name = "CPUP",
+            enabled = true,
+            extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.Percentage
+        )
+    )
 
     var timeStart = Long.MAX_VALUE
     var timeEnd = Long.MIN_VALUE
@@ -42,13 +56,22 @@ class TimelineViewModel(
                 val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
                 val _cpus = mutableStateListOf<CPUSEntry>()
                 val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
-                val _userEntries = mutableMapOf<String, TimelineEntries>()
-
+                //val _userEntries = mutableMapOf<String, TimelineEntries>()
+                val _userEntries = mutableStateListOf<TimelineEntries>()
 
                 println("Start Timeline building .. ${dltMessages.size} messages")
 
-                _userEntries["CPU_PER_PID"] = TimelinePercentageEntries()
-                _userEntries["MEMT"] = TimelineMinMaxEntries()
+//                _userEntries["CPU_PER_PID"] = TimelinePercentageEntries()
+//                _userEntries["MEMT"] = TimelineMinMaxEntries()
+
+                timelineFilters.forEachIndexed { index, timelineFilter ->
+                    val filteredEntries = when (timelineFilter.diagramType) {
+                        TimelineFilter.DiagramType.MinMaxValue -> TimelineMinMaxEntries()
+                        TimelineFilter.DiagramType.Percentage -> TimelinePercentageEntries()
+                        else -> TimelinePercentageEntries()
+                    }
+                    _userEntries.add(filteredEntries)
+                }
 
                 dltMessages.forEachIndexed { index, message ->
                     // timeStamps
@@ -60,36 +83,31 @@ class TimelineViewModel(
                         timeStart = ts
                     }
 
-                    analyzeCPUC(message, _cpuUsage, index)
-                    analyzeCPUS(message, _cpus, index)
-                    analyzeUserState(message, index, _userState)
-                    val pattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(".toRegex()
-                    analyzeEntriesRegex(
-                        message,
-                        appId = "MON",
-                        contextId = "CPUP",
-                        regex = pattern,
-                        entries = _userEntries["CPU_PER_PID"]!!
-                    )
+//                    analyzeCPUC(message, _cpuUsage, index)
+//                    analyzeCPUS(message, _cpus, index)
+//                    analyzeUserState(message, index, _userState)
 
-                    analyzeEntriesIndexOf(
-                        message,
-                        appId = "MON",
-                        contextId = "MEMT",
-                        valueDelimiters = Pair("MaxRSS(MB): ", " increase:"),
-                        keyDelimiters = Pair("", "(cpid:"),
-                        entries = _userEntries["MEMT"]!!,
-                    )
+                    timelineFilters.forEachIndexed { i, timelineFilter ->
+                        analyzeEntriesRegex(
+                            message,
+                            timelineFilter,
+                            _userEntries[i]
+                        )
+                    }
+//                    analyzeEntriesIndexOf(
+//                        message,
+//                        appId = "MON",
+//                        contextId = "MEMT",
+//                        valueDelimiters = Pair("MaxRSS(MB): ", " increase:"),
+//                        keyDelimiters = Pair("", "(cpid:"),
+//                        entries = _userEntries["MEMT"]!!,
+//                    )
                     onProgressChanged(index.toFloat() / dltMessages.size)
                 }
 
                 withContext(Dispatchers.Default) {
-                    cpuUsage.clear()
-                    cpuUsage.addAll(_cpuUsage)
-                    cpus.clear()
-                    cpus.addAll(_cpus)
-                    userStateEntries = _userState
-                    userEntries = _userEntries
+                    userEntries.clear()
+                    userEntries.addAll(_userEntries)
                 }
             }
         }
@@ -98,16 +116,17 @@ class TimelineViewModel(
 
     private fun analyzeEntriesRegex(
         message: DLTMessage,
-        appId: String? = null,
-        contextId: String? = null,
-        regex: Regex,
+        filter: TimelineFilter,
         entries: TimelineEntries
     ) {
         if (message.payload !is VerbosePayload) return
+        if (filter.extractPattern == null) return
+
         val payload = (message.payload as VerbosePayload).asText()
+        val regex = filter.extractPattern.toRegex()
 
         try {
-            if (message.extendedHeader?.applicationId == appId && message.extendedHeader?.contextId == contextId) {
+            if (TimelineFilter.assessFilter(filter, message)) {
                 val matches = regex.find(payload)!!
                 val key: String? = matches.groups["key"]?.value
                 val value: String? = matches.groups["value"]?.value
