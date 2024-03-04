@@ -31,6 +31,16 @@ class TimelineViewModel(
 
     val timelineFilters = mutableStateListOf<TimelineFilter>(
         TimelineFilter(
+            name = "GPU Load",
+            enabled = true,
+            extractPattern = "(GPU Load:)\\s+(?<value>\\d+.\\d+)%(?<key>)", // we use empty 'key' group to ignore key
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.Percentage
+        ),
+        TimelineFilter(
             name = "CPUP",
             enabled = true,
             extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
@@ -39,7 +49,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
             ),
             diagramType = TimelineFilter.DiagramType.Percentage
-        )
+        ),
     )
 
     var timeStart = Long.MAX_VALUE
@@ -128,7 +138,7 @@ class TimelineViewModel(
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
                 val matches = regex.find(payload)!!
-                val key: String? = matches.groups["key"]?.value
+                val key: String? = matches.groups["key"]?.value ?: "key"
                 val value: String? = matches.groups["value"]?.value
 
                 if (key != null && value != null) {

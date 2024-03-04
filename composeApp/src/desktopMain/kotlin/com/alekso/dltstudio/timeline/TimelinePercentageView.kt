@@ -35,7 +35,7 @@ fun TimelinePercentageView(
     val textMeasurer = rememberTextMeasurer()
     val seriesTextStyle = remember { TextStyle(color = Color.LightGray, fontSize = 10.sp) }
 
-    Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
+    Canvas(modifier = modifier.background(Color.White).clipToBounds()) {
         val height = size.height
         val width = size.width
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
