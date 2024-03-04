@@ -256,6 +256,12 @@ class TimelineViewModel(
             val temp = timelineFilters[index]
             timelineFilters[index] = timelineFilters[index + offset]
             timelineFilters[index + offset] = temp
+
+            val temp2 = userEntries[index]
+            userEntries[index] = userEntries[index + offset]
+            userEntries[index + offset] = temp2
+
+
         }
     }
 
