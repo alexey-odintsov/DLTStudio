@@ -52,8 +52,8 @@ fun EditTimelineFilterDialog(
 }
 
 private val COL_NAME_SIZE_DP = 150.dp
-private val SEARCH_INPUT_SIZE_DP = 250.dp
-private val FILTER_TYPE = 150.dp
+private val COL_VALUE = 250.dp
+private val COL_PATTERN = 400.dp
 
 @Composable
 fun EditTimelineFilterPanel(
@@ -81,7 +81,7 @@ fun EditTimelineFilterPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Name")
             CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
+                modifier = Modifier.width(COL_VALUE),
                 value = filterName, onValueChange = {
                     filterName = it
                 }
@@ -96,7 +96,7 @@ fun EditTimelineFilterPanel(
 
             Text(modifier = colNameStyle, text = "Diagram Type")
             CustomDropDown(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
                 items = items,
                 initialSelectedIndex = initialSelection,
                 onItemsSelected = { i -> diagramType = items[i] }
@@ -113,7 +113,7 @@ fun EditTimelineFilterPanel(
 
             Text(modifier = colNameStyle, text = "Message Type")
             CustomDropDown(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
                 items = items,
                 initialSelectedIndex = initialSelection,
                 onItemsSelected = { i ->
@@ -133,7 +133,7 @@ fun EditTimelineFilterPanel(
 
             Text(modifier = colNameStyle, text = "Message Type Info")
             CustomDropDown(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
                 items = items,
                 initialSelectedIndex = initialSelection,
                 onItemsSelected = { i ->
@@ -147,7 +147,7 @@ fun EditTimelineFilterPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "ECU ID")
             CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
+                modifier = Modifier.width(COL_VALUE),
                 value = ecuId ?: "", onValueChange = {
                     ecuId = it
                 }
@@ -157,7 +157,7 @@ fun EditTimelineFilterPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "App ID")
             CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
+                modifier = Modifier.width(COL_VALUE),
                 value = appId ?: "", onValueChange = {
                     appId = it
                 }
@@ -167,7 +167,7 @@ fun EditTimelineFilterPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Context ID")
             CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
+                modifier = Modifier.width(COL_VALUE),
                 value = contextId ?: "", onValueChange = {
                     contextId = it
                 }
@@ -177,7 +177,7 @@ fun EditTimelineFilterPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Session ID")
             CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
+                modifier = Modifier.width(COL_VALUE),
                 value = sessionId ?: "", onValueChange = {
                     sessionId = it
                 }
@@ -187,7 +187,7 @@ fun EditTimelineFilterPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Extract pattern")
             CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
+                modifier = Modifier.width(COL_PATTERN),
                 value = extractPattern ?: "", onValueChange = {
                     extractPattern = it
                 }
