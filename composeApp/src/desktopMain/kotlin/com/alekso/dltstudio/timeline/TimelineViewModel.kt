@@ -77,7 +77,15 @@ class TimelineViewModel(
         _analyzeState.value = AnalyzeState.IDLE
     }
 
+    private fun cleanup() {
+        timeStart = Long.MAX_VALUE
+        timeEnd = Long.MIN_VALUE
+        userEntries.clear()
+        highlightedKeys.clear()
+    }
+
     private fun startAnalyzing(dltMessages: List<DLTMessage>) {
+        cleanup()
         _analyzeState.value = AnalyzeState.ANALYZING
         analyzeJob = CoroutineScope(Dispatchers.IO).launch {
             if (dltMessages.isNotEmpty()) {
