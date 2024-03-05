@@ -24,10 +24,8 @@ class TimelineViewModel(
 ) {
     private var analyzeJob: Job? = null
 
-//    var cpuUsage = mutableListOf<CPUUsageEntry>()
-//    var cpus = mutableListOf<CPUSEntry>()
-//    var userStateEntries = mutableMapOf<Int, MutableList<UserStateEntry>>()
     var userEntries = mutableStateListOf<TimelineEntries>()
+    var highlightedKeys = mutableStateListOf<String?>()
 
     val timelineFilters = mutableStateListOf<TimelineFilter>(
         TimelineFilter(
@@ -62,17 +60,9 @@ class TimelineViewModel(
         analyzeJob?.cancel()
         analyzeJob = CoroutineScope(Dispatchers.IO).launch {
             if (dltMessages.isNotEmpty()) {
-                // we need copies of ParseSession's collections to prevent ConcurrentModificationException
-                val _cpuUsage = mutableStateListOf<CPUUsageEntry>()
-                val _cpus = mutableStateListOf<CPUSEntry>()
-                val _userState = mutableMapOf<Int, MutableList<UserStateEntry>>()
-                //val _userEntries = mutableMapOf<String, TimelineEntries>()
                 val _userEntries = mutableStateListOf<TimelineEntries>()
 
                 println("Start Timeline building .. ${dltMessages.size} messages")
-
-//                _userEntries["CPU_PER_PID"] = TimelinePercentageEntries()
-//                _userEntries["MEMT"] = TimelineMinMaxEntries()
 
                 timelineFilters.forEachIndexed { index, timelineFilter ->
                     val filteredEntries = when (timelineFilter.diagramType) {
@@ -81,6 +71,7 @@ class TimelineViewModel(
                         else -> TimelinePercentageEntries()
                     }
                     _userEntries.add(filteredEntries)
+                    highlightedKeys.add(index, null)
                 }
 
                 dltMessages.forEachIndexed { index, message ->
@@ -116,6 +107,7 @@ class TimelineViewModel(
                 }
 
                 withContext(Dispatchers.Default) {
+                    // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     userEntries.clear()
                     userEntries.addAll(_userEntries)
                 }

@@ -40,13 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.TimeFormatter
-import com.alekso.dltstudio.cpu.CPUCLegend
-import com.alekso.dltstudio.cpu.CPUSLegend
-import com.alekso.dltstudio.cpu.CPUSView
-import com.alekso.dltstudio.cpu.CPUUsageView
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
-import com.alekso.dltstudio.user.UserStateLegend
-import com.alekso.dltstudio.user.UserStateView
 
 private val LEGEND_WIDTH_DP = 250.dp
 
@@ -63,8 +57,6 @@ fun TimeLinePanel(
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
-    var memtHighlight by remember { mutableStateOf<String?>(null) }
-    var cpuppidHighlight by remember { mutableStateOf<String?>(null) }
 
     val dragCallback = { pe: PointerEvent, width: Int ->
         if (dltMessages.isNotEmpty()) {
@@ -73,9 +65,6 @@ fun TimeLinePanel(
             offsetUpdate(offsetSec + (dragAmount / secSize / scale))
         }
     }
-    val legendsHighlight = mutableMapOf<String, (String?) -> Unit>()
-    legendsHighlight["MEMT"] = { key -> memtHighlight = key }
-    legendsHighlight["CPU_PER_PID"] = { key -> cpuppidHighlight = key }
     val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -201,9 +190,12 @@ fun TimeLinePanel(
                             modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                             title = timelineFilter.name,
                             entries = timelineViewModel.userEntries.getOrNull(index),
-                            { key -> //legendsHighlight[index]?.invoke(key)
-                                 },
-//                            highlightedKey = cpuppidHighlight
+                            { key ->
+                                if (index in 0..<timelineViewModel.highlightedKeys.size) {
+                                    timelineViewModel.highlightedKeys[index] = key
+                                }
+                            },
+                            highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
                         )
                         // TODO: distinguish diagram type
                         TimelinePercentageView(
@@ -213,32 +205,11 @@ fun TimeLinePanel(
                                     onEvent = { dragCallback(it, size.width) }),
                             entries = timelineViewModel.userEntries.getOrNull(index) as TimelinePercentageEntries?,
                             timeFrame = timeFrame,
-                            highlightedKey = cpuppidHighlight
+                            highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
                         )
                     }
                 }
             }
-//                {
-//                    Row {
-//                        TimelineLegend(
-//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
-//                            title = "Memory usage",
-//                            entries = timelineViewModel.userEntries["MEMT"],
-//                            { key -> legendsHighlight["MEMT"]?.invoke(key) },
-//                            highlightedKey = memtHighlight
-//                        )
-//                        TimelineMinMaxValueView(
-//                            modifier = Modifier.height(200.dp).fillMaxWidth()
-//                                .onPointerEvent(
-//                                    PointerEventType.Move,
-//                                    onEvent = { dragCallback(it, size.width) }),
-//                            entries = timelineViewModel.userEntries["MEMT"] as TimelineMinMaxEntries?,
-//                            timeFrame = timeFrame,
-//                            seriesPostfix = " Mb",
-//                            highlightedKey = memtHighlight
-//                        )
-//                    }
-//                },
 
             Box(modifier = Modifier.weight(1f)) {
                 LazyColumn(
