@@ -10,14 +10,18 @@ import com.alekso.dltstudio.cpu.CPUUsageEntry
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
+import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.user.UserAnalyzer
 import com.alekso.dltstudio.user.UserStateEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.yield
 
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit
@@ -26,6 +30,10 @@ class TimelineViewModel(
 
     var userEntries = mutableStateListOf<TimelineEntries>()
     var highlightedKeys = mutableStateListOf<String?>()
+
+    private var _analyzeState: MutableStateFlow<AnalyzeState> = MutableStateFlow(AnalyzeState.IDLE)
+    val analyzeState: StateFlow<AnalyzeState> = _analyzeState
+
 
     val timelineFilters = mutableStateListOf<TimelineFilter>(
         TimelineFilter(
@@ -57,7 +65,20 @@ class TimelineViewModel(
 
 
     fun analyzeTimeline(dltMessages: List<DLTMessage>) {
+        when (_analyzeState.value) {
+            AnalyzeState.IDLE -> startAnalyzing(dltMessages)
+            AnalyzeState.ANALYZING -> stopAnalyzing()
+        }
+
+    }
+
+    private fun stopAnalyzing() {
         analyzeJob?.cancel()
+        _analyzeState.value = AnalyzeState.IDLE
+    }
+
+    private fun startAnalyzing(dltMessages: List<DLTMessage>) {
+        _analyzeState.value = AnalyzeState.ANALYZING
         analyzeJob = CoroutineScope(Dispatchers.IO).launch {
             if (dltMessages.isNotEmpty()) {
                 val _userEntries = mutableStateListOf<TimelineEntries>()
@@ -75,6 +96,7 @@ class TimelineViewModel(
                 }
 
                 dltMessages.forEachIndexed { index, message ->
+                    yield()
                     // timeStamps
                     val ts = message.timeStampNano
                     if (ts > timeEnd) {
@@ -110,6 +132,7 @@ class TimelineViewModel(
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     userEntries.clear()
                     userEntries.addAll(_userEntries)
+                    _analyzeState.value = AnalyzeState.IDLE
                 }
             }
         }

@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
 
 @Composable
 fun TimelineToolbar(
-    runClick: () -> Unit,
+    analyzeState: AnalyzeState,
+    onAnalyzeClick: () -> Unit,
     leftClick: () -> Unit,
     rightClick: () -> Unit,
     zoomInClick: () -> Unit,
@@ -31,9 +33,13 @@ fun TimelineToolbar(
 
         ImageButton(
             modifier = Modifier.size(32.dp),
-            iconName = "icon_run.xml",
+            iconName = if (analyzeState == AnalyzeState.IDLE) {
+                "icon_run.xml"
+            } else {
+                "icon_stop.xml"
+            },
             title = "Analyze timeline",
-            onClick = runClick
+            onClick = onAnalyzeClick
         )
         HorizontalDivider(modifier = Modifier.height(32.dp))
 

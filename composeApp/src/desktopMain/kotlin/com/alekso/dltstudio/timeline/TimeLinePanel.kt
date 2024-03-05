@@ -77,7 +77,8 @@ fun TimeLinePanel(
                 scaleUpdate(1f)
                 offsetUpdate(0f)
             },
-            runClick = { timelineViewModel.analyzeTimeline(dltMessages) },
+            analyzeState = timelineViewModel.analyzeState.value,
+            onAnalyzeClick = { timelineViewModel.analyzeTimeline(dltMessages) },
             onTimelineFiltersClicked = { dialogState.value = true },
         )
 
