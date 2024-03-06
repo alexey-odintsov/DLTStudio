@@ -186,45 +186,52 @@ fun TimeLinePanel(
 //                    }
 //                },
             timelineViewModel.timelineFilters.forEachIndexed { index, timelineFilter ->
-                panels.add {
-                    Row {
-                        TimelineLegend(
-                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
-                            title = timelineFilter.name,
-                            entries = timelineViewModel.userEntries.getOrNull(index),
-                            { key ->
-                                if (index in 0..<timelineViewModel.highlightedKeys.size) {
-                                    timelineViewModel.highlightedKeys[index] = key
+                if (timelineFilter.enabled) {
+                    panels.add {
+                        Row {
+                            TimelineLegend(
+                                modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
+                                title = timelineFilter.name,
+                                entries = timelineViewModel.userEntries.getOrNull(index),
+                                { key ->
+                                    if (index in 0..<timelineViewModel.highlightedKeys.size) {
+                                        timelineViewModel.highlightedKeys[index] = key
+                                    }
+                                },
+                                highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
+                            )
+                            when (timelineFilter.diagramType) {
+                                TimelineFilter.DiagramType.Percentage -> {
+                                    TimelinePercentageView(
+                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                            .onPointerEvent(
+                                                PointerEventType.Move,
+                                                onEvent = { dragCallback(it, size.width) }),
+                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimelinePercentageEntries?,
+                                        timeFrame = timeFrame,
+                                        highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
+                                            index
+                                        )
+                                    )
                                 }
-                            },
-                            highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
-                        )
-                        when (timelineFilter.diagramType) {
-                            TimelineFilter.DiagramType.Percentage -> {
-                                TimelinePercentageView(
-                                    modifier = Modifier.height(200.dp).fillMaxWidth()
-                                        .onPointerEvent(
-                                            PointerEventType.Move,
-                                            onEvent = { dragCallback(it, size.width) }),
-                                    entries = timelineViewModel.userEntries.getOrNull(index) as TimelinePercentageEntries?,
-                                    timeFrame = timeFrame,
-                                    highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
-                                )
-                            }
 
-                            TimelineFilter.DiagramType.MinMaxValue -> {
-                                TimelineMinMaxValueView(
-                                    modifier = Modifier.height(200.dp).fillMaxWidth()
-                                        .onPointerEvent(
-                                            PointerEventType.Move,
-                                            onEvent = { dragCallback(it, size.width) }),
-                                    entries = timelineViewModel.userEntries.getOrNull(index) as TimelineMinMaxEntries?,
-                                    timeFrame = timeFrame,
-                                    highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
-                                )
+                                TimelineFilter.DiagramType.MinMaxValue -> {
+                                    TimelineMinMaxValueView(
+                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                            .onPointerEvent(
+                                                PointerEventType.Move,
+                                                onEvent = { dragCallback(it, size.width) }),
+                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimelineMinMaxEntries?,
+                                        timeFrame = timeFrame,
+                                        highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
+                                            index
+                                        )
+                                    )
+                                }
+
+                                TimelineFilter.DiagramType.State -> TODO()
+                                TimelineFilter.DiagramType.Events -> TODO()
                             }
-                            TimelineFilter.DiagramType.State -> TODO()
-                            TimelineFilter.DiagramType.Events -> TODO()
                         }
                     }
                 }
