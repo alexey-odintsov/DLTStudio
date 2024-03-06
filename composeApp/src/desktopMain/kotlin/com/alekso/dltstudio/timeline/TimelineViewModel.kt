@@ -1,12 +1,8 @@
 package com.alekso.dltstudio.timeline
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.VerbosePayload
-import com.alekso.dltstudio.cpu.CPUAnalyzer
-import com.alekso.dltstudio.cpu.CPUSEntry
-import com.alekso.dltstudio.cpu.CPUUsageEntry
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
@@ -236,42 +232,6 @@ class TimelineViewModel(
         }
     }
 
-
-    private fun analyzeCPUC(
-        message: DLTMessage,
-        _cpuUsage: SnapshotStateList<CPUUsageEntry>,
-        index: Int
-    ) {
-        if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
-                "MON"
-            ) == true &&
-            message.extendedHeader?.contextId == "CPUC"
-        ) {
-            try {
-                _cpuUsage.add(CPUAnalyzer.analyzeCPUUsage(index, message))
-            } catch (e: Exception) {
-                // skip
-            }
-        }
-    }
-
-    private fun analyzeCPUS(
-        message: DLTMessage,
-        _cpus: SnapshotStateList<CPUSEntry>,
-        index: Int
-    ) {
-        if (message.ecuId == "MGUA" && message.extendedHeader?.applicationId?.startsWith(
-                "MON"
-            ) == true &&
-            message.extendedHeader?.contextId == "CPUS"
-        ) {
-            try {
-                _cpus.add(CPUAnalyzer.analyzeCPUS(index, message))
-            } catch (e: Exception) {
-                // skip
-            }
-        }
-    }
 
     private fun analyzeUserState(
         message: DLTMessage,
