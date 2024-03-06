@@ -141,11 +141,13 @@ class TimelineViewModel(
                     }
 
                     timelineFilters.forEachIndexed { i, timelineFilter ->
-                        analyzeEntriesRegex(
-                            message,
-                            timelineFilter,
-                            _userEntries[i]
-                        )
+                        if (timelineFilter.enabled) {
+                            analyzeEntriesRegex(
+                                message,
+                                timelineFilter,
+                                _userEntries[i]
+                            )
+                        }
                     }
                     onProgressChanged(index.toFloat() / dltMessages.size)
                 }
