@@ -37,22 +37,12 @@ class TimelineViewModel(
 
     val timelineFilters = mutableStateListOf<TimelineFilter>(
         TimelineFilter(
-            name = "GPU Load",
+            name = "CPUC",
             enabled = true,
-            extractPattern = "(GPU Load:)\\s+(?<value>\\d+.\\d+)%(?<key>)", // we use empty 'key' group to ignore key
+            extractPattern = "(cpu0):\\s*(\\d+[.\\d+]*)%.*(cpu1):\\s*(\\d+[.\\d+]*)%.*(cpu2):\\s*(\\d+[.\\d+]*)%.*(cpu3):\\s*(\\d+[.\\d+]*)%.*(cpu4):\\s*(\\d+[.\\d+]*)%.*(cpu5):\\s*(\\d+[.\\d+]*)%.*(cpu6):\\s*(\\d+[.\\d+]*)%.*(cpu7):\\s*(\\d+[.\\d+]*)%.*",
             filters = mapOf(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
-                FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
-            ),
-            diagramType = TimelineFilter.DiagramType.Percentage
-        ),
-        TimelineFilter(
-            name = "CPUP",
-            enabled = true,
-            extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
-            filters = mapOf(
-                FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
-                FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
             ),
             diagramType = TimelineFilter.DiagramType.Percentage
         ),
@@ -67,12 +57,22 @@ class TimelineViewModel(
             diagramType = TimelineFilter.DiagramType.Percentage
         ),
         TimelineFilter(
-            name = "CPUC",
+            name = "CPUP",
             enabled = true,
-            extractPattern = "(cpu0):\\s*(\\d+[.\\d+]*)%.*(cpu1):\\s*(\\d+[.\\d+]*)%.*(cpu2):\\s*(\\d+[.\\d+]*)%.*(cpu3):\\s*(\\d+[.\\d+]*)%.*(cpu4):\\s*(\\d+[.\\d+]*)%.*(cpu5):\\s*(\\d+[.\\d+]*)%.*(cpu6):\\s*(\\d+[.\\d+]*)%.*(cpu7):\\s*(\\d+[.\\d+]*)%.*",
+            extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
             filters = mapOf(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
-                FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.Percentage
+        ),
+        TimelineFilter(
+            name = "GPU Load",
+            enabled = true,
+            extractPattern = "(GPU Load:)\\s+(?<value>\\d+.\\d+)%(?<key>)", // we use empty 'key' group to ignore key
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
             ),
             diagramType = TimelineFilter.DiagramType.Percentage
         ),
