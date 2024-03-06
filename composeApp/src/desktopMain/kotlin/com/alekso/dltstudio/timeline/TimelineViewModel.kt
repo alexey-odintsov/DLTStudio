@@ -56,6 +56,26 @@ class TimelineViewModel(
             ),
             diagramType = TimelineFilter.DiagramType.Percentage
         ),
+        TimelineFilter(
+            name = "CPUS",
+            enabled = true,
+            extractPattern = "(cpu):(\\d+[.\\d+]*)%.*(us):\\s(\\d+[.\\d+]*)%.*(sy):\\s(\\d+[.\\d+]*)%.*(io):\\s*(\\d+[.\\d+]*).*(irq):\\s(\\d+[.\\d+]*)%.*(softirq):\\s(\\d+[.\\d+]*)%.*(ni):\\s(\\d+[.\\d+]*)%.*(st):\\s(\\d+[.\\d+]*)%.*(g):\\s(\\d+[.\\d+]*)%.*(gn):\\s(\\d+[.\\d+]*)%.*(avgcpu):\\s*(\\d+[.\\d+]*)%.*(thread):\\s*(\\d+[.\\d+]*)%.*(kernelthread):\\s*(\\d+[.\\d+]*)%",
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("CPUS", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.Percentage
+        ),
+        TimelineFilter(
+            name = "CPUC",
+            enabled = true,
+            extractPattern = "(cpu0):\\s*(\\d+[.\\d+]*)%.*(cpu1):\\s*(\\d+[.\\d+]*)%.*(cpu2):\\s*(\\d+[.\\d+]*)%.*(cpu3):\\s*(\\d+[.\\d+]*)%.*(cpu4):\\s*(\\d+[.\\d+]*)%.*(cpu5):\\s*(\\d+[.\\d+]*)%.*(cpu6):\\s*(\\d+[.\\d+]*)%.*(cpu7):\\s*(\\d+[.\\d+]*)%.*",
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.Percentage
+        ),
     )
 
     var timeStart = Long.MAX_VALUE
@@ -161,11 +181,23 @@ class TimelineViewModel(
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
                 val matches = regex.find(payload)!!
-                val key: String? = matches.groups["key"]?.value ?: "key"
-                val value: String? = matches.groups["value"]?.value
-
-                if (key != null && value != null) {
-                    entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
+                try {
+                    val key: String? = matches.groups["key"]?.value ?: "key"
+                    val value: String? = matches.groups["value"]?.value
+                    if (key != null && value != null) {
+                        entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
+                        return
+                    }
+                } catch (e: Exception) {
+                    if (matches.groups.size > 2) { // TODO: find better way to support multi-groups
+                        for (i in 1..<matches.groups.size step 2) {
+                            val key = matches.groups[i]?.value
+                            val value = matches.groups[i + 1]?.value
+                            if (key != null && value != null) {
+                                entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
+                            }
+                        }
+                    }
                 }
             }
         } catch (e: Exception) {
