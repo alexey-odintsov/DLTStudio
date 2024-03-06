@@ -116,6 +116,8 @@ class TimelineViewModel(
         analyzeJob = CoroutineScope(Dispatchers.IO).launch {
             if (dltMessages.isNotEmpty()) {
                 val _userEntries = mutableStateListOf<TimelineEntries>()
+                var _timeStart = Long.MAX_VALUE
+                var _timeEnd = Long.MIN_VALUE
 
                 println("Start Timeline building .. ${dltMessages.size} messages")
 
@@ -133,11 +135,11 @@ class TimelineViewModel(
                     yield()
                     // timeStamps
                     val ts = message.timeStampNano
-                    if (ts > timeEnd) {
-                        timeEnd = ts
+                    if (ts > _timeEnd) {
+                        _timeEnd = ts
                     }
-                    if (ts < timeStart) {
-                        timeStart = ts
+                    if (ts < _timeStart) {
+                        _timeStart = ts
                     }
 
                     timelineFilters.forEachIndexed { i, timelineFilter ->
@@ -156,6 +158,8 @@ class TimelineViewModel(
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     userEntries.clear()
                     userEntries.addAll(_userEntries)
+                    timeStart = _timeStart
+                    timeEnd = _timeEnd
                     _analyzeState.value = AnalyzeState.IDLE
                 }
             }
