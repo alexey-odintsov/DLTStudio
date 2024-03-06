@@ -140,10 +140,6 @@ class TimelineViewModel(
                         timeStart = ts
                     }
 
-//                    analyzeCPUC(message, _cpuUsage, index)
-//                    analyzeCPUS(message, _cpus, index)
-//                    analyzeUserState(message, index, _userState)
-
                     timelineFilters.forEachIndexed { i, timelineFilter ->
                         analyzeEntriesRegex(
                             message,
@@ -151,14 +147,6 @@ class TimelineViewModel(
                             _userEntries[i]
                         )
                     }
-//                    analyzeEntriesIndexOf(
-//                        message,
-//                        appId = "MON",
-//                        contextId = "MEMT",
-//                        valueDelimiters = Pair("MaxRSS(MB): ", " increase:"),
-//                        keyDelimiters = Pair("", "(cpid:"),
-//                        entries = _userEntries["MEMT"]!!,
-//                    )
                     onProgressChanged(index.toFloat() / dltMessages.size)
                 }
 
