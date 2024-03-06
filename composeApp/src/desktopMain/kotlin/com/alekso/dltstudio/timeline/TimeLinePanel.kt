@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
 
 private val LEGEND_WIDTH_DP = 250.dp
@@ -198,16 +199,33 @@ fun TimeLinePanel(
                             },
                             highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
                         )
-                        // TODO: distinguish diagram type
-                        TimelinePercentageView(
-                            modifier = Modifier.height(200.dp).fillMaxWidth()
-                                .onPointerEvent(
-                                    PointerEventType.Move,
-                                    onEvent = { dragCallback(it, size.width) }),
-                            entries = timelineViewModel.userEntries.getOrNull(index) as TimelinePercentageEntries?,
-                            timeFrame = timeFrame,
-                            highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
-                        )
+                        when (timelineFilter.diagramType) {
+                            TimelineFilter.DiagramType.Percentage -> {
+                                TimelinePercentageView(
+                                    modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        .onPointerEvent(
+                                            PointerEventType.Move,
+                                            onEvent = { dragCallback(it, size.width) }),
+                                    entries = timelineViewModel.userEntries.getOrNull(index) as TimelinePercentageEntries?,
+                                    timeFrame = timeFrame,
+                                    highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
+                                )
+                            }
+
+                            TimelineFilter.DiagramType.MinMaxValue -> {
+                                TimelineMinMaxValueView(
+                                    modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        .onPointerEvent(
+                                            PointerEventType.Move,
+                                            onEvent = { dragCallback(it, size.width) }),
+                                    entries = timelineViewModel.userEntries.getOrNull(index) as TimelineMinMaxEntries?,
+                                    timeFrame = timeFrame,
+                                    highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
+                                )
+                            }
+                            TimelineFilter.DiagramType.State -> TODO()
+                            TimelineFilter.DiagramType.Events -> TODO()
+                        }
                     }
                 }
             }

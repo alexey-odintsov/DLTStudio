@@ -63,6 +63,16 @@ class TimelineViewModel(
             diagramType = TimelineFilter.DiagramType.Percentage
         ),
         TimelineFilter(
+            name = "MEMT",
+            enabled = true,
+            extractPattern = "(.*)\\(cpid.*MaxRSS\\(MB\\):\\s(\\d+).*increase",
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("MEMT", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.MinMaxValue
+        ),
+        TimelineFilter(
             name = "GPU Load",
             enabled = true,
             extractPattern = "(GPU Load:)\\s+(?<value>\\d+.\\d+)%(?<key>)", // we use empty 'key' group to ignore key
