@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.logs
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
@@ -22,6 +23,7 @@ import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
@@ -36,22 +38,24 @@ fun LazyScrollable(
 
         val horizontalState = rememberScrollState()
 
-        LogRow(
-            modifier = Modifier,
-            isSelected = false,
-            "#",
-            "DateTime",
-            "Time",
-            "ecu",
-            "ecuId",
-            "sessId",
-            "appId",
-            "ctxId",
-            "content",
-        )
-
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(Modifier.horizontalScroll(horizontalState).width(2000.dp), listState) {
+                stickyHeader {
+                    LogRow(
+                        modifier = Modifier,
+                        isSelected = false,
+                        "#",
+                        "DateTime",
+                        "Time",
+                        "ecu",
+                        "ecuId",
+                        "sessId",
+                        "appId",
+                        "ctxId",
+                        "content",
+                    )
+                }
+
                 items(dltMessages.size) { i ->
                     val message = dltMessages[i]
                     val cellStyle =
