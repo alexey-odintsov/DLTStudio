@@ -9,13 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -68,9 +67,13 @@ fun LogsPanel(
     // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
+    logsListState: LazyListState,
+    searchListState: LazyListState,
+    onLogsRowSelected: (Int, Int) -> Unit,
+    onSearchRowSelected: (Int, Int) -> Unit,
+    logsListSelectedRow: Int,
+    searchListSelectedRow: Int,
 ) {
-    var selectedRow by remember { mutableStateOf(0) }
-    var searchResultSelectedRow by remember { mutableStateOf(0) }
     val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
@@ -120,15 +123,16 @@ fun LogsPanel(
                             Modifier.fillMaxSize(),
                             dltMessages,
                             mergedFilters,
-                            selectedRow,
-                            selectedRowCallback = { i, messageIndex -> selectedRow = i }
+                            logsListSelectedRow,
+                            logsListState = logsListState,
+                            onLogsRowSelected = onLogsRowSelected,
                         )
                     }
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            dltMessages.getOrNull(selectedRow),
-                            selectedRow
+                            dltMessages.getOrNull(logsListSelectedRow),
+                            logsListSelectedRow
                         )
                     }
                     splitter {
@@ -159,14 +163,9 @@ fun LogsPanel(
                     searchResult,
                     searchIndexes,
                     mergedFilters,
-                    searchResultSelectedRow,
-                    selectedRowCallback = { i, messageIndex ->
-                        if (searchResultSelectedRow == i) {
-                            selectedRow = messageIndex
-                        } else {
-                            searchResultSelectedRow = i
-                        }
-                    },
+                    searchListSelectedRow,
+                    searchListState = searchListState,
+                    onSearchRowSelected = onSearchRowSelected,
                 )
             }
             splitter {
@@ -199,25 +198,31 @@ fun LogsPanel(
 fun PreviewLogsPanel() {
     LogsPanel(
         Modifier.fillMaxSize(),
-        searchState = SearchState(searchText = "Search text"),
         dltMessages = SampleData.getSampleDltMessages(20),
+        searchState = SearchState(searchText = "Search text"),
         searchResult = emptyList(),
         searchIndexes = emptyList(),
+        onSearchButtonClicked = { },
+        onSearchUseRegexChanged = { },
+        colorFilters = emptyList(),
+        onColorFilterUpdate = { i, f -> },
+        onColorFilterDelete = { i -> },
+        onColorFilterMove = { i, o -> },
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
         ),
-        onSearchButtonClicked = { },
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },
         updateToolbarWarningCheck = { },
-        onSearchUseRegexChanged = { },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
-        colorFilters = emptyList(),
-        onColorFilterDelete = { i -> },
-        onColorFilterUpdate = { i, f -> },
-        onColorFilterMove = { i, o -> },
+        logsListState = LazyListState(),
+        searchListState = LazyListState(),
+        onLogsRowSelected = { i, r -> },
+        onSearchRowSelected = { i, r -> },
+        0,
+        0
     )
 }

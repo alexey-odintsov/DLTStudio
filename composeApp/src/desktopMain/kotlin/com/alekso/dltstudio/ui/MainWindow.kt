@@ -12,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.DragData
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -40,6 +41,7 @@ fun MainWindow(
     onProgressUpdate: (Float) -> Unit
 ) {
     val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
+    val coroutineScope = rememberCoroutineScope()
 
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
@@ -113,6 +115,12 @@ fun MainWindow(
                     onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
                     onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
                     onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
+                    logsListState = mainViewModel.logsListState,
+                    logsListSelectedRow = mainViewModel.logsListSelectedRow.value,
+                    searchListSelectedRow = mainViewModel.searchListSelectedRow.value,
+                    searchListState = mainViewModel.searchListState,
+                    onLogsRowSelected = { i, r -> mainViewModel.onLogsRowSelected(coroutineScope, i, r) },
+                    onSearchRowSelected = { i, r -> mainViewModel.onSearchRowSelected(coroutineScope, i, r) },
                 )
             }
 

@@ -2,6 +2,7 @@ package com.alekso.dltstudio.logs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,7 +16,8 @@ fun LogsListPanel(
     messages: List<DLTMessage>,
     colorFilters: List<ColorFilter>,
     selectedRow: Int,
-    selectedRowCallback: (Int, Int) -> Unit
+    logsListState: LazyListState,
+    onLogsRowSelected: (Int, Int) -> Unit,
 ) {
     Panel(
         modifier = modifier,
@@ -27,7 +29,8 @@ fun LogsListPanel(
             null,
             colorFilters,
             selectedRow = selectedRow,
-            selectedRowCallback = selectedRowCallback
+            onRowSelected = onLogsRowSelected,
+            listState = logsListState,
         )
     }
 }

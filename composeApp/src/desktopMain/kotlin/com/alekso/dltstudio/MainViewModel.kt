@@ -1,6 +1,8 @@
 package com.alekso.dltstudio
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
@@ -30,6 +32,30 @@ class MainViewModel(
 
     private var parseJob: Job? = null
     private var searchJob: Job? = null
+
+    val logsListState = LazyListState()
+    var logsListSelectedRow = mutableStateOf(0)
+
+    val searchListState = LazyListState()
+    var searchListSelectedRow = mutableStateOf(0)
+
+
+    fun onLogsRowSelected(coroutineScope: CoroutineScope, index: Int, rowId: Int) {
+        coroutineScope.launch {
+            logsListSelectedRow.value = rowId
+        }
+    }
+
+    fun onSearchRowSelected(coroutineScope: CoroutineScope, index: Int, rowId: Int) {
+        coroutineScope.launch {
+            if (searchListSelectedRow.value == index) { // simulate second click
+                logsListSelectedRow.value = rowId
+                logsListState.scrollToItem(rowId)
+            } else {
+                searchListSelectedRow.value = index
+            }
+        }
+    }
 
     fun parseFile(dltFiles: List<File>) {
         searchJob?.cancel()

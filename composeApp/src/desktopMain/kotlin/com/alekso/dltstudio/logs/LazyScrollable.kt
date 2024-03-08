@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
@@ -29,11 +29,11 @@ fun LazyScrollable(
     indexes: List<Int>? = null,
     colorFilters: List<ColorFilter>,
     selectedRow: Int,
-    selectedRowCallback: (Int, Int) -> Unit,
+    onRowSelected: (Int, Int) -> Unit,
+    listState: LazyListState,
 ) {
     Column(modifier = modifier) {
 
-        val state = rememberLazyListState()
         val horizontalState = rememberScrollState()
 
         LogRow(
@@ -51,7 +51,7 @@ fun LazyScrollable(
         )
 
         Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(Modifier.horizontalScroll(horizontalState).width(2000.dp), state) {
+            LazyColumn(Modifier.horizontalScroll(horizontalState).width(2000.dp), listState) {
                 items(dltMessages.size) { i ->
                     val message = dltMessages[i]
                     val cellStyle =
@@ -76,7 +76,7 @@ fun LazyScrollable(
                         LogRow(
                             modifier = Modifier.selectable(
                                 selected = i == selectedRow,
-                                onClick = { selectedRowCallback(i, index) }),
+                                onClick = { onRowSelected(i, index) }),
                             isSelected = (i == selectedRow),
                             index.toString(),
                             sTime,
@@ -96,7 +96,7 @@ fun LazyScrollable(
             VerticalScrollbar(
                 modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                 adapter = rememberScrollbarAdapter(
-                    scrollState = state
+                    scrollState = listState
                 )
             )
             HorizontalScrollbar(

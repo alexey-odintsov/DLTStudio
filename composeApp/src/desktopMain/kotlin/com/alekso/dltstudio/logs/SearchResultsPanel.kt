@@ -2,6 +2,7 @@ package com.alekso.dltstudio.logs
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +17,8 @@ fun SearchResultsPanel(
     searchIndexes: List<Int>,
     colorFilters: List<ColorFilter>,
     searchResultSelectedRow: Int,
-    selectedRowCallback: (Int, Int) -> Unit,
+    searchListState: LazyListState,
+    onSearchRowSelected: (Int, Int) -> Unit,
 ) {
     Panel(
         modifier = modifier,
@@ -28,7 +30,8 @@ fun SearchResultsPanel(
             searchIndexes,
             colorFilters,
             selectedRow = searchResultSelectedRow,
-            selectedRowCallback = selectedRowCallback
+            onRowSelected = onSearchRowSelected,
+            listState = searchListState,
         )
     }
 
