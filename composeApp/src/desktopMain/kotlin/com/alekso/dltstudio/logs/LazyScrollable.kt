@@ -71,6 +71,8 @@ fun LazyScrollable(
                     val sApplicationId: String = "${message.extendedHeader?.applicationId}"
                     val sContextId: String = "${message.extendedHeader?.contextId}"
                     val sContent: String = "${message.payload?.asText()}"
+                    val logTypeIndicator: LogTypeIndicator? =
+                        LogTypeIndicator.fromMessageType(message.extendedHeader?.messageInfo?.messageTypeInfo)
 
                     RowContextMenu(
                         i,
@@ -91,7 +93,8 @@ fun LazyScrollable(
                             sApplicationId,
                             sContextId,
                             sContent,
-                            cellStyle = cellStyle
+                            cellStyle = cellStyle,
+                            logTypeIndicator = logTypeIndicator
                         )
                     }
                 }

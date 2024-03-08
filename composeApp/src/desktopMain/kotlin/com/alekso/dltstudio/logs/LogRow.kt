@@ -4,6 +4,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
 import androidx.compose.runtime.Composable
@@ -30,7 +31,8 @@ fun LogRow(
     contextId: String,
     content: String,
     isHeader: Boolean = false,
-    cellStyle: CellStyle? = null
+    cellStyle: CellStyle? = null,
+    logTypeIndicator: LogTypeIndicator? = null
 ) {
     Column(
         modifier = modifier.then(
@@ -89,14 +91,21 @@ fun LogRow(
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(50.dp),
+                modifier = Modifier.width(45.dp),
                 textAlign = TextAlign.Center,
                 text = contextId,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.width(14.dp),
+                text = logTypeIndicator?.logTypeSymbol ?: "",
+                textAlign = TextAlign.Center,
+                isHeader = isHeader,
+                cellStyle = logTypeIndicator?.logTypeStyle ?: updatedCellStyle
+            )
+            Cell(
+                modifier = Modifier.weight(1f).padding(start = 6.dp),
                 text = content,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
