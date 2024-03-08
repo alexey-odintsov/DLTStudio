@@ -10,7 +10,7 @@ A very simple desktop DLT logs analyzing app written with Compose Multiplatform.
 - Zoomable and movable timeline screen
   - Users switch state view
   - CPUC and CPUS views which show CPU usage
-  - Custom timeline views - currently implemented 'CPU usage by process' and 'Memory usage by process' views (soon will be customizable with UI)
+  - Custom timeline views
 
 # Usage
 Just drag and drop your dlt files to the app.
