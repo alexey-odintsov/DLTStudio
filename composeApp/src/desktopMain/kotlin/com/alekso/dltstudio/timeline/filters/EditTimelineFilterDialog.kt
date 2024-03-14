@@ -220,7 +220,9 @@ fun EditTimelineFilterPanel(
                     name = filterName,
                     filters = map,
                     extractPattern = extractPattern,
-                    diagramType = TimelineFilter.DiagramType.valueOf(diagramType)
+                    diagramType = TimelineFilter.DiagramType.valueOf(diagramType),
+                    extractorType = TimelineFilter.ExtractorType.KeyValueNamed
+                    // TODO: select from UI
                 )
             )
             onDialogClosed()
@@ -238,7 +240,8 @@ fun PreviewEditTimelineFilterDialog() {
         name = "CPU Usage by PID", enabled = true,
         filters = mutableMapOf(),
         extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
-        diagramType = TimelineFilter.DiagramType.Percentage
+        diagramType = TimelineFilter.DiagramType.Percentage,
+        extractorType = TimelineFilter.ExtractorType.KeyValueNamed
     )
 
     Column(Modifier.background(Color(238, 238, 238))) {

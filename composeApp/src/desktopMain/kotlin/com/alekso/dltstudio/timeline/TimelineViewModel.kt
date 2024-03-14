@@ -8,8 +8,6 @@ import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
-import com.alekso.dltstudio.user.UserAnalyzer
-import com.alekso.dltstudio.user.UserStateEntry
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -24,7 +22,7 @@ class TimelineViewModel(
 ) {
     private var analyzeJob: Job? = null
 
-    var userEntries = mutableStateListOf<TimelineEntries>()
+    var userEntries = mutableStateListOf<TimeLineEntries<*>>()
     var highlightedKeys = mutableStateListOf<String?>()
 
     private var _analyzeState: MutableStateFlow<AnalyzeState> = MutableStateFlow(AnalyzeState.IDLE)
@@ -33,6 +31,17 @@ class TimelineViewModel(
 
     val timelineFilters = mutableStateListOf<TimelineFilter>(
         TimelineFilter(
+            name = "User state",
+            enabled = true,
+            extractPattern = "User\\s(\\d+)\\sstate changed from (.*) to (.*)",
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("ALD", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("SYST", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.State,
+            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
+        ),
+        TimelineFilter(
             name = "CPUC",
             enabled = true,
             extractPattern = "(cpu0):\\s*(\\d+[.\\d+]*)%.*(cpu1):\\s*(\\d+[.\\d+]*)%.*(cpu2):\\s*(\\d+[.\\d+]*)%.*(cpu3):\\s*(\\d+[.\\d+]*)%.*(cpu4):\\s*(\\d+[.\\d+]*)%.*(cpu5):\\s*(\\d+[.\\d+]*)%.*(cpu6):\\s*(\\d+[.\\d+]*)%.*(cpu7):\\s*(\\d+[.\\d+]*)%.*",
@@ -40,47 +49,52 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage
+            diagramType = TimelineFilter.DiagramType.Percentage,
+            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
             name = "CPUS",
-            enabled = true,
+            enabled = false,
             extractPattern = "(cpu):(\\d+[.\\d+]*)%.*(us):\\s(\\d+[.\\d+]*)%.*(sy):\\s(\\d+[.\\d+]*)%.*(io):\\s*(\\d+[.\\d+]*).*(irq):\\s(\\d+[.\\d+]*)%.*(softirq):\\s(\\d+[.\\d+]*)%.*(ni):\\s(\\d+[.\\d+]*)%.*(st):\\s(\\d+[.\\d+]*)%.*(g):\\s(\\d+[.\\d+]*)%.*(gn):\\s(\\d+[.\\d+]*)%.*(avgcpu):\\s*(\\d+[.\\d+]*)%.*(thread):\\s*(\\d+[.\\d+]*)%.*(kernelthread):\\s*(\\d+[.\\d+]*)%",
             filters = mapOf(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("CPUS", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage
+            diagramType = TimelineFilter.DiagramType.Percentage,
+            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
             name = "CPUP",
-            enabled = true,
+            enabled = false,
             extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
             filters = mapOf(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage
+            diagramType = TimelineFilter.DiagramType.Percentage,
+            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
         ),
         TimelineFilter(
             name = "MEMT",
-            enabled = true,
+            enabled = false,
             extractPattern = "(.*)\\(cpid.*MaxRSS\\(MB\\):\\s(\\d+).*increase",
             filters = mapOf(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("MEMT", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.MinMaxValue
+            diagramType = TimelineFilter.DiagramType.MinMaxValue,
+            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
             name = "GPU Load",
-            enabled = true,
+            enabled = false,
             extractPattern = "(GPU Load:)\\s+(?<value>\\d+.\\d+)%(?<key>)", // we use empty 'key' group to ignore key
             filters = mapOf(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage
+            diagramType = TimelineFilter.DiagramType.Percentage,
+            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
         ),
     )
 
@@ -114,20 +128,17 @@ class TimelineViewModel(
         cleanup()
         _analyzeState.value = AnalyzeState.ANALYZING
         analyzeJob = CoroutineScope(Dispatchers.IO).launch {
+            val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
-                val _userEntries = mutableStateListOf<TimelineEntries>()
+                val _userEntries = mutableStateListOf<TimeLineEntries<*>>()
                 var _timeStart = Long.MAX_VALUE
                 var _timeEnd = Long.MIN_VALUE
 
                 println("Start Timeline building .. ${dltMessages.size} messages")
 
+                // prefill timeline data holders
                 timelineFilters.forEachIndexed { index, timelineFilter ->
-                    val filteredEntries = when (timelineFilter.diagramType) {
-                        TimelineFilter.DiagramType.MinMaxValue -> TimelineMinMaxEntries()
-                        TimelineFilter.DiagramType.Percentage -> TimelinePercentageEntries()
-                        else -> TimelinePercentageEntries()
-                    }
-                    _userEntries.add(filteredEntries)
+                    _userEntries.add(timelineFilter.diagramType.createEntries())
                     highlightedKeys.add(index, null)
                 }
 
@@ -163,6 +174,7 @@ class TimelineViewModel(
                     _analyzeState.value = AnalyzeState.IDLE
                 }
             }
+            println("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
         }
     }
 
@@ -170,7 +182,7 @@ class TimelineViewModel(
     private fun analyzeEntriesRegex(
         message: DLTMessage,
         filter: TimelineFilter,
-        entries: TimelineEntries
+        entries: TimeLineEntries<*>
     ) {
         if (message.payload !is VerbosePayload) return
         if (filter.extractPattern == null) return
@@ -180,56 +192,7 @@ class TimelineViewModel(
 
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
-                val matches = regex.find(payload)!!
-                try {
-                    val key: String? = matches.groups["key"]?.value ?: "key"
-                    val value: String? = matches.groups["value"]?.value
-                    if (key != null && value != null) {
-                        entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
-                        return
-                    }
-                } catch (e: Exception) {
-                    if (matches.groups.size > 2) { // TODO: find better way to support multi-groups
-                        for (i in 1..<matches.groups.size step 2) {
-                            val key = matches.groups[i]?.value
-                            val value = matches.groups[i + 1]?.value
-                            if (key != null && value != null) {
-                                entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            // ignore
-        }
-    }
-
-    private fun analyzeEntriesIndexOf(
-        message: DLTMessage,
-        appId: String? = null,
-        contextId: String? = null,
-        keyDelimiters: Pair<String, String>,
-        valueDelimiters: Pair<String, String>,
-        entries: TimelineEntries
-    ) {
-        if (message.payload !is VerbosePayload) return
-        val payload = (message.payload as VerbosePayload).asText()
-
-        try {
-            if (message.extendedHeader?.applicationId == appId && message.extendedHeader?.contextId == contextId) {
-                val key: String? = payload.substring(
-                    payload.indexOf(keyDelimiters.first) + keyDelimiters.first.length,
-                    payload.indexOf(keyDelimiters.second)
-                )
-                val value: String? = payload.substring(
-                    payload.indexOf(valueDelimiters.first) + valueDelimiters.first.length,
-                    payload.indexOf(valueDelimiters.second)
-                )
-
-                if (key != null && value != null) {
-                    entries.addEntry(TimelineEntry(message.timeStampNano, key, value))
-                }
+                filter.diagramType.extractEntry(regex, payload, entries, message, filter)
             }
         } catch (e: Exception) {
             // ignore
@@ -237,28 +200,37 @@ class TimelineViewModel(
     }
 
 
-    private fun analyzeUserState(
-        message: DLTMessage,
-        index: Int,
-        _userState: MutableMap<Int, MutableList<UserStateEntry>>
-    ) {
-        if (message.ecuId == "MGUA"
-            && message.extendedHeader?.applicationId?.startsWith("ALD") == true
-            && message.extendedHeader?.contextId == "SYST"
-            && message.payload?.asText()?.contains("state changed from") == true
-        ) {
-            try {
-                val userState =
-                    UserAnalyzer.analyzeUserStateChanges(index, message)
-                if (!_userState.containsKey(userState.uid)) {
-                    _userState[userState.uid] = mutableListOf()
-                }
-                (_userState[userState.uid] as MutableList).add(userState)
-            } catch (e: Exception) {
-                // skip
-            }
-        }
-    }
+//    private fun analyzeEntriesIndexOf(
+//        message: DLTMessage,
+//        appId: String? = null,
+//        contextId: String? = null,
+//        keyDelimiters: Pair<String, String>,
+//        valueDelimiters: Pair<String, String>,
+//        entries: TimelineEntriesHolder
+//    ) {
+//        if (message.payload !is VerbosePayload) return
+//        val payload = (message.payload as VerbosePayload).asText()
+//
+//        try {
+//            if (message.extendedHeader?.applicationId == appId && message.extendedHeader?.contextId == contextId) {
+//                val key: String? = payload.substring(
+//                    payload.indexOf(keyDelimiters.first) + keyDelimiters.first.length,
+//                    payload.indexOf(keyDelimiters.second)
+//                )
+//                val value: String? = payload.substring(
+//                    payload.indexOf(valueDelimiters.first) + valueDelimiters.first.length,
+//                    payload.indexOf(valueDelimiters.second)
+//                )
+//
+//                if (key != null && value != null) {
+//                    entries.addEntry(TimeLineSimpleEntry(message.timeStampNano, key, value))
+//                }
+//            }
+//        } catch (e: Exception) {
+//            // ignore
+//        }
+//    }
+
 
     fun onTimelineFilterUpdate(index: Int, filter: TimelineFilter) {
         if (index < 0 || index > timelineFilters.size) {
@@ -279,8 +251,6 @@ class TimelineViewModel(
             val temp2 = userEntries[index]
             userEntries[index] = userEntries[index + offset]
             userEntries[index + offset] = temp2
-
-
         }
     }
 

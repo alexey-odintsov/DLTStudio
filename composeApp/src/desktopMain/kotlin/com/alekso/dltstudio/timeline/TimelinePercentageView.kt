@@ -26,7 +26,7 @@ import java.time.Instant
 @Composable
 fun TimelinePercentageView(
     modifier: Modifier,
-    entries: TimelinePercentageEntries?,
+    entries: TimeLinePercentageEntries?,
     timeFrame: TimeFrame,
     splitTimeSec: Float = 999f,
     showVerticalSeries: Boolean = false,
@@ -64,7 +64,7 @@ fun TimelinePercentageView(
             }
         }
 
-        val map = entries.getEntriesMap()
+        val map = entries.map
         map.keys.forEachIndexed { index, key ->
             val items = map[key]
             renderLines(
@@ -96,7 +96,7 @@ fun TimelinePercentageView(
 }
 
 private fun DrawScope.renderLines(
-    items: MutableList<TimelineEntry>?,
+    items: MutableList<TimeLineEntry<Float>>?,
     splitTimeSec: Float,
     timeFrame: TimeFrame,
     secSizePx: Float,
@@ -136,21 +136,21 @@ fun PreviewTimelineView() {
     val ts = Instant.now().toEpochMilli() * 1000L
     val te = ts + 7000000L
 
-    val entries = TimelinePercentageEntries()
-    entries.entries["1325"] = mutableListOf(
-        TimelineEntry(ts + 1450000, "key1", "5.3"),
-        TimelineEntry(ts + 2000000, "key1", "43"),
-        TimelineEntry(ts + 2300000, "key1", "83"),
-        TimelineEntry(ts + 2400000, "key1", "43"),
+    val entries = TimeLinePercentageEntries()
+    entries.map["1325"] = mutableListOf(
+        TimeLineEntry<Float>(ts + 1450000, "key1", 5.3f),
+        TimeLineEntry<Float>(ts + 2000000, "key1", 43f),
+        TimeLineEntry<Float>(ts + 2300000, "key1", 83f),
+        TimeLineEntry<Float>(ts + 2400000, "key1", 43f),
     )
-    entries.entries["435"] = mutableListOf(
-        TimelineEntry(ts + 200000, "435", "13"),
-        TimelineEntry(ts + 2100000, "435", "2"),
-        TimelineEntry(ts + 2700000, "435", "4"),
-        TimelineEntry(ts + 3400000, "435", "2"),
-        TimelineEntry(ts + 3560000, "435", "23"),
-        TimelineEntry(ts + 4000000, "435", "72"),
-        TimelineEntry(ts + 6900000, "435", "5"),
+    entries.map["435"] = mutableListOf(
+        TimeLineEntry<Float>(ts + 200000, "435", 13f),
+        TimeLineEntry<Float>(ts + 2100000, "435", 2f),
+        TimeLineEntry<Float>(ts + 2700000, "435", 4f),
+        TimeLineEntry<Float>(ts + 3400000, "435", 2.3f),
+        TimeLineEntry<Float>(ts + 3560000, "435", 23f),
+        TimeLineEntry<Float>(ts + 4000000, "435", 72f),
+        TimeLineEntry<Float>(ts + 6900000, "435", 5f),
     )
 
     Column {

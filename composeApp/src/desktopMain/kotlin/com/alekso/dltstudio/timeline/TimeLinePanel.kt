@@ -207,7 +207,7 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimelinePercentageEntries?,
+                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimeLinePercentageEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
                                             index
@@ -221,7 +221,7 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimelineMinMaxEntries?,
+                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimeLineMinMaxEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
                                             index
@@ -229,7 +229,19 @@ fun TimeLinePanel(
                                     )
                                 }
 
-                                TimelineFilter.DiagramType.State -> TODO()
+                                TimelineFilter.DiagramType.State -> {
+                                    TimelineStateView(
+                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                            .onPointerEvent(
+                                                PointerEventType.Move,
+                                                onEvent = { dragCallback(it, size.width) }),
+                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimeLineStateEntries?,
+                                        timeFrame = timeFrame,
+                                        highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
+                                            index
+                                        )
+                                    )
+                                }
                                 TimelineFilter.DiagramType.Events -> TODO()
                             }
                         }

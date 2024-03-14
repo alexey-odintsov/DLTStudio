@@ -26,12 +26,12 @@ import com.alekso.dltstudio.colors.ColorPalette
 fun TimelineLegend(
     modifier: Modifier,
     title: String,
-    entries: TimelineEntries? = null,
+    entries: TimeLineEntries<*>? = null,
     updateHighlightedKey: (String?) -> Unit,
     highlightedKey: String? = null,
 ) {
     val state = rememberLazyListState()
-    val map = entries?.getEntriesMap()
+    val map = entries?.map
 
     Box(modifier = modifier.padding(start = 4.dp, end = 4.dp)) {
         Column(Modifier.fillMaxSize()) {

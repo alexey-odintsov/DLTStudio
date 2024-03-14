@@ -29,7 +29,7 @@ private const val SERIES_COUNT = 10
 @Composable
 fun TimelineMinMaxValueView(
     modifier: Modifier,
-    entries: TimelineMinMaxEntries?,
+    entries: TimeLineMinMaxEntries?,
     timeFrame: TimeFrame,
     splitTimeSec: Float = 999f,
     seriesPostfix: String = "",
@@ -68,7 +68,7 @@ fun TimelineMinMaxValueView(
         }
 
         // Draw values
-        val map = entries.getEntriesMap()
+        val map = entries.map
         map.keys.forEachIndexed { index, key ->
             val items = map[key]
             renderLines(
@@ -102,12 +102,12 @@ fun TimelineMinMaxValueView(
 }
 
 private fun DrawScope.renderLines(
-    items: MutableList<TimelineEntry>?,
+    items: MutableList<TimeLineEntry<Float>>?,
     splitTimeSec: Float,
     timeFrame: TimeFrame,
     secSizePx: Float,
     height: Float,
-    entries: TimelineMinMaxEntries,
+    entries: TimeLineMinMaxEntries,
     color: Color,
     highlightedKey: String?,
     key: String
@@ -143,23 +143,23 @@ fun PreviewTimelineMinMaxValueView() {
     val ts = Instant.now().toEpochMilli() * 1000L
     val te = ts + 7000000L
 
-    val entries = TimelineMinMaxEntries()
+    val entries = TimeLineMinMaxEntries()
     entries.maxValue = 151f
     entries.minValue = 33f
-    entries.entries["1325"] = mutableListOf(
-        TimelineEntry(ts + 1450000, "1325", "110"),
-        TimelineEntry(ts + 2000000, "1325", "83"),
-        TimelineEntry(ts + 3300000, "1325", "127"),
-        TimelineEntry(ts + 4400000, "1325", "89"),
+    entries.map["1325"] = mutableListOf(
+        TimeLineEntry<Float>(ts + 1450000, "1325", 110f),
+        TimeLineEntry<Float>(ts + 2000000, "1325", 83f),
+        TimeLineEntry<Float>(ts + 3300000, "1325", 127f),
+        TimeLineEntry<Float>(ts + 4400000, "1325", 89f),
     )
-    entries.entries["435"] = mutableListOf(
-        TimelineEntry(ts + 200000, "435", "133"),
-        TimelineEntry(ts + 2100000, "435", "151"),
-        TimelineEntry(ts + 2700000, "435", "104"),
-        TimelineEntry(ts + 3400000, "435", "42"),
-        TimelineEntry(ts + 3560000, "435", "63"),
-        TimelineEntry(ts + 4000000, "435", "72"),
-        TimelineEntry(ts + 6800000, "435", "111"),
+    entries.map["435"] = mutableListOf(
+        TimeLineEntry<Float>(ts + 200000, "435", 133f),
+        TimeLineEntry<Float>(ts + 2100000, "435", 151f),
+        TimeLineEntry<Float>(ts + 2700000, "435", 104f),
+        TimeLineEntry<Float>(ts + 3400000, "435", 42f),
+        TimeLineEntry<Float>(ts + 3560000, "435", 63f),
+        TimeLineEntry<Float>(ts + 4000000, "435", 72f),
+        TimeLineEntry<Float>(ts + 6800000, "435", 111f),
     )
 
     Column {

@@ -146,7 +146,8 @@ fun PreviewTimelineFiltersDialog() {
             name = "CPU Usage by PID", enabled = true,
             filters = mutableMapOf(),
             extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
-            diagramType = TimelineFilter.DiagramType.Percentage
+            diagramType = TimelineFilter.DiagramType.Percentage,
+            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
         )
     )
 
