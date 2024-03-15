@@ -125,66 +125,7 @@ fun TimeLinePanel(
 
             val state = rememberLazyListState()
             val panels = mutableStateListOf<@Composable () -> Unit>()
-//                {
-//                    Row {
-//                        UserStateLegend(
-//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(100.dp),
-//                            map = timelineViewModel.userStateEntries
-//                        )
-//                        UserStateView(
-//                            offset = offsetSec,
-//                            scale = scale,
-//                            modifier = Modifier.height(100.dp).fillMaxWidth()
-//                                .onPointerEvent(
-//                                    PointerEventType.Move,
-//                                    onEvent = { dragCallback(it, size.width) }),
-//                            map = timelineViewModel.userStateEntries,
-//                            timeStart = timelineViewModel.timeStart,
-//                            timeEnd = timelineViewModel.timeEnd,
-//                            totalSeconds = timelineViewModel.totalSeconds
-//                        )
-//                    }
-//                },
-//                {
-//                    Row {
-//                        CPUCLegend(
-//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
-//                            items = timelineViewModel.cpuUsage
-//                        )
-//                        CPUUsageView(
-//                            offset = offsetSec,
-//                            scale = scale,
-//                            modifier = Modifier.height(300.dp).fillMaxWidth()
-//                                .onPointerEvent(
-//                                    PointerEventType.Move,
-//                                    onEvent = { dragCallback(it, size.width) }),
-//                            items = timelineViewModel.cpuUsage,
-//                            timeStart = timelineViewModel.timeStart,
-//                            timeEnd = timelineViewModel.timeEnd,
-//                            totalSeconds = timelineViewModel.totalSeconds
-//                        )
-//                    }
-//                },
-//                {
-//                    Row {
-//                        CPUSLegend(
-//                            modifier = Modifier.width(LEGEND_WIDTH_DP).height(300.dp),
-//                            items = timelineViewModel.cpus
-//                        )
-//                        CPUSView(
-//                            offset = offsetSec,
-//                            scale = scale,
-//                            modifier = Modifier.height(300.dp).fillMaxWidth()
-//                                .onPointerEvent(
-//                                    PointerEventType.Move,
-//                                    onEvent = { dragCallback(it, size.width) }),
-//                            items = timelineViewModel.cpus,
-//                            timeStart = timelineViewModel.timeStart,
-//                            timeEnd = timelineViewModel.timeEnd,
-//                            totalSeconds = timelineViewModel.totalSeconds
-//                        )
-//                    }
-//                },
+
             timelineViewModel.timelineFilters.forEachIndexed { index, timelineFilter ->
                 if (timelineFilter.enabled) {
                     panels.add {
@@ -242,7 +183,18 @@ fun TimeLinePanel(
                                         )
                                     )
                                 }
-                                TimelineFilter.DiagramType.Events -> TODO()
+
+                                TimelineFilter.DiagramType.Events -> TimelineEventView(
+                                    modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        .onPointerEvent(
+                                            PointerEventType.Move,
+                                            onEvent = { dragCallback(it, size.width) }),
+                                    entries = timelineViewModel.userEntries.getOrNull(index) as TimeLineEventEntries?,
+                                    timeFrame = timeFrame,
+                                    highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
+                                        index
+                                    )
+                                )
                             }
                         }
                     }

@@ -42,6 +42,17 @@ class TimelineViewModel(
             extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
+            name = "Crashes",
+            enabled = true,
+            extractPattern = "Crash \\((?<value>.*)\\) detected.*Process:\\s(?<key>.*). Exception: (?<info>.*) Crash ID:",
+            filters = mapOf(
+                FilterParameter.AppId to FilterCriteria("RMAN", TextCriteria.PlainText),
+                FilterParameter.ContextId to FilterCriteria("CRSH", TextCriteria.PlainText),
+            ),
+            diagramType = TimelineFilter.DiagramType.Events,
+            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
+        ),
+        TimelineFilter(
             name = "CPUC",
             enabled = true,
             extractPattern = "(cpu0):\\s*(\\d+[.\\d+]*)%.*(cpu1):\\s*(\\d+[.\\d+]*)%.*(cpu2):\\s*(\\d+[.\\d+]*)%.*(cpu3):\\s*(\\d+[.\\d+]*)%.*(cpu4):\\s*(\\d+[.\\d+]*)%.*(cpu5):\\s*(\\d+[.\\d+]*)%.*(cpu6):\\s*(\\d+[.\\d+]*)%.*(cpu7):\\s*(\\d+[.\\d+]*)%.*",

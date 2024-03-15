@@ -6,6 +6,9 @@ import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.timeline.TimeLineEntries
 import com.alekso.dltstudio.timeline.TimeLineEntry
+import com.alekso.dltstudio.timeline.TimeLineEvent
+import com.alekso.dltstudio.timeline.TimeLineEventEntries
+import com.alekso.dltstudio.timeline.TimeLineEventEntry
 import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries
 import com.alekso.dltstudio.timeline.TimeLinePercentageEntries
 import com.alekso.dltstudio.timeline.TimeLineStateEntries
@@ -178,10 +181,46 @@ data class TimelineFilter(
                 message: DLTMessage,
                 filter: TimelineFilter
             ) {
-                TODO("Not yet implemented")
+                val matches = regex.find(payload)!!
+
+                when (filter.extractorType) {
+                    ExtractorType.KeyValueNamed -> {
+                        val key: String = matches.groups["key"]?.value ?: "key"
+                        val value: String? = matches.groups["value"]?.value
+                        val info: String? = matches.groups["info"]?.value
+                        if (value != null && info != null) {
+                            (entries as TimeLineEventEntries).addEntry(
+                                TimeLineEventEntry(
+                                    message.timeStampNano,
+                                    key,
+                                    TimeLineEvent(value, info)
+                                )
+                            )
+                        }
+                    }
+
+                    ExtractorType.KeyValueGroups -> {
+//                        if (matches.groups.size > 2) {
+//                            for (i in 1..3) {
+//                                val key = matches.groups[i]?.value
+//                                val value = matches.groups[i + 1]?.value
+//                                val oldValue = matches.groups[i + 2]?.value
+//                                if (key != null && value != null && oldValue != null) {
+//                                    (entries as TimeLineStateEntries).addEntry(
+//                                        TimeLineStateEntry(
+//                                            message.timeStampNano,
+//                                            key,
+//                                            Pair(value, oldValue)
+//                                        )
+//                                    )
+//                                }
+//                            }
+//                        }
+                    }
+                }
             }
 
-            override fun createEntries(): TimeLineEntries<*> = TODO()
+            override fun createEntries(): TimeLineEntries<*> = TimeLineEventEntries()
         }, // Crash events
         ;
 

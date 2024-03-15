@@ -14,6 +14,17 @@ data class TimeLineStateEntry(
     override val value: Pair<String, String>
 ) : TimeLineEntry<Pair<String, String>>(timestamp, key, value)
 
+data class TimeLineEvent(
+    val event: String,
+    val info: String?
+)
+
+data class TimeLineEventEntry(
+    override val timestamp: Long,
+    override val key: String,
+    override val value: TimeLineEvent
+) : TimeLineEntry<TimeLineEvent>(timestamp, key, value)
+
 
 abstract class TimeLineEntries<T> {
     val map: MutableMap<String, MutableList<T>> = mutableMapOf()
@@ -43,6 +54,19 @@ class TimeLinePercentageEntries : TimeLineEntries<TimeLineEntry<Float>>() {
             map[entry.key] = mutableListOf()
         }
         map[entry.key]?.add(entry)
+    }
+}
+
+class TimeLineEventEntries : TimeLineEntries<TimeLineEventEntry>() {
+    val states = mutableListOf<String>()
+    override fun addEntry(entry: TimeLineEventEntry) {
+        if (!map.containsKey(entry.key)) {
+            map[entry.key] = mutableListOf()
+        }
+        map[entry.key]?.add(entry)
+        if (!states.contains(entry.value.event)) {
+            states.add(entry.value.event)
+        }
     }
 }
 
