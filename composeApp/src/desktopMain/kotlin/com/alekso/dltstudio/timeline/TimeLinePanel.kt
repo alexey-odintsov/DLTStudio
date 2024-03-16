@@ -30,8 +30,10 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
@@ -72,35 +74,37 @@ fun TimeLinePanel(
     val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier.onKeyEvent { e ->
-        when (e.key) {
-            Key.A -> {
-                offsetUpdate(offsetSec + 1f)
-                true
-            }
+        if (e.type == KeyEventType.KeyDown) {
+            when (e.key) {
+                Key.A -> {
+                    offsetUpdate(offsetSec + 1f / scale)
+                    true
+                }
 
-            Key.D -> {
-                offsetUpdate(offsetSec - 1f)
-                true
-            }
+                Key.D -> {
+                    offsetUpdate(offsetSec - 1f / scale)
+                    true
+                }
 
-            Key.W -> {
-                scaleUpdate(scale + 1f)
-                true
-            }
+                Key.W -> {
+                    scaleUpdate(scale + 1f)
+                    true
+                }
 
-            Key.S -> {
-                scaleUpdate(scale - 1f)
-                true
-            }
+                Key.S -> {
+                    scaleUpdate(scale - 1f)
+                    true
+                }
 
-            else -> {
-                false
+                else -> {
+                    false
+                }
             }
-        }
+        } else false
     }) {
         TimelineToolbar(
-            leftClick = { offsetUpdate(offsetSec + 1f) },
-            rightClick = { offsetUpdate(offsetSec - 1f) },
+            leftClick = { offsetUpdate(offsetSec + 1f / scale) },
+            rightClick = { offsetUpdate(offsetSec - 1f / scale) },
             zoomInClick = { scaleUpdate(scale + 1f) },
             zoomOutClick = { scaleUpdate(scale - 1f) },
             zoomFitClick = {
@@ -297,6 +301,6 @@ fun PreviewTimeline() {
         offsetSec = 0f,
         offsetUpdate = {},
         scale = 1f,
-        scaleUpdate = {},
+        scaleUpdate = { f -> },
     )
 }
