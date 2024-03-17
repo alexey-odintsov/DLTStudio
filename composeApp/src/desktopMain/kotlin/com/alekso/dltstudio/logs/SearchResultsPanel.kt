@@ -22,7 +22,7 @@ fun SearchResultsPanel(
 ) {
     Panel(
         modifier = modifier,
-        title = "Search results"
+        title = if (searchResult.isNotEmpty()) "Search results: ${searchResult.size} items" else "Search results"
     ) {
         LazyScrollable(
             Modifier.fillMaxSize().background(Color.LightGray),
