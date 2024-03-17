@@ -71,6 +71,7 @@ fun EditTimelineFilterPanel(
     var contextId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.ContextId]?.value) }
     var sessionId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.SessionId]?.value) }
     var extractPattern by rememberSaveable { mutableStateOf(filter.extractPattern) }
+    var extractorType by rememberSaveable { mutableStateOf(filter.extractorType.name) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
     Column(
@@ -194,6 +195,22 @@ fun EditTimelineFilterPanel(
             )
         }
 
+
+        Row {
+            val items = mutableListOf<String>()
+            items.addAll(TimelineFilter.ExtractorType.entries.map { it.name })
+            var initialSelection = items.indexOfFirst { it == filter.extractorType.name }
+            if (initialSelection == -1) initialSelection = 0
+
+            Text(modifier = colNameStyle, text = "Extractor type")
+            CustomDropDown(
+                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+                items = items,
+                initialSelectedIndex = initialSelection,
+                onItemsSelected = { i -> extractorType = items[i] }
+            )
+        }
+
         CustomButton(onClick = {
             val map = mutableMapOf<FilterParameter, FilterCriteria>()
             messageType?.let {
@@ -221,8 +238,7 @@ fun EditTimelineFilterPanel(
                     filters = map,
                     extractPattern = extractPattern,
                     diagramType = TimelineFilter.DiagramType.valueOf(diagramType),
-                    extractorType = TimelineFilter.ExtractorType.KeyValueNamed
-                    // TODO: select from UI
+                    extractorType = TimelineFilter.ExtractorType.valueOf(extractorType),
                 )
             )
             onDialogClosed()
