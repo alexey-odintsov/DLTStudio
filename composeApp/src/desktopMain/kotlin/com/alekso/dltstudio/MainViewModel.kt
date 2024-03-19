@@ -100,6 +100,8 @@ class MainViewModel(
         searchJob = CoroutineScope(IO).launch {
             searchResult.clear()
             searchIndexes.clear()
+            val startMs = System.currentTimeMillis()
+            println("Start searching for '$searchText'")
 
             _dltMessages.forEachIndexed { i, dltMessage ->
                 yield()
@@ -120,6 +122,7 @@ class MainViewModel(
                 searchText = searchText,
                 state = SearchState.State.IDLE
             )
+            println("Search complete in ${(System.currentTimeMillis() - startMs) / 1000} sec.")
         }
     }
 
