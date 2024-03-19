@@ -9,20 +9,18 @@ import com.alekso.dltparser.toHex
 data class VerbosePayload(
     val arguments: List<Argument>
 ) : Payload {
+
+    val text by lazy {
+        arguments.joinToString(" ") { it.getPayloadAsText() }
+    }
+
     override fun getSize(): Int {
         var size = 0
         arguments.forEach { size += it.getSize() }
         return size
     }
 
-    override fun asText(): String {
-        var result = ""
-        arguments.forEachIndexed { index, it ->
-            result += if (index > 0) " " else ""
-            result += it.getPayloadAsText()
-        }
-        return result
-    }
+    override fun asText(): String = text
 
     data class Argument(
         val typeInfoInt: Int,
