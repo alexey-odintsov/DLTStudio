@@ -147,10 +147,14 @@ class TimelineViewModel(
 
                 println("Start Timeline building .. ${dltMessages.size} messages")
 
+                val regexps = mutableListOf<Regex?>()
                 // prefill timeline data holders
                 timelineFilters.forEachIndexed { index, timelineFilter ->
                     _userEntries.add(timelineFilter.diagramType.createEntries())
                     highlightedKeys.add(index, null)
+
+                    // precompile regex in advance
+                    regexps.add(index, timelineFilter.extractPattern?.toRegex())
                 }
 
                 dltMessages.forEachIndexed { index, message ->
@@ -165,10 +169,11 @@ class TimelineViewModel(
                     }
 
                     timelineFilters.forEachIndexed { i, timelineFilter ->
-                        if (timelineFilter.enabled) {
+                        if (timelineFilter.enabled && regexps[i] != null) {
                             analyzeEntriesRegex(
                                 message,
                                 timelineFilter,
+                                regexps[i]!!,
                                 _userEntries[i]
                             )
                         }
@@ -193,16 +198,15 @@ class TimelineViewModel(
     private fun analyzeEntriesRegex(
         message: DLTMessage,
         filter: TimelineFilter,
+        regex: Regex,
         entries: TimeLineEntries<*>
     ) {
         if (message.payload !is VerbosePayload) return
         if (filter.extractPattern == null) return
 
-        val payload = (message.payload as VerbosePayload).asText()
-        val regex = filter.extractPattern.toRegex()
-
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
+                val payload = (message.payload as VerbosePayload).asText()
                 filter.diagramType.extractEntry(regex, payload, entries, message, filter)
             }
         } catch (e: Exception) {
