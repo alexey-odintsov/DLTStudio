@@ -49,6 +49,7 @@ import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
 
 private val LEGEND_WIDTH_DP = 250.dp
+private const val MOVE_TIMELINE_STEP_PX = 10
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -77,12 +78,12 @@ fun TimeLinePanel(
         if (e.type == KeyEventType.KeyDown) {
             when (e.key) {
                 Key.A -> {
-                    offsetUpdate(offsetSec + 1f / scale)
+                    offsetUpdate(offsetSec + MOVE_TIMELINE_STEP_PX / secSizePx)
                     true
                 }
 
                 Key.D -> {
-                    offsetUpdate(offsetSec - 1f / scale)
+                    offsetUpdate(offsetSec - MOVE_TIMELINE_STEP_PX / secSizePx)
                     true
                 }
 
@@ -103,8 +104,8 @@ fun TimeLinePanel(
         } else false
     }) {
         TimelineToolbar(
-            leftClick = { offsetUpdate(offsetSec + 1f / scale) },
-            rightClick = { offsetUpdate(offsetSec - 1f / scale) },
+            leftClick = { offsetUpdate(offsetSec + MOVE_TIMELINE_STEP_PX / secSizePx) },
+            rightClick = { offsetUpdate(offsetSec - MOVE_TIMELINE_STEP_PX / secSizePx) },
             zoomInClick = { scaleUpdate(scale + 1f) },
             zoomOutClick = { scaleUpdate(scale - 1f) },
             zoomFitClick = {
