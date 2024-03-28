@@ -28,7 +28,6 @@ fun TimelineEventView(
     modifier: Modifier,
     entries: TimeLineEventEntries?,
     timeFrame: TimeFrame,
-    splitTimeSec: Float = 999f,
     showVerticalSeries: Boolean = false,
     highlightedKey: String? = null,
 ) {
@@ -69,7 +68,6 @@ fun TimelineEventView(
             renderEvents(
                 entries.states,
                 items,
-                splitTimeSec,
                 timeFrame,
                 secSizePx,
                 height,
@@ -86,7 +84,6 @@ fun TimelineEventView(
             renderEvents(
                 entries.states,
                 items,
-                splitTimeSec,
                 timeFrame,
                 secSizePx,
                 height,
@@ -100,10 +97,11 @@ fun TimelineEventView(
     }
 }
 
+private const val EVENT_RADIUS_DP = 3
+
 private fun DrawScope.renderEvents(
     states: List<String>,
     items: MutableList<TimeLineEventEntry>?,
-    splitTimeSec: Float,
     timeFrame: TimeFrame,
     secSizePx: Float,
     height: Float,
@@ -113,18 +111,13 @@ private fun DrawScope.renderEvents(
     topOffset: Float,
     itemHeight: Float
 ) {
-    val regularStroke = 2.dp.toPx()
-    val highlightedStroke = 3.dp.toPx()
-
     items?.forEachIndexed entriesIteration@{ i, entry ->
-
         val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
         val curY = states.indexOf(entry.value.event) * itemHeight + topOffset
 
-        drawCircle(color, 5.dp.toPx(),
+        drawCircle(color, EVENT_RADIUS_DP.dp.toPx(),
             Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
         )
-//            strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
     }
 }
 
