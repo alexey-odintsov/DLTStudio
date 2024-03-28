@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.timeline
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,9 +19,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.colors.ColorPalette
+import java.time.Instant
 
 @Composable
 fun TimelineLegend(
@@ -38,7 +42,9 @@ fun TimelineLegend(
             Text(
                 title,
                 fontWeight = FontWeight(600),
-                modifier = Modifier.padding(bottom = 4.dp)
+                modifier = Modifier.padding(bottom = 4.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
             if (!map.isNullOrEmpty()) {
                 LazyColumn(Modifier, state) {
@@ -71,6 +77,46 @@ fun TimelineLegend(
             adapter = rememberScrollbarAdapter(
                 scrollState = state
             )
+        )
+    }
+}
+
+@Preview
+@Composable
+fun PreviewTimeLineLegend() {
+    val ts = Instant.now().toEpochMilli() * 1000L
+
+    val entries = TimeLineEventEntries()
+    entries.addEntry(
+        TimeLineEventEntry(
+            ts,
+            "my test app long long name (pid: 99982)",
+            TimeLineEvent("CRASH", null)
+        )
+    )
+    entries.addEntry(
+        TimeLineEventEntry(
+            ts,
+            "Second app (pid: 23455)",
+            TimeLineEvent("ANR", null)
+        )
+    )
+    entries.addEntry(
+        TimeLineEventEntry(
+            ts,
+            "System app (pid: 0)",
+            TimeLineEvent("WTF", null)
+        )
+    )
+
+
+    Column(Modifier.background(Color.Gray)) {
+        TimelineLegend(
+            modifier = Modifier.width(200.dp),
+            title = "Very long test title with more than one line text",
+            entries = entries,
+            updateHighlightedKey = {},
+            highlightedKey = null
         )
     }
 }
