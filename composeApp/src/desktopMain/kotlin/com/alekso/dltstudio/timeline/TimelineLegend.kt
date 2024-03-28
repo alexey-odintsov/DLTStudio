@@ -3,6 +3,7 @@ package com.alekso.dltstudio.timeline
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,8 +12,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Text
@@ -47,7 +50,8 @@ fun TimelineLegend(
                 overflow = TextOverflow.Ellipsis
             )
             if (!map.isNullOrEmpty()) {
-                LazyColumn(Modifier, state) {
+                val horizontalState = rememberScrollState()
+                LazyColumn(Modifier.horizontalScroll(horizontalState).wrapContentWidth(Alignment.Start), state) {
                     val keys = map.keys.toList()
 
                     items(keys.size) { i ->
@@ -63,8 +67,10 @@ fun TimelineLegend(
                                     .background(ColorPalette.getColor(i))
                             )
                             Text(
-                                modifier = Modifier.weight(1f),
+                                modifier = Modifier,
                                 text = key,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
                                 fontWeight = FontWeight(if (highlightedKey == key) 600 else 400)
                             )
                         }
