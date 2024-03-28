@@ -7,6 +7,7 @@ import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
+import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import java.io.File
 
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit
@@ -269,4 +271,19 @@ class TimelineViewModel(
         }
     }
 
+
+    fun saveTimeLineFilters(file: File) {
+        TimeLineFilterManager().saveToFile(timelineFilters, file)
+    }
+
+    fun loadTimeLineFilters(file: File) {
+        timelineFilters.clear()
+        TimeLineFilterManager().loadFromFile(file)?.let {
+            timelineFilters.addAll(it)
+        }
+    }
+
+    fun clearTimeLineFilters() {
+        timelineFilters.clear()
+    }
 }

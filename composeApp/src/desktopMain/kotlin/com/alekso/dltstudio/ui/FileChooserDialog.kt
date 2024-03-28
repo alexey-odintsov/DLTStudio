@@ -15,6 +15,8 @@ data class FileChooserDialogState(
         OPEN_DLT_FILE,
         OPEN_FILTER_FILE,
         SAVE_FILTER_FILE,
+        OPEN_TIMELINE_FILTER_FILE,
+        SAVE_TIMELINE_FILTER_FILE,
         UNKNOWN
     }
 }
@@ -34,7 +36,8 @@ fun FileChooserDialog(
     fileChooser.selectedFile = null
     fileChooser.currentDirectory = null
 
-    if (dialogContext == FileChooserDialogState.DialogContext.SAVE_FILTER_FILE) {
+    if (dialogContext == FileChooserDialogState.DialogContext.SAVE_FILTER_FILE ||
+        dialogContext == FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE ) {
         if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             val file = fileChooser.selectedFile
             println("choose file or folder is: $file")

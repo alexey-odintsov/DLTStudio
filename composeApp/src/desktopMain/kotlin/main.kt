@@ -9,6 +9,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltstudio.MainViewModel
+import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
@@ -29,6 +30,8 @@ fun main() = application {
 
 
         val mainViewModel = remember { MainViewModel(DLTParserV2(), onProgressUpdate) }
+        val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
+
         var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
         MenuBar {
@@ -63,6 +66,27 @@ fun main() = application {
                     "Clear",
                     onClick = { mainViewModel.clearColorFilters() })
             }
+            Menu("Timeline") {
+                Menu("Filters") {
+                    Item(
+                        "Open",
+                        onClick = {
+                            stateIOpenFileDialog = FileChooserDialogState(
+                                true,
+                                FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE
+                            )
+                        })
+                    Item(
+                        "Save",
+                        onClick = {
+                            stateIOpenFileDialog = FileChooserDialogState(
+                                true,
+                                FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE
+                            )
+                        })
+                    Item("Clear", onClick = { timelineViewModel.clearTimeLineFilters() })
+                }
+            }
         }
 
         if (stateIOpenFileDialog.visibility) {
@@ -73,6 +97,8 @@ fun main() = application {
                     FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
                     FileChooserDialogState.DialogContext.UNKNOWN -> "Open file"
                     FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
+                    FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> "Open TimeLine filters"
+                    FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> "Save TimeLine filters"
                 },
                 onFileSelected = { file ->
                     when (stateIOpenFileDialog.dialogContext) {
@@ -94,6 +120,18 @@ fun main() = application {
                             }
                         }
 
+                        FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> {
+                            file?.let {
+                                timelineViewModel.loadTimeLineFilters(it)
+                            }
+                        }
+
+                        FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> {
+                            file?.let {
+                                timelineViewModel.saveTimeLineFilters(it)
+                            }
+                        }
+
                         FileChooserDialogState.DialogContext.UNKNOWN -> {
 
                         }
@@ -103,7 +141,7 @@ fun main() = application {
             )
         }
 
-        MainWindow(mainViewModel, progress, onProgressUpdate)
+        MainWindow(mainViewModel, timelineViewModel, progress, onProgressUpdate)
 //        }
     }
 }

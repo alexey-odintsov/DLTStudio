@@ -37,10 +37,10 @@ import java.net.URI
 @Preview
 fun MainWindow(
     mainViewModel: MainViewModel,
+    timelineViewModel: TimelineViewModel,
     progress: Float,
     onProgressUpdate: (Float) -> Unit
 ) {
-    val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
     val coroutineScope = rememberCoroutineScope()
 
     var tabIndex by remember { mutableStateOf(0) }
@@ -148,6 +148,6 @@ fun MainWindow(
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(MainViewModel(DLTParserV1(), {}), 1f, {})
+        MainWindow(MainViewModel(DLTParserV1(), {}), TimelineViewModel({}), 1f, {})
     }
 }
