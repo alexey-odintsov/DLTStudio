@@ -9,6 +9,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltstudio.MainViewModel
+import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
@@ -16,7 +17,10 @@ import com.alekso.dltstudio.ui.MainWindow
 
 fun main() = application {
     Window(
-        onCloseRequest = ::exitApplication,
+        onCloseRequest = {
+            Preferences.saveToFile()
+            exitApplication()
+        },
         title = "DTL Studio",
         state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
@@ -25,6 +29,9 @@ fun main() = application {
 //            typography = MaterialTheme.typography, // todo: Default font size is too big
 //            shapes = MaterialTheme.shapes
 //        ) {
+
+        Preferences.loadFromFile()
+
         var progress by remember { mutableStateOf(0f) }
         val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 

@@ -9,6 +9,7 @@ import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -93,6 +94,8 @@ class MainViewModel(
     }
 
     private fun startSearch(searchText: String) {
+        Preferences.addRecentSearch(searchText)
+
         _searchState.value = _searchState.value.copy(
             searchText = searchText,
             state = SearchState.State.SEARCHING
