@@ -11,6 +11,7 @@ import java.lang.reflect.Type
 private const val PREFERENCES_FILES_NAME = "dlt_studio_preferences.txt"
 private const val MAX_RECENT_SEARCH = 10
 private const val MAX_RECENT_COLOR_FILTER = 5
+private const val MAX_RECENT_TIMELINE_FILTER = 5
 
 
 data class RecentFile(
@@ -64,7 +65,20 @@ object Preferences {
         }
     }
 
+    fun addRecentTimelineFilter(fileName: String, filePath: String) {
+        if (state.recentTimelineFilters.any { it.absolutePath == filePath }) {
+            return
+        }
+
+        state.recentTimelineFilters.add(RecentFile(filePath, fileName))
+        if (state.recentTimelineFilters.size > MAX_RECENT_TIMELINE_FILTER) {
+            state.recentTimelineFilters.removeFirst()
+        }
+    }
+
     fun recentColorFilters() = state.recentColorFilters
+
+    fun recentTimelineFilters() = state.recentTimelineFilters
 
     fun saveToFile() {
         try {

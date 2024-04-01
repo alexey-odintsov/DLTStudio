@@ -6,6 +6,7 @@ import com.alekso.dltparser.dlt.VerbosePayload
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
+import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
@@ -274,6 +275,7 @@ class TimelineViewModel(
 
     fun saveTimeLineFilters(file: File) {
         TimeLineFilterManager().saveToFile(timelineFilters, file)
+        Preferences.addRecentTimelineFilter(file.name, file.absolutePath)
     }
 
     fun loadTimeLineFilters(file: File) {
@@ -281,6 +283,7 @@ class TimelineViewModel(
         TimeLineFilterManager().loadFromFile(file)?.let {
             timelineFilters.addAll(it)
         }
+        Preferences.addRecentTimelineFilter(file.name, file.absolutePath)
     }
 
     fun clearTimeLineFilters() {

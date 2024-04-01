@@ -87,6 +87,16 @@ fun main() = application {
             }
             Menu("Timeline") {
                 Menu("Filters") {
+                    Preferences.recentTimelineFilters().forEach {
+                        Item(
+                            it.fileName,
+                            onClick = {
+                                timelineViewModel.loadTimeLineFilters(File(it.absolutePath))
+                            })
+                    }
+                    if (Preferences.recentTimelineFilters().isNotEmpty()) {
+                        Separator()
+                    }
                     Item(
                         "Open",
                         onClick = {
