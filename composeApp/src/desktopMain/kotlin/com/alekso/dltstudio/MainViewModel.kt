@@ -153,6 +153,7 @@ class MainViewModel(
 
     fun saveColorFilters(file: File) {
         ColorFilterManager().saveToFile(colorFilters, file)
+        Preferences.addRecentColorFilter(file.name, file.absolutePath)
     }
 
     fun loadColorFilters(file: File) {
@@ -160,6 +161,7 @@ class MainViewModel(
         ColorFilterManager().loadFromFile(file)?.let {
             colorFilters.addAll(it)
         }
+        Preferences.addRecentColorFilter(file.name, file.absolutePath)
     }
 
     fun clearColorFilters() {

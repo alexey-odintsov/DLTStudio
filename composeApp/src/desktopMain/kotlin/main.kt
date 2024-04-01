@@ -14,8 +14,10 @@ import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
+import java.io.File
 
 fun main() = application {
+    Preferences.loadFromFile()
     Window(
         onCloseRequest = {
             Preferences.saveToFile()
@@ -30,7 +32,6 @@ fun main() = application {
 //            shapes = MaterialTheme.shapes
 //        ) {
 
-        Preferences.loadFromFile()
 
         var progress by remember { mutableStateOf(0f) }
         val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
@@ -52,7 +53,18 @@ fun main() = application {
                         )
                     })
             }
-            Menu("Filters") {
+            Menu("Color filters") {
+                Preferences.recentColorFilters().forEach {
+                    Item(
+                        it.fileName,
+                        onClick = {
+                            mainViewModel.loadColorFilters(File(it.absolutePath))
+                        })
+                }
+                if (Preferences.recentColorFilters().isNotEmpty()) {
+                    Separator()
+                }
+
                 Item(
                     "Open",
                     onClick = {

@@ -9,11 +9,19 @@ import java.lang.reflect.Type
 
 
 private const val PREFERENCES_FILES_NAME = "dlt_studio_preferences.txt"
+private const val MAX_RECENT_SEARCH = 10
+private const val MAX_RECENT_COLOR_FILTER = 5
+
+
+data class RecentFile(
+    val absolutePath: String,
+    val fileName: String,
+)
 
 object Preferences {
     class State(
-        var recentColorFilters: MutableList<String> = mutableListOf(),
-        var recentTimelineFilters: MutableList<String> = mutableListOf(),
+        var recentColorFilters: MutableList<RecentFile> = mutableListOf(),
+        var recentTimelineFilters: MutableList<RecentFile> = mutableListOf(),
         var recentSearchQueries: MutableList<String> = mutableListOf(),
     )
 
@@ -25,24 +33,40 @@ object Preferences {
         if (platform.startsWith("Mac OS")) {
             val path =
                 "${System.getProperty("user.home")}/Library/Preferences/$PREFERENCES_FILES_NAME"
-            println("Save preferences to $path")
+            println("Preferences path $path")
             File(path)
         } else { // todo: Linux/Win implementation
-            println("Save preferences to default directory")
+            println("Preferences default path directory")
             File(PREFERENCES_FILES_NAME)
         }
     }
 
 
     fun addRecentSearch(searchText: String) {
+        if (state.recentSearchQueries.any { it == searchText }) {
+            return
+        }
+
         state.recentSearchQueries.add(searchText)
-        if (state.recentSearchQueries.size > 10) {
-            state.recentSearchQueries.removeLast()
+        if (state.recentSearchQueries.size > MAX_RECENT_SEARCH) {
+            state.recentSearchQueries.removeFirst()
         }
     }
 
-    fun saveToFile() {
+    fun addRecentColorFilter(fileName: String, filePath: String) {
+        if (state.recentColorFilters.any { it.absolutePath == filePath }) {
+            return
+        }
 
+        state.recentColorFilters.add(RecentFile(filePath, fileName))
+        if (state.recentColorFilters.size > MAX_RECENT_COLOR_FILTER) {
+            state.recentColorFilters.removeFirst()
+        }
+    }
+
+    fun recentColorFilters() = state.recentColorFilters
+
+    fun saveToFile() {
         try {
             FileWriter(file).use {
                 it.write(Gson().toJson(state))
@@ -56,12 +80,14 @@ object Preferences {
         try {
             if (!file.exists()) {
                 file.createNewFile()
+                state = State()
+            } else {
+                val json = FileReader(file).use {
+                    it.readText()
+                }
+                val type: Type = object : TypeToken<State>() {}.type
+                state = Gson().fromJson(json, type)
             }
-            val json = FileReader(file).use {
-                it.readText()
-            }
-            val type: Type = object : TypeToken<State>() {}.type
-            state = Gson().fromJson(json, type)
         } catch (e: Exception) {
             println("Failed to load preferences: $e")
         }
