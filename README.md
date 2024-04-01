@@ -1,5 +1,5 @@
 A very simple desktop DLT logs analyzing app written with Compose Multiplatform.
-<img src="doc/preview_logs.png" width="600"> <img src="doc/preview_timeline.png" width="600">
+<img src="doc/dlt_studio_logs.png" width="600"> <img src="doc/dlt_studio_timeline.png" width="600">
 
 # Features
 - Logs view screen
