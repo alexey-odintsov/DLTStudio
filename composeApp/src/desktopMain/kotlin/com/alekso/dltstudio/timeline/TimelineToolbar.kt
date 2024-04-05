@@ -27,7 +27,7 @@ fun TimelineToolbar(
         ImageButton(
             modifier = Modifier.size(32.dp),
             iconName = "icon_color_filters.xml",
-            title = "Color filters",
+            title = "Timeline filters",
             onClick = onTimelineFiltersClicked
         )
 
