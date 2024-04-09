@@ -40,7 +40,7 @@ object SampleData {
                             ), 12, 10, "TEST MESSAGE".toByteArray()
                         )
                     )
-                ),
+                ).asText(),
                 122
             )
             list.add(dltMessage)

@@ -51,9 +51,7 @@ class DLTParserV1: DLTParser {
 
                     try {
                         val dltMessage = parseDLTMessage(bytes, i, shouldLog)
-                        //if (dltMessage.extendedHeader?.applicationId == "PLAT" && dltMessage.extendedHeader?.contextId == "KVSS") {// applicationId=PLAT, contextId=KVSS
                         messages.add(dltMessage)
-                        //}
                         i += dltMessage.sizeBytes // skip read bytes
                     } catch (e: Exception) {
                         i++ // move counter to the next byte
@@ -163,7 +161,7 @@ class DLTParserV1: DLTParser {
             println("")
         }
 
-        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload, i - offset)
+        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload?.asText() ?: "", i - offset)
     }
 
     private fun parseStandardHeader(shouldLog: Boolean, bytes: ByteArray, i: Int): StandardHeader {

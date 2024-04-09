@@ -110,16 +110,14 @@ class MainViewModel(
                 yield()
                 val payload = dltMessage.payload
 
-                if (payload != null) {
-                    if ((_searchState.value.searchUseRegex && searchText.toRegex()
-                            .containsMatchIn(payload.asText()))
-                        || (payload.asText().contains(searchText))
-                    ) {
-                        searchResult.add(dltMessage)
-                        searchIndexes.add(i)
-                    }
-                    onProgressChanged(i.toFloat() / dltMessages.size)
+                if ((_searchState.value.searchUseRegex && searchText.toRegex()
+                        .containsMatchIn(payload))
+                    || (payload.contains(searchText))
+                ) {
+                    searchResult.add(dltMessage)
+                    searchIndexes.add(i)
                 }
+                onProgressChanged(i.toFloat() / dltMessages.size)
             }
             _searchState.value = _searchState.value.copy(
                 searchText = searchText,
