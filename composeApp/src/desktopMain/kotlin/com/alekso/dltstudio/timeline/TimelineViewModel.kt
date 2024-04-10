@@ -19,6 +19,8 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.io.File
 
+private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
+
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit
 ) {
@@ -159,6 +161,7 @@ class TimelineViewModel(
                     regexps.add(index, timelineFilter.extractPattern?.toRegex())
                 }
 
+                var prevTs  = System.currentTimeMillis()
                 dltMessages.forEachIndexed { index, message ->
                     yield()
                     // timeStamps
@@ -180,7 +183,11 @@ class TimelineViewModel(
                             )
                         }
                     }
-                    onProgressChanged(index.toFloat() / dltMessages.size)
+                    val nowTs = System.currentTimeMillis()
+                    if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+                        prevTs = nowTs
+                        onProgressChanged(index.toFloat() / dltMessages.size)
+                    }
                 }
 
                 withContext(Dispatchers.Default) {
