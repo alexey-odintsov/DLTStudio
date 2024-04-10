@@ -19,6 +19,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
 import java.io.File
 
+private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
+
 class MainViewModel(
     private val dltParser: DLTParser,
     private val onProgressChanged: (Float) -> Unit
@@ -101,6 +103,8 @@ class MainViewModel(
             state = SearchState.State.SEARCHING
         )
         searchJob = CoroutineScope(IO).launch {
+            var prevTs  = System.currentTimeMillis()
+
             searchResult.clear()
             searchIndexes.clear()
             val startMs = System.currentTimeMillis()
@@ -117,7 +121,11 @@ class MainViewModel(
                     searchResult.add(dltMessage)
                     searchIndexes.add(i)
                 }
-                onProgressChanged(i.toFloat() / dltMessages.size)
+                val nowTs = System.currentTimeMillis()
+                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+                    prevTs = nowTs
+                    onProgressChanged(i.toFloat() / dltMessages.size)
+                }
             }
             _searchState.value = _searchState.value.copy(
                 searchText = searchText,
