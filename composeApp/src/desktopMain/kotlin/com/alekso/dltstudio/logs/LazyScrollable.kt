@@ -70,7 +70,7 @@ fun LazyScrollable(
                     val sSessionId: String = "${message.standardHeader.sessionId}"
                     val sApplicationId: String = "${message.extendedHeader?.applicationId}"
                     val sContextId: String = "${message.extendedHeader?.contextId}"
-                    val sContent: String = "${message.payload?.asText()}"
+                    val sContent: String = "${message.payload}"
                     val logTypeIndicator: LogTypeIndicator? =
                         LogTypeIndicator.fromMessageType(message.extendedHeader?.messageInfo?.messageTypeInfo)
 

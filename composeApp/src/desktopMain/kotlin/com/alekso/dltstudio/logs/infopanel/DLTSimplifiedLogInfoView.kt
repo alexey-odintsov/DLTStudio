@@ -30,10 +30,7 @@ fun DLTSimplifiedInfoView(
                         "${dltMessage.extendedHeader?.applicationId} " +
                         "${dltMessage.extendedHeader?.contextId} "
                 TableRow(0, "", headerText)
-                if (dltMessage.payload != null) {
-                    val payloadText = dltMessage.payload!!.asText()
-                    TableRow(0, "", payloadText)
-                }
+                TableRow(0, "", dltMessage.payload)
             }
         }
     }

@@ -2,7 +2,6 @@ package com.alekso.dltstudio.timeline
 
 import androidx.compose.runtime.mutableStateListOf
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.VerbosePayload
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
@@ -19,6 +18,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.io.File
+
+private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit
@@ -160,6 +161,7 @@ class TimelineViewModel(
                     regexps.add(index, timelineFilter.extractPattern?.toRegex())
                 }
 
+                var prevTs  = System.currentTimeMillis()
                 dltMessages.forEachIndexed { index, message ->
                     yield()
                     // timeStamps
@@ -181,7 +183,11 @@ class TimelineViewModel(
                             )
                         }
                     }
-                    onProgressChanged(index.toFloat() / dltMessages.size)
+                    val nowTs = System.currentTimeMillis()
+                    if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+                        prevTs = nowTs
+                        onProgressChanged(index.toFloat() / dltMessages.size)
+                    }
                 }
 
                 withContext(Dispatchers.Default) {
@@ -204,51 +210,16 @@ class TimelineViewModel(
         regex: Regex,
         entries: TimeLineEntries<*>
     ) {
-        if (message.payload !is VerbosePayload) return
         if (filter.extractPattern == null) return
 
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
-                val payload = (message.payload as VerbosePayload).asText()
-                filter.diagramType.extractEntry(regex, payload, entries, message, filter)
+                filter.diagramType.extractEntry(regex, message.payload, entries, message, filter)
             }
         } catch (e: Exception) {
             // ignore
         }
     }
-
-
-//    private fun analyzeEntriesIndexOf(
-//        message: DLTMessage,
-//        appId: String? = null,
-//        contextId: String? = null,
-//        keyDelimiters: Pair<String, String>,
-//        valueDelimiters: Pair<String, String>,
-//        entries: TimelineEntriesHolder
-//    ) {
-//        if (message.payload !is VerbosePayload) return
-//        val payload = (message.payload as VerbosePayload).asText()
-//
-//        try {
-//            if (message.extendedHeader?.applicationId == appId && message.extendedHeader?.contextId == contextId) {
-//                val key: String? = payload.substring(
-//                    payload.indexOf(keyDelimiters.first) + keyDelimiters.first.length,
-//                    payload.indexOf(keyDelimiters.second)
-//                )
-//                val value: String? = payload.substring(
-//                    payload.indexOf(valueDelimiters.first) + valueDelimiters.first.length,
-//                    payload.indexOf(valueDelimiters.second)
-//                )
-//
-//                if (key != null && value != null) {
-//                    entries.addEntry(TimeLineSimpleEntry(message.timeStampNano, key, value))
-//                }
-//            }
-//        } catch (e: Exception) {
-//            // ignore
-//        }
-//    }
-
 
     fun onTimelineFilterUpdate(index: Int, filter: TimelineFilter) {
         if (index < 0 || index > timelineFilters.size) {
