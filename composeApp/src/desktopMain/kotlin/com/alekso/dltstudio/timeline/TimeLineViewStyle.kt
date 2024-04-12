@@ -13,8 +13,8 @@ data class TimeLineViewStyle(
     val fontColor: Color,
     val labelBackgroundColor: Color,
     val labelHeight: TextUnit,
-    val lineHeight: Dp,
-    val lineHeightHighlighted: Dp,
+    val lineWidth: Dp,
+    val highlightedLineWidth: Dp,
 ) {
     companion object {
         val Default = TimeLineViewStyle(
@@ -23,8 +23,8 @@ data class TimeLineViewStyle(
             fontColor = Color.LightGray,
             labelBackgroundColor = Color(0xc0808080),
             labelHeight = TextUnit(12f, TextUnitType.Sp),
-            lineHeight = 1.5f.dp,
-            lineHeightHighlighted = 2.5f.dp,
+            lineWidth = 0.5f.dp,
+            highlightedLineWidth = 2.0f.dp,
         )
     }
 }

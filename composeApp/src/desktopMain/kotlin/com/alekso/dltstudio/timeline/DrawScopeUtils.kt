@@ -12,9 +12,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
-/**
- * Renders
- */
 fun DrawScope.renderLines(
     viewStyle: TimeLineViewStyle,
     items: MutableList<TimeLineEntry<Float>>?,
@@ -48,7 +45,7 @@ fun DrawScope.renderLines(
             Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY),
             Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
             strokeWidth = if (highlightedKey != null && highlightedKey == key)
-                viewStyle.lineHeight.toPx() else viewStyle.lineHeight.toPx()
+                viewStyle.highlightedLineWidth.toPx() else viewStyle.lineWidth.toPx()
         )
     }
 }
