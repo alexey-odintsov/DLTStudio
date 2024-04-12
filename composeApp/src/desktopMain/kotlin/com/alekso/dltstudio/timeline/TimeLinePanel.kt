@@ -28,6 +28,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -40,6 +41,8 @@ import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
@@ -49,6 +52,8 @@ import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
 
 private val LEGEND_WIDTH_DP = 250.dp
+private val TIME_MARKER_WIDTH_DP = 140.dp
+private val TIME_MARKER_HEIGHT_DP = 12.dp
 private const val MOVE_TIMELINE_STEP_PX = 10
 
 @OptIn(ExperimentalComposeUiApi::class)
@@ -262,6 +267,9 @@ fun TimeLinePanel(
                     secSizePx =
                         ((size.width - LEGEND_WIDTH_DP.toPx()) * scale) / timelineViewModel.totalSeconds.toFloat()
 
+                    val doesMarkerFit =
+                        (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
+
                     drawLine(
                         Color(0xFFFFFFc0),
                         Offset(cursorPosition.x, 0f),
@@ -273,18 +281,23 @@ fun TimeLinePanel(
                         (1000000L * cursorOffsetSec).toLong() + timelineViewModel.timeStart
 
                     drawText(
-                        textMeasurer,
+                        size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
+                        textMeasurer = textMeasurer,
                         text = "${TimeFormatter.formatTime(cursorTimestamp)} (${
                             "%+.2f".format(
                                 cursorOffsetSec
                             )
                         })",
-                        topLeft = Offset(cursorPosition.x + 4.dp.toPx(), 4.dp.toPx()),
+                        topLeft = Offset(
+                            if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
+                            4.dp.toPx()
+                        ),
                         style = TextStyle(
                             color = Color.Yellow,
                             fontSize = 10.sp,
-                            background = Color(0x80808080)
-                        )
+                            background = Color(0x80808080),
+                            textAlign = if (doesMarkerFit) TextAlign.Left else TextAlign.Right
+                        ), overflow = TextOverflow.Ellipsis
                     )
                 }
             }
