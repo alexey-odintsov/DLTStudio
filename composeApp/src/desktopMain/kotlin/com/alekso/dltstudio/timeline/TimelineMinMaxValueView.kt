@@ -11,60 +11,66 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
 import java.time.Instant
 
 
-private const val SERIES_COUNT = 10
+private const val DEFAULT_SERIES_COUNT = 10
+
 
 @Composable
 fun TimelineMinMaxValueView(
     modifier: Modifier,
+    viewStyle: TimeLineViewStyle = TimeLineViewStyle.Default,
     entries: TimeLineMinMaxEntries?,
     timeFrame: TimeFrame,
     splitTimeSec: Float = 999f,
     seriesPostfix: String = "",
     showVerticalSeries: Boolean = false,
     highlightedKey: String? = null,
+    seriesCount: Int = DEFAULT_SERIES_COUNT
 ) {
     val textMeasurer = rememberTextMeasurer()
-    val seriesTextStyle = remember { TextStyle(color = Color.LightGray, fontSize = 10.sp) }
+    val verticalPaddingDp = viewStyle.verticalPaddingDp
+
+    val seriesTextStyle = remember {
+        TextStyle(
+            color = viewStyle.fontColor,
+            fontSize = viewStyle.fontSize,
+            lineHeight = viewStyle.labelHeight,
+            background = viewStyle.labelBackgroundColor,
+            lineHeightStyle = LineHeightStyle(
+                LineHeightStyle.Alignment.Center,
+                LineHeightStyle.Trim.None
+            )
+        )
+    }
 
     Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
+        if (entries == null) return@Canvas
+
         val height = size.height
         val width = size.width
+        val availableHeight = height - verticalPaddingDp.toPx() * 2
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
 
-        if (entries == null) return@Canvas
-        entries.minValue = 0f
+        entries.minValue = 0f // always render 0 .. MAX
 
-        // Draw series lines
-        val step = (entries.maxValue - entries.minValue) / SERIES_COUNT
-        for (i in 0..SERIES_COUNT) {
-            val y = height * i / SERIES_COUNT
-            drawLine(Color.LightGray, Offset(0f, y), Offset(width, y), alpha = 0.5f)
-            drawText(
-                textMeasurer,
-                text = "${"%.0f".format(entries.maxValue - (i * step))}$seriesPostfix",
-                topLeft = Offset(3.dp.toPx(), height * i / SERIES_COUNT),
-                style = seriesTextStyle
-            )
-        }
+        renderVerticalSeries(
+            seriesCount,
+            availableHeight,
+            verticalPaddingDp,
+            width,
+        )
 
         if (showVerticalSeries) {
-            for (i in 0..timeFrame.getTotalSeconds()) {
-                val x = timeFrame.offsetSeconds * secSizePx + i * secSizePx
-                drawLine(Color.LightGray, Offset(x, 0f), Offset(x, height), alpha = 0.2f)
-            }
+            renderSecondsVerticalLines(timeFrame, secSizePx, availableHeight)
         }
 
         // Draw values
@@ -72,12 +78,14 @@ fun TimelineMinMaxValueView(
         map.keys.forEachIndexed { index, key ->
             val items = map[key]
             renderLines(
+                viewStyle,
                 items,
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                height,
-                entries,
+                availableHeight,
+                verticalPaddingDp.toPx(),
+                entries.maxValue,
                 ColorPalette.getColor(index),
                 highlightedKey,
                 key
@@ -87,52 +95,30 @@ fun TimelineMinMaxValueView(
         if (highlightedKey != null) {
             val items = map[highlightedKey]
             renderLines(
+                viewStyle,
                 items,
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                height,
-                entries,
+                availableHeight,
+                verticalPaddingDp.toPx(),
+                entries.maxValue,
                 Color.Green,
                 highlightedKey,
                 highlightedKey
             )
         }
-    }
-}
 
-private fun DrawScope.renderLines(
-    items: MutableList<TimeLineEntry<Float>>?,
-    splitTimeSec: Float,
-    timeFrame: TimeFrame,
-    secSizePx: Float,
-    height: Float,
-    entries: TimeLineMinMaxEntries,
-    color: Color,
-    highlightedKey: String?,
-    key: String
-) {
-    items?.forEachIndexed entriesIteration@{ i, entry ->
-        if (i == 0) return@entriesIteration
-
-        val prev = items[i - 1]
-        val prevDiffSec = (entry.timestamp - prev.timestamp) / 1000000f
-        // split lines if difference is too big
-        if (prevDiffSec > splitTimeSec) {
-            return@entriesIteration
-        }
-        val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx
-        val prevY = height - height * prev.value.toFloat() / entries.maxValue
-
-        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
-        val curY = height - height * entry.value.toFloat() / entries.maxValue
-
-        drawLine(
-            color,
-            Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY),
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
-            strokeWidth = if (highlightedKey != null && highlightedKey == key) 2.dp.toPx() else 1f
+        renderLabels(
+            entries,
+            seriesCount,
+            availableHeight,
+            verticalPaddingDp.toPx(),
+            textMeasurer,
+            seriesPostfix,
+            seriesTextStyle
         )
+
     }
 }
 
@@ -141,25 +127,34 @@ private fun DrawScope.renderLines(
 @Composable
 fun PreviewTimelineMinMaxValueView() {
     val ts = Instant.now().toEpochMilli() * 1000L
-    val te = ts + 7000000L
+    val te = ts + 7_000_000L
+    val key1 = "key1"
+    val key2 = "key2"
 
     val entries = TimeLineMinMaxEntries()
-    entries.maxValue = 151f
-    entries.minValue = 33f
-    entries.map["1325"] = mutableListOf(
-        TimeLineEntry<Float>(ts + 1450000, "1325", 110f),
-        TimeLineEntry<Float>(ts + 2000000, "1325", 83f),
-        TimeLineEntry<Float>(ts + 3300000, "1325", 127f),
-        TimeLineEntry<Float>(ts + 4400000, "1325", 89f),
+    entries.maxValue = 150f
+    entries.minValue = 0f
+
+    entries.map[key1] = mutableListOf(
+        TimeLineEntry(ts + 50_000, key1, 150f),
+        TimeLineEntry(ts + 550_000, key1, 149f),
+        TimeLineEntry(ts + 1_050_000, key1, 150f),
+        TimeLineEntry(ts + 1_450_000, key1, 110f),
+        TimeLineEntry(ts + 2_000_000, key1, 83f),
+        TimeLineEntry(ts + 3_300_000, key1, 127f),
+        TimeLineEntry(ts + 4_400_000, key1, 89f),
+        TimeLineEntry(ts + 4_500_000, key1, 0f),
+        TimeLineEntry(ts + 5_000_000, key1, 0f),
+        TimeLineEntry(ts + 6_000_000, key1, 0f),
     )
-    entries.map["435"] = mutableListOf(
-        TimeLineEntry<Float>(ts + 200000, "435", 133f),
-        TimeLineEntry<Float>(ts + 2100000, "435", 151f),
-        TimeLineEntry<Float>(ts + 2700000, "435", 104f),
-        TimeLineEntry<Float>(ts + 3400000, "435", 42f),
-        TimeLineEntry<Float>(ts + 3560000, "435", 63f),
-        TimeLineEntry<Float>(ts + 4000000, "435", 72f),
-        TimeLineEntry<Float>(ts + 6800000, "435", 111f),
+    entries.map[key2] = mutableListOf(
+        TimeLineEntry(ts + 200_000, key2, 133f),
+        TimeLineEntry(ts + 2_100_000, key2, 151f),
+        TimeLineEntry(ts + 2_700_000, key2, 104f),
+        TimeLineEntry(ts + 3_400_000, key2, 42f),
+        TimeLineEntry(ts + 3_560_000, key2, 63f),
+        TimeLineEntry(ts + 4_000_000, key2, 72f),
+        TimeLineEntry(ts + 6_800_000, key2, 111f),
     )
 
     Column {
@@ -176,10 +171,13 @@ fun PreviewTimelineMinMaxValueView() {
             Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
             TimelineMinMaxValueView(
                 modifier = Modifier.fillMaxWidth().height(200.dp),
+                viewStyle = TimeLineViewStyle.Default,
                 entries = entries,
                 timeFrame = timeFrame,
                 seriesPostfix = " Mb",
-                highlightedKey = "1325"
+                highlightedKey = key2,
+                showVerticalSeries = true,
+                seriesCount = 5 * i
             )
         }
     }
