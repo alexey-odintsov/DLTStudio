@@ -50,6 +50,55 @@ fun DrawScope.renderLines(
     }
 }
 
+fun DrawScope.renderStateLines(
+    states: List<String>,
+    items: MutableList<TimeLineStateEntry>?,
+    splitTimeSec: Float,
+    timeFrame: TimeFrame,
+    secSizePx: Float,
+    verticalPaddingPx: Float,
+    color: Color,
+    highlightedKey: String?,
+    key: String,
+    itemHeight: Float
+) {
+    val regularStroke = 2.dp.toPx()
+    val highlightedStroke = 3.dp.toPx()
+
+    items?.forEachIndexed entriesIteration@{ i, entry ->
+
+        val prev = if (i > 0) items[i - 1] else null
+
+        val prevX = if (prev != null) {
+            ((prev.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
+        } else {
+            0f
+        }
+        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
+
+        val curOldY = verticalPaddingPx + states.indexOf(entry.value.first) * itemHeight
+        val curY = verticalPaddingPx + states.indexOf(entry.value.second) * itemHeight
+
+        // horizontal line
+        if (prev != null) {
+            val prevY = verticalPaddingPx + states.indexOf(prev.value.second) * itemHeight
+            drawLine(
+                color,
+                Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY),
+                Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY),
+                strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
+            )
+        }
+        // vertical line
+        drawLine(
+            color,
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY),
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+            strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
+        )
+    }
+}
+
 fun DrawScope.renderEvents(
     states: List<String>,
     items: MutableList<TimeLineEventEntry>?,
