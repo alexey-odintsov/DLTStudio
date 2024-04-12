@@ -11,14 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
 import java.time.Instant
@@ -26,40 +23,48 @@ import java.time.Instant
 @Composable
 fun TimelineEventView(
     modifier: Modifier,
+    viewStyle: TimeLineViewStyle = TimeLineViewStyle.Default,
     entries: TimeLineEventEntries?,
     timeFrame: TimeFrame,
     showVerticalSeries: Boolean = false,
     highlightedKey: String? = null,
 ) {
     val textMeasurer = rememberTextMeasurer()
-    val seriesTextStyle = remember { TextStyle(color = Color.LightGray, fontSize = 10.sp) }
+    val verticalPaddingDp = viewStyle.verticalPaddingDp
+
+    val seriesTextStyle = remember {
+        TextStyle(
+            color = viewStyle.fontColor,
+            fontSize = viewStyle.fontSize,
+            lineHeight = viewStyle.labelHeight,
+            background = viewStyle.labelBackgroundColor,
+            lineHeightStyle = LineHeightStyle(
+                LineHeightStyle.Alignment.Center,
+                LineHeightStyle.Trim.None
+            )
+        )
+    }
 
     Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
-        val height = size.height
-        val width = size.width
-        val secSizePx: Float = timeFrame.calculateSecSizePx(width)
-
         if (entries == null) return@Canvas
 
-        val itemHeight = height / entries.states.size.toFloat()
-        val topOffset = itemHeight / 3f
+        val height = size.height
+        val width = size.width
+        val availableHeight = height - verticalPaddingDp.toPx() * 2
+        val secSizePx: Float = timeFrame.calculateSecSizePx(width)
+        val seriesCount = entries.states.size
 
-        for (i in 0..<entries.states.size) {
-            val y = i * itemHeight + topOffset
-            drawLine(Color.LightGray, Offset(0f, y), Offset(width, y), alpha = 0.5f)
-            drawText(
-                textMeasurer,
-                text = entries.states[i],
-                topLeft = Offset(3.dp.toPx(), y),
-                style = seriesTextStyle
-            )
-        }
+        val itemHeight = availableHeight / (seriesCount - 1).toFloat()
+
+        renderVerticalSeries(
+            seriesCount - 1,
+            availableHeight,
+            verticalPaddingDp,
+            width,
+        )
 
         if (showVerticalSeries) {
-            for (i in 0..timeFrame.getTotalSeconds()) {
-                val x = timeFrame.offsetSeconds * secSizePx + i * secSizePx
-                drawLine(Color.LightGray, Offset(x, 0f), Offset(x, height), alpha = 0.2f)
-            }
+            renderSecondsVerticalLines(timeFrame, secSizePx, height)
         }
 
         val map = entries.map
@@ -70,11 +75,10 @@ fun TimelineEventView(
                 items,
                 timeFrame,
                 secSizePx,
-                height,
+                verticalPaddingDp.toPx(),
                 ColorPalette.getColor(index, alpha = 0.5f),
                 highlightedKey,
                 key,
-                topOffset,
                 itemHeight
             )
         }
@@ -86,40 +90,21 @@ fun TimelineEventView(
                 items,
                 timeFrame,
                 secSizePx,
-                height,
+                verticalPaddingDp.toPx(),
                 Color.Green,
                 highlightedKey,
                 highlightedKey,
-                topOffset,
                 itemHeight
             )
         }
-    }
-}
 
-private const val EVENT_RADIUS_DP = 3
-
-private fun DrawScope.renderEvents(
-    states: List<String>,
-    items: MutableList<TimeLineEventEntry>?,
-    timeFrame: TimeFrame,
-    secSizePx: Float,
-    height: Float,
-    color: Color,
-    highlightedKey: String?,
-    key: String,
-    topOffset: Float,
-    itemHeight: Float
-) {
-    items?.forEachIndexed entriesIteration@{ i, entry ->
-        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
-        val curY = states.indexOf(entry.value.event) * itemHeight + topOffset
-
-        drawCircle(color, EVENT_RADIUS_DP.dp.toPx(),
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+        renderStateLabels(
+            entries.states, seriesCount, itemHeight, verticalPaddingDp.toPx(),
+            textMeasurer, seriesTextStyle
         )
     }
 }
+
 
 @Preview
 @Composable
@@ -135,11 +120,10 @@ fun PreviewTimelineEventView() {
     entries.addEntry(TimeLineEventEntry(ts + 4_000_000, "app1", TimeLineEvent("ANR", "info 1")))
 
     Column {
-        for (i in 1..3) {
             val timeFrame = TimeFrame(
                 timestampStart = ts,
                 timestampEnd = te,
-                scale = i.toFloat(),
+                scale = 1f,
                 offsetSeconds = 0f
             )
             Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
@@ -152,6 +136,5 @@ fun PreviewTimelineEventView() {
                 showVerticalSeries = true,
                 highlightedKey = "435"
             )
-        }
     }
 }

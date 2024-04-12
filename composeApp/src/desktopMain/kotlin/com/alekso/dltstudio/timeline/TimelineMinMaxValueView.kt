@@ -70,7 +70,7 @@ fun TimelineMinMaxValueView(
         )
 
         if (showVerticalSeries) {
-            renderSecondsVerticalLines(timeFrame, secSizePx, availableHeight)
+            renderSecondsVerticalLines(timeFrame, secSizePx, height)
         }
 
         // Draw values

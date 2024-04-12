@@ -50,14 +50,36 @@ fun DrawScope.renderLines(
     }
 }
 
+fun DrawScope.renderEvents(
+    states: List<String>,
+    items: MutableList<TimeLineEventEntry>?,
+    timeFrame: TimeFrame,
+    secSizePx: Float,
+    verticalPaddingPx: Float,
+    color: Color,
+    highlightedKey: String?,
+    key: String,
+    itemHeight: Float
+) {
+    items?.forEachIndexed entriesIteration@{ i, entry ->
+        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
+        val curY = verticalPaddingPx + states.indexOf(entry.value.event) * itemHeight
+
+        drawCircle(
+            color, 3.dp.toPx(),
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+        )
+    }
+}
+
 fun DrawScope.renderSecondsVerticalLines(
     timeFrame: TimeFrame,
     secSizePx: Float,
-    availableHeight: Float
+    height: Float,
 ) {
     for (i in 0..timeFrame.getTotalSeconds()) {
         val x = timeFrame.offsetSeconds * secSizePx + i * secSizePx
-        drawLine(Color.LightGray, Offset(x, 0f), Offset(x, availableHeight), alpha = 0.2f)
+        drawLine(Color.LightGray, Offset(x, 0f), Offset(x, height), alpha = 0.2f)
     }
 }
 
@@ -67,7 +89,6 @@ fun DrawScope.renderVerticalSeries(
     verticalPaddingDp: Dp,
     width: Float,
 ) {
-    // Render labels
     for (i in 0..seriesCount) {
         val y = availableHeight * i / seriesCount + verticalPaddingDp.toPx()
         drawLine(Color.LightGray, Offset(0f, y), Offset(width, y), alpha = 0.5f)
@@ -85,7 +106,7 @@ fun DrawScope.renderLabels(
     seriesTextStyle: TextStyle
 ) {
     val step = (maxValue - minValue) / seriesCount
-    // Render labels
+
     for (i in 0..seriesCount) {
         val y = availableHeight * i / seriesCount + verticalPaddingPx
         drawText(
@@ -97,6 +118,25 @@ fun DrawScope.renderLabels(
                 y - 6.sp.toPx()
             ),
             style = seriesTextStyle,
+        )
+    }
+}
+
+fun DrawScope.renderStateLabels(
+    states: List<String>,
+    seriesCount: Int,
+    itemHeight: Float,
+    verticalPaddingPx: Float,
+    textMeasurer: TextMeasurer,
+    seriesTextStyle: TextStyle
+) {
+    for (i in 0..<seriesCount) {
+        val y = verticalPaddingPx + i * itemHeight
+        drawText(
+            textMeasurer,
+            text = states[i],
+            topLeft = Offset(3.dp.toPx(), y - 6.sp.toPx()),
+            style = seriesTextStyle
         )
     }
 }
