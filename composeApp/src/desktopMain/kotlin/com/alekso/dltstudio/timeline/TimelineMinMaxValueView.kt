@@ -110,7 +110,8 @@ fun TimelineMinMaxValueView(
         }
 
         renderLabels(
-            entries,
+            entries.minValue,
+            entries.maxValue,
             seriesCount,
             availableHeight,
             verticalPaddingDp.toPx(),

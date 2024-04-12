@@ -75,7 +75,8 @@ fun DrawScope.renderVerticalSeries(
 }
 
 fun DrawScope.renderLabels(
-    entries: TimeLineMinMaxEntries,
+    minValue: Float,
+    maxValue: Float,
     seriesCount: Int,
     availableHeight: Float,
     verticalPaddingPx: Float,
@@ -83,14 +84,14 @@ fun DrawScope.renderLabels(
     seriesPostfix: String,
     seriesTextStyle: TextStyle
 ) {
-    val step = (entries.maxValue - entries.minValue) / seriesCount
+    val step = (maxValue - minValue) / seriesCount
     // Render labels
     for (i in 0..seriesCount) {
         val y = availableHeight * i / seriesCount + verticalPaddingPx
         drawText(
             textMeasurer = textMeasurer,
             size = Size(100.dp.toPx(), 12.dp.toPx()),
-            text = "${"%.0f".format(entries.maxValue - (i * step))}$seriesPostfix",
+            text = "${"%.0f".format(maxValue - (i * step))}$seriesPostfix",
             topLeft = Offset(
                 3.dp.toPx(),
                 y - 6.sp.toPx()
