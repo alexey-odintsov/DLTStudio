@@ -112,7 +112,11 @@ class MainViewModel(
 
             _dltMessages.forEachIndexed { i, dltMessage ->
                 yield()
-                val payload = dltMessage.payload
+                val payload = "${dltMessage.standardHeader.ecuId} " +
+                        "${dltMessage.standardHeader.sessionId} " +
+                        "${dltMessage.extendedHeader?.applicationId} " +
+                        "${dltMessage.extendedHeader?.contextId} " +
+                        dltMessage.payload
 
                 if ((_searchState.value.searchUseRegex && searchText.toRegex()
                         .containsMatchIn(payload))
