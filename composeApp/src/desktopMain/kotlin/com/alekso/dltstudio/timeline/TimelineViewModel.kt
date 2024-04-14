@@ -198,6 +198,7 @@ class TimelineViewModel(
                     timeEnd = _timeEnd
                     _analyzeState.value = AnalyzeState.IDLE
                 }
+                onProgressChanged(1f)
             }
             println("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
         }

@@ -131,6 +131,7 @@ class MainViewModel(
                 searchText = searchText,
                 state = SearchState.State.IDLE
             )
+            onProgressChanged(1f)
             println("Search complete in ${(System.currentTimeMillis() - startMs) / 1000} sec.")
         }
     }
