@@ -29,8 +29,11 @@ data class TimelineFilter(
         IndexOf
     }
 
-    enum class DiagramType {
-        Percentage { // CPU Usage
+    enum class DiagramType(val description: String) {
+
+
+        Percentage(description = "Shows values change from in 0..100% range") { // CPU Usage
+
             override fun extractEntry(
                 regex: Regex,
                 payload: String,
@@ -77,7 +80,7 @@ data class TimelineFilter(
 
             override fun createEntries(): TimeLineEntries<*> = TimeLinePercentageEntries()
         },
-        MinMaxValue { // Memory usage
+        MinMaxValue(description = "Shows values change from in 0..Max range") { // Memory usage
             override fun extractEntry(
                 regex: Regex,
                 payload: String,
@@ -124,7 +127,7 @@ data class TimelineFilter(
 
             override fun createEntries(): TimeLineEntries<*> = TimeLineMinMaxEntries()
         },
-        State { // User switch
+        State(description = "Shows values change from given states") { // User switch
             override fun extractEntry(
                 regex: Regex,
                 payload: String,
@@ -173,7 +176,7 @@ data class TimelineFilter(
 
             override fun createEntries(): TimeLineEntries<*> = TimeLineStateEntries()
         },
-        Events {
+        Events(description = "Shows events that occur over the time")  {
             override fun extractEntry(
                 regex: Regex,
                 payload: String,

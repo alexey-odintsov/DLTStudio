@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
@@ -104,6 +105,14 @@ fun EditTimelineFilterPanel(
             )
         }
 
+        Row {
+            Text(
+                modifier = Modifier.width(COL_PATTERN)
+                    .offset(x = COL_NAME_SIZE_DP)
+                    .padding(horizontal = 4.dp),
+                text = TimelineFilter.DiagramType.entries.first { it.name == diagramType}.description
+            )
+        }
 
         Row {
             val items = mutableListOf("Any")
