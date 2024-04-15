@@ -5,9 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,13 +45,20 @@ fun EditTimelineFilterDialog(
     colorFilter: TimelineFilter,
     onFilterUpdate: (Int, TimelineFilter) -> Unit,
     colorFilterIndex: Int,
+    testPayloadText: String = "",
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (colorFilterIndex >= 0) "Edit Timeline Filter" else "Add new Timeline filter",
         state = rememberDialogState(width = 700.dp, height = 500.dp)
     ) {
-        EditTimelineFilterPanel(colorFilter, colorFilterIndex, onFilterUpdate, onDialogClosed)
+        EditTimelineFilterPanel(
+            colorFilter,
+            colorFilterIndex,
+            onFilterUpdate,
+            onDialogClosed,
+            testPayloadText
+        )
     }
 }
 
@@ -61,7 +71,8 @@ fun EditTimelineFilterPanel(
     filter: TimelineFilter,
     filterIndex: Int,
     onFilterUpdate: (Int, TimelineFilter) -> Unit,
-    onDialogClosed: () -> Unit
+    onDialogClosed: () -> Unit,
+    testPayloadText: String = "",
 ) {
     var filterName by rememberSaveable { mutableStateOf(filter.name) }
     var diagramType by rememberSaveable { mutableStateOf(filter.diagramType.name) }
@@ -74,6 +85,8 @@ fun EditTimelineFilterPanel(
     var extractPattern by rememberSaveable { mutableStateOf(filter.extractPattern) }
     var extractorType by rememberSaveable { mutableStateOf(filter.extractorType.name) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
+    var testPayload by rememberSaveable { mutableStateOf(testPayloadText) }
+    var groupsTestValue by rememberSaveable { mutableStateOf("") }
 
     Column(
         Modifier.width(1000.dp).padding(4.dp),
@@ -197,9 +210,10 @@ fun EditTimelineFilterPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Extract pattern")
             CustomEditText(
-                modifier = Modifier.width(COL_PATTERN),
+                modifier = Modifier.width(COL_PATTERN).wrapContentHeight(Alignment.Top),
                 value = extractPattern ?: "", onValueChange = {
                     extractPattern = it
+                    groupsTestValue = testRegex(extractPattern, testPayload)
                 }
             )
         }
@@ -217,6 +231,29 @@ fun EditTimelineFilterPanel(
                 items = items,
                 initialSelectedIndex = initialSelection,
                 onItemsSelected = { i -> extractorType = items[i] }
+            )
+        }
+
+        // Regex check
+        Row(
+            modifier = Modifier.padding(top = 20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            CustomEditText(
+                modifier = Modifier.fillMaxWidth().height(44.dp).align(Alignment.Top),
+                singleLine = false,
+                value = testPayload,
+                onValueChange = {
+                    testPayload = it
+                }
+            )
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(modifier = colNameStyle, text = "Groups")
+            Text(
+                modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top)
+                    .padding(horizontal = 4.dp),
+                text = groupsTestValue
             )
         }
 
@@ -258,18 +295,50 @@ fun EditTimelineFilterPanel(
     }
 }
 
+fun testRegex(extractPattern: String?, testPayload: String, global: Boolean = false): String {
+    var groupsTestValue = ""
+    if (extractPattern != null) {
+        try {
+            if (global) {
+                val matches = Regex(extractPattern).findAll(testPayload)
+                groupsTestValue = matches.map { "${it.groups[1]?.value} -> ${it.groups[2]?.value}" }
+                    .joinToString("\n")
+                println("Groups: '$groupsTestValue'")
+            } else {
+                val matches = Regex(extractPattern).find(testPayload)
+                if (matches?.groups == null) {
+                    groupsTestValue = "Empty groups"
+                } else {
+
+                    groupsTestValue = "${matches.groups[1]?.value} -> ${matches.groups[2]?.value}"
+                    println("Groups: '$groupsTestValue'")
+                }
+            }
+        } catch (e: Exception) {
+            groupsTestValue = "Invalid regex ${e.printStackTrace()}"
+        }
+    }
+    return groupsTestValue
+}
+
 @Preview
 @Composable
 fun PreviewEditTimelineFilterDialog() {
     val filter = TimelineFilter(
         name = "CPU Usage by PID", enabled = true,
         filters = mutableMapOf(),
-        extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
+        extractPattern = "(cpu\\d+: \\d+\\.\\d+)%",
         diagramType = TimelineFilter.DiagramType.Percentage,
         extractorType = TimelineFilter.ExtractorType.KeyValueNamed
     )
 
     Column(Modifier.background(Color(238, 238, 238))) {
-        EditTimelineFilterPanel(filter, 0, { i, f -> }) {}
+        EditTimelineFilterPanel(
+            filter,
+            0,
+            { i, f -> },
+            {},
+            "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%"
+        )
     }
 }
