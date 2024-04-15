@@ -90,8 +90,8 @@ class DLTParserV2 : DLTParser {
 
                 bytesRead += i
             }
-            progressCallback.invoke(1f)
         }
+        progressCallback.invoke(1f)
         println("Parsing complete in ${(System.currentTimeMillis() - startMs) / 1000} sec. Parsed ${messages.size} messages; $bytesRead bytes read and $skippedBytes skipped bytes")
         return messages.sortedBy { it.timeStampNano }
     }
