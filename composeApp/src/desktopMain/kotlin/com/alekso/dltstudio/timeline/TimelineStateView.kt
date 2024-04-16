@@ -102,8 +102,8 @@ fun TimelineStateView(
         }
 
         renderStateLabels(
-            entries.states, seriesCount, itemHeight, verticalPaddingDp.toPx(),
-            textMeasurer, seriesTextStyle
+            entries.states, seriesCount, verticalPaddingDp.toPx(),
+            textMeasurer, seriesTextStyle, availableHeight
         )
     }
 }

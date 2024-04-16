@@ -108,15 +108,17 @@ fun DrawScope.renderEvents(
     color: Color,
     highlightedKey: String?,
     key: String,
-    itemHeight: Float
+    seriesCount: Int,
+    availableHeight: Float,
 ) {
     items?.forEachIndexed entriesIteration@{ i, entry ->
-        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
-        val curY = verticalPaddingPx + states.indexOf(entry.value.event) * itemHeight
+        val x = ((entry.timestamp - timeFrame.timestampStart) / 1_000_000f * secSizePx)
+        val y = calculateY(seriesCount, states.indexOf(entry.value.event), availableHeight)
 
         drawCircle(
-            color, 3.dp.toPx(),
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+            color = color,
+            radius = if (highlightedKey != null && highlightedKey == key) 4.dp.toPx() else 3.dp.toPx(),
+            center = Offset(timeFrame.offsetSeconds * secSizePx + x, y + verticalPaddingPx),
         )
     }
 }
@@ -138,9 +140,14 @@ fun DrawScope.renderVerticalSeries(
     verticalPaddingDp: Dp,
     width: Float,
 ) {
-    for (i in 0..seriesCount) {
-        val y = availableHeight * i / seriesCount + verticalPaddingDp.toPx()
-        drawLine(Color.LightGray, Offset(0f, y), Offset(width, y), alpha = 0.5f)
+    for (i in 0..<seriesCount) {
+        val y = calculateY(seriesCount, i, availableHeight)
+        drawLine(
+            Color.LightGray,
+            Offset(0f, y + verticalPaddingDp.toPx()),
+            Offset(width, y + verticalPaddingDp.toPx()),
+            alpha = 0.5f
+        )
     }
 }
 
@@ -174,18 +181,28 @@ fun DrawScope.renderLabels(
 fun DrawScope.renderStateLabels(
     states: List<String>,
     seriesCount: Int,
-    itemHeight: Float,
     verticalPaddingPx: Float,
     textMeasurer: TextMeasurer,
-    seriesTextStyle: TextStyle
+    seriesTextStyle: TextStyle,
+    availableHeight: Float,
 ) {
     for (i in 0..<seriesCount) {
-        val y = verticalPaddingPx + i * itemHeight
+        val y = calculateY(seriesCount, i, availableHeight)
         drawText(
             textMeasurer,
+            size = Size(LABEL_WIDTH.toPx(), LABEL_HEIGHT.toPx()),
             text = states[i],
-            topLeft = Offset(3.dp.toPx(), y - 6.sp.toPx()),
+            topLeft = Offset(3.dp.toPx(), y - LABEL_HALF_HEIGHT.toPx() + verticalPaddingPx),
             style = seriesTextStyle
         )
     }
+}
+
+private var LABEL_WIDTH = 100.dp
+private var LABEL_HEIGHT = 12.dp
+private var LABEL_HALF_HEIGHT = LABEL_HEIGHT / 2f
+
+fun calculateY(seriesCount: Int, i: Int, availableHeight: Float): Float {
+    val itemHeight = availableHeight / (seriesCount - 1)
+    return if (seriesCount == 1) availableHeight / 2f else itemHeight * i
 }
