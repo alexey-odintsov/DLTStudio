@@ -60,7 +60,8 @@ fun DrawScope.renderStateLines(
     color: Color,
     highlightedKey: String?,
     key: String,
-    itemHeight: Float
+    seriesCount: Int,
+    availableHeight: Float,
 ) {
     val regularStroke = 2.dp.toPx()
     val highlightedStroke = 3.dp.toPx()
@@ -76,24 +77,24 @@ fun DrawScope.renderStateLines(
         }
         val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
 
-        val curOldY = verticalPaddingPx + states.indexOf(entry.value.first) * itemHeight
-        val curY = verticalPaddingPx + states.indexOf(entry.value.second) * itemHeight
+        val curOldY = calculateY(seriesCount, states.indexOf(entry.value.first), availableHeight)
+        val curY = calculateY(seriesCount, states.indexOf(entry.value.second), availableHeight)
 
         // horizontal line
         if (prev != null) {
-            val prevY = verticalPaddingPx + states.indexOf(prev.value.second) * itemHeight
+            val prevY = calculateY(seriesCount, states.indexOf(prev.value.second), availableHeight)
             drawLine(
                 color,
-                Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY),
-                Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY),
+                Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY + verticalPaddingPx),
+                Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY+ verticalPaddingPx),
                 strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
             )
         }
         // vertical line
         drawLine(
             color,
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY),
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY+ verticalPaddingPx),
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY+ verticalPaddingPx),
             strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
         )
     }
@@ -108,15 +109,17 @@ fun DrawScope.renderEvents(
     color: Color,
     highlightedKey: String?,
     key: String,
-    itemHeight: Float
+    seriesCount: Int,
+    availableHeight: Float,
 ) {
     items?.forEachIndexed entriesIteration@{ i, entry ->
-        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
-        val curY = verticalPaddingPx + states.indexOf(entry.value.event) * itemHeight
+        val x = ((entry.timestamp - timeFrame.timestampStart) / 1_000_000f * secSizePx)
+        val y = calculateY(seriesCount, states.indexOf(entry.value.event), availableHeight)
 
         drawCircle(
-            color, 3.dp.toPx(),
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY),
+            color = color,
+            radius = if (highlightedKey != null && highlightedKey == key) 4.dp.toPx() else 3.dp.toPx(),
+            center = Offset(timeFrame.offsetSeconds * secSizePx + x, y + verticalPaddingPx),
         )
     }
 }
@@ -135,12 +138,17 @@ fun DrawScope.renderSecondsVerticalLines(
 fun DrawScope.renderVerticalSeries(
     seriesCount: Int,
     availableHeight: Float,
-    verticalPaddingDp: Dp,
+    verticalPaddingPx: Float,
     width: Float,
 ) {
-    for (i in 0..seriesCount) {
-        val y = availableHeight * i / seriesCount + verticalPaddingDp.toPx()
-        drawLine(Color.LightGray, Offset(0f, y), Offset(width, y), alpha = 0.5f)
+    for (i in 0..<seriesCount) {
+        val y = calculateY(seriesCount, i, availableHeight)
+        drawLine(
+            Color.LightGray,
+            Offset(0f, y + verticalPaddingPx),
+            Offset(width, y + verticalPaddingPx),
+            alpha = 0.5f
+        )
     }
 }
 
@@ -174,18 +182,35 @@ fun DrawScope.renderLabels(
 fun DrawScope.renderStateLabels(
     states: List<String>,
     seriesCount: Int,
-    itemHeight: Float,
     verticalPaddingPx: Float,
     textMeasurer: TextMeasurer,
-    seriesTextStyle: TextStyle
+    seriesTextStyle: TextStyle,
+    availableHeight: Float,
 ) {
     for (i in 0..<seriesCount) {
-        val y = verticalPaddingPx + i * itemHeight
+        val y = calculateY(seriesCount, i, availableHeight)
         drawText(
             textMeasurer,
+            size = Size(LABEL_WIDTH.toPx(), LABEL_HEIGHT.toPx()),
             text = states[i],
-            topLeft = Offset(3.dp.toPx(), y - 6.sp.toPx()),
+            topLeft = Offset(3.dp.toPx(), y - LABEL_HALF_HEIGHT.toPx() + verticalPaddingPx),
             style = seriesTextStyle
         )
     }
+}
+
+private var LABEL_WIDTH = 300.dp
+private var LABEL_HEIGHT = 12.dp
+private var LABEL_HALF_HEIGHT = LABEL_HEIGHT / 2f
+private var MAX_ITEM_HEIGHT_RATIO = 0.3f
+
+fun calculateY(seriesCount: Int, i: Int, availableHeight: Float): Float {
+    var itemHeight = availableHeight / (seriesCount - 1)
+    var additionalPadding = 0f
+
+    if (itemHeight > availableHeight * MAX_ITEM_HEIGHT_RATIO) {
+        itemHeight = availableHeight * MAX_ITEM_HEIGHT_RATIO
+        additionalPadding = (availableHeight - ((seriesCount - 1) * itemHeight)) / 2f
+    }
+    return if (seriesCount == 1) availableHeight / 2f else itemHeight * i + additionalPadding
 }

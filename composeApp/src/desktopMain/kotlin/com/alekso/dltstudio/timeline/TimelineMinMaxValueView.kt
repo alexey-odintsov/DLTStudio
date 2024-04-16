@@ -57,7 +57,8 @@ fun TimelineMinMaxValueView(
 
         val height = size.height
         val width = size.width
-        val availableHeight = height - verticalPaddingDp.toPx() * 2
+        val verticalPaddingPx = verticalPaddingDp.toPx()
+        val availableHeight = height - verticalPaddingPx * 2
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
 
         entries.minValue = 0f // always render 0 .. MAX
@@ -65,7 +66,7 @@ fun TimelineMinMaxValueView(
         renderVerticalSeries(
             seriesCount,
             availableHeight,
-            verticalPaddingDp,
+            verticalPaddingPx,
             width,
         )
 
@@ -84,7 +85,7 @@ fun TimelineMinMaxValueView(
                 timeFrame,
                 secSizePx,
                 availableHeight,
-                verticalPaddingDp.toPx(),
+                verticalPaddingPx,
                 entries.maxValue,
                 ColorPalette.getColor(index),
                 highlightedKey,
@@ -101,7 +102,7 @@ fun TimelineMinMaxValueView(
                 timeFrame,
                 secSizePx,
                 availableHeight,
-                verticalPaddingDp.toPx(),
+                verticalPaddingPx,
                 entries.maxValue,
                 Color.Green,
                 highlightedKey,
@@ -114,7 +115,7 @@ fun TimelineMinMaxValueView(
             entries.maxValue,
             seriesCount,
             availableHeight,
-            verticalPaddingDp.toPx(),
+            verticalPaddingPx,
             textMeasurer,
             seriesPostfix,
             seriesTextStyle
