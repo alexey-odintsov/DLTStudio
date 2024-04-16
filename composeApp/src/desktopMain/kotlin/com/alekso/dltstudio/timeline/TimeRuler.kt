@@ -49,7 +49,7 @@ fun TimeRuler(
             )
         }
 
-        if (secSizePx < Float.POSITIVE_INFINITY) {
+        if (secSizePx < Float.POSITIVE_INFINITY && timeMarksCount > 0) {
             for (i in 0..totalSeconds step timeMarksCount) {
                 try {
                     drawText(
