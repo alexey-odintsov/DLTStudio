@@ -60,7 +60,7 @@ fun TimelineEventView(
         renderVerticalSeries(
             seriesCount,
             availableHeight,
-            verticalPaddingDp,
+            verticalPaddingPx,
             width,
         )
 

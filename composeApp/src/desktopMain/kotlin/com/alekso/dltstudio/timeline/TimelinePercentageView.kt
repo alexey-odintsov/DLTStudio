@@ -56,13 +56,14 @@ fun TimelinePercentageView(
 
         val height = size.height
         val width = size.width
-        val availableHeight = height - verticalPaddingDp.toPx() * 2
+        val verticalPaddingPx = verticalPaddingDp.toPx()
+        val availableHeight = height - verticalPaddingPx * 2
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
 
         renderVerticalSeries(
             seriesCount,
             availableHeight,
-            verticalPaddingDp,
+            verticalPaddingPx,
             width,
         )
 
@@ -81,7 +82,7 @@ fun TimelinePercentageView(
                 timeFrame,
                 secSizePx,
                 availableHeight,
-                verticalPaddingDp.toPx(),
+                verticalPaddingPx,
                 100f,
                 ColorPalette.getColor(index),
                 highlightedKey,
@@ -98,7 +99,7 @@ fun TimelinePercentageView(
                 timeFrame,
                 secSizePx,
                 availableHeight,
-                verticalPaddingDp.toPx(),
+                verticalPaddingPx,
                 100f,
                 Color.Green,
                 highlightedKey,
@@ -111,7 +112,7 @@ fun TimelinePercentageView(
             100f,
             seriesCount,
             availableHeight,
-            verticalPaddingDp.toPx(),
+            verticalPaddingPx,
             textMeasurer,
             "%",
             seriesTextStyle

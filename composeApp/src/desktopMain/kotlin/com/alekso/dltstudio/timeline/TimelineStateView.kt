@@ -51,16 +51,15 @@ fun TimelineStateView(
 
         val height = size.height
         val width = size.width
-        val availableHeight = height - verticalPaddingDp.toPx() * 2
+        val verticalPaddingPx = verticalPaddingDp.toPx()
+        val availableHeight = height - verticalPaddingPx * 2
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
         val seriesCount = entries.states.size
 
-        val itemHeight = availableHeight / (seriesCount - 1).toFloat()
-
         renderVerticalSeries(
-            seriesCount - 1,
+            seriesCount,
             availableHeight,
-            verticalPaddingDp,
+            verticalPaddingPx,
             width,
         )
 
@@ -77,11 +76,12 @@ fun TimelineStateView(
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                verticalPaddingDp.toPx(),
+                verticalPaddingPx,
                 ColorPalette.getColor(index, alpha = 0.5f),
                 highlightedKey,
                 key,
-                itemHeight
+                seriesCount,
+                availableHeight,
             )
         }
 
@@ -93,16 +93,17 @@ fun TimelineStateView(
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                verticalPaddingDp.toPx(),
+                verticalPaddingPx,
                 Color.Green,
                 highlightedKey,
                 highlightedKey,
-                itemHeight
+                seriesCount,
+                availableHeight,
             )
         }
 
         renderStateLabels(
-            entries.states, seriesCount, verticalPaddingDp.toPx(),
+            entries.states, seriesCount, verticalPaddingPx,
             textMeasurer, seriesTextStyle, availableHeight
         )
     }
