@@ -201,8 +201,15 @@ fun DrawScope.renderStateLabels(
 private var LABEL_WIDTH = 100.dp
 private var LABEL_HEIGHT = 12.dp
 private var LABEL_HALF_HEIGHT = LABEL_HEIGHT / 2f
+private var MAX_ITEM_HEIGHT_RATIO = 0.45f
 
 fun calculateY(seriesCount: Int, i: Int, availableHeight: Float): Float {
-    val itemHeight = availableHeight / (seriesCount - 1)
-    return if (seriesCount == 1) availableHeight / 2f else itemHeight * i
+    var itemHeight = availableHeight / (seriesCount - 1)
+    var additionalPadding = 0f
+
+    if (itemHeight > availableHeight * MAX_ITEM_HEIGHT_RATIO) {
+        itemHeight = availableHeight * MAX_ITEM_HEIGHT_RATIO
+        additionalPadding = (availableHeight - ((seriesCount - 1) * itemHeight)) / 2f
+    }
+    return if (seriesCount == 1) availableHeight / 2f else itemHeight * i + additionalPadding
 }
