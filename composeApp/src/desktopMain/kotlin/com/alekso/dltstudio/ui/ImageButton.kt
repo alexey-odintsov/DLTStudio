@@ -6,6 +6,7 @@ import androidx.compose.material.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -19,7 +20,7 @@ fun ImageButton(
 ) {
     IconButton(modifier = modifier, onClick = onClick) {
         Image(
-            painterResource(iconName),
+            painterResource(DrawableResource(iconName)),
             contentDescription = title,
             modifier = Modifier.padding(6.dp),
         )

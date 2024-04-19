@@ -1,4 +1,3 @@
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 
 plugins {
@@ -18,8 +17,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.material)
             implementation(compose.ui)
-            implementation("org.jetbrains.compose.components:components-splitpane-desktop:1.5.12")
-            @OptIn(ExperimentalComposeLibrary::class)
+            implementation(libs.compose.splitpane)
             implementation(compose.components.resources)
             implementation(libs.gson)
         }
