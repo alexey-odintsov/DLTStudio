@@ -10,6 +10,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+compose-splitpane = { group = "org.jetbrains.compose.components", name = "components-splitpane-desktop", version.ref = "compose-plugin" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
