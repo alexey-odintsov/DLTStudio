@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
@@ -28,7 +29,7 @@ fun ToggleImageButton(
         checked = checkedState,
         onCheckedChange = { updateCheckedState.invoke(it) }) {
         Image(
-            painterResource(iconName),
+            painterResource(DrawableResource(iconName)),
             contentDescription = title,
             modifier = Modifier.padding(6.dp),
             colorFilter = if (checkedState) {
