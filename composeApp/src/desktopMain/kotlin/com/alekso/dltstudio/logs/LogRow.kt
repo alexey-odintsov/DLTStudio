@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -42,56 +43,56 @@ fun LogRow(
         val updatedCellStyle = if (isSelected) selectedCellStyle else cellStyle
         Row {
             Cell(
-                modifier = Modifier.width(60.dp),
+                modifier = Modifier.width(54.dp).padding(end = 2.dp),
                 textAlign = TextAlign.Right,
                 text = index,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(200.dp),
+                modifier = Modifier.width(180.dp),
                 textAlign = TextAlign.Center,
                 text = datetime,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(80.dp),
+                modifier = Modifier.width(80.dp).padding(end = 2.dp),
                 textAlign = TextAlign.Right,
                 text = timeOffset,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(50.dp),
+                modifier = Modifier.width(46.dp),
                 textAlign = TextAlign.Center,
                 text = ecu,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(50.dp),
+                modifier = Modifier.width(46.dp),
                 textAlign = TextAlign.Center,
                 text = ecuId,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(50.dp),
+                modifier = Modifier.width(46.dp),
                 textAlign = TextAlign.Center,
                 text = sessionId,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(50.dp),
+                modifier = Modifier.width(46.dp),
                 textAlign = TextAlign.Center,
                 text = applicationId,
                 isHeader = isHeader,
                 cellStyle = updatedCellStyle
             )
             Cell(
-                modifier = Modifier.width(45.dp),
+                modifier = Modifier.width(46.dp),
                 textAlign = TextAlign.Center,
                 text = contextId,
                 isHeader = isHeader,
@@ -114,4 +115,26 @@ fun LogRow(
         Divider()
     }
 
+}
+
+@Preview
+@Composable
+fun LogRowPreview() {
+    Column(modifier = Modifier.background(Color.Gray)) {
+        (1..10).forEach { i ->
+            LogRow(
+                modifier = Modifier.fillMaxWidth(),
+                isSelected = false,
+                index = (16_345_345 + i).toString(),
+                datetime = "2024-02-04 18:26:23.074689",
+                timeOffset = "1234",
+                ecu = if (i % 3 == 0) "汉语" else "EcuI",
+                sessionId = "123",
+                applicationId = "AppId",
+                ecuId = "EcuId",
+                contextId = "Con",
+                content = "Content goes here",
+            )
+        }
+    }
 }
