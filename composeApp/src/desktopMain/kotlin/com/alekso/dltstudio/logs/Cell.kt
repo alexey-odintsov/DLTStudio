@@ -2,6 +2,7 @@ package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ fun Cell(
     Text(
         modifier = Modifier
             .padding(end = 1.dp)
+            .height(12.dp)
             .background(
                 if (isHeader) {
                     Color.Transparent
