@@ -114,7 +114,7 @@ fun LogsPanel(
 
 
         VerticalSplitPane(splitPaneState = vSplitterState) {
-            first(300.dp) {
+            first(50.dp) {
                 HorizontalSplitPane(
                     splitPaneState = hSplitterState
                 ) {
