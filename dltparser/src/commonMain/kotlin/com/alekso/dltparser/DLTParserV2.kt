@@ -145,7 +145,11 @@ class DLTParserV2 : DLTParser {
                             stream,
                             if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
                         )
-                        payload.append(verbosePayloadArgument.getPayloadAsText())
+                        val argumentString = verbosePayloadArgument.getPayloadAsText()
+                        if (payload.isNotEmpty() && !payload.endsWith(" ") && !argumentString.startsWith(" ")) {
+                            payload.append(" ")
+                        }
+                        payload.append(argumentString)
                     }
                 } catch (e: Exception) {
                     println("$e SH: $standardHeader; EH: $extendedHeader;")
