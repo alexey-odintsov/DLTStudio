@@ -55,7 +55,8 @@ fun MainWindow(
             LogsToolbarState(
                 toolbarFatalChecked = true,
                 toolbarErrorChecked = true,
-                toolbarWarningChecked = true
+                toolbarWarningChecked = true,
+                toolbarWrapContentChecked = true,
             )
         )
     }
@@ -78,6 +79,10 @@ fun MainWindow(
     val updateToolbarWarningCheck: (Boolean) -> Unit =
         { checked ->
             logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
+        }
+    val updateToolbarWrapContentCheck: (Boolean) -> Unit =
+        { checked ->
+            logsToolbarState = LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
         }
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
@@ -109,6 +114,7 @@ fun MainWindow(
                     updateToolbarFatalCheck = updateToolbarFatalCheck,
                     updateToolbarErrorCheck = updateToolbarErrorCheck,
                     updateToolbarWarningCheck = updateToolbarWarningCheck,
+                    updateToolbarWrapContentCheck = updateToolbarWrapContentCheck,
                     onSearchUseRegexChanged = { mainViewModel.onSearchUseRegexChanged(it) },
                     vSplitterState = vSplitterState,
                     hSplitterState = hSplitterState,

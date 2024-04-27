@@ -64,6 +64,7 @@ fun LogsPanel(
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
+    updateToolbarWrapContentCheck: (Boolean) -> Unit,
     // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
@@ -84,6 +85,7 @@ fun LogsPanel(
             updateToolbarFatalCheck,
             updateToolbarErrorCheck,
             updateToolbarWarningCheck,
+            updateToolbarWrapContentCheck,
             onSearchUseRegexChanged,
             onColorFiltersClicked = { dialogState.value = true }
         )
@@ -126,6 +128,7 @@ fun LogsPanel(
                             logsListSelectedRow,
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
+                            wrapContent = logsToolbarState.toolbarWrapContentChecked
                         )
                     }
                     second(20.dp) {
@@ -166,6 +169,7 @@ fun LogsPanel(
                     searchListSelectedRow,
                     searchListState = searchListState,
                     onSearchRowSelected = onSearchRowSelected,
+                    wrapContent = logsToolbarState.toolbarWrapContentChecked,
                 )
             }
             splitter {
@@ -212,10 +216,12 @@ fun PreviewLogsPanel() {
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
+            toolbarWrapContentChecked = true,
         ),
         updateToolbarFatalCheck = { },
         updateToolbarErrorCheck = { },
         updateToolbarWarningCheck = { },
+        updateToolbarWrapContentCheck = {},
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
         logsListState = LazyListState(),

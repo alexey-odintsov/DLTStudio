@@ -38,7 +38,8 @@ fun LogRow(
     content: String,
     isHeader: Boolean = false,
     cellStyle: CellStyle? = null,
-    logTypeIndicator: LogTypeIndicator? = null
+    logTypeIndicator: LogTypeIndicator? = null,
+    wrapContent: Boolean,
 ) {
     Column(
         modifier = modifier.then(
@@ -66,7 +67,8 @@ fun LogRow(
                 textAlign = TextAlign.Right,
                 text = index,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
@@ -74,15 +76,17 @@ fun LogRow(
                 textAlign = TextAlign.Center,
                 text = datetime,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
-            )
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
+                )
             CellDivider()
             Cell(
                 modifier = Modifier.width(80.dp).padding(end = 2.dp),
                 textAlign = TextAlign.Right,
                 text = timeOffset,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
@@ -90,7 +94,8 @@ fun LogRow(
                 textAlign = TextAlign.Center,
                 text = ecu,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
@@ -98,7 +103,8 @@ fun LogRow(
                 textAlign = TextAlign.Center,
                 text = ecuId,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
@@ -106,7 +112,8 @@ fun LogRow(
                 textAlign = TextAlign.Center,
                 text = sessionId,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
@@ -114,7 +121,8 @@ fun LogRow(
                 textAlign = TextAlign.Center,
                 text = applicationId,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
@@ -122,7 +130,8 @@ fun LogRow(
                 textAlign = TextAlign.Center,
                 text = contextId,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
@@ -130,14 +139,16 @@ fun LogRow(
                 text = logTypeIndicator?.logTypeSymbol ?: "",
                 textAlign = TextAlign.Center,
                 isHeader = isHeader,
-                cellStyle = logTypeIndicator?.logTypeStyle ?: finalCellStyle
+                cellStyle = logTypeIndicator?.logTypeStyle ?: finalCellStyle,
+                wrapContent = wrapContent,
             )
             CellDivider()
             Cell(
                 modifier = Modifier.weight(1f).padding(start = 6.dp),
                 text = content,
                 isHeader = isHeader,
-                cellStyle = finalCellStyle
+                cellStyle = finalCellStyle,
+                wrapContent = wrapContent,
             )
         }
         RowDivider()
@@ -206,7 +217,8 @@ fun LogRowPreview() {
                 logTypeIndicator = if (i == 6) LogTypeIndicator(
                     "F",
                     ColorFilterFatal.cellStyle
-                ) else null
+                ) else null,
+                wrapContent = true,
             )
         }
     }

@@ -33,6 +33,7 @@ fun LazyScrollable(
     selectedRow: Int,
     onRowSelected: (Int, Int) -> Unit,
     listState: LazyListState,
+    wrapContent: Boolean,
 ) {
     Column(modifier = modifier) {
 
@@ -53,6 +54,7 @@ fun LazyScrollable(
                         "appId",
                         "ctxId",
                         "content",
+                        wrapContent = wrapContent,
                     )
                 }
 
@@ -94,7 +96,8 @@ fun LazyScrollable(
                             sContextId,
                             sContent,
                             cellStyle = cellStyle,
-                            logTypeIndicator = logTypeIndicator
+                            logTypeIndicator = logTypeIndicator,
+                            wrapContent = wrapContent,
                         )
                     }
                 }

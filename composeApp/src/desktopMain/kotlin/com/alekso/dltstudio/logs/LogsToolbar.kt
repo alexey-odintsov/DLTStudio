@@ -27,6 +27,7 @@ data class LogsToolbarState(
     val toolbarFatalChecked: Boolean,
     val toolbarErrorChecked: Boolean,
     val toolbarWarningChecked: Boolean,
+    val toolbarWrapContentChecked: Boolean,
 ) {
     companion object {
         fun updateToolbarFatalCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
@@ -40,6 +41,9 @@ data class LogsToolbarState(
         fun updateToolbarWarnCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
             return state.copy(toolbarWarningChecked = newValue)
         }
+        fun updateToolbarWrapContentCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
+            return state.copy(toolbarWrapContentChecked = newValue)
+        }
     }
 }
 
@@ -51,6 +55,7 @@ fun LogsToolbar(
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
+    updateToolbarWrapContentCheck: (Boolean) -> Unit,
     onSearchUseRegexChanged: (Boolean) -> Unit,
     onColorFiltersClicked: () -> Unit,
 ) {
@@ -122,6 +127,15 @@ fun LogsToolbar(
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
+        ToggleImageButton(
+            checkedState = state.toolbarWrapContentChecked,
+            iconName = "icon_w.xml",
+            title = "Wrap content",
+            checkedTintColor = Color(0xE7, 0x62, 0x29),
+            updateCheckedState = updateToolbarWrapContentCheck,
+        )
+
+
     }
 }
 
@@ -133,6 +147,7 @@ fun PreviewLogsToolbar() {
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
+            toolbarWrapContentChecked = true,
         ),
         searchState = SearchState(),
         onSearchButtonClicked = {},
@@ -141,5 +156,6 @@ fun PreviewLogsToolbar() {
         updateToolbarWarningCheck = {},
         onSearchUseRegexChanged = {},
         onColorFiltersClicked = {},
+        updateToolbarWrapContentCheck = {}
     )
 }
