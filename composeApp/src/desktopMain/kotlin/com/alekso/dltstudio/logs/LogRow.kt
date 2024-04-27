@@ -47,7 +47,7 @@ fun LogRow(
         )
     ) {
         val finalCellStyle =
-            if (isSelected) selectedCellStyle else logTypeIndicator?.logTypeStyle ?: cellStyle
+            if (isSelected) selectedCellStyle else cellStyle ?: logTypeIndicator?.logTypeStyle
 
         Row(
             modifier
@@ -135,7 +135,11 @@ fun LogRow(
             )
             CellDivider()
             Cell(
-                modifier = Modifier.width(14.dp),
+                modifier = Modifier.width(14.dp)
+                    .background(
+                        logTypeIndicator?.logTypeStyle?.backgroundColor
+                            ?: finalCellStyle?.backgroundColor ?: Color.Transparent
+                    ),
                 text = logTypeIndicator?.logTypeSymbol ?: "",
                 textAlign = TextAlign.Center,
                 isHeader = isHeader,
