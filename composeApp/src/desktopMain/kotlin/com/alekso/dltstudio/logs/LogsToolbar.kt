@@ -129,9 +129,9 @@ fun LogsToolbar(
 
         ToggleImageButton(
             checkedState = state.toolbarWrapContentChecked,
-            iconName = "icon_w.xml",
+            iconName = "icon_wordwrap.xml",
             title = "Wrap content",
-            checkedTintColor = Color(0xE7, 0x62, 0x29),
+            checkedTintColor = Color.Blue,
             updateCheckedState = updateToolbarWrapContentCheck,
         )
 

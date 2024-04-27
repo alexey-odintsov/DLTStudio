@@ -56,7 +56,7 @@ fun MainWindow(
                 toolbarFatalChecked = true,
                 toolbarErrorChecked = true,
                 toolbarWarningChecked = true,
-                toolbarWrapContentChecked = true,
+                toolbarWrapContentChecked = false,
             )
         )
     }
