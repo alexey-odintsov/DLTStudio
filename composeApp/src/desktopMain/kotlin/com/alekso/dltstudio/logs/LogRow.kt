@@ -46,8 +46,7 @@ fun LogRow(
             Modifier.fillMaxWidth()
         )
     ) {
-        val finalCellStyle =
-            if (isSelected) selectedCellStyle else cellStyle ?: logTypeIndicator?.logTypeStyle
+        val finalCellStyle = if (isSelected) selectedCellStyle else cellStyle
 
         Row(
             modifier
