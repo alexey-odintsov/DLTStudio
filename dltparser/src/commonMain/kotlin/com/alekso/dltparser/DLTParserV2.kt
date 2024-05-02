@@ -192,6 +192,9 @@ class DLTParserV2 : DLTParser {
 //        if (DEBUG_LOG && shouldLog) {
 //            println("")
 //        }
+        if (payload.endsWith("\n")) {
+            payload.deleteCharAt(payload.length - 1)
+        }
 
         return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload.toString(), (i - offset).toInt())
     }

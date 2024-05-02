@@ -18,6 +18,7 @@ fun LogsListPanel(
     selectedRow: Int,
     logsListState: LazyListState,
     onLogsRowSelected: (Int, Int) -> Unit,
+    wrapContent: Boolean,
 ) {
     Panel(
         modifier = modifier,
@@ -31,6 +32,7 @@ fun LogsListPanel(
             selectedRow = selectedRow,
             onRowSelected = onLogsRowSelected,
             listState = logsListState,
+            wrapContent = wrapContent,
         )
     }
 }

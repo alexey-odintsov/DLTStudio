@@ -19,6 +19,7 @@ fun SearchResultsPanel(
     searchResultSelectedRow: Int,
     searchListState: LazyListState,
     onSearchRowSelected: (Int, Int) -> Unit,
+    wrapContent: Boolean,
 ) {
     Panel(
         modifier = modifier,
@@ -32,6 +33,7 @@ fun SearchResultsPanel(
             selectedRow = searchResultSelectedRow,
             onRowSelected = onSearchRowSelected,
             listState = searchListState,
+            wrapContent = wrapContent,
         )
     }
 
