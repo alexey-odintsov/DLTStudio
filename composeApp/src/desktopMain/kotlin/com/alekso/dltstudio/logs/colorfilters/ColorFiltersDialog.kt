@@ -76,7 +76,7 @@ fun ColorFiltersPanel(
 ) {
 
     Column(modifier = Modifier.padding(4.dp)) {
-        LazyColumn {
+        LazyColumn(Modifier.weight(1f)) {
             items(colorFilters.size) { i ->
                 val filter = colorFilters[i]
                 Row(

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -73,7 +74,7 @@ fun ColorFiltersPanel(
 ) {
 
     Column(modifier = Modifier.padding(4.dp)) {
-        LazyColumn {
+        LazyColumn(Modifier.weight(1f)) {
             items(timelineFilters.size) { i ->
                 val filter = timelineFilters[i]
                 Row(
@@ -151,5 +152,7 @@ fun PreviewTimelineFiltersDialog() {
         )
     )
 
-    ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> }, { i -> }, { i, o -> })
+    Column(Modifier.height(300.dp)) {
+        ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> }, { i -> }, { i, o -> })
+    }
 }
