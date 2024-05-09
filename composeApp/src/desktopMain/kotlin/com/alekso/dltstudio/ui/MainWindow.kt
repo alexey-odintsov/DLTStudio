@@ -105,6 +105,7 @@ fun MainWindow(
                 LogsPanel(
                     modifier = Modifier.weight(1f),
                     searchState = searchState,
+                    searchAutoComplete = mainViewModel.searchAutocomplete,
                     dltMessages = mainViewModel.dltMessages,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
