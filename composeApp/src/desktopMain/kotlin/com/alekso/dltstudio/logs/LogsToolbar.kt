@@ -18,7 +18,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.search.SearchState
-import com.alekso.dltstudio.ui.CustomEditText
+import com.alekso.dltstudio.ui.AutoCompleteEditText
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.ToggleImageButton
@@ -51,6 +51,7 @@ data class LogsToolbarState(
 fun LogsToolbar(
     state: LogsToolbarState,
     searchState: SearchState,
+    searchAutoComplete: List<String>,
     onSearchButtonClicked: (String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
@@ -101,7 +102,8 @@ fun LogsToolbar(
             updateCheckedState = onSearchUseRegexChanged
         )
 
-        CustomEditText(modifier = Modifier.width(500.dp).height(20.dp)
+        AutoCompleteEditText(
+            modifier = Modifier.width(500.dp).height(20.dp)
             .onKeyEvent { e ->
                 if (e.key == Key.Enter) {
                     onSearchButtonClicked(text)
@@ -110,9 +112,12 @@ fun LogsToolbar(
                     false
                 }
             },
-            value = text, onValueChange = {
+            value = text,
+            onValueChange = {
                 text = it
-            })
+            },
+            items = searchAutoComplete
+        )
 
         ImageButton(modifier = Modifier.size(32.dp),
             iconName = if (searchState.state == SearchState.State.IDLE) {
@@ -150,12 +155,13 @@ fun PreviewLogsToolbar() {
             toolbarWrapContentChecked = true,
         ),
         searchState = SearchState(),
+        searchAutoComplete = emptyList(),
         onSearchButtonClicked = {},
         updateToolbarFatalCheck = {},
         updateToolbarErrorCheck = {},
         updateToolbarWarningCheck = {},
+        updateToolbarWrapContentCheck = {},
         onSearchUseRegexChanged = {},
-        onColorFiltersClicked = {},
-        updateToolbarWrapContentCheck = {}
+        onColorFiltersClicked = {}
     )
 }

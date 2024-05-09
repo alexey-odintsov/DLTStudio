@@ -32,6 +32,7 @@ class MainViewModel(
 
     val searchResult = mutableStateListOf<DLTMessage>()
     val searchIndexes = mutableStateListOf<Int>()
+    val searchAutocomplete = mutableStateListOf<String>()
 
     private var parseJob: Job? = null
     private var searchJob: Job? = null
@@ -104,7 +105,9 @@ class MainViewModel(
         )
         searchJob = CoroutineScope(IO).launch {
             var prevTs  = System.currentTimeMillis()
-
+            if (!searchAutocomplete.contains(searchText)) {
+                searchAutocomplete.add(searchText)
+            }
             searchResult.clear()
             searchIndexes.clear()
             val startMs = System.currentTimeMillis()

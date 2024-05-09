@@ -52,6 +52,7 @@ fun LogsPanel(
     searchState: SearchState,
     searchResult: List<DLTMessage>,
     searchIndexes: List<Int>,
+    searchAutoComplete: List<String>,
     onSearchButtonClicked: (String) -> Unit,
     onSearchUseRegexChanged: (Boolean) -> Unit,
     // color filters
@@ -81,6 +82,7 @@ fun LogsPanel(
         LogsToolbar(
             logsToolbarState,
             searchState,
+            searchAutoComplete,
             onSearchButtonClicked,
             updateToolbarFatalCheck,
             updateToolbarErrorCheck,
@@ -228,7 +230,8 @@ fun PreviewLogsPanel() {
         searchListState = LazyListState(),
         onLogsRowSelected = { i, r -> },
         onSearchRowSelected = { i, r -> },
-        0,
-        0
+        logsListSelectedRow =0,
+        searchListSelectedRow = 0,
+        searchAutoComplete = emptyList(),
     )
 }
