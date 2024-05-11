@@ -222,7 +222,7 @@ fun EditTimelineFilterPanel(
                     singleLine = false,
                     value = extractPattern ?: "", onValueChange = {
                         extractPattern = it
-                        groupsTestValue = testRegex(extractPattern, testPayload)
+                        groupsTestValue = ExtractorChecker.testRegex(extractPattern, testPayload, TimelineFilter.ExtractorType.valueOf(extractorType))
                     }
                 )
             }
@@ -307,45 +307,6 @@ fun EditTimelineFilterPanel(
         }
 
     }
-}
-
-fun testRegex(extractPattern: String?, testPayload: String?, global: Boolean = false): String {
-    var groupsTestValue = ""
-    if (extractPattern != null && testPayload != null) {
-        try {
-            if (global) {
-                val matches = Regex(extractPattern).findAll(testPayload)
-                groupsTestValue = matches.map { "${it.groups[1]?.value} -> ${it.groups[2]?.value}" }
-                    .joinToString("\n")
-                println("Groups: '$groupsTestValue'")
-            } else {
-                val matches = Regex(extractPattern).find(testPayload)
-                if (matches?.groups == null) {
-                    groupsTestValue = "Empty groups"
-                } else {
-
-                    val matchesText = StringBuilder()
-                    matches.groups.forEachIndexed { index, group ->
-                        if (index > 0 && group != null) {
-                            matchesText.append(group.value)
-                            if (index < matches.groups.size - 1) {
-                                if (index % 2 == 1) {
-                                    matchesText.append(" -> ")
-                                } else {
-                                    matchesText.append("\n")
-                                }
-                            }
-                        }
-                    }
-                    groupsTestValue = matchesText.toString()
-                    println("Groups: '$groupsTestValue'")
-                }
-            }
-        } catch (e: Exception) {
-            groupsTestValue = "Invalid regex ${e.printStackTrace()}"
-        }
-    }
-    return groupsTestValue
 }
 
 @Preview
