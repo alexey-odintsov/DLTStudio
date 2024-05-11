@@ -18,6 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.VisualTransformation
@@ -34,6 +35,8 @@ fun CustomEditText(
     singleLine: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
+
+    val textAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top
 
     BasicTextField(
         modifier = modifier.padding(start = 4.dp, top = 0.dp, end = 2.dp, bottom = 0.dp),
@@ -57,7 +60,7 @@ fun CustomEditText(
                     Box(
                         modifier = Modifier.border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
                             .background(Color.White, RoundedCornerShape(4.dp))
-                            .padding(horizontal = 4.dp).wrapContentHeight()
+                            .padding(horizontal = 4.dp).wrapContentHeight(align = textAlignment)
                     ) {
                         innerTextField()
                     }
@@ -79,7 +82,7 @@ fun PreviewDesktopEditText() {
             Row {
                 Text(text = "${i * 2}")
                 CustomEditText(
-                    modifier = Modifier.width(100.dp).height((i * 2).dp),
+                    modifier = Modifier.width(100.dp).height((i * 3).dp),
                     value = "Hello2", onValueChange = {}
                 )
             }
