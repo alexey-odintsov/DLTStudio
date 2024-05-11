@@ -22,7 +22,7 @@ data class TimelineFilter(
     val extractPattern: String? = null, // regex only
     val diagramType: DiagramType,
     val extractorType: ExtractorType,
-
+    val testClause: String? = null,
     ) {
     enum class AnalyzerType {
         Regex,
