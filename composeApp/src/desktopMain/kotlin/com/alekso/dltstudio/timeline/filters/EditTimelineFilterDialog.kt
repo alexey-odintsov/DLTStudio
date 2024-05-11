@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -90,171 +93,184 @@ fun EditTimelineFilterPanel(
 
     Column(
         Modifier.width(1000.dp).padding(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+
     ) {
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "Name")
-            CustomEditText(
-                modifier = Modifier.width(COL_VALUE),
-                value = filterName, onValueChange = {
-                    filterName = it
-                }
-            )
-        }
-
-        Row {
-            val items = mutableListOf<String>()
-            items.addAll(TimelineFilter.DiagramType.entries.map { it.name })
-            var initialSelection = items.indexOfFirst { it == filter.diagramType.name }
-            if (initialSelection == -1) initialSelection = 0
-
-            Text(modifier = colNameStyle, text = "Diagram Type")
-            CustomDropDown(
-                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
-                items = items,
-                initialSelectedIndex = initialSelection,
-                onItemsSelected = { i -> diagramType = items[i] }
-            )
-        }
-
-        Row {
-            Text(
-                modifier = Modifier.width(COL_PATTERN)
-                    .offset(x = COL_NAME_SIZE_DP)
-                    .padding(horizontal = 4.dp),
-                text = TimelineFilter.DiagramType.entries.first { it.name == diagramType}.description
-            )
-        }
-
-        Row {
-            val items = mutableListOf("Any")
-            items.addAll(MessageInfo.MessageType.entries.map { it.name })
-            var initialSelection =
-                items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
-            if (initialSelection == -1) initialSelection = 0
-
-            Text(modifier = colNameStyle, text = "Message Type")
-            CustomDropDown(
-                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
-                items = items,
-                initialSelectedIndex = initialSelection,
-                onItemsSelected = { i ->
-                    messageType = if (i > 0) {
-                        items[i]
-                    } else null
-                }
-            )
-        }
-
-        Row {
-            val items = mutableListOf("Any")
-            items.addAll(MessageInfo.MessageTypeInfo.entries.map { it.name })
-            var initialSelection =
-                items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
-            if (initialSelection == -1) initialSelection = 0
-
-            Text(modifier = colNameStyle, text = "Message Type Info")
-            CustomDropDown(
-                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
-                items = items,
-                initialSelectedIndex = initialSelection,
-                onItemsSelected = { i ->
-                    messageTypeInfo = if (i > 0) {
-                        items[i]
-                    } else null
-                }
-            )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "ECU ID")
-            CustomEditText(
-                modifier = Modifier.width(COL_VALUE),
-                value = ecuId ?: "", onValueChange = {
-                    ecuId = it
-                }
-            )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "App ID")
-            CustomEditText(
-                modifier = Modifier.width(COL_VALUE),
-                value = appId ?: "", onValueChange = {
-                    appId = it
-                }
-            )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "Context ID")
-            CustomEditText(
-                modifier = Modifier.width(COL_VALUE),
-                value = contextId ?: "", onValueChange = {
-                    contextId = it
-                }
-            )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "Session ID")
-            CustomEditText(
-                modifier = Modifier.width(COL_VALUE),
-                value = sessionId ?: "", onValueChange = {
-                    sessionId = it
-                }
-            )
-        }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "Extract pattern")
-            CustomEditText(
-                modifier = Modifier.width(COL_PATTERN).wrapContentHeight(Alignment.Top),
-                value = extractPattern ?: "", onValueChange = {
-                    extractPattern = it
-                    groupsTestValue = testRegex(extractPattern, testPayload)
-                }
-            )
-        }
-
-
-        Row {
-            val items = mutableListOf<String>()
-            items.addAll(TimelineFilter.ExtractorType.entries.map { it.name })
-            var initialSelection = items.indexOfFirst { it == filter.extractorType.name }
-            if (initialSelection == -1) initialSelection = 0
-
-            Text(modifier = colNameStyle, text = "Extractor type")
-            CustomDropDown(
-                modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
-                items = items,
-                initialSelectedIndex = initialSelection,
-                onItemsSelected = { i -> extractorType = items[i] }
-            )
-        }
-
-        // Regex check
-        Row(
-            modifier = Modifier.padding(top = 20.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.weight(1f)
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            CustomEditText(
-                modifier = Modifier.fillMaxWidth().height(44.dp).align(Alignment.Top),
-                singleLine = false,
-                value = testPayload,
-                onValueChange = {
-                    testPayload = it
-                }
-            )
-        }
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "Groups")
-            Text(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top)
-                    .padding(horizontal = 4.dp),
-                text = groupsTestValue
-            )
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "Name")
+                CustomEditText(
+                    modifier = Modifier.width(COL_VALUE),
+                    value = filterName, onValueChange = {
+                        filterName = it
+                    }
+                )
+            }
+
+            Row {
+                val items = mutableListOf<String>()
+                items.addAll(TimelineFilter.DiagramType.entries.map { it.name })
+                var initialSelection = items.indexOfFirst { it == filter.diagramType.name }
+                if (initialSelection == -1) initialSelection = 0
+
+                Text(modifier = colNameStyle, text = "Diagram Type")
+                CustomDropDown(
+                    modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+                    items = items,
+                    initialSelectedIndex = initialSelection,
+                    onItemsSelected = { i -> diagramType = items[i] }
+                )
+            }
+
+            Row {
+                Text(
+                    modifier = Modifier.width(COL_PATTERN)
+                        .offset(x = COL_NAME_SIZE_DP)
+                        .padding(horizontal = 4.dp),
+                    text = TimelineFilter.DiagramType.entries.first { it.name == diagramType }.description
+                )
+            }
+
+            Row {
+                val items = mutableListOf("Any")
+                items.addAll(MessageInfo.MessageType.entries.map { it.name })
+                var initialSelection =
+                    items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
+                if (initialSelection == -1) initialSelection = 0
+
+                Text(modifier = colNameStyle, text = "Message Type")
+                CustomDropDown(
+                    modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+                    items = items,
+                    initialSelectedIndex = initialSelection,
+                    onItemsSelected = { i ->
+                        messageType = if (i > 0) {
+                            items[i]
+                        } else null
+                    }
+                )
+            }
+
+            Row {
+                val items = mutableListOf("Any")
+                items.addAll(MessageInfo.MessageTypeInfo.entries.map { it.name })
+                var initialSelection =
+                    items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
+                if (initialSelection == -1) initialSelection = 0
+
+                Text(modifier = colNameStyle, text = "Message Type Info")
+                CustomDropDown(
+                    modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+                    items = items,
+                    initialSelectedIndex = initialSelection,
+                    onItemsSelected = { i ->
+                        messageTypeInfo = if (i > 0) {
+                            items[i]
+                        } else null
+                    }
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "ECU ID")
+                CustomEditText(
+                    modifier = Modifier.width(COL_VALUE),
+                    value = ecuId ?: "", onValueChange = {
+                        ecuId = it
+                    }
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "App ID")
+                CustomEditText(
+                    modifier = Modifier.width(COL_VALUE),
+                    value = appId ?: "", onValueChange = {
+                        appId = it
+                    }
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "Context ID")
+                CustomEditText(
+                    modifier = Modifier.width(COL_VALUE),
+                    value = contextId ?: "", onValueChange = {
+                        contextId = it
+                    }
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "Session ID")
+                CustomEditText(
+                    modifier = Modifier.width(COL_VALUE),
+                    value = sessionId ?: "", onValueChange = {
+                        sessionId = it
+                    }
+                )
+            }
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "Extract pattern")
+            }
+            Row {
+                CustomEditText(
+                    modifier = Modifier.wrapContentHeight(Alignment.Top).fillMaxWidth()
+                        .align(Alignment.Top),
+                    singleLine = false,
+                    value = extractPattern ?: "", onValueChange = {
+                        extractPattern = it
+                        groupsTestValue = testRegex(extractPattern, testPayload)
+                    }
+                )
+            }
+
+
+            Row {
+                val items = mutableListOf<String>()
+                items.addAll(TimelineFilter.ExtractorType.entries.map { it.name })
+                var initialSelection = items.indexOfFirst { it == filter.extractorType.name }
+                if (initialSelection == -1) initialSelection = 0
+
+                Text(modifier = colNameStyle, text = "Extractor type")
+                CustomDropDown(
+                    modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+                    items = items,
+                    initialSelectedIndex = initialSelection,
+                    onItemsSelected = { i -> extractorType = items[i] }
+                )
+            }
+
+            // Regex check
+            Divider(modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "Regex check")
+            }
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CustomEditText(
+                    modifier = Modifier.fillMaxWidth().height(44.dp).align(Alignment.Top),
+                    singleLine = false,
+                    value = testPayload,
+                    onValueChange = {
+                        testPayload = it
+                    }
+                )
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "Groups:")
+                Text(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top)
+                        .padding(horizontal = 4.dp),
+                    text = groupsTestValue
+                )
+            }
         }
 
         CustomButton(onClick = {
@@ -340,7 +356,7 @@ fun PreviewEditTimelineFilterDialog() {
     val filter = TimelineFilter(
         name = "CPU Usage by PID", enabled = true,
         filters = mutableMapOf(),
-        extractPattern = "(cpu\\d+: \\d+\\.\\d+)%",
+        extractPattern = """(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?""",
         diagramType = TimelineFilter.DiagramType.Percentage,
         extractorType = TimelineFilter.ExtractorType.KeyValueNamed
     )
@@ -349,7 +365,7 @@ fun PreviewEditTimelineFilterDialog() {
         EditTimelineFilterPanel(
             filter,
             0,
-            { i, f -> },
+            { _, _ -> },
             {},
             "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%"
         )
