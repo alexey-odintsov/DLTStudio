@@ -310,7 +310,20 @@ fun testRegex(extractPattern: String?, testPayload: String, global: Boolean = fa
                     groupsTestValue = "Empty groups"
                 } else {
 
-                    groupsTestValue = "${matches.groups[1]?.value} -> ${matches.groups[2]?.value}"
+                    val matchesText = StringBuilder()
+                    matches.groups.forEachIndexed { index, group ->
+                        if (index > 0 && group != null) {
+                            matchesText.append(group.value)
+                            if (index < matches.groups.size - 1) {
+                                if (index % 2 == 1) {
+                                    matchesText.append(" -> ")
+                                } else {
+                                    matchesText.append("\n")
+                                }
+                            }
+                        }
+                    }
+                    groupsTestValue = matchesText.toString()
                     println("Groups: '$groupsTestValue'")
                 }
             }
