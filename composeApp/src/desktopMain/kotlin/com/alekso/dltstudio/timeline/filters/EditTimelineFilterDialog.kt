@@ -222,7 +222,12 @@ fun EditTimelineFilterPanel(
                     singleLine = false,
                     value = extractPattern ?: "", onValueChange = {
                         extractPattern = it
-                        groupsTestValue = ExtractorChecker.testRegex(extractPattern, testPayload, TimelineFilter.ExtractorType.valueOf(extractorType))
+                        groupsTestValue = ExtractorChecker.testRegex(
+                            extractPattern = extractPattern,
+                            testPayload = testPayload,
+                            diagramType = TimelineFilter.DiagramType.valueOf(diagramType),
+                            extractorType = TimelineFilter.ExtractorType.valueOf(extractorType),
+                        )
                     }
                 )
             }
