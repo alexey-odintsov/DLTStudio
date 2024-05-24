@@ -7,20 +7,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ImageButton(
     modifier: Modifier = Modifier,
-    iconName: String,
+    icon: DrawableResource,
     title: String,
     onClick: () -> Unit
 ) {
     IconButton(modifier = modifier, onClick = onClick) {
         Image(
-            painterResource(DrawableResource(iconName)),
+            painterResource(icon),
             contentDescription = title,
             modifier = Modifier.padding(6.dp),
         )

@@ -1,7 +1,7 @@
 [versions]
-compose-plugin = "1.6.2" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
+compose-plugin = "1.6.10" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
 junit = "4.13.2"
-kotlin = "1.9.21"
+kotlin = "1.9.24"
 org-jetbrains-kotlin-jvm = "1.9.21"
 gson = "2.8.6"
 

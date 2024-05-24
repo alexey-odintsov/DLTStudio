@@ -25,6 +25,11 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.ImageButton
+import dtlstudio.composeapp.generated.resources.Res
+import dtlstudio.composeapp.generated.resources.icon_delete
+import dtlstudio.composeapp.generated.resources.icon_down
+import dtlstudio.composeapp.generated.resources.icon_edit
+import dtlstudio.composeapp.generated.resources.icon_up
 
 
 @Composable
@@ -85,12 +90,12 @@ fun ColorFiltersPanel(
                 ) {
 
                     ImageButton(modifier = Modifier.size(28.dp),
-                        iconName = "icon_up.xml",
+                        icon = Res.drawable.icon_up,
                         title = "Move Up",
                         onClick = { onColorFilterMove(i, -1) })
 
                     ImageButton(modifier = Modifier.size(28.dp),
-                        iconName = "icon_down.xml",
+                        icon = Res.drawable.icon_down,
                         title = "Move Down",
                         onClick = { onColorFilterMove(i, 1) })
 
@@ -119,12 +124,12 @@ fun ColorFiltersPanel(
                     }
 
                     ImageButton(modifier = Modifier.size(28.dp),
-                        iconName = "icon_edit.xml",
+                        icon = Res.drawable.icon_edit,
                         title = "Edit",
                         onClick = { onEditFilterClick(i, filter) })
 
                     ImageButton(modifier = Modifier.size(28.dp),
-                        iconName = "icon_delete.xml",
+                        icon = Res.drawable.icon_delete,
                         title = "Delete",
                         onClick = { onFilterDelete(i) })
                 }

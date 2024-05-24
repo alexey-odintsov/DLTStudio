@@ -10,16 +10,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
+import dtlstudio.composeapp.generated.resources.Res
+import dtlstudio.composeapp.generated.resources.icon_w
 import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun ToggleImageButton(
     modifier: Modifier = Modifier.size(32.dp),
     checkedState: Boolean,
-    iconName: String,
+    icon: DrawableResource,
     title: String,
     updateCheckedState: (Boolean) -> Unit,
     checkedTintColor: Color = Color.DarkGray,
@@ -29,7 +29,7 @@ fun ToggleImageButton(
         checked = checkedState,
         onCheckedChange = { updateCheckedState.invoke(it) }) {
         Image(
-            painterResource(DrawableResource(iconName)),
+            painterResource(icon),
             contentDescription = title,
             modifier = Modifier.padding(6.dp),
             colorFilter = if (checkedState) {
@@ -45,7 +45,7 @@ fun ToggleImageButton(
 @Composable
 fun PreviewToggleImageButton() {
     ToggleImageButton(checkedState = true,
-        iconName = "icon_w.xml",
+        icon = Res.drawable.icon_w,
         title = "Title",
         checkedTintColor = Color.Red,
         updateCheckedState = {}

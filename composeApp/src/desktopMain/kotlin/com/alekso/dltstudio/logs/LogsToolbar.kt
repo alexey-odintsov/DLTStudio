@@ -22,6 +22,15 @@ import com.alekso.dltstudio.ui.AutoCompleteEditText
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.ToggleImageButton
+import dtlstudio.composeapp.generated.resources.Res
+import dtlstudio.composeapp.generated.resources.icon_color_filters
+import dtlstudio.composeapp.generated.resources.icon_e
+import dtlstudio.composeapp.generated.resources.icon_f
+import dtlstudio.composeapp.generated.resources.icon_regex
+import dtlstudio.composeapp.generated.resources.icon_search
+import dtlstudio.composeapp.generated.resources.icon_stop
+import dtlstudio.composeapp.generated.resources.icon_w
+import dtlstudio.composeapp.generated.resources.icon_wordwrap
 
 data class LogsToolbarState(
     val toolbarFatalChecked: Boolean,
@@ -64,21 +73,21 @@ fun LogsToolbar(
     Row(verticalAlignment = Alignment.CenterVertically) {
         ToggleImageButton(
             checkedState = state.toolbarFatalChecked,
-            iconName = "icon_f.xml",
+            icon = Res.drawable.icon_f,
             title = "Enable fatal logs highlight",
             checkedTintColor = Color.Red,
             updateCheckedState = updateToolbarFatalCheck
         )
         ToggleImageButton(
             checkedState = state.toolbarErrorChecked,
-            iconName = "icon_e.xml",
+            icon = Res.drawable.icon_e,
             title = "Enable error logs highlight",
             checkedTintColor = Color.Red,
             updateCheckedState = updateToolbarErrorCheck
         )
         ToggleImageButton(
             checkedState = state.toolbarWarningChecked,
-            iconName = "icon_w.xml",
+            icon = Res.drawable.icon_w,
             title = "Enable warning logs highlight",
             checkedTintColor = Color(0xE7, 0x62, 0x29),
             updateCheckedState = updateToolbarWarningCheck
@@ -86,7 +95,7 @@ fun LogsToolbar(
 
         ImageButton(
             modifier = Modifier.size(32.dp),
-            iconName = "icon_color_filters.xml",
+            icon = Res.drawable.icon_color_filters,
             title = "Color filters",
             onClick = onColorFiltersClicked
         )
@@ -96,7 +105,7 @@ fun LogsToolbar(
         var text by rememberSaveable { mutableStateOf(searchState.searchText) }
         ToggleImageButton(
             checkedState = searchState.searchUseRegex,
-            iconName = "icon_regex.xml",
+            icon = Res.drawable.icon_regex,
             title = "Use Regex or Plain text search",
             checkedTintColor = Color.Blue,
             updateCheckedState = onSearchUseRegexChanged
@@ -120,10 +129,10 @@ fun LogsToolbar(
         )
 
         ImageButton(modifier = Modifier.size(32.dp),
-            iconName = if (searchState.state == SearchState.State.IDLE) {
-                "icon_search.xml"
+            icon = if (searchState.state == SearchState.State.IDLE) {
+                Res.drawable.icon_search
             } else {
-                "icon_stop.xml"
+                Res.drawable.icon_stop
             },
             title = "Search",
             onClick = {
@@ -134,7 +143,7 @@ fun LogsToolbar(
 
         ToggleImageButton(
             checkedState = state.toolbarWrapContentChecked,
-            iconName = "icon_wordwrap.xml",
+            icon = Res.drawable.icon_wordwrap,
             title = "Wrap content",
             checkedTintColor = Color.Blue,
             updateCheckedState = updateToolbarWrapContentCheck,
