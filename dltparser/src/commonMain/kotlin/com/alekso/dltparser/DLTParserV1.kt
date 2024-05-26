@@ -8,12 +8,17 @@ import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
 import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.ExtendedHeader
-import com.alekso.dltparser.dlt.MessageInfo
-import com.alekso.dltparser.dlt.NonVerbosePayload
+import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
+import com.alekso.dltparser.dlt.extendedheader.MessageInfo
+import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
 import com.alekso.dltparser.dlt.Payload
-import com.alekso.dltparser.dlt.StandardHeader
-import com.alekso.dltparser.dlt.VerbosePayload
+import com.alekso.dltparser.dlt.extendedheader.MessageType
+import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
+import com.alekso.dltparser.dlt.standardheader.HeaderType
+import com.alekso.dltparser.dlt.standardheader.StandardHeader
+import com.alekso.dltparser.dlt.verbosepayload.Argument
+import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
+import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 import java.io.File
 
 
@@ -96,7 +101,7 @@ class DLTParserV1: DLTParser {
         var payload: Payload? = null
         if (extendedHeader != null) {
             if (extendedHeader.messageInfo.verbose) {
-                val arguments = mutableListOf<VerbosePayload.Argument>()
+                val arguments = mutableListOf<Argument>()
                 if (DEBUG_LOG && shouldLog) {
                     println(
                         "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
@@ -128,7 +133,7 @@ class DLTParserV1: DLTParser {
                 i += payloadSize
                 payload = VerbosePayload(arguments)
 
-            } else if (extendedHeader.messageInfo.messageType == MessageInfo.MessageType.DLT_TYPE_CONTROL) {
+            } else if (extendedHeader.messageInfo.messageType == MessageType.DLT_TYPE_CONTROL) {
                 val payloadSize =
                     standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
                 val messageId: Int = bytes.readInt(
@@ -137,7 +142,7 @@ class DLTParserV1: DLTParser {
                 )
                 var response: Int? = null
                 var payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
-                if (extendedHeader.messageInfo.messageTypeInfo == MessageInfo.MessageTypeInfo.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
+                if (extendedHeader.messageInfo.messageTypeInfo == MessageTypeInfo.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
                     response = bytes[i + payloadOffset].toInt()
                     payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
                 }
@@ -192,7 +197,7 @@ class DLTParserV1: DLTParser {
         )
     }
 
-    private fun parseStandardHeaderType(shouldLog: Boolean, byte: Byte): StandardHeader.HeaderType {
+    private fun parseStandardHeaderType(shouldLog: Boolean, byte: Byte): HeaderType {
         val useExtendedHeader = byte.isBitSet(0)
         val payloadBigEndian = byte.isBitSet(1)
         val withEcuId = byte.isBitSet(2)
@@ -208,7 +213,7 @@ class DLTParserV1: DLTParser {
             )
         }
 
-        return StandardHeader.HeaderType(
+        return HeaderType(
             byte,
             useExtendedHeader,
             payloadBigEndian,
@@ -259,7 +264,7 @@ class DLTParserV1: DLTParser {
 
     fun parseVerbosePayload(
         shouldLog: Boolean, j: Int, bytes: ByteArray, i: Int, payloadEndian: Endian
-    ): VerbosePayload.Argument {
+    ): Argument {
         if (DEBUG_LOG && shouldLog) {
             println(
                 "   $j: Argument.parse ($payloadEndian):  ${bytes.sliceArray(i..i + 20).toHex()}"
@@ -311,7 +316,7 @@ class DLTParserV1: DLTParser {
         val payload =
             bytes.sliceArray(i + 4 + additionalSize..if (toIndex < bytes.size) toIndex else bytes.size - 1)
 
-        val argument = VerbosePayload.Argument(
+        val argument = Argument(
             typeInfoInt, typeInfo, additionalSize, payloadSize, payload
         )
 
@@ -326,7 +331,7 @@ class DLTParserV1: DLTParser {
 
     fun parseVerbosePayloadTypeInfo(
         shouldLog: Boolean, typeInfoInt: Int, payloadEndian: Endian
-    ): VerbosePayload.TypeInfo {
+    ): TypeInfo {
         val typeLengthBits = when (typeInfoInt and 0b1111) {
             0b0001 -> 8
             0b0010 -> 16
@@ -337,9 +342,9 @@ class DLTParserV1: DLTParser {
         }
 
         val stringCoding = when (typeInfoInt.shr(15) and STRING_CODING_MASK) {
-            0 -> VerbosePayload.TypeInfo.StringCoding.ASCII
-            1 -> VerbosePayload.TypeInfo.StringCoding.UTF8
-            else -> VerbosePayload.TypeInfo.StringCoding.RESERVED
+            0 -> TypeInfo.StringCoding.ASCII
+            1 -> TypeInfo.StringCoding.UTF8
+            else -> TypeInfo.StringCoding.RESERVED
         }
 
         if (DEBUG_LOG && shouldLog) {
@@ -352,7 +357,7 @@ class DLTParserV1: DLTParser {
             )
         }
 
-        return VerbosePayload.TypeInfo(
+        return TypeInfo(
             typeLengthBits,
             typeBool = typeInfoInt.isBitSet(4),
             typeSigned = typeInfoInt.isBitSet(5),

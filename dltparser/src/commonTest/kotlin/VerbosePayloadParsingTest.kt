@@ -1,6 +1,6 @@
 import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltparser.Endian
-import com.alekso.dltparser.dlt.VerbosePayload
+import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 import com.alekso.dltparser.readInt
 import org.junit.Assert
 import org.junit.Test

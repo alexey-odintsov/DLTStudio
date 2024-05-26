@@ -1,10 +1,10 @@
 package testdata
 
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.ExtendedHeader
-import com.alekso.dltparser.dlt.MessageInfo
-import com.alekso.dltparser.dlt.StandardHeader
-import com.alekso.dltparser.dlt.VerbosePayload
+import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
+import com.alekso.dltparser.dlt.extendedheader.MessageInfo
+import com.alekso.dltparser.dlt.standardheader.StandardHeader
+import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 
 object TestData {
 

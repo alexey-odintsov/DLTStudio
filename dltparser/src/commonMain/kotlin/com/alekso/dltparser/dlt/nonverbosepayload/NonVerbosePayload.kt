@@ -1,5 +1,6 @@
-package com.alekso.dltparser.dlt
+package com.alekso.dltparser.dlt.nonverbosepayload
 
+import com.alekso.dltparser.dlt.Payload
 import com.alekso.dltparser.toHex
 
 data class NonVerbosePayload(

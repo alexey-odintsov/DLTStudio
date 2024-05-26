@@ -26,7 +26,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltparser.dlt.MessageInfo
+import com.alekso.dltparser.dlt.extendedheader.MessageType
+import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
@@ -134,7 +135,7 @@ fun EditTimelineFilterPanel(
 
             Row {
                 val items = mutableListOf("Any")
-                items.addAll(MessageInfo.MessageType.entries.map { it.name })
+                items.addAll(MessageType.entries.map { it.name })
                 var initialSelection =
                     items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
                 if (initialSelection == -1) initialSelection = 0
@@ -154,7 +155,7 @@ fun EditTimelineFilterPanel(
 
             Row {
                 val items = mutableListOf("Any")
-                items.addAll(MessageInfo.MessageTypeInfo.entries.map { it.name })
+                items.addAll(MessageTypeInfo.entries.map { it.name })
                 var initialSelection =
                     items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
                 if (initialSelection == -1) initialSelection = 0

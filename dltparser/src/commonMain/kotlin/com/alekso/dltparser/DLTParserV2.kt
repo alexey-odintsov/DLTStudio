@@ -10,11 +10,15 @@ import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
 import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.ExtendedHeader
-import com.alekso.dltparser.dlt.MessageInfo
-import com.alekso.dltparser.dlt.NonVerbosePayload
-import com.alekso.dltparser.dlt.StandardHeader
-import com.alekso.dltparser.dlt.VerbosePayload
+import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
+import com.alekso.dltparser.dlt.extendedheader.MessageInfo
+import com.alekso.dltparser.dlt.extendedheader.MessageType
+import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
+import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
+import com.alekso.dltparser.dlt.standardheader.HeaderType
+import com.alekso.dltparser.dlt.standardheader.StandardHeader
+import com.alekso.dltparser.dlt.verbosepayload.Argument
+import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
 import java.io.EOFException
 import java.io.File
 
@@ -156,7 +160,7 @@ class DLTParserV2 : DLTParser {
                 }
                 i += payloadSize
 
-            } else if (extendedHeader.messageInfo.messageType == MessageInfo.MessageType.DLT_TYPE_CONTROL) {
+            } else if (extendedHeader.messageInfo.messageType == MessageType.DLT_TYPE_CONTROL) {
                 val payloadSize =
                     standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
                 val messageId: Int = if (standardHeader.headerType.payloadBigEndian) {
@@ -166,7 +170,7 @@ class DLTParserV2 : DLTParser {
                 }
                 var response: Int? = null
                 var payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
-                if (extendedHeader.messageInfo.messageTypeInfo == MessageInfo.MessageTypeInfo.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
+                if (extendedHeader.messageInfo.messageTypeInfo == MessageTypeInfo.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
                     response = stream.readByte().toInt()
                     payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
                 }
@@ -227,7 +231,7 @@ class DLTParserV2 : DLTParser {
         )
     }
 
-    private fun parseStandardHeaderType(shouldLog: Boolean, byte: Byte): StandardHeader.HeaderType {
+    private fun parseStandardHeaderType(shouldLog: Boolean, byte: Byte): HeaderType {
         val useExtendedHeader = byte.isBitSet(0)
         val payloadBigEndian = byte.isBitSet(1)
         val withEcuId = byte.isBitSet(2)
@@ -243,7 +247,7 @@ class DLTParserV2 : DLTParser {
             )
         }
 
-        return StandardHeader.HeaderType(
+        return HeaderType(
             byte,
             useExtendedHeader,
             payloadBigEndian,
@@ -292,7 +296,7 @@ class DLTParserV2 : DLTParser {
 
     private fun parseVerbosePayload(
         shouldLog: Boolean, stream: ParserInputStream, payloadEndian: Endian
-    ): VerbosePayload.Argument {
+    ): Argument {
         val typeInfoInt = if (payloadEndian == Endian.LITTLE) {
             stream.readIntLittle()
         } else {
@@ -340,7 +344,7 @@ class DLTParserV2 : DLTParser {
 
         val payload = stream.readNBytes(payloadSize)
 
-        val argument = VerbosePayload.Argument(
+        val argument = Argument(
             typeInfoInt, typeInfo, additionalSize, payloadSize, payload
         )
 
@@ -355,7 +359,7 @@ class DLTParserV2 : DLTParser {
 
     private fun parseVerbosePayloadTypeInfo(
         shouldLog: Boolean, typeInfoInt: Int, payloadEndian: Endian
-    ): VerbosePayload.TypeInfo {
+    ): TypeInfo {
         val typeLengthBits = when (typeInfoInt and 0b1111) {
             0b0001 -> 8
             0b0010 -> 16
@@ -366,9 +370,9 @@ class DLTParserV2 : DLTParser {
         }
 
         val stringCoding = when (typeInfoInt.shr(15) and STRING_CODING_MASK) {
-            0 -> VerbosePayload.TypeInfo.StringCoding.ASCII
-            1 -> VerbosePayload.TypeInfo.StringCoding.UTF8
-            else -> VerbosePayload.TypeInfo.StringCoding.RESERVED
+            0 -> TypeInfo.StringCoding.ASCII
+            1 -> TypeInfo.StringCoding.UTF8
+            else -> TypeInfo.StringCoding.RESERVED
         }
 
         if (DEBUG_LOG && shouldLog) {
@@ -381,7 +385,7 @@ class DLTParserV2 : DLTParser {
             )
         }
 
-        return VerbosePayload.TypeInfo(
+        return TypeInfo(
             typeLengthBits,
             typeBool = typeInfoInt.isBitSet(4),
             typeSigned = typeInfoInt.isBitSet(5),

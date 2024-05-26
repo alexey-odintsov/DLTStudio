@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.ExtendedHeader
+import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.toBinary
 import com.alekso.dltparser.toHex
 

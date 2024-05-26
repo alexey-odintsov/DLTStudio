@@ -2,7 +2,7 @@ package com.alekso.dltstudio.logs.colorfilters
 
 import androidx.compose.ui.graphics.Color
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.MessageInfo
+import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.CellStyle
 
 enum class FilterParameter {
@@ -90,7 +90,7 @@ val ColorFilterWarn = ColorFilter(
     "Warn",
     mapOf(
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            MessageInfo.MessageTypeInfo.DLT_LOG_WARN.name,
+            MessageTypeInfo.DLT_LOG_WARN.name,
             TextCriteria.PlainText
         )
     ),
@@ -100,7 +100,7 @@ val ColorFilterError = ColorFilter(
     "Error",
     mapOf(
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            MessageInfo.MessageTypeInfo.DLT_LOG_DLT_ERROR.name,
+            MessageTypeInfo.DLT_LOG_DLT_ERROR.name,
             TextCriteria.PlainText
         )
     ),
@@ -110,7 +110,7 @@ val ColorFilterFatal = ColorFilter(
     "Fatal",
     mapOf(
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            MessageInfo.MessageTypeInfo.DLT_LOG_FATAL.name,
+            MessageTypeInfo.DLT_LOG_FATAL.name,
             TextCriteria.PlainText
         )
     ),
