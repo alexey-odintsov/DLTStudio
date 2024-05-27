@@ -3,7 +3,12 @@ package testdata
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
+import com.alekso.dltparser.dlt.extendedheader.MessageType
+import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
+import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
+import com.alekso.dltparser.dlt.verbosepayload.Argument
+import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
 import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 
 object TestData {
@@ -23,7 +28,7 @@ object TestData {
     internal val DLT_MESSAGE_1_PARSED = DLTMessage(
         1703251206316811, "MGUA",
         StandardHeader(
-            StandardHeader.HeaderType(
+            HeaderType(
                 61.toByte(),
                 useExtendedHeader = true,
                 payloadBigEndian = false,
@@ -38,24 +43,24 @@ object TestData {
             MessageInfo(
                 65.toByte(),
                 true,
-                MessageInfo.MessageType.DLT_TYPE_LOG,
-                MessageInfo.MessageTypeInfo.DLT_LOG_INFO
+                MessageType.DLT_TYPE_LOG,
+                MessageTypeInfo.DLT_LOG_INFO
             ), 1U, "SGFX", "COMP"
         ),
         VerbosePayload(
             listOf(
-                VerbosePayload.Argument(
+                Argument(
                     512,
-                    VerbosePayload.TypeInfo(
+                    TypeInfo(
                         typeString = true,
-                        stringCoding = VerbosePayload.TypeInfo.StringCoding.ASCII
+                        stringCoding = TypeInfo.StringCoding.ASCII
                     ),
                     2,
                     63,
                     "Page flip enqueued on connector 260 with handler 0x73d8005740${0x0a.toChar()}${0x00.toChar()}".toByteArray()
                 )
             )
-        ),
+        ).asText(),
         111
     )
 
@@ -80,7 +85,7 @@ object TestData {
     internal val DLT_MESSAGE_2_PARSED = DLTMessage(
         1703251206318905, "MGUA",
         StandardHeader(
-            StandardHeader.HeaderType(
+            HeaderType(
                 61.toByte(),
                 useExtendedHeader = true,
                 payloadBigEndian = false,
@@ -95,24 +100,24 @@ object TestData {
             MessageInfo(
                 65.toByte(),
                 true,
-                MessageInfo.MessageType.DLT_TYPE_LOG,
-                MessageInfo.MessageTypeInfo.DLT_LOG_INFO
+                MessageType.DLT_TYPE_LOG,
+                MessageTypeInfo.DLT_LOG_INFO
             ), 1U, "ARC", "ARC"
         ),
         VerbosePayload(
             listOf(
-                VerbosePayload.Argument(
+                Argument(
                     512,
-                    VerbosePayload.TypeInfo(
+                    TypeInfo(
                         typeString = true,
-                        stringCoding = VerbosePayload.TypeInfo.StringCoding.ASCII
+                        stringCoding = TypeInfo.StringCoding.ASCII
                     ),
                     2,
                     164,
                     "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A${0x0a.toChar()}${0x00.toChar()}".toByteArray()
                 )
             )
-        ),
+        ).asText(),
         212
     )
 
@@ -148,7 +153,7 @@ object TestData {
     internal val DLT_MESSAGE_BROKEN_1_PARSED = DLTMessage(
         1706459941654402, "UH\u0001\u0001",
         StandardHeader(
-            StandardHeader.HeaderType(
+            HeaderType(
                 61.toByte(),
                 useExtendedHeader = true,
                 payloadBigEndian = false,
@@ -163,24 +168,24 @@ object TestData {
             MessageInfo(
                 67.toByte(),
                 true,
-                MessageInfo.MessageType.DLT_TYPE_APP_TRACE,
-                MessageInfo.MessageTypeInfo.DLT_TRACE_STATE
+                MessageType.DLT_TYPE_APP_TRACE,
+                MessageTypeInfo.DLT_TRACE_STATE
             ), 85U, "SGFX", "COMP"
         ),
         VerbosePayload(
             listOf(
-                VerbosePayload.Argument(
+                Argument(
                     512,
-                    VerbosePayload.TypeInfo(
+                    TypeInfo(
                         typeString = true,
-                        stringCoding = VerbosePayload.TypeInfo.StringCoding.ASCII
+                        stringCoding = TypeInfo.StringCoding.ASCII
                     ),
                     2,
                     63,
                     "Page flip enqueued on connector 260 with handler 0x73d8005740${0x0a.toChar()}${0x00.toChar()}".toByteArray()
                 )
             )
-        ),
+        ).asText(),
         84
     )
 }
