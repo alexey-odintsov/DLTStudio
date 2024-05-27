@@ -166,7 +166,18 @@ class DLTParserV1: DLTParser {
             println("")
         }
 
-        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload?.asText() ?: "", i - offset)
+        val payloadString = payload?.asText() ?: ""
+        if (payloadString.endsWith("\n")) {
+            payloadString.removeRange(payloadString.length - 2..<payloadString.length)
+        }
+        return DLTMessage(
+            timeStampNano,
+            ecuId,
+            standardHeader,
+            extendedHeader,
+            payloadString,
+            i - offset
+        )
     }
 
     private fun parseStandardHeader(shouldLog: Boolean, bytes: ByteArray, i: Int): StandardHeader {

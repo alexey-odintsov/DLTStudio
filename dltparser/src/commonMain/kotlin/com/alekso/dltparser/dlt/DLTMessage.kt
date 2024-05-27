@@ -25,7 +25,7 @@ data class DLTMessage(
         return "{$timeStampNano, '$ecuId'\n" +
                 " $standardHeader\n" +
                 " $extendedHeader}\n" +
-                " $payload}\n" +
+                " '$payload'}\n" +
                 " meta size bytes: $sizeBytes"
     }
 }
