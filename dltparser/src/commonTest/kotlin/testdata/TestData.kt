@@ -57,7 +57,7 @@ object TestData {
                     ),
                     2,
                     63,
-                    "Page flip enqueued on connector 260 with handler 0x73d8005740${0x0a.toChar()}${0x00.toChar()}".toByteArray()
+                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
                 )
             )
         ).asText(),
@@ -114,7 +114,7 @@ object TestData {
                     ),
                     2,
                     164,
-                    "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A${0x0a.toChar()}${0x00.toChar()}".toByteArray()
+                    "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A".toByteArray()
                 )
             )
         ).asText(),
@@ -182,7 +182,7 @@ object TestData {
                     ),
                     2,
                     63,
-                    "Page flip enqueued on connector 260 with handler 0x73d8005740${0x0a.toChar()}${0x00.toChar()}".toByteArray()
+                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
                 )
             )
         ).asText(),

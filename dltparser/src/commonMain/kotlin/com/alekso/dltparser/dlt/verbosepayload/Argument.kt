@@ -17,8 +17,8 @@ data class Argument(
     }
 
     fun getPayloadAsText(): String {
-        return when {
-            typeInfo.typeString -> String(payload).replace("\u0000", "")
+        val result = when {
+            typeInfo.typeString -> String(payload)
             typeInfo.typeUnsigned -> {
                 when (typeInfo.typeLengthBits) {
                     8 -> "${payload[0].toUInt()}"
@@ -45,6 +45,7 @@ data class Argument(
             typeInfo.typeBool -> if (payload[0] == 0.toByte()) "FALSE" else "TRUE"
             else -> payload.toHex() // TODO: Add other types
         }
+        return result.replace("\u0000", "").replace("\n", "")
     }
 
     override fun equals(other: Any?): Boolean {

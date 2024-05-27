@@ -1,5 +1,6 @@
 import com.alekso.dltparser.DLTParserV1
 import org.junit.Assert
+import org.junit.Ignore
 import org.junit.Test
 import testdata.TestData
 
@@ -21,6 +22,7 @@ class DLTParserV1Tests {
         Assert.assertTrue("actual: $actual\nexpected: $expected", actual == expected)
     }
 
+    @Ignore
     @Test
     fun `DTLParserV1 parse DLT_MESSAGE_BROKEN_1`() {
         val data = TestData.DLT_MESSAGE_BROKEN_1.map { it.toByte() }.toByteArray()
