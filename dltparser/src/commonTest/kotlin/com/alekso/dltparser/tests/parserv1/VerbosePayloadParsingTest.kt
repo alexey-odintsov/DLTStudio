@@ -1,3 +1,5 @@
+package com.alekso.dltparser.tests.parserv1
+
 import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltparser.Endian
 import com.alekso.dltparser.dlt.verbosepayload.Argument

@@ -1,3 +1,5 @@
+package com.alekso.dltparser.tests
+
 import com.alekso.dltparser.Endian
 import com.alekso.dltparser.readInt
 import com.alekso.dltparser.readUShort
