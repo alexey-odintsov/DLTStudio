@@ -1,8 +1,10 @@
+package com.alekso.dltparser.tests.parserv1
+
 import com.alekso.dltparser.DLTParserV1
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
-import testdata.TestData
+import com.alekso.dltparser.tests.testdata.TestData
 
 class DLTParserV1Tests {
 

@@ -1,4 +1,4 @@
-package testdata
+package com.alekso.dltparser.tests.testdata
 
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader

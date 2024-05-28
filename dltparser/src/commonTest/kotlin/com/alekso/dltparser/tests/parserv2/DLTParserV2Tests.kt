@@ -1,9 +1,11 @@
+package com.alekso.dltparser.tests.parserv2
+
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.ParserInputStream
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
-import testdata.TestData
+import com.alekso.dltparser.tests.testdata.TestData
 
 class DLTParserV2Tests {
 

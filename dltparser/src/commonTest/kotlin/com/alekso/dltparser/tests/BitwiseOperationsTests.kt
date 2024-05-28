@@ -1,3 +1,5 @@
+package com.alekso.dltparser.tests
+
 import com.alekso.dltparser.isBitSet
 import org.junit.Assert
 import org.junit.Test
