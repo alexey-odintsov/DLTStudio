@@ -1,3 +1,5 @@
+package com.alekso.dltstudio.tests
+
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.alekso.dltstudio.ui.TabsPanel
