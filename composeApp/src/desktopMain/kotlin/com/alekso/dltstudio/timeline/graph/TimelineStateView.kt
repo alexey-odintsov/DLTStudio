@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.timeline
+package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
@@ -18,23 +18,21 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
+import com.alekso.dltstudio.timeline.TimeFrame
+import com.alekso.dltstudio.timeline.TimeLineStateEntries
+import com.alekso.dltstudio.timeline.TimeLineStateEntry
+import com.alekso.dltstudio.timeline.TimeLineViewStyle
 import java.time.Instant
 
-
-private const val DEFAULT_SERIES_COUNT = 11
-
-
 @Composable
-fun TimelineMinMaxValueView(
+fun TimelineStateView(
     modifier: Modifier,
     viewStyle: TimeLineViewStyle = TimeLineViewStyle.Default,
-    entries: TimeLineMinMaxEntries?,
+    entries: TimeLineStateEntries?,
     timeFrame: TimeFrame,
     splitTimeSec: Float = 999f,
-    seriesPostfix: String = "",
     showVerticalSeries: Boolean = false,
     highlightedKey: String? = null,
-    seriesCount: Int = DEFAULT_SERIES_COUNT
 ) {
     val textMeasurer = rememberTextMeasurer()
     val verticalPaddingDp = viewStyle.verticalPaddingDp
@@ -60,8 +58,7 @@ fun TimelineMinMaxValueView(
         val verticalPaddingPx = verticalPaddingDp.toPx()
         val availableHeight = height - verticalPaddingPx * 2
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
-
-        entries.minValue = 0f // always render 0 .. MAX
+        val seriesCount = entries.states.size
 
         renderVerticalSeries(
             seriesCount,
@@ -74,90 +71,67 @@ fun TimelineMinMaxValueView(
             renderSecondsVerticalLines(timeFrame, secSizePx, height)
         }
 
-        // Draw values
         val map = entries.map
         map.keys.forEachIndexed { index, key ->
             val items = map[key]
-            renderLines(
-                viewStyle,
+            renderStateLines(
+                entries.states,
                 items,
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                availableHeight,
                 verticalPaddingPx,
-                entries.maxValue,
-                ColorPalette.getColor(index),
+                ColorPalette.getColor(index, alpha = 0.5f),
                 highlightedKey,
-                key
+                key,
+                seriesCount,
+                availableHeight,
             )
         }
 
         if (highlightedKey != null) {
             val items = map[highlightedKey]
-            renderLines(
-                viewStyle,
+            renderStateLines(
+                entries.states,
                 items,
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                availableHeight,
                 verticalPaddingPx,
-                entries.maxValue,
                 Color.Green,
                 highlightedKey,
-                highlightedKey
+                highlightedKey,
+                seriesCount,
+                availableHeight,
             )
         }
 
-        renderLabels(
-            entries.minValue,
-            entries.maxValue,
-            seriesCount,
-            availableHeight,
-            verticalPaddingPx,
-            textMeasurer,
-            seriesPostfix,
-            seriesTextStyle
+        renderStateLabels(
+            entries.states, seriesCount, verticalPaddingPx,
+            textMeasurer, seriesTextStyle, availableHeight
         )
-
     }
 }
 
 
+
 @Preview
 @Composable
-fun PreviewTimelineMinMaxValueView() {
+fun PreviewTimelineStateView() {
     val ts = Instant.now().toEpochMilli() * 1000L
     val te = ts + 7_000_000L
-    val key1 = "key1"
-    val key2 = "key2"
 
-    val entries = TimeLineMinMaxEntries()
-    entries.maxValue = 150f
-    entries.minValue = 0f
+    val entries = TimeLineStateEntries()
+    entries.map["10"] = mutableListOf()
+    entries.addEntry(TimeLineStateEntry(ts + 1_450_000, "10", Pair("STATE_A", "STATE_B")))
+    entries.addEntry(TimeLineStateEntry(ts + 2_000_000, "10", Pair("STATE_B", "STATE_C")))
+    entries.addEntry(TimeLineStateEntry(ts + 4_000_000, "10", Pair("STATE_C", "STATE_A")))
+    entries.addEntry(TimeLineStateEntry(ts + 6_000_000, "10", Pair("STATE_A", "STATE_D")))
 
-    entries.map[key1] = mutableListOf(
-        TimeLineEntry(ts + 50_000, key1, 150f),
-        TimeLineEntry(ts + 550_000, key1, 149f),
-        TimeLineEntry(ts + 1_050_000, key1, 150f),
-        TimeLineEntry(ts + 1_450_000, key1, 110f),
-        TimeLineEntry(ts + 2_000_000, key1, 83f),
-        TimeLineEntry(ts + 3_300_000, key1, 127f),
-        TimeLineEntry(ts + 4_400_000, key1, 89f),
-        TimeLineEntry(ts + 4_500_000, key1, 0f),
-        TimeLineEntry(ts + 5_000_000, key1, 0f),
-        TimeLineEntry(ts + 6_000_000, key1, 0f),
-    )
-    entries.map[key2] = mutableListOf(
-        TimeLineEntry(ts + 200_000, key2, 133f),
-        TimeLineEntry(ts + 2_100_000, key2, 151f),
-        TimeLineEntry(ts + 2_700_000, key2, 104f),
-        TimeLineEntry(ts + 3_400_000, key2, 42f),
-        TimeLineEntry(ts + 3_560_000, key2, 63f),
-        TimeLineEntry(ts + 4_000_000, key2, 72f),
-        TimeLineEntry(ts + 6_800_000, key2, 111f),
-    )
+    entries.map["0"] = mutableListOf()
+    entries.addEntry(TimeLineStateEntry(ts + 550_000, "0", Pair("STATE_A", "STATE_B")))
+    entries.addEntry(TimeLineStateEntry(ts + 3_023_000, "0", Pair("STATE_B", "STATE_D")))
+    entries.addEntry(TimeLineStateEntry(ts + 6_200_000, "0", Pair("STATE_D", "STATE_C")))
 
     Column {
         for (i in 1..3) {
@@ -167,19 +141,15 @@ fun PreviewTimelineMinMaxValueView() {
                 scale = i.toFloat(),
                 offsetSeconds = 0f
             )
-
             Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
             Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
             Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
-            TimelineMinMaxValueView(
-                modifier = Modifier.fillMaxWidth().height(200.dp),
-                viewStyle = TimeLineViewStyle.Default,
+            TimelineStateView(
+                modifier = Modifier.fillMaxWidth().height(100.dp),
                 entries = entries,
                 timeFrame = timeFrame,
-                seriesPostfix = " Mb",
-                highlightedKey = key2,
                 showVerticalSeries = true,
-                seriesCount = 10+i
+                highlightedKey = "435"
             )
         }
     }

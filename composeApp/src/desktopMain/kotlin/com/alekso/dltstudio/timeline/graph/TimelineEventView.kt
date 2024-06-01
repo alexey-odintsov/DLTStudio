@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.timeline
+package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
@@ -20,6 +20,11 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
+import com.alekso.dltstudio.timeline.TimeFrame
+import com.alekso.dltstudio.timeline.TimeLineEvent
+import com.alekso.dltstudio.timeline.TimeLineEventEntries
+import com.alekso.dltstudio.timeline.TimeLineEventEntry
+import com.alekso.dltstudio.timeline.TimeLineViewStyle
 import java.time.Instant
 
 @Composable

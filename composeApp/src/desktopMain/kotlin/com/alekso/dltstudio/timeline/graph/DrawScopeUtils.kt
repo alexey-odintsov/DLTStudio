@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.timeline
+package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -8,6 +8,11 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.timeline.TimeFrame
+import com.alekso.dltstudio.timeline.TimeLineEntry
+import com.alekso.dltstudio.timeline.TimeLineEventEntry
+import com.alekso.dltstudio.timeline.TimeLineStateEntry
+import com.alekso.dltstudio.timeline.TimeLineViewStyle
 
 
 fun DrawScope.renderLines(

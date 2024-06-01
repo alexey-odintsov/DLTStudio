@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.timeline
+package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
@@ -18,19 +18,24 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
+import com.alekso.dltstudio.timeline.TimeFrame
+import com.alekso.dltstudio.timeline.TimeLineEntry
+import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries
+import com.alekso.dltstudio.timeline.TimeLineViewStyle
 import java.time.Instant
 
 
 private const val DEFAULT_SERIES_COUNT = 11
 
-// TODO: Almost identical to TimelineMinMaxView - find a way to use one view
+
 @Composable
-fun TimelinePercentageView(
+fun TimelineMinMaxValueView(
     modifier: Modifier,
     viewStyle: TimeLineViewStyle = TimeLineViewStyle.Default,
-    entries: TimeLinePercentageEntries?,
+    entries: TimeLineMinMaxEntries?,
     timeFrame: TimeFrame,
     splitTimeSec: Float = 999f,
+    seriesPostfix: String = "",
     showVerticalSeries: Boolean = false,
     highlightedKey: String? = null,
     seriesCount: Int = DEFAULT_SERIES_COUNT
@@ -60,6 +65,8 @@ fun TimelinePercentageView(
         val availableHeight = height - verticalPaddingPx * 2
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
 
+        entries.minValue = 0f // always render 0 .. MAX
+
         renderVerticalSeries(
             seriesCount,
             availableHeight,
@@ -83,7 +90,7 @@ fun TimelinePercentageView(
                 secSizePx,
                 availableHeight,
                 verticalPaddingPx,
-                100f,
+                entries.maxValue,
                 ColorPalette.getColor(index),
                 highlightedKey,
                 key
@@ -100,7 +107,7 @@ fun TimelinePercentageView(
                 secSizePx,
                 availableHeight,
                 verticalPaddingPx,
-                100f,
+                entries.maxValue,
                 Color.Green,
                 highlightedKey,
                 highlightedKey
@@ -108,49 +115,52 @@ fun TimelinePercentageView(
         }
 
         renderLabels(
-            0f,
-            100f,
+            entries.minValue,
+            entries.maxValue,
             seriesCount,
             availableHeight,
             verticalPaddingPx,
             textMeasurer,
-            "%",
+            seriesPostfix,
             seriesTextStyle
         )
+
     }
 }
 
 
 @Preview
 @Composable
-fun PreviewTimelineView() {
+fun PreviewTimelineMinMaxValueView() {
     val ts = Instant.now().toEpochMilli() * 1000L
     val te = ts + 7_000_000L
     val key1 = "key1"
     val key2 = "key2"
 
-    val entries = TimeLinePercentageEntries()
+    val entries = TimeLineMinMaxEntries()
+    entries.maxValue = 150f
+    entries.minValue = 0f
 
     entries.map[key1] = mutableListOf(
-        TimeLineEntry(ts + 50_000, key1, 10f),
-        TimeLineEntry(ts + 550_000, key1, 49f),
-        TimeLineEntry(ts + 1_050_000, key1, 50f),
-        TimeLineEntry(ts + 1_450_000, key1, 70f),
+        TimeLineEntry(ts + 50_000, key1, 150f),
+        TimeLineEntry(ts + 550_000, key1, 149f),
+        TimeLineEntry(ts + 1_050_000, key1, 150f),
+        TimeLineEntry(ts + 1_450_000, key1, 110f),
         TimeLineEntry(ts + 2_000_000, key1, 83f),
-        TimeLineEntry(ts + 3_300_000, key1, 100f),
-        TimeLineEntry(ts + 4_400_000, key1, 100f),
-        TimeLineEntry(ts + 4_500_000, key1, 40f),
+        TimeLineEntry(ts + 3_300_000, key1, 127f),
+        TimeLineEntry(ts + 4_400_000, key1, 89f),
+        TimeLineEntry(ts + 4_500_000, key1, 0f),
         TimeLineEntry(ts + 5_000_000, key1, 0f),
         TimeLineEntry(ts + 6_000_000, key1, 0f),
     )
     entries.map[key2] = mutableListOf(
-        TimeLineEntry(ts + 200_000, key2, 0f),
-        TimeLineEntry(ts + 2_100_000, key2, 0f),
-        TimeLineEntry(ts + 2_700_000, key2, 4f),
+        TimeLineEntry(ts + 200_000, key2, 133f),
+        TimeLineEntry(ts + 2_100_000, key2, 151f),
+        TimeLineEntry(ts + 2_700_000, key2, 104f),
         TimeLineEntry(ts + 3_400_000, key2, 42f),
         TimeLineEntry(ts + 3_560_000, key2, 63f),
         TimeLineEntry(ts + 4_000_000, key2, 72f),
-        TimeLineEntry(ts + 6_800_000, key2, 100f),
+        TimeLineEntry(ts + 6_800_000, key2, 111f),
     )
 
     Column {
@@ -161,14 +171,19 @@ fun PreviewTimelineView() {
                 scale = i.toFloat(),
                 offsetSeconds = 0f
             )
+
             Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
             Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
             Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
-            TimelinePercentageView(
+            TimelineMinMaxValueView(
                 modifier = Modifier.fillMaxWidth().height(200.dp),
+                viewStyle = TimeLineViewStyle.Default,
                 entries = entries,
                 timeFrame = timeFrame,
+                seriesPostfix = " Mb",
                 highlightedKey = key2,
+                showVerticalSeries = true,
+                seriesCount = 10+i
             )
         }
     }
