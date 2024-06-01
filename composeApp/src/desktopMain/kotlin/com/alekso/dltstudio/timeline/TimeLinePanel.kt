@@ -50,6 +50,10 @@ import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
+import com.alekso.dltstudio.timeline.graph.TimelineEventView
+import com.alekso.dltstudio.timeline.graph.TimelineMinMaxValueView
+import com.alekso.dltstudio.timeline.graph.TimelinePercentageView
+import com.alekso.dltstudio.timeline.graph.TimelineStateView
 
 private val LEGEND_WIDTH_DP = 250.dp
 private val TIME_MARKER_WIDTH_DP = 140.dp

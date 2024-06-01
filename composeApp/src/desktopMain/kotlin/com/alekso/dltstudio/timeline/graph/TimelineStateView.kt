@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.timeline
+package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
@@ -18,22 +18,21 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
+import com.alekso.dltstudio.timeline.TimeFrame
+import com.alekso.dltstudio.timeline.TimeLineStateEntries
+import com.alekso.dltstudio.timeline.TimeLineStateEntry
+import com.alekso.dltstudio.timeline.TimeLineViewStyle
 import java.time.Instant
 
-
-private const val DEFAULT_SERIES_COUNT = 10
-
-// TODO: Almost identical to TimelineMinMaxView - find a way to use one view
 @Composable
-fun TimelinePercentageView(
+fun TimelineStateView(
     modifier: Modifier,
     viewStyle: TimeLineViewStyle = TimeLineViewStyle.Default,
-    entries: TimeLinePercentageEntries?,
+    entries: TimeLineStateEntries?,
     timeFrame: TimeFrame,
     splitTimeSec: Float = 999f,
     showVerticalSeries: Boolean = false,
     highlightedKey: String? = null,
-    seriesCount: Int = DEFAULT_SERIES_COUNT
 ) {
     val textMeasurer = rememberTextMeasurer()
     val verticalPaddingDp = viewStyle.verticalPaddingDp
@@ -59,6 +58,7 @@ fun TimelinePercentageView(
         val verticalPaddingPx = verticalPaddingDp.toPx()
         val availableHeight = height - verticalPaddingPx * 2
         val secSizePx: Float = timeFrame.calculateSecSizePx(width)
+        val seriesCount = entries.states.size
 
         renderVerticalSeries(
             seriesCount,
@@ -71,87 +71,67 @@ fun TimelinePercentageView(
             renderSecondsVerticalLines(timeFrame, secSizePx, height)
         }
 
-        // Draw values
         val map = entries.map
         map.keys.forEachIndexed { index, key ->
             val items = map[key]
-            renderLines(
-                viewStyle,
+            renderStateLines(
+                entries.states,
                 items,
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                availableHeight,
                 verticalPaddingPx,
-                100f,
-                ColorPalette.getColor(index),
+                ColorPalette.getColor(index, alpha = 0.5f),
                 highlightedKey,
-                key
+                key,
+                seriesCount,
+                availableHeight,
             )
         }
 
         if (highlightedKey != null) {
             val items = map[highlightedKey]
-            renderLines(
-                viewStyle,
+            renderStateLines(
+                entries.states,
                 items,
                 splitTimeSec,
                 timeFrame,
                 secSizePx,
-                availableHeight,
                 verticalPaddingPx,
-                100f,
                 Color.Green,
                 highlightedKey,
-                highlightedKey
+                highlightedKey,
+                seriesCount,
+                availableHeight,
             )
         }
 
-        renderLabels(
-            0f,
-            100f,
-            seriesCount,
-            availableHeight,
-            verticalPaddingPx,
-            textMeasurer,
-            "%",
-            seriesTextStyle
+        renderStateLabels(
+            entries.states, seriesCount, verticalPaddingPx,
+            textMeasurer, seriesTextStyle, availableHeight
         )
     }
 }
 
 
+
 @Preview
 @Composable
-fun PreviewTimelineView() {
+fun PreviewTimelineStateView() {
     val ts = Instant.now().toEpochMilli() * 1000L
     val te = ts + 7_000_000L
-    val key1 = "key1"
-    val key2 = "key2"
 
-    val entries = TimeLinePercentageEntries()
+    val entries = TimeLineStateEntries()
+    entries.map["10"] = mutableListOf()
+    entries.addEntry(TimeLineStateEntry(ts + 1_450_000, "10", Pair("STATE_A", "STATE_B")))
+    entries.addEntry(TimeLineStateEntry(ts + 2_000_000, "10", Pair("STATE_B", "STATE_C")))
+    entries.addEntry(TimeLineStateEntry(ts + 4_000_000, "10", Pair("STATE_C", "STATE_A")))
+    entries.addEntry(TimeLineStateEntry(ts + 6_000_000, "10", Pair("STATE_A", "STATE_D")))
 
-    entries.map[key1] = mutableListOf(
-        TimeLineEntry(ts + 50_000, key1, 10f),
-        TimeLineEntry(ts + 550_000, key1, 49f),
-        TimeLineEntry(ts + 1_050_000, key1, 50f),
-        TimeLineEntry(ts + 1_450_000, key1, 70f),
-        TimeLineEntry(ts + 2_000_000, key1, 83f),
-        TimeLineEntry(ts + 3_300_000, key1, 100f),
-        TimeLineEntry(ts + 4_400_000, key1, 100f),
-        TimeLineEntry(ts + 4_500_000, key1, 40f),
-        TimeLineEntry(ts + 5_000_000, key1, 0f),
-        TimeLineEntry(ts + 6_000_000, key1, 0f),
-    )
-    entries.map[key2] = mutableListOf(
-        TimeLineEntry(ts + 200_000, key2, 0f),
-        TimeLineEntry(ts + 2_100_000, key2, 0f),
-        TimeLineEntry(ts + 2_700_000, key2, 4f),
-        TimeLineEntry(ts + 3_400_000, key2, 42f),
-        TimeLineEntry(ts + 3_560_000, key2, 63f),
-        TimeLineEntry(ts + 4_000_000, key2, 72f),
-        TimeLineEntry(ts + 6_800_000, key2, 100f),
-    )
+    entries.map["0"] = mutableListOf()
+    entries.addEntry(TimeLineStateEntry(ts + 550_000, "0", Pair("STATE_A", "STATE_B")))
+    entries.addEntry(TimeLineStateEntry(ts + 3_023_000, "0", Pair("STATE_B", "STATE_D")))
+    entries.addEntry(TimeLineStateEntry(ts + 6_200_000, "0", Pair("STATE_D", "STATE_C")))
 
     Column {
         for (i in 1..3) {
@@ -164,11 +144,12 @@ fun PreviewTimelineView() {
             Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
             Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
             Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
-            TimelinePercentageView(
-                modifier = Modifier.fillMaxWidth().height(200.dp),
+            TimelineStateView(
+                modifier = Modifier.fillMaxWidth().height(100.dp),
                 entries = entries,
                 timeFrame = timeFrame,
-                highlightedKey = key2,
+                showVerticalSeries = true,
+                highlightedKey = "435"
             )
         }
     }
