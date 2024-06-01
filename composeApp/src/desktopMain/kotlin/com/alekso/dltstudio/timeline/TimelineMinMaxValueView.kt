@@ -21,7 +21,7 @@ import com.alekso.dltstudio.colors.ColorPalette
 import java.time.Instant
 
 
-private const val DEFAULT_SERIES_COUNT = 10
+private const val DEFAULT_SERIES_COUNT = 11
 
 
 @Composable
@@ -179,7 +179,7 @@ fun PreviewTimelineMinMaxValueView() {
                 seriesPostfix = " Mb",
                 highlightedKey = key2,
                 showVerticalSeries = true,
-                seriesCount = 5 * i
+                seriesCount = 10+i
             )
         }
     }

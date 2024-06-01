@@ -7,9 +7,7 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 
 fun DrawScope.renderLines(
@@ -162,17 +160,18 @@ fun DrawScope.renderLabels(
     seriesPostfix: String,
     seriesTextStyle: TextStyle
 ) {
-    val step = (maxValue - minValue) / seriesCount
+    val step = (maxValue - minValue) / (seriesCount - 1)
+    val textHeight = seriesTextStyle.fontSize.toPx() + 2.dp.toPx()
 
-    for (i in 0..seriesCount) {
-        val y = availableHeight * i / seriesCount + verticalPaddingPx
+    for (i in 0..<seriesCount) {
+        val y = calculateY(seriesCount, i, size.height - verticalPaddingPx * 2)
         drawText(
             textMeasurer = textMeasurer,
-            size = Size(100.dp.toPx(), 12.dp.toPx()),
+            size = Size(200.dp.toPx(), textHeight),
             text = "${"%.0f".format(maxValue - (i * step))}$seriesPostfix",
             topLeft = Offset(
                 3.dp.toPx(),
-                y - 6.sp.toPx()
+                y + textHeight / 2f
             ),
             style = seriesTextStyle,
         )

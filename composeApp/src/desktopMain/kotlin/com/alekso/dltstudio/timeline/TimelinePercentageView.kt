@@ -21,7 +21,7 @@ import com.alekso.dltstudio.colors.ColorPalette
 import java.time.Instant
 
 
-private const val DEFAULT_SERIES_COUNT = 10
+private const val DEFAULT_SERIES_COUNT = 11
 
 // TODO: Almost identical to TimelineMinMaxView - find a way to use one view
 @Composable
