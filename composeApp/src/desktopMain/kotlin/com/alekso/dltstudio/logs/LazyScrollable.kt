@@ -38,9 +38,14 @@ fun LazyScrollable(
     Column(modifier = modifier) {
 
         val horizontalState = rememberScrollState()
+        val columnModifier = if (wrapContent) {
+            Modifier
+        } else {
+            Modifier.horizontalScroll(horizontalState).width(3000.dp)
+        }
 
         Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(Modifier.horizontalScroll(horizontalState).width(2000.dp), listState) {
+            LazyColumn(columnModifier, listState) {
                 stickyHeader {
                     LogRow(
                         modifier = Modifier,
