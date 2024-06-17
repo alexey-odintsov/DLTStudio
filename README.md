@@ -49,8 +49,13 @@ or in terminal run command:
 
 
 # Distribute
+
+Depending on the platform run one of the following tasks:
 ```
 ./gradlew packageDmg
+./gradlew packageExe
+./gradlew packageDeb
+./gradlew packageMsi
 ```
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
