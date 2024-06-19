@@ -15,19 +15,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.model.LogMessage
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
-    dltMessages: List<DLTMessage>,
+    dltMessages: SnapshotStateList<LogMessage>,
     indexes: List<Int>? = null,
     colorFilters: List<ColorFilter>,
     selectedRow: Int,
@@ -64,7 +65,7 @@ fun LazyScrollable(
                 }
 
                 items(dltMessages.size) { i ->
-                    val message = dltMessages[i]
+                    val message = dltMessages[i].dltMessage
                     val cellStyle =
                         colorFilters.firstOrNull { filter -> filter.assess(message) }?.cellStyle
 

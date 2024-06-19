@@ -21,13 +21,13 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.Panel
 import com.alekso.dltstudio.ui.TabsPanel
 
 @Composable
-fun LogPreviewPanel(modifier: Modifier, dltMessage: DLTMessage?, messageIndex: Int) {
+fun LogPreviewPanel(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
 
@@ -37,11 +37,11 @@ fun LogPreviewPanel(modifier: Modifier, dltMessage: DLTMessage?, messageIndex: I
 
             when (tabIndex) {
                 0 -> {
-                    DLTSimplifiedInfoView(dltMessage = dltMessage, messageIndex = messageIndex)
+                    DLTSimplifiedInfoView(logMessage = logMessage, messageIndex = messageIndex)
                 }
 
                 else -> {
-                    DLTDetailedInfoView(dltMessage = dltMessage, messageIndex = messageIndex)
+                    DLTDetailedInfoView(logMessage = logMessage, messageIndex = messageIndex)
                 }
             }
 
@@ -103,6 +103,6 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 @Preview
 @Composable
 fun PreviewLogPreview() {
-    val dltMessage = SampleData.getSampleDltMessages(1)[0]
-    LogPreviewPanel(Modifier.width(200.dp), dltMessage = dltMessage, 0)
+    val dltMessage = LogMessage(SampleData.getSampleDltMessages(1)[0])
+    LogPreviewPanel(Modifier.width(200.dp), logMessage = dltMessage, 0)
 }

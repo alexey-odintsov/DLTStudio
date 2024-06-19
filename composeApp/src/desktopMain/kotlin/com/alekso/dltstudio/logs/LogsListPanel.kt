@@ -4,16 +4,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.Panel
 
 @Composable
 fun LogsListPanel(
     modifier: Modifier = Modifier,
-    messages: List<DLTMessage>,
+    messages: SnapshotStateList<LogMessage>,
     colorFilters: List<ColorFilter>,
     selectedRow: Int,
     logsListState: LazyListState,

@@ -15,13 +15,13 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
@@ -30,6 +30,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.model.LogMessage
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
@@ -47,10 +48,10 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    dltMessages: List<DLTMessage>,
+    logMessages: SnapshotStateList<LogMessage>,
     // search
     searchState: SearchState,
-    searchResult: List<DLTMessage>,
+    searchResult: SnapshotStateList<LogMessage>,
     searchIndexes: List<Int>,
     searchAutoComplete: List<String>,
     onSearchButtonClicked: (String) -> Unit,
@@ -125,7 +126,7 @@ fun LogsPanel(
                     first(20.dp) {
                         LogsListPanel(
                             Modifier.fillMaxSize(),
-                            dltMessages,
+                            logMessages,
                             mergedFilters,
                             logsListSelectedRow,
                             logsListState = logsListState,
@@ -136,7 +137,7 @@ fun LogsPanel(
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            dltMessages.getOrNull(logsListSelectedRow),
+                            logMessages.getOrNull(logsListSelectedRow),
                             logsListSelectedRow
                         )
                     }
@@ -202,11 +203,13 @@ fun LogsPanel(
 @Preview
 @Composable
 fun PreviewLogsPanel() {
+    val list = SnapshotStateList<LogMessage>()
+    list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
-        dltMessages = SampleData.getSampleDltMessages(20),
+        logMessages = list,
         searchState = SearchState(searchText = "Search text"),
-        searchResult = emptyList(),
+        searchResult = SnapshotStateList(),
         searchIndexes = emptyList(),
         onSearchButtonClicked = { },
         onSearchUseRegexChanged = { },

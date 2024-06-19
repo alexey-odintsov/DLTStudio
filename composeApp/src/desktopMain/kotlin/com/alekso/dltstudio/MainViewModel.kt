@@ -5,10 +5,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.DLTParser
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -26,11 +26,11 @@ class MainViewModel(
     private val onProgressChanged: (Float) -> Unit
 ) {
 
-    private val _dltMessages = mutableStateListOf<DLTMessage>()
-    val dltMessages: SnapshotStateList<DLTMessage>
-        get() = _dltMessages
+    private val _logMessages = mutableStateListOf<LogMessage>()
+    val logMessages: SnapshotStateList<LogMessage>
+        get() = _logMessages
 
-    val searchResult = mutableStateListOf<DLTMessage>()
+    val searchResult = mutableStateListOf<LogMessage>()
     val searchIndexes = mutableStateListOf<Int>()
     val searchAutocomplete = mutableStateListOf<String>()
 
@@ -67,10 +67,10 @@ class MainViewModel(
 
         searchResult.clear()
         searchIndexes.clear()
-        _dltMessages.clear()
+        _logMessages.clear()
 
         parseJob = CoroutineScope(IO).launch {
-            _dltMessages.addAll(dltParser.read(onProgressChanged, dltFiles))
+            _logMessages.addAll(dltParser.read(onProgressChanged, dltFiles).map { LogMessage(it) })
         }
     }
 
@@ -113,13 +113,9 @@ class MainViewModel(
             val startMs = System.currentTimeMillis()
             println("Start searching for '$searchText'")
 
-            _dltMessages.forEachIndexed { i, dltMessage ->
+            _logMessages.forEachIndexed { i, dltMessage ->
                 yield()
-                val payload = "${dltMessage.standardHeader.ecuId} " +
-                        "${dltMessage.standardHeader.sessionId} " +
-                        "${dltMessage.extendedHeader?.applicationId} " +
-                        "${dltMessage.extendedHeader?.contextId} " +
-                        dltMessage.payload
+                val payload = dltMessage.getMessageText()
 
                 if ((_searchState.value.searchUseRegex && searchText.toRegex()
                         .containsMatchIn(payload))
@@ -131,7 +127,7 @@ class MainViewModel(
                 val nowTs = System.currentTimeMillis()
                 if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                     prevTs = nowTs
-                    onProgressChanged(i.toFloat() / dltMessages.size)
+                    onProgressChanged(i.toFloat() / logMessages.size)
                 }
             }
             _searchState.value = _searchState.value.copy(

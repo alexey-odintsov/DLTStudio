@@ -106,7 +106,7 @@ fun MainWindow(
                     modifier = Modifier.weight(1f),
                     searchState = searchState,
                     searchAutoComplete = mainViewModel.searchAutocomplete,
-                    dltMessages = mainViewModel.dltMessages,
+                    logMessages = mainViewModel.logMessages,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
@@ -134,7 +134,7 @@ fun MainWindow(
             1 -> TimeLinePanel(
                 modifier = Modifier.weight(1f),
                 timelineViewModel = timelineViewModel,
-                mainViewModel.dltMessages,
+                mainViewModel.logMessages,
                 offset,
                 offsetUpdateCallback,
                 scale,
@@ -142,8 +142,8 @@ fun MainWindow(
             )
         }
         Divider()
-        val statusText = if (mainViewModel.dltMessages.isNotEmpty()) {
-            "Messages: ${"%,d".format(mainViewModel.dltMessages.size)}"
+        val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
+            "Messages: ${"%,d".format(mainViewModel.logMessages.size)}"
         } else {
             "No file loaded"
         }
