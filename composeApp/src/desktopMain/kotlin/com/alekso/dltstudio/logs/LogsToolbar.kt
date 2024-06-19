@@ -4,7 +4,6 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -112,7 +111,7 @@ fun LogsToolbar(
         )
 
         AutoCompleteEditText(
-            modifier = Modifier.width(500.dp).height(20.dp)
+            modifier = Modifier.height(20.dp).weight(1f)
             .onKeyEvent { e ->
                 if (e.key == Key.Enter) {
                     onSearchButtonClicked(text)
