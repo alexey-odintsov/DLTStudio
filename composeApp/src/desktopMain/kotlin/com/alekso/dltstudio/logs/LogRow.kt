@@ -40,6 +40,7 @@ fun LogRow(
     cellStyle: CellStyle? = null,
     logTypeIndicator: LogTypeIndicator? = null,
     wrapContent: Boolean,
+    marked: Boolean = false,
 ) {
     Column(
         modifier = modifier.then(
@@ -61,6 +62,13 @@ fun LogRow(
                     }
                 )
         ) {
+            Cell(
+                modifier = Modifier.width(8.dp).padding(end = 2.dp, start = 2.dp),
+                textAlign = TextAlign.Center,
+                text = if (marked) "⊙" else "",
+                isHeader = isHeader,
+                cellStyle = finalCellStyle,
+            )
             Cell(
                 modifier = Modifier.width(54.dp).padding(end = 2.dp),
                 textAlign = TextAlign.Right,
@@ -198,16 +206,16 @@ fun LogRowPreview() {
             LogRow(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 isSelected = i == 3,
-                isHeader = i == 0,
                 index = (16_345_345 + i).toString(),
                 datetime = "2024-02-04 18:26:23.074689",
                 timeOffset = "1234",
                 ecu = if (i % 3 == 0) "汉语" else "EcuI",
+                ecuId = "EcuId",
                 sessionId = "123",
                 applicationId = "AppId",
-                ecuId = "EcuId",
                 contextId = "Con",
                 content = contents[i],
+                isHeader = i == 0,
                 cellStyle = when (i) {
                     9 -> CellStyle(backgroundColor = Color.Yellow)
                     8 -> CellStyle(
@@ -222,6 +230,7 @@ fun LogRowPreview() {
                     ColorFilterFatal.cellStyle
                 ) else null,
                 wrapContent = true,
+                marked = i % 2 == 0,
             )
         }
     }

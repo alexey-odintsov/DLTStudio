@@ -5,21 +5,21 @@ import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.model.LogMessage
 
-// TODO: Implement menu
 @Composable
 fun RowContextMenu(
     i: Int,
-    message: DLTMessage,
+    message: LogMessage,
     rowContent: String,
-    content: @Composable () -> Unit
+    onRowMarked: (LogMessage) -> Unit,
+    content: @Composable () -> Unit,
 ) {
     val clipboardManager = LocalClipboardManager.current
     ContextMenuArea(items = {
         listOf(
             ContextMenuItem("Copy") { clipboardManager.setText(AnnotatedString(rowContent)) },
-            ContextMenuItem("Mark") {/*do something else*/ }
+            ContextMenuItem("Mark") { onRowMarked(message) }
         )
     }) {
         content()
