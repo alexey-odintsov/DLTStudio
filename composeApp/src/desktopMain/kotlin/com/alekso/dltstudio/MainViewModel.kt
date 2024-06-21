@@ -26,6 +26,8 @@ private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 enum class LogRemoveContext {
     ApplicationId,
     ContextId,
+    EcuId,
+    SessionId,
 }
 
 interface RowContextMenuCallbacks {
@@ -210,6 +212,8 @@ class MainViewModel(
                 when (type) {
                     LogRemoveContext.ContextId -> message.extendedHeader?.contextId != filter
                     LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId != filter
+                    LogRemoveContext.EcuId -> message.standardHeader.ecuId != filter
+                    LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() != filter
                 }
             }
 
