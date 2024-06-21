@@ -132,13 +132,6 @@ class MainViewModel(
             _logMessages.forEachIndexed { i, dltMessage ->
                 yield()
                 val payload = dltMessage.getMessageText()
-//                val payload = "${dltMessage.standardHeader.ecuId} " +
-//                        "${dltMessage.standardHeader.sessionId} " +
-//                        "${dltMessage.extendedHeader?.applicationId} " +
-//                        "${dltMessage.extendedHeader?.contextId} " +
-//                        "${LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)?.logTypeSymbol ?: ""} " +
-//                        dltMessage.payload
-
 
                 if ((_searchState.value.searchUseRegex && searchText.toRegex()
                         .containsMatchIn(payload))

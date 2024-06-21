@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.model
 
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.logs.LogTypeIndicator
 
 data class LogMessage(
     val dltMessage: DLTMessage,
@@ -12,6 +13,7 @@ data class LogMessage(
                 "${dltMessage.standardHeader.sessionId} " +
                 "${dltMessage.extendedHeader?.applicationId} " +
                 "${dltMessage.extendedHeader?.contextId} " +
+                "${LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)?.logTypeSymbol ?: ""} " +
                 dltMessage.payload
     }
 }
