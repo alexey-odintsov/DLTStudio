@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
@@ -20,6 +21,12 @@ import kotlinx.coroutines.yield
 import java.io.File
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
+
+interface RowContextMenuCallbacks {
+    fun onCopyClicked(text: AnnotatedString)
+    fun onMarkClicked(i: Int, message: DLTMessage)
+    fun onRemoveClicked(type: String, filter: String)
+}
 
 class MainViewModel(
     private val dltParser: DLTParser,
@@ -180,5 +187,49 @@ class MainViewModel(
 
     fun clearColorFilters() {
         colorFilters.clear()
+    }
+
+    fun removeMessages(type: String, filter: String) {
+        CoroutineScope(IO).launch {
+            println("start removing '$filter' $type")
+            var prevTs = System.currentTimeMillis()
+            val filtered = _dltMessages.filterIndexed { index, message ->
+                val nowTs = System.currentTimeMillis()
+                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+                    prevTs = nowTs
+                    onProgressChanged(index.toFloat() / dltMessages.size)
+                }
+
+                when (type) {
+                    "context" -> message.extendedHeader?.contextId != filter
+                    "app" -> message.extendedHeader?.applicationId != filter
+                    else -> false
+                }
+            }
+
+            _dltMessages.clear()
+            _dltMessages.addAll(filtered)
+            onProgressChanged(1f)
+
+            // TODO: update searchIndexes as well otherwise they will be broken
+//            val filteredSearch = searchResult.filterIndexed { index, message ->
+//                val nowTs = System.currentTimeMillis()
+//                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+//                    prevTs = nowTs
+//                    onProgressChanged(index.toFloat() / dltMessages.size)
+//                }
+//
+//                when (type) {
+//                    "context" -> message.extendedHeader?.contextId != filter
+//                    "app" -> message.extendedHeader?.applicationId != filter
+//                    else -> false
+//                }
+//            }
+//
+//            searchResult.clear()
+//            searchResult.addAll(filteredSearch)
+            onProgressChanged(1f)
+            println("done removing '$filter'")
+        }
     }
 }
