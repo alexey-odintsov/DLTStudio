@@ -21,8 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.LogRemoveContext
+import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
@@ -76,6 +79,7 @@ fun LogsPanel(
     onSearchRowSelected: (Int, Int) -> Unit,
     logsListSelectedRow: Int,
     searchListSelectedRow: Int,
+    rowContextMenuCallbacks: RowContextMenuCallbacks,
 ) {
     val dialogState = remember { mutableStateOf(false) }
 
@@ -131,7 +135,8 @@ fun LogsPanel(
                             logsListSelectedRow,
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
-                            wrapContent = logsToolbarState.toolbarWrapContentChecked
+                            wrapContent = logsToolbarState.toolbarWrapContentChecked,
+                            rowContextMenuCallbacks = rowContextMenuCallbacks,
                         )
                     }
                     second(20.dp) {
@@ -173,6 +178,7 @@ fun LogsPanel(
                     searchListState = searchListState,
                     onSearchRowSelected = onSearchRowSelected,
                     wrapContent = logsToolbarState.toolbarWrapContentChecked,
+                    rowContextMenuCallbacks = rowContextMenuCallbacks,
                 )
             }
             splitter {
@@ -236,5 +242,19 @@ fun PreviewLogsPanel() {
         logsListSelectedRow =0,
         searchListSelectedRow = 0,
         searchAutoComplete = emptyList(),
+        rowContextMenuCallbacks = object : RowContextMenuCallbacks {
+            override fun onCopyClicked(text: AnnotatedString) {
+
+            }
+
+            override fun onMarkClicked(i: Int, message: DLTMessage) {
+
+            }
+
+            override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
+
+            }
+
+        },
     )
 }

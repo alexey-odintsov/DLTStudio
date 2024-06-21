@@ -19,6 +19,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.LogMessage
@@ -35,6 +37,7 @@ fun LazyScrollable(
     onRowSelected: (Int, Int) -> Unit,
     listState: LazyListState,
     wrapContent: Boolean,
+    rowContextMenuCallbacks: RowContextMenuCallbacks,
 ) {
     Column(modifier = modifier) {
 
@@ -84,9 +87,10 @@ fun LazyScrollable(
                         LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)
 
                     RowContextMenu(
-                        i,
-                        logMessage,
-                        "$index $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent",
+                        i = i,
+                        message = message,
+                        rowContent = "$index $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent",
+                        rowContextMenuCallbacks = rowContextMenuCallbacks,
                         onRowMarked =  { markedMessage ->  logMessages[i] = logMessages[i].copy(marked = logMessages[i].marked.not()) },
                     ) {
                         LogRow(
