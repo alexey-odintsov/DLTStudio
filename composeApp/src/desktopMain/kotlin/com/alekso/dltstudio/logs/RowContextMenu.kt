@@ -24,13 +24,13 @@ fun RowContextMenu(
         )
 
     message.extendedHeader?.let {
-        menuItems.add(ContextMenuItem("Remove Context ${it.contextId} from logs") {
+        menuItems.add(ContextMenuItem("Remove context '${it.contextId}'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.ContextId, it.contextId)
         })
     }
 
     message.extendedHeader?.let {
-        menuItems.add(ContextMenuItem("Remove Application ${it.applicationId} from logs") {
+        menuItems.add(ContextMenuItem("Remove application '${it.applicationId}'") {
             rowContextMenuCallbacks.onRemoveClicked(
                 LogRemoveContext.ApplicationId,
                 it.applicationId
@@ -39,13 +39,13 @@ fun RowContextMenu(
     }
 
     message.standardHeader.ecuId?.let {
-        menuItems.add(ContextMenuItem("Remove Ecu $it from logs") {
+        menuItems.add(ContextMenuItem("Remove ecu '$it'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.EcuId, it)
         })
     }
 
     message.standardHeader.sessionId?.let {
-        menuItems.add(ContextMenuItem("Remove Session $it from logs") {
+        menuItems.add(ContextMenuItem("Remove session '$it'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.SessionId, it.toString())
         })
     }
