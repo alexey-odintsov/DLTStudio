@@ -50,6 +50,15 @@ fun RowContextMenu(
         })
     }
 
+    message.timeStampNano.let {
+        menuItems.add(ContextMenuItem("Remove rows before") {
+            rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.BeforeTimestamp, it.toString())
+        })
+        menuItems.add(ContextMenuItem("Remove rows after") {
+            rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.AfterTimestamp, it.toString())
+        })
+    }
+
     ContextMenuArea(items = { menuItems }) {
         content()
     }

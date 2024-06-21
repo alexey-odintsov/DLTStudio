@@ -28,6 +28,8 @@ enum class LogRemoveContext {
     ContextId,
     EcuId,
     SessionId,
+    BeforeTimestamp,
+    AfterTimestamp,
 }
 
 interface RowContextMenuCallbacks {
@@ -214,6 +216,8 @@ class MainViewModel(
                     LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId != filter
                     LogRemoveContext.EcuId -> message.standardHeader.ecuId != filter
                     LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() != filter
+                    LogRemoveContext.BeforeTimestamp -> message.timeStampNano >= filter.toLong()
+                    LogRemoveContext.AfterTimestamp -> message.timeStampNano <= filter.toLong()
                 }
             }
 
