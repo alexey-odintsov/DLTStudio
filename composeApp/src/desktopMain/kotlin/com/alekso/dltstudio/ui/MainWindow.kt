@@ -23,12 +23,12 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -139,8 +139,8 @@ fun MainWindow(
                             clipboardManager.setText(text)
                         }
 
-                        override fun onMarkClicked(i: Int, message: DLTMessage) {
-                            // TODO: Mark row
+                        override fun onMarkClicked(i: Int, message: LogMessage) {
+                            mainViewModel.markMessage(i, message)
                         }
 
                         override fun onRemoveClicked(context: LogRemoveContext, filter: String) {

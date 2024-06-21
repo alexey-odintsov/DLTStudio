@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
-import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.logs.LogTypeIndicator
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.search.SearchState
@@ -35,7 +33,7 @@ enum class LogRemoveContext {
 
 interface RowContextMenuCallbacks {
     fun onCopyClicked(text: AnnotatedString)
-    fun onMarkClicked(i: Int, message: DLTMessage)
+    fun onMarkClicked(i: Int, message: LogMessage)
     fun onRemoveClicked(context: LogRemoveContext, filter: String)
 }
 
@@ -249,5 +247,9 @@ class MainViewModel(
             onProgressChanged(1f)
             println("done removing '$filter'")
         }
+    }
+
+    fun markMessage(i: Int, message: LogMessage) {
+        logMessages[i] = logMessages[i].copy(marked = logMessages[i].marked.not())
     }
 }

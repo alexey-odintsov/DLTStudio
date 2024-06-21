@@ -247,7 +247,7 @@ fun PreviewLogsPanel() {
 
             }
 
-            override fun onMarkClicked(i: Int, message: DLTMessage) {
+            override fun onMarkClicked(i: Int, message: LogMessage) {
 
             }
 
