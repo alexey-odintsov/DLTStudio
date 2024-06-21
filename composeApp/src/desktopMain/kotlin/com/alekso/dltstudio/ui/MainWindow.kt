@@ -19,9 +19,14 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExternalDragValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.onExternalDrag
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
+import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
+import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
 import com.alekso.dltstudio.timeline.TimeLinePanel
@@ -42,6 +47,7 @@ fun MainWindow(
     onProgressUpdate: (Float) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val clipboardManager = LocalClipboardManager.current
 
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
@@ -128,6 +134,20 @@ fun MainWindow(
                     searchListState = mainViewModel.searchListState,
                     onLogsRowSelected = { i, r -> mainViewModel.onLogsRowSelected(coroutineScope, i, r) },
                     onSearchRowSelected = { i, r -> mainViewModel.onSearchRowSelected(coroutineScope, i, r) },
+                    rowContextMenuCallbacks = object : RowContextMenuCallbacks {
+                        override fun onCopyClicked(text: AnnotatedString) {
+                            clipboardManager.setText(text)
+                        }
+
+                        override fun onMarkClicked(i: Int, message: DLTMessage) {
+                            // TODO: Mark row
+                        }
+
+                        override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
+                            mainViewModel.removeMessages(context, filter)
+                        }
+
+                    }
                 )
             }
 

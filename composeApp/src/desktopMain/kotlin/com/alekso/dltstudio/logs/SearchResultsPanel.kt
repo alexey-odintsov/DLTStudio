@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.ui.Panel
 
@@ -20,7 +21,9 @@ fun SearchResultsPanel(
     searchListState: LazyListState,
     onSearchRowSelected: (Int, Int) -> Unit,
     wrapContent: Boolean,
-) {
+    rowContextMenuCallbacks: RowContextMenuCallbacks,
+
+    ) {
     Panel(
         modifier = modifier,
         title = if (searchResult.isNotEmpty()) "Search results: ${searchResult.size} items" else "Search results"
@@ -34,6 +37,7 @@ fun SearchResultsPanel(
             onRowSelected = onSearchRowSelected,
             listState = searchListState,
             wrapContent = wrapContent,
+            rowContextMenuCallbacks = rowContextMenuCallbacks,
         )
     }
 

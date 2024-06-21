@@ -4,6 +4,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.LogTypeIndicator
@@ -21,6 +22,21 @@ import kotlinx.coroutines.yield
 import java.io.File
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
+
+enum class LogRemoveContext {
+    ApplicationId,
+    ContextId,
+    EcuId,
+    SessionId,
+    BeforeTimestamp,
+    AfterTimestamp,
+}
+
+interface RowContextMenuCallbacks {
+    fun onCopyClicked(text: AnnotatedString)
+    fun onMarkClicked(i: Int, message: DLTMessage)
+    fun onRemoveClicked(context: LogRemoveContext, filter: String)
+}
 
 class MainViewModel(
     private val dltParser: DLTParser,
@@ -182,5 +198,52 @@ class MainViewModel(
 
     fun clearColorFilters() {
         colorFilters.clear()
+    }
+
+    fun removeMessages(type: LogRemoveContext, filter: String) {
+        CoroutineScope(IO).launch {
+            println("start removing '$filter' $type")
+            var prevTs = System.currentTimeMillis()
+            val filtered = _dltMessages.filterIndexed { index, message ->
+                val nowTs = System.currentTimeMillis()
+                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+                    prevTs = nowTs
+                    onProgressChanged(index.toFloat() / dltMessages.size)
+                }
+
+                when (type) {
+                    LogRemoveContext.ContextId -> message.extendedHeader?.contextId != filter
+                    LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId != filter
+                    LogRemoveContext.EcuId -> message.standardHeader.ecuId != filter
+                    LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() != filter
+                    LogRemoveContext.BeforeTimestamp -> message.timeStampNano >= filter.toLong()
+                    LogRemoveContext.AfterTimestamp -> message.timeStampNano <= filter.toLong()
+                }
+            }
+
+            _dltMessages.clear()
+            _dltMessages.addAll(filtered)
+            onProgressChanged(1f)
+
+            // TODO: update searchIndexes as well otherwise they will be broken
+//            val filteredSearch = searchResult.filterIndexed { index, message ->
+//                val nowTs = System.currentTimeMillis()
+//                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+//                    prevTs = nowTs
+//                    onProgressChanged(index.toFloat() / dltMessages.size)
+//                }
+//
+//                when (type) {
+//                    "context" -> message.extendedHeader?.contextId != filter
+//                    "app" -> message.extendedHeader?.applicationId != filter
+//                    else -> false
+//                }
+//            }
+//
+//            searchResult.clear()
+//            searchResult.addAll(filteredSearch)
+            onProgressChanged(1f)
+            println("done removing '$filter'")
+        }
     }
 }
