@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.logs.LogTypeIndicator
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.search.SearchState
@@ -126,6 +127,7 @@ class MainViewModel(
                         "${dltMessage.standardHeader.sessionId} " +
                         "${dltMessage.extendedHeader?.applicationId} " +
                         "${dltMessage.extendedHeader?.contextId} " +
+                        "${LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)?.logTypeSymbol ?: ""} " +
                         dltMessage.payload
 
                 if ((_searchState.value.searchUseRegex && searchText.toRegex()
