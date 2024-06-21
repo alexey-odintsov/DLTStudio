@@ -5,6 +5,7 @@ import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.RowContextMenuCallbacks
 
 @Composable
@@ -24,14 +25,17 @@ fun RowContextMenu(
 
     message.extendedHeader?.let {
         menuItems.add(ContextMenuItem("Remove Context ${it.contextId} from logs") {
-            rowContextMenuCallbacks.onRemoveClicked("context", it.contextId)
+            rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.ContextId, it.contextId)
         })
     }
 
 
     message.extendedHeader?.let {
         menuItems.add(ContextMenuItem("Remove Application ${it.applicationId} from logs") {
-            rowContextMenuCallbacks.onRemoveClicked("app", it.applicationId)
+            rowContextMenuCallbacks.onRemoveClicked(
+                LogRemoveContext.ApplicationId,
+                it.applicationId
+            )
         })
     }
     ContextMenuArea(items = { menuItems }) {

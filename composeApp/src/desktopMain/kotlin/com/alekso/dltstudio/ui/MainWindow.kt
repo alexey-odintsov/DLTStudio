@@ -24,6 +24,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPanel
@@ -142,8 +143,8 @@ fun MainWindow(
                             // TODO: Mark row
                         }
 
-                        override fun onRemoveClicked(type: String, filter: String) {
-                            mainViewModel.removeMessages(type, filter)
+                        override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
+                            mainViewModel.removeMessages(context, filter)
                         }
 
                     }

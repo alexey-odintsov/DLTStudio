@@ -24,6 +24,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
@@ -247,7 +248,7 @@ fun PreviewLogsPanel() {
 
             }
 
-            override fun onRemoveClicked(type: String, filter: String) {
+            override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
 
             }
 

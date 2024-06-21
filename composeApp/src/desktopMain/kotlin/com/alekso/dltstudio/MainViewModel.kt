@@ -23,10 +23,15 @@ import java.io.File
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
+enum class LogRemoveContext {
+    ApplicationId,
+    ContextId,
+}
+
 interface RowContextMenuCallbacks {
     fun onCopyClicked(text: AnnotatedString)
     fun onMarkClicked(i: Int, message: DLTMessage)
-    fun onRemoveClicked(type: String, filter: String)
+    fun onRemoveClicked(context: LogRemoveContext, filter: String)
 }
 
 class MainViewModel(
@@ -191,7 +196,7 @@ class MainViewModel(
         colorFilters.clear()
     }
 
-    fun removeMessages(type: String, filter: String) {
+    fun removeMessages(type: LogRemoveContext, filter: String) {
         CoroutineScope(IO).launch {
             println("start removing '$filter' $type")
             var prevTs = System.currentTimeMillis()
@@ -203,9 +208,8 @@ class MainViewModel(
                 }
 
                 when (type) {
-                    "context" -> message.extendedHeader?.contextId != filter
-                    "app" -> message.extendedHeader?.applicationId != filter
-                    else -> false
+                    LogRemoveContext.ContextId -> message.extendedHeader?.contextId != filter
+                    LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId != filter
                 }
             }
 
