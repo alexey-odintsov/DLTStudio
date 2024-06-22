@@ -6,7 +6,8 @@ import com.alekso.dltstudio.ui.TabsPanel
 import dtlstudio.composeapp.generated.resources.Res
 import dtlstudio.composeapp.generated.resources.tab_logs
 import dtlstudio.composeapp.generated.resources.tab_timeline
-import org.jetbrains.compose.resources.stringResource
+import kotlinx.coroutines.test.runTest
+import org.jetbrains.compose.resources.getString
 import org.junit.Rule
 import org.junit.Test
 
@@ -15,15 +16,17 @@ class UIJVMTest {
     val rule = createComposeRule()
 
     @Test
-    fun `test tabs presence`() {
+    fun `test tabs presence`() = runTest {
+        val tabLogs = getString(Res.string.tab_logs)
+        val tabTimeline = getString(Res.string.tab_timeline)
         rule.setContent {
             TabsPanel(
                 0,
-                listOf(stringResource(Res.string.tab_logs), stringResource(Res.string.tab_timeline))
+                listOf(tabLogs, tabTimeline)
             ) { }
         }
 
-        rule.onNodeWithText("Logs").assertExists("Logs tab doesn't exist")
-        rule.onNodeWithText("Timeline").assertExists("Timeline tab doesn't exist")
+        rule.onNodeWithText(tabLogs).assertExists("Logs tab doesn't exist")
+        rule.onNodeWithText(tabTimeline).assertExists("Timeline tab doesn't exist")
     }
 }
