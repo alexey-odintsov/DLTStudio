@@ -20,7 +20,12 @@ fun RowContextMenu(
         ContextMenuItem("Copy") {
             rowContextMenuCallbacks.onCopyClicked(AnnotatedString(rowContent))
         },
-        ContextMenuItem("Mark") { rowContextMenuCallbacks.onMarkClicked(i, message) },
+        ContextMenuItem(if (message.marked) "Unmark" else "Mark") {
+            rowContextMenuCallbacks.onMarkClicked(
+                i,
+                message
+            )
+        },
         )
 
     message.dltMessage.extendedHeader?.let {
