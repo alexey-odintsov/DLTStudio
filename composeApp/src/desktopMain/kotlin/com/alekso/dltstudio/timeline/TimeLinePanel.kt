@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -45,9 +46,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
 import com.alekso.dltstudio.timeline.graph.TimelineEventView
@@ -65,7 +66,7 @@ private const val MOVE_TIMELINE_STEP_PX = 10
 fun TimeLinePanel(
     modifier: Modifier,
     timelineViewModel: TimelineViewModel,
-    dltMessages: List<DLTMessage>,
+    logMessages: SnapshotStateList<LogMessage>,
     offsetSec: Float,
     offsetUpdate: (Float) -> Unit,
     scale: Float,
@@ -75,7 +76,7 @@ fun TimeLinePanel(
     var secSizePx by remember { mutableStateOf(1f) }
 
     val dragCallback = { pe: PointerEvent, width: Int ->
-        if (dltMessages.isNotEmpty()) {
+        if (logMessages.isNotEmpty()) {
             val secSize: Float = width / (timelineViewModel.totalSeconds.toFloat())
             val dragAmount = pe.changes.first().position.x - pe.changes.first().previousPosition.x
             offsetUpdate(offsetSec + (dragAmount / secSize / scale))
@@ -122,7 +123,7 @@ fun TimeLinePanel(
                 offsetUpdate(0f)
             },
             analyzeState = timelineViewModel.analyzeState.value,
-            onAnalyzeClick = { timelineViewModel.analyzeTimeline(dltMessages) },
+            onAnalyzeClick = { timelineViewModel.analyzeTimeline(logMessages) },
             onTimelineFiltersClicked = { dialogState.value = true },
         )
 
@@ -139,7 +140,7 @@ fun TimeLinePanel(
 
         Divider()
 
-        if (dltMessages.isNotEmpty()) {
+        if (logMessages.isNotEmpty()) {
             val timeFrame = TimeFrame(
                 timestampStart = timelineViewModel.timeStart,
                 timestampEnd = timelineViewModel.timeEnd,
@@ -312,9 +313,11 @@ fun TimeLinePanel(
 @Preview
 @Composable
 fun PreviewTimeline() {
+    val list = SnapshotStateList<LogMessage>()
+    list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
-        dltMessages = SampleData.getSampleDltMessages(20),
+        logMessages = list,
         timelineViewModel = TimelineViewModel({}),
         offsetSec = 0f,
         offsetUpdate = {},

@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
@@ -18,6 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
+import dtlstudio.composeapp.generated.resources.Res
+import dtlstudio.composeapp.generated.resources.icon_mark
+import org.jetbrains.compose.resources.painterResource
 
 
 private val selectedCellStyle = CellStyle(backgroundColor = Color.LightGray)
@@ -40,6 +45,7 @@ fun LogRow(
     cellStyle: CellStyle? = null,
     logTypeIndicator: LogTypeIndicator? = null,
     wrapContent: Boolean,
+    marked: Boolean = false,
 ) {
     Column(
         modifier = modifier.then(
@@ -61,6 +67,23 @@ fun LogRow(
                     }
                 )
         ) {
+            Cell(
+                modifier = Modifier.width(10.dp).padding(end = 2.dp, start = 2.dp, top = 2.dp),
+                textAlign = TextAlign.Center,
+                text = "",
+                isHeader = isHeader,
+                cellStyle = finalCellStyle,
+            ) {
+                if (marked) {
+                    Image(
+                        painterResource(Res.drawable.icon_mark),
+                        contentDescription = "Mark log",
+                        modifier = Modifier.size(6.dp),
+                    )
+                } else {
+                    Box(modifier = Modifier.size(6.dp))
+                }
+            }
             Cell(
                 modifier = Modifier.width(54.dp).padding(end = 2.dp),
                 textAlign = TextAlign.Right,
@@ -198,16 +221,16 @@ fun LogRowPreview() {
             LogRow(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
                 isSelected = i == 3,
-                isHeader = i == 0,
                 index = (16_345_345 + i).toString(),
                 datetime = "2024-02-04 18:26:23.074689",
                 timeOffset = "1234",
                 ecu = if (i % 3 == 0) "汉语" else "EcuI",
+                ecuId = "EcuId",
                 sessionId = "123",
                 applicationId = "AppId",
-                ecuId = "EcuId",
                 contextId = "Con",
                 content = contents[i],
+                isHeader = i == 0,
                 cellStyle = when (i) {
                     9 -> CellStyle(backgroundColor = Color.Yellow)
                     8 -> CellStyle(
@@ -222,6 +245,7 @@ fun LogRowPreview() {
                     ColorFilterFatal.cellStyle
                 ) else null,
                 wrapContent = true,
+                marked = i % 2 == 0,
             )
         }
     }

@@ -23,12 +23,12 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -112,12 +112,12 @@ fun MainWindow(
                     modifier = Modifier.weight(1f),
                     searchState = searchState,
                     searchAutoComplete = mainViewModel.searchAutocomplete,
-                    dltMessages = mainViewModel.dltMessages,
+                    logMessages = mainViewModel.logMessages,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
                     logsToolbarState = logsToolbarState,
-                    onSearchButtonClicked = { mainViewModel.onSearchClicked(it) },
+                    onSearchButtonClicked = { searchType, text ->  mainViewModel.onSearchClicked(searchType, text) },
                     updateToolbarFatalCheck = updateToolbarFatalCheck,
                     updateToolbarErrorCheck = updateToolbarErrorCheck,
                     updateToolbarWarningCheck = updateToolbarWarningCheck,
@@ -139,8 +139,8 @@ fun MainWindow(
                             clipboardManager.setText(text)
                         }
 
-                        override fun onMarkClicked(i: Int, message: DLTMessage) {
-                            // TODO: Mark row
+                        override fun onMarkClicked(i: Int, message: LogMessage) {
+                            mainViewModel.markMessage(i, message)
                         }
 
                         override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
@@ -154,7 +154,7 @@ fun MainWindow(
             1 -> TimeLinePanel(
                 modifier = Modifier.weight(1f),
                 timelineViewModel = timelineViewModel,
-                mainViewModel.dltMessages,
+                mainViewModel.logMessages,
                 offset,
                 offsetUpdateCallback,
                 scale,
@@ -162,8 +162,8 @@ fun MainWindow(
             )
         }
         Divider()
-        val statusText = if (mainViewModel.dltMessages.isNotEmpty()) {
-            "Messages: ${"%,d".format(mainViewModel.dltMessages.size)}"
+        val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
+            "Messages: ${"%,d".format(mainViewModel.logMessages.size)}"
         } else {
             "No file loaded"
         }

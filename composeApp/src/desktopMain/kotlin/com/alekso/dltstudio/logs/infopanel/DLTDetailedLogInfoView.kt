@@ -8,22 +8,22 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.toBinary
 import com.alekso.dltparser.toHex
+import com.alekso.dltstudio.model.LogMessage
 
 @Composable
 fun DLTDetailedInfoView(
     modifier: Modifier = Modifier,
-    dltMessage: DLTMessage?,
+    logMessage: LogMessage?,
     messageIndex: Int
 ) {
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)
 
     SelectionContainer {
         Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-            if (dltMessage != null) {
+            logMessage?.dltMessage?.let {
                 val parameterRowWidth = 150
                 Header(
                     modifier = paddingModifier,
@@ -31,11 +31,11 @@ fun DLTDetailedInfoView(
                 )
                 TableRow(
                     parameterRowWidth, "Timestamp",
-                    "${dltMessage.timeStampNano}"
+                    "${it.timeStampNano}"
                 )
                 TableRow(
                     parameterRowWidth, "ECU Id",
-                    "'${dltMessage.ecuId}'"
+                    "'${it.ecuId}'"
                 )
 
                 Header(
@@ -45,64 +45,64 @@ fun DLTDetailedInfoView(
 
                 TableRow(
                     parameterRowWidth, "Header Type",
-                    "0x${dltMessage.standardHeader.headerType.originalByte.toHex()} " +
-                            "(${dltMessage.standardHeader.headerType.originalByte.toBinary(8)}b)"
+                    "0x${it.standardHeader.headerType.originalByte.toHex()} " +
+                            "(${it.standardHeader.headerType.originalByte.toBinary(8)}b)"
                 )
                 TableRow(
                     parameterRowWidth, "  Extender header",
-                    "${dltMessage.standardHeader.headerType.useExtendedHeader}"
+                    "${it.standardHeader.headerType.useExtendedHeader}"
                 )
                 TableRow(
                     parameterRowWidth, "  Payload Endian",
-                    if (dltMessage.standardHeader.headerType.payloadBigEndian) "BIG" else "LITTLE"
+                    if (it.standardHeader.headerType.payloadBigEndian) "BIG" else "LITTLE"
                 )
                 TableRow(
                     parameterRowWidth, "  ECU present",
-                    "${dltMessage.standardHeader.headerType.withEcuId}"
+                    "${it.standardHeader.headerType.withEcuId}"
                 )
                 TableRow(
                     parameterRowWidth, "  Session present",
-                    "${dltMessage.standardHeader.headerType.withSessionId}"
+                    "${it.standardHeader.headerType.withSessionId}"
                 )
                 TableRow(
                     parameterRowWidth, "  Timestamp present",
-                    "${dltMessage.standardHeader.headerType.withTimestamp}"
+                    "${it.standardHeader.headerType.withTimestamp}"
                 )
                 TableRow(
                     parameterRowWidth, "  Version number",
-                    "0x${dltMessage.standardHeader.headerType.versionNumber.toHex()}"
+                    "0x${it.standardHeader.headerType.versionNumber.toHex()}"
                 )
 
                 TableRow(
                     parameterRowWidth, "Message counter",
-                    "${dltMessage.standardHeader.messageCounter}"
+                    "${it.standardHeader.messageCounter}"
                 )
                 TableRow(
                     parameterRowWidth, "Length",
-                    "${dltMessage.standardHeader.length}"
+                    "${it.standardHeader.length}"
                 )
-                if (dltMessage.standardHeader.headerType.withEcuId) {
+                if (it.standardHeader.headerType.withEcuId) {
                     TableRow(
                         parameterRowWidth, "ECU Id",
-                        "'${dltMessage.standardHeader.ecuId}'"
+                        "'${it.standardHeader.ecuId}'"
                     )
                 }
-                if (dltMessage.standardHeader.headerType.withSessionId) {
+                if (it.standardHeader.headerType.withSessionId) {
                     TableRow(
                         parameterRowWidth, "Session Id",
-                        "${dltMessage.standardHeader.sessionId}"
+                        "${it.standardHeader.sessionId}"
                     )
                 }
 
-                if (dltMessage.standardHeader.headerType.withTimestamp) {
+                if (it.standardHeader.headerType.withTimestamp) {
                     TableRow(
                         parameterRowWidth, "Timestamp",
-                        "${dltMessage.standardHeader.timeStamp}"
+                        "${it.standardHeader.timeStamp}"
                     )
                 }
 
-                if (dltMessage.extendedHeader != null) {
-                    val extendedHeader: ExtendedHeader = dltMessage.extendedHeader!!
+                if (it.extendedHeader != null) {
+                    val extendedHeader: ExtendedHeader = it.extendedHeader!!
                     Header(
                         modifier = paddingModifier,
                         text = "Extended header:"
@@ -144,7 +144,7 @@ fun DLTDetailedInfoView(
                     text = "Payload:"
                 )
 
-                TableRow(0, "", dltMessage.payload)
+                TableRow(0, "", it.payload)
             }
         }
     }

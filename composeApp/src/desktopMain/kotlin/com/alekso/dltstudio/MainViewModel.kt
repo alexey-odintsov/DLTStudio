@@ -6,11 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
-import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.logs.LogTypeIndicator
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -34,7 +34,7 @@ enum class LogRemoveContext {
 
 interface RowContextMenuCallbacks {
     fun onCopyClicked(text: AnnotatedString)
-    fun onMarkClicked(i: Int, message: DLTMessage)
+    fun onMarkClicked(i: Int, message: LogMessage)
     fun onRemoveClicked(context: LogRemoveContext, filter: String)
 }
 
@@ -43,11 +43,11 @@ class MainViewModel(
     private val onProgressChanged: (Float) -> Unit
 ) {
 
-    private val _dltMessages = mutableStateListOf<DLTMessage>()
-    val dltMessages: SnapshotStateList<DLTMessage>
-        get() = _dltMessages
+    private val _logMessages = mutableStateListOf<LogMessage>()
+    val logMessages: SnapshotStateList<LogMessage>
+        get() = _logMessages
 
-    val searchResult = mutableStateListOf<DLTMessage>()
+    val searchResult = mutableStateListOf<LogMessage>()
     val searchIndexes = mutableStateListOf<Int>()
     val searchAutocomplete = mutableStateListOf<String>()
 
@@ -84,10 +84,10 @@ class MainViewModel(
 
         searchResult.clear()
         searchIndexes.clear()
-        _dltMessages.clear()
+        _logMessages.clear()
 
         parseJob = CoroutineScope(IO).launch {
-            _dltMessages.addAll(dltParser.read(onProgressChanged, dltFiles))
+            _logMessages.addAll(dltParser.read(onProgressChanged, dltFiles).map { LogMessage(it) })
         }
     }
 
@@ -99,9 +99,9 @@ class MainViewModel(
         _searchState.value = _searchState.value.copy(searchUseRegex = checked)
     }
 
-    fun onSearchClicked(searchText: String) {
+    fun onSearchClicked(searchType: SearchType, searchText: String) {
         when (_searchState.value.state) {
-            SearchState.State.IDLE -> startSearch(searchText)
+            SearchState.State.IDLE -> startSearch(searchType, searchText)
             SearchState.State.SEARCHING -> stopSearch()
         }
     }
@@ -113,7 +113,7 @@ class MainViewModel(
         )
     }
 
-    private fun startSearch(searchText: String) {
+    private fun startSearch(searchType: SearchType, searchText: String) {
         Preferences.addRecentSearch(searchText)
 
         _searchState.value = _searchState.value.copy(
@@ -128,28 +128,28 @@ class MainViewModel(
             searchResult.clear()
             searchIndexes.clear()
             val startMs = System.currentTimeMillis()
-            println("Start searching for '$searchText'")
+            println("Start searching for $searchType '$searchText'")
 
-            _dltMessages.forEachIndexed { i, dltMessage ->
+            _logMessages.forEachIndexed { i, logMessage ->
                 yield()
-                val payload = "${dltMessage.standardHeader.ecuId} " +
-                        "${dltMessage.standardHeader.sessionId} " +
-                        "${dltMessage.extendedHeader?.applicationId} " +
-                        "${dltMessage.extendedHeader?.contextId} " +
-                        "${LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)?.logTypeSymbol ?: ""} " +
-                        dltMessage.payload
+                val payload = logMessage.getMessageText()
 
-                if ((_searchState.value.searchUseRegex && searchText.toRegex()
+                if (
+                    // regular text search
+                    (searchType == SearchType.Text && ((_searchState.value.searchUseRegex && searchText.toRegex()
                         .containsMatchIn(payload))
-                    || (payload.contains(searchText))
+                            || (payload.contains(searchText))))
+
+                    // marked rows search
+                    || (searchType == SearchType.MarkedRows && logMessage.marked)
                 ) {
-                    searchResult.add(dltMessage)
+                    searchResult.add(logMessage)
                     searchIndexes.add(i)
                 }
                 val nowTs = System.currentTimeMillis()
                 if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                     prevTs = nowTs
-                    onProgressChanged(i.toFloat() / dltMessages.size)
+                    onProgressChanged(i.toFloat() / logMessages.size)
                 }
             }
             _searchState.value = _searchState.value.copy(
@@ -204,11 +204,12 @@ class MainViewModel(
         CoroutineScope(IO).launch {
             println("start removing '$filter' $type")
             var prevTs = System.currentTimeMillis()
-            val filtered = _dltMessages.filterIndexed { index, message ->
+            val filtered = _logMessages.filterIndexed { index, logMessage ->
+                val message = logMessage.dltMessage
                 val nowTs = System.currentTimeMillis()
                 if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                     prevTs = nowTs
-                    onProgressChanged(index.toFloat() / dltMessages.size)
+                    onProgressChanged(index.toFloat() / _logMessages.size)
                 }
 
                 when (type) {
@@ -221,8 +222,8 @@ class MainViewModel(
                 }
             }
 
-            _dltMessages.clear()
-            _dltMessages.addAll(filtered)
+            _logMessages.clear()
+            _logMessages.addAll(filtered)
             onProgressChanged(1f)
 
             // TODO: update searchIndexes as well otherwise they will be broken
@@ -244,6 +245,19 @@ class MainViewModel(
 //            searchResult.addAll(filteredSearch)
             onProgressChanged(1f)
             println("done removing '$filter'")
+        }
+    }
+
+    fun markMessage(i: Int, message: LogMessage) {
+        val updatedMessage = message.copy(marked = message.marked.not())
+        val logMessageIndex = logMessages.indexOf(message)
+        val searchMessageIndex = searchResult.indexOf(message)
+
+        if (logMessageIndex != -1) {
+            logMessages[logMessageIndex] = updatedMessage
+        }
+        if (searchMessageIndex != -1) {
+            searchResult[searchMessageIndex] = updatedMessage
         }
     }
 }
