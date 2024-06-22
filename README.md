@@ -21,6 +21,8 @@ Timeline filters
   - Plain text and regex search by Payload (so far)
   - DLT message Simple and Detailed info panel
   - Warn, Error and Fatal messages color filters with toggle buttons
+  - Logs marking and filtering for marked logs
+  - Logs removal based on criteria (App, Context, Ecu, Session, everything before/after)
   - Customisable color filters
   - Logs word wrapping
 - Timeline screen
