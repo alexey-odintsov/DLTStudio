@@ -129,15 +129,15 @@ class MainViewModel(
             val startMs = System.currentTimeMillis()
             println("Start searching for '$searchText'")
 
-            _logMessages.forEachIndexed { i, dltMessage ->
+            _logMessages.forEachIndexed { i, logMessage ->
                 yield()
-                val payload = dltMessage.getMessageText()
+                val payload = logMessage.getMessageText()
 
                 if ((_searchState.value.searchUseRegex && searchText.toRegex()
                         .containsMatchIn(payload))
                     || (payload.contains(searchText))
                 ) {
-                    searchResult.add(dltMessage)
+                    searchResult.add(logMessage)
                     searchIndexes.add(i)
                 }
                 val nowTs = System.currentTimeMillis()
@@ -243,6 +243,15 @@ class MainViewModel(
     }
 
     fun markMessage(i: Int, message: LogMessage) {
-        logMessages[i] = logMessages[i].copy(marked = logMessages[i].marked.not())
+        val updatedMessage = message.copy(marked = message.marked.not())
+        val logMessageIndex = logMessages.indexOf(message)
+        val searchMessageIndex = searchResult.indexOf(message)
+
+        if (logMessageIndex != -1) {
+            logMessages[logMessageIndex] = updatedMessage
+        }
+        if (searchMessageIndex != -1) {
+            searchResult[searchMessageIndex] = updatedMessage
+        }
     }
 }
