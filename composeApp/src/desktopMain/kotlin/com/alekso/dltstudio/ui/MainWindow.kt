@@ -31,6 +31,10 @@ import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarState
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
+import dtlstudio.composeapp.generated.resources.Res
+import dtlstudio.composeapp.generated.resources.tab_logs
+import dtlstudio.composeapp.generated.resources.tab_timeline
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.rememberSplitPaneState
 import java.io.File
@@ -104,7 +108,11 @@ fun MainWindow(
     }
 
     Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
-        TabsPanel(tabIndex, listOf("Logs", "Timeline"), tabClickListener)
+        TabsPanel(
+            tabIndex,
+            listOf(stringResource(Res.string.tab_logs), stringResource(Res.string.tab_timeline)),
+            tabClickListener
+        )
 
         when (tabIndex) {
             0 -> {
