@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
@@ -30,32 +31,39 @@ fun Cell(
     isHeader: Boolean = false,
     cellStyle: CellStyle? = null,
     wrapContent: Boolean = false,
+    content: (@Composable () -> Unit)? = null,
 ) {
     val color = if (cellStyle != null) {
         cellStyle.textColor ?: Color.Unspecified
     } else Color.Unspecified
 
-    if (wrapContent) {
-        Text(
-            modifier = Modifier.padding(end = 1.dp).then(modifier),
-            textAlign = textAlign,
-            fontSize = 10.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight(if (isHeader) 600 else 400),
-            softWrap = true,
-            text = text,
-            color = color,
-        )
+    if (content != null) {
+        Box(modifier = modifier) {
+            content()
+        }
     } else {
-        Text(
-            modifier = Modifier.padding(end = 1.dp).height(12.dp).then(modifier),
-            maxLines = 1,
-            textAlign = textAlign,
-            fontSize = 10.sp,
-            fontFamily = FontFamily.Monospace,
-            fontWeight = FontWeight(if (isHeader) 600 else 400),
-            text = text,
-            color = color,
-        )
+        if (wrapContent) {
+            Text(
+                modifier = Modifier.padding(end = 1.dp).then(modifier),
+                textAlign = textAlign,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight(if (isHeader) 600 else 400),
+                softWrap = true,
+                text = text,
+                color = color,
+            )
+        } else {
+            Text(
+                modifier = Modifier.padding(end = 1.dp).height(12.dp).then(modifier),
+                maxLines = 1,
+                textAlign = textAlign,
+                fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace,
+                fontWeight = FontWeight(if (isHeader) 600 else 400),
+                text = text,
+                color = color,
+            )
+        }
     }
 }

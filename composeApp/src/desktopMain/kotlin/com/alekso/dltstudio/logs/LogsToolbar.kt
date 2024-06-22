@@ -26,6 +26,7 @@ import dtlstudio.composeapp.generated.resources.Res
 import dtlstudio.composeapp.generated.resources.icon_color_filters
 import dtlstudio.composeapp.generated.resources.icon_e
 import dtlstudio.composeapp.generated.resources.icon_f
+import dtlstudio.composeapp.generated.resources.icon_marked_logs
 import dtlstudio.composeapp.generated.resources.icon_regex
 import dtlstudio.composeapp.generated.resources.icon_search
 import dtlstudio.composeapp.generated.resources.icon_stop
@@ -104,11 +105,11 @@ fun LogsToolbar(
 
         ImageButton(modifier = Modifier.size(32.dp),
             icon = if (searchState.state == SearchState.State.IDLE) {
-                Res.drawable.icon_search
+                Res.drawable.icon_marked_logs
             } else {
                 Res.drawable.icon_stop
             },
-            title = "Show marked rows",
+            title = "Show marked logs",
             onClick = {
                 onSearchButtonClicked(SearchType.MarkedRows, "")
             })
