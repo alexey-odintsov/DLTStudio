@@ -9,6 +9,7 @@ import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import kotlinx.coroutines.CoroutineScope
@@ -98,9 +99,9 @@ class MainViewModel(
         _searchState.value = _searchState.value.copy(searchUseRegex = checked)
     }
 
-    fun onSearchClicked(searchText: String) {
+    fun onSearchClicked(searchType: SearchType, searchText: String) {
         when (_searchState.value.state) {
-            SearchState.State.IDLE -> startSearch(searchText)
+            SearchState.State.IDLE -> startSearch(searchType, searchText)
             SearchState.State.SEARCHING -> stopSearch()
         }
     }
@@ -112,7 +113,7 @@ class MainViewModel(
         )
     }
 
-    private fun startSearch(searchText: String) {
+    private fun startSearch(searchType: SearchType, searchText: String) {
         Preferences.addRecentSearch(searchText)
 
         _searchState.value = _searchState.value.copy(
@@ -127,15 +128,20 @@ class MainViewModel(
             searchResult.clear()
             searchIndexes.clear()
             val startMs = System.currentTimeMillis()
-            println("Start searching for '$searchText'")
+            println("Start searching for $searchType '$searchText'")
 
             _logMessages.forEachIndexed { i, logMessage ->
                 yield()
                 val payload = logMessage.getMessageText()
 
-                if ((_searchState.value.searchUseRegex && searchText.toRegex()
+                if (
+                    // regular text search
+                    (searchType == SearchType.Text && ((_searchState.value.searchUseRegex && searchText.toRegex()
                         .containsMatchIn(payload))
-                    || (payload.contains(searchText))
+                            || (payload.contains(searchText))))
+
+                    // marked rows search
+                    || (searchType == SearchType.MarkedRows && logMessage.marked)
                 ) {
                     searchResult.add(logMessage)
                     searchIndexes.add(i)

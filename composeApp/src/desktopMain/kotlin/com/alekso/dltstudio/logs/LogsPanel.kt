@@ -33,6 +33,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
@@ -57,7 +58,7 @@ fun LogsPanel(
     searchResult: SnapshotStateList<LogMessage>,
     searchIndexes: List<Int>,
     searchAutoComplete: List<String>,
-    onSearchButtonClicked: (String) -> Unit,
+    onSearchButtonClicked: (SearchType, String) -> Unit,
     onSearchUseRegexChanged: (Boolean) -> Unit,
     // color filters
     colorFilters: List<ColorFilter>,
@@ -217,7 +218,7 @@ fun PreviewLogsPanel() {
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
         searchIndexes = emptyList(),
-        onSearchButtonClicked = { },
+        onSearchButtonClicked = { _, _ -> },
         onSearchUseRegexChanged = { },
         colorFilters = emptyList(),
         onColorFilterUpdate = { i, f -> },

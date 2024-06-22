@@ -17,6 +17,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.ui.AutoCompleteEditText
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
@@ -60,7 +61,7 @@ fun LogsToolbar(
     state: LogsToolbarState,
     searchState: SearchState,
     searchAutoComplete: List<String>,
-    onSearchButtonClicked: (String) -> Unit,
+    onSearchButtonClicked: (SearchType, String) -> Unit,
     updateToolbarFatalCheck: (Boolean) -> Unit,
     updateToolbarErrorCheck: (Boolean) -> Unit,
     updateToolbarWarningCheck: (Boolean) -> Unit,
@@ -101,6 +102,18 @@ fun LogsToolbar(
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
+        ImageButton(modifier = Modifier.size(32.dp),
+            icon = if (searchState.state == SearchState.State.IDLE) {
+                Res.drawable.icon_search
+            } else {
+                Res.drawable.icon_stop
+            },
+            title = "Show marked rows",
+            onClick = {
+                onSearchButtonClicked(SearchType.MarkedRows, "")
+            })
+
+
         var text by rememberSaveable { mutableStateOf(searchState.searchText) }
         ToggleImageButton(
             checkedState = searchState.searchUseRegex,
@@ -114,7 +127,7 @@ fun LogsToolbar(
             modifier = Modifier.height(20.dp).weight(1f)
             .onKeyEvent { e ->
                 if (e.key == Key.Enter) {
-                    onSearchButtonClicked(text)
+                    onSearchButtonClicked(SearchType.Text, text)
                     true
                 } else {
                     false
@@ -135,7 +148,7 @@ fun LogsToolbar(
             },
             title = "Search",
             onClick = {
-                onSearchButtonClicked(text)
+                onSearchButtonClicked(SearchType.Text, text)
             })
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
@@ -164,7 +177,7 @@ fun PreviewLogsToolbar() {
         ),
         searchState = SearchState(),
         searchAutoComplete = emptyList(),
-        onSearchButtonClicked = {},
+        onSearchButtonClicked = { _, _ -> },
         updateToolbarFatalCheck = {},
         updateToolbarErrorCheck = {},
         updateToolbarWarningCheck = {},

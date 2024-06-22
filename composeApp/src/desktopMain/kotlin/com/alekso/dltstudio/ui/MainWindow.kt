@@ -117,7 +117,7 @@ fun MainWindow(
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
                     logsToolbarState = logsToolbarState,
-                    onSearchButtonClicked = { mainViewModel.onSearchClicked(it) },
+                    onSearchButtonClicked = { searchType, text ->  mainViewModel.onSearchClicked(searchType, text) },
                     updateToolbarFatalCheck = updateToolbarFatalCheck,
                     updateToolbarErrorCheck = updateToolbarErrorCheck,
                     updateToolbarWarningCheck = updateToolbarWarningCheck,
