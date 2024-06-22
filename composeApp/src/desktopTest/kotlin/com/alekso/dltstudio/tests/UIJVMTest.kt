@@ -16,7 +16,7 @@ class UIJVMTest {
             TabsPanel(0, listOf("Logs", "Timeline"), { })
         }
 
-        rule.onNodeWithText("Log3s").assertExists("Logs tab doesn't exist")
+        rule.onNodeWithText("Logs").assertExists("Logs tab doesn't exist")
         rule.onNodeWithText("Timeline").assertExists("Timeline tab doesn't exist")
     }
 }
