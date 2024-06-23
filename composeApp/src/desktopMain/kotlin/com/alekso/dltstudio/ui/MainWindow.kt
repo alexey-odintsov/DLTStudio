@@ -27,7 +27,9 @@ import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPanel
+import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
@@ -63,6 +65,7 @@ fun MainWindow(
                 toolbarErrorChecked = true,
                 toolbarWarningChecked = true,
                 toolbarWrapContentChecked = false,
+                toolbarCommentsChecked = false,
             )
         )
     }
@@ -75,21 +78,40 @@ fun MainWindow(
     // Logs toolbar
     val searchState by mainViewModel.searchState.collectAsState()
 
-    val updateToolbarFatalCheck: (Boolean) -> Unit =
-        { checked ->
+    val logsToolbarCallbacks = object : LogsToolbarCallbacks {
+        override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+            mainViewModel.onSearchClicked(searchType, text)
+        }
+
+        override fun updateToolbarFatalCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
         }
-    val updateToolbarErrorCheck: (Boolean) -> Unit = { checked ->
-        logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
-    }
-    val updateToolbarWarningCheck: (Boolean) -> Unit =
-        { checked ->
+
+        override fun updateToolbarErrorCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWarningCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
         }
-    val updateToolbarWrapContentCheck: (Boolean) -> Unit =
-        { checked ->
+
+        override fun updateToolbarCommentsCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWrapContentCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
         }
+
+        override fun onSearchUseRegexChanged(checked: Boolean) {
+            mainViewModel.onSearchUseRegexChanged(checked)
+        }
+
+        override fun onColorFiltersClicked() {
+            // TODO move dialog creation here
+        }
+
+    }
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
         if (it.dragData is DragData.FilesList) {
@@ -117,12 +139,7 @@ fun MainWindow(
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
                     logsToolbarState = logsToolbarState,
-                    onSearchButtonClicked = { searchType, text ->  mainViewModel.onSearchClicked(searchType, text) },
-                    updateToolbarFatalCheck = updateToolbarFatalCheck,
-                    updateToolbarErrorCheck = updateToolbarErrorCheck,
-                    updateToolbarWarningCheck = updateToolbarWarningCheck,
-                    updateToolbarWrapContentCheck = updateToolbarWrapContentCheck,
-                    onSearchUseRegexChanged = { mainViewModel.onSearchUseRegexChanged(it) },
+                    logsToolbarCallbacks = logsToolbarCallbacks,
                     vSplitterState = vSplitterState,
                     hSplitterState = hSplitterState,
                     onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },

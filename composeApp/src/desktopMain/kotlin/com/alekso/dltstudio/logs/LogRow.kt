@@ -47,6 +47,7 @@ fun LogRow(
     wrapContent: Boolean,
     marked: Boolean = false,
     comment: String? = null,
+    showComments: Boolean = false,
 ) {
     Column(
         modifier = modifier.then(
@@ -178,7 +179,7 @@ fun LogRow(
                 wrapContent = wrapContent,
             )
         }
-        if (comment != null) {
+        if (showComments && comment != null) {
             RowDivider()
             Row(
                 modifier

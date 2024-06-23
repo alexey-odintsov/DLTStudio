@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.LogMessage
@@ -23,6 +22,7 @@ fun LogsListPanel(
     onLogsRowSelected: (Int, Int) -> Unit,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    showComments: Boolean,
 ) {
     Panel(
         modifier = modifier,
@@ -38,6 +38,7 @@ fun LogsListPanel(
             listState = logsListState,
             wrapContent = wrapContent,
             rowContextMenuCallbacks = rowContextMenuCallbacks,
+            showComments = showComments,
         )
     }
 }

@@ -58,8 +58,6 @@ fun LogsPanel(
     searchResult: SnapshotStateList<LogMessage>,
     searchIndexes: List<Int>,
     searchAutoComplete: List<String>,
-    onSearchButtonClicked: (SearchType, String) -> Unit,
-    onSearchUseRegexChanged: (Boolean) -> Unit,
     // color filters
     colorFilters: List<ColorFilter>,
     onColorFilterUpdate: (Int, ColorFilter) -> Unit,
@@ -67,10 +65,7 @@ fun LogsPanel(
     onColorFilterMove: (Int, Int) -> Unit,
     // toolbar
     logsToolbarState: LogsToolbarState,
-    updateToolbarFatalCheck: (Boolean) -> Unit,
-    updateToolbarErrorCheck: (Boolean) -> Unit,
-    updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateToolbarWrapContentCheck: (Boolean) -> Unit,
+    logsToolbarCallbacks: LogsToolbarCallbacks,
     // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
@@ -90,13 +85,8 @@ fun LogsPanel(
             logsToolbarState,
             searchState,
             searchAutoComplete,
-            onSearchButtonClicked,
-            updateToolbarFatalCheck,
-            updateToolbarErrorCheck,
-            updateToolbarWarningCheck,
-            updateToolbarWrapContentCheck,
-            onSearchUseRegexChanged,
-            onColorFiltersClicked = { dialogState.value = true }
+            callbacks = logsToolbarCallbacks,
+            //onColorFiltersClicked = { dialogState.value = true }
         )
 
         if (dialogState.value) {
@@ -138,6 +128,7 @@ fun LogsPanel(
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
                             wrapContent = logsToolbarState.toolbarWrapContentChecked,
+                            showComments = logsToolbarState.toolbarCommentsChecked,
                             rowContextMenuCallbacks = rowContextMenuCallbacks,
                         )
                     }
@@ -180,6 +171,7 @@ fun LogsPanel(
                     searchListState = searchListState,
                     onSearchRowSelected = onSearchRowSelected,
                     wrapContent = logsToolbarState.toolbarWrapContentChecked,
+                    showComments = logsToolbarState.toolbarCommentsChecked,
                     rowContextMenuCallbacks = rowContextMenuCallbacks,
                 )
             }
@@ -219,8 +211,6 @@ fun PreviewLogsPanel() {
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
         searchIndexes = emptyList(),
-        onSearchButtonClicked = { _, _ -> },
-        onSearchUseRegexChanged = { },
         colorFilters = emptyList(),
         onColorFilterUpdate = { i, f -> },
         onColorFilterDelete = { i -> },
@@ -230,11 +220,41 @@ fun PreviewLogsPanel() {
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
             toolbarWrapContentChecked = true,
+            toolbarCommentsChecked = false,
         ),
-        updateToolbarFatalCheck = { },
-        updateToolbarErrorCheck = { },
-        updateToolbarWarningCheck = { },
-        updateToolbarWrapContentCheck = {},
+        logsToolbarCallbacks = object : LogsToolbarCallbacks {
+            override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+
+            }
+
+            override fun updateToolbarFatalCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarErrorCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarWarningCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarCommentsCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarWrapContentCheck(checked: Boolean) {
+
+            }
+
+            override fun onSearchUseRegexChanged(checked: Boolean) {
+
+            }
+
+            override fun onColorFiltersClicked() {
+
+            }
+        },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
         logsListState = LazyListState(),
