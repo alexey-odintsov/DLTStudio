@@ -14,6 +14,9 @@ import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
+import dtlstudio.composeapp.generated.resources.Res
+import dtlstudio.composeapp.generated.resources.app_name
+import org.jetbrains.compose.resources.stringResource
 import java.io.File
 
 fun main() = application {
@@ -23,7 +26,7 @@ fun main() = application {
             Preferences.saveToFile()
             exitApplication()
         },
-        title = "DTL Studio",
+        title = stringResource(Res.string.app_name),
         state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
 //        MaterialTheme(
