@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,7 +28,6 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
-import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
@@ -60,9 +57,6 @@ fun LogsPanel(
     searchAutoComplete: List<String>,
     // color filters
     colorFilters: List<ColorFilter>,
-    onColorFilterUpdate: (Int, ColorFilter) -> Unit,
-    onColorFilterDelete: (Int) -> Unit,
-    onColorFilterMove: (Int, Int) -> Unit,
     // toolbar
     logsToolbarState: LogsToolbarState,
     logsToolbarCallbacks: LogsToolbarCallbacks,
@@ -78,7 +72,6 @@ fun LogsPanel(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
 ) {
     println("recompose LogsPanel")
-    val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         LogsToolbar(
@@ -86,19 +79,7 @@ fun LogsPanel(
             searchState,
             searchAutoComplete,
             callbacks = logsToolbarCallbacks,
-            //onColorFiltersClicked = { dialogState.value = true }
         )
-
-        if (dialogState.value) {
-            ColorFiltersDialog(
-                visible = dialogState.value,
-                onDialogClosed = { dialogState.value = false },
-                colorFilters = colorFilters,
-                onColorFilterUpdate = onColorFilterUpdate,
-                onColorFilterDelete = onColorFilterDelete,
-                onColorFilterMove = onColorFilterMove,
-            )
-        }
 
         Divider()
         val mergedFilters = mutableListOf<ColorFilter>()
@@ -212,9 +193,6 @@ fun PreviewLogsPanel() {
         searchResult = SnapshotStateList(),
         searchIndexes = emptyList(),
         colorFilters = emptyList(),
-        onColorFilterUpdate = { i, f -> },
-        onColorFilterDelete = { i -> },
-        onColorFilterMove = { i, o -> },
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
