@@ -24,6 +24,7 @@ import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.ToggleImageButton
 import dtlstudio.composeapp.generated.resources.Res
 import dtlstudio.composeapp.generated.resources.icon_color_filters
+import dtlstudio.composeapp.generated.resources.icon_comments
 import dtlstudio.composeapp.generated.resources.icon_e
 import dtlstudio.composeapp.generated.resources.icon_f
 import dtlstudio.composeapp.generated.resources.icon_marked_logs
@@ -105,9 +106,9 @@ fun LogsToolbar(
 
         ToggleImageButton(
             checkedState = state.toolbarCommentsChecked,
-            icon = Res.drawable.icon_w, // TODO: Create icon
+            icon = Res.drawable.icon_comments,
             title = "Toggle comments",
-            checkedTintColor = Color(0xE7, 0x62, 0x29),
+            checkedTintColor = Color.Blue,
             updateCheckedState = callbacks::updateToolbarCommentsCheck,
         )
 
