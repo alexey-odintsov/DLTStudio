@@ -6,7 +6,7 @@ import com.alekso.dltstudio.logs.LogTypeIndicator
 data class LogMessage(
     val dltMessage: DLTMessage,
     val marked: Boolean = false,
-    val comment: String? = null,
+    val comment: String? = "This is a test comment",
 ) {
     fun getMessageText(): String {
         return "${dltMessage.standardHeader.ecuId} " +

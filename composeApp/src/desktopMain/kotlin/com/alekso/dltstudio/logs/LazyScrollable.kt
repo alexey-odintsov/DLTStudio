@@ -109,6 +109,7 @@ fun LazyScrollable(
                             logTypeIndicator = logTypeIndicator,
                             wrapContent = wrapContent,
                             marked = logMessage.marked,
+                            comment = logMessage.comment,
                         )
                     }
                 }

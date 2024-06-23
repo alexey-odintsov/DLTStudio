@@ -82,6 +82,7 @@ fun LogsPanel(
     searchListSelectedRow: Int,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
 ) {
+    println("recompose LogsPanel")
     val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {

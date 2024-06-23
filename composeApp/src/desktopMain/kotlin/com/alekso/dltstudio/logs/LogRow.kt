@@ -46,6 +46,7 @@ fun LogRow(
     logTypeIndicator: LogTypeIndicator? = null,
     wrapContent: Boolean,
     marked: Boolean = false,
+    comment: String? = null,
 ) {
     Column(
         modifier = modifier.then(
@@ -177,6 +178,21 @@ fun LogRow(
                 wrapContent = wrapContent,
             )
         }
+        if (comment != null) {
+            RowDivider()
+            Row(
+                modifier
+                    .height(IntrinsicSize.Max)
+                    .background(Color.White)
+            ) {
+                Cell(
+                    modifier = Modifier.weight(1f).padding(start = 6.dp),
+                    text = comment,
+                    isComment = true,
+                    wrapContent = wrapContent,
+                )
+            }
+        }
         RowDivider()
     }
 }
@@ -246,6 +262,7 @@ fun LogRowPreview() {
                 ) else null,
                 wrapContent = true,
                 marked = i % 2 == 0,
+                comment = "This is comment"
             )
         }
     }

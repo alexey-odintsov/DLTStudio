@@ -130,6 +130,7 @@ class MainViewModel(
             val startMs = System.currentTimeMillis()
             println("Start searching for $searchType '$searchText'")
 
+            val temp = mutableListOf<LogMessage>()
             _logMessages.forEachIndexed { i, logMessage ->
                 yield()
                 val payload = logMessage.getMessageText()
@@ -143,15 +144,21 @@ class MainViewModel(
                     // marked rows search
                     || (searchType == SearchType.MarkedRows && logMessage.marked)
                 ) {
-                    searchResult.add(logMessage)
+                    temp.add(logMessage)
                     searchIndexes.add(i)
                 }
                 val nowTs = System.currentTimeMillis()
                 if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                     prevTs = nowTs
                     onProgressChanged(i.toFloat() / logMessages.size)
+                    // debounced list update
+                    searchResult.clear()
+                    searchResult.addAll(temp)
                 }
             }
+            searchResult.clear()
+            searchResult.addAll(temp)
+
             _searchState.value = _searchState.value.copy(
                 searchText = searchText,
                 state = SearchState.State.IDLE
@@ -254,7 +261,7 @@ class MainViewModel(
         val searchMessageIndex = searchResult.indexOf(message)
 
         if (logMessageIndex != -1) {
-            logMessages[logMessageIndex] = updatedMessage
+            _logMessages[logMessageIndex] = updatedMessage
         }
         if (searchMessageIndex != -1) {
             searchResult[searchMessageIndex] = updatedMessage
