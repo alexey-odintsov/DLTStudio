@@ -161,6 +161,7 @@ fun MainWindow(
                     searchListState = mainViewModel.searchListState,
                     onLogsRowSelected = { i, r -> mainViewModel.onLogsRowSelected(coroutineScope, i, r) },
                     onSearchRowSelected = { i, r -> mainViewModel.onSearchRowSelected(coroutineScope, i, r) },
+                    onCommentUpdated = { logMessage, comment -> mainViewModel.updateComment(logMessage, comment) },
                     rowContextMenuCallbacks = object : RowContextMenuCallbacks {
                         override fun onCopyClicked(text: AnnotatedString) {
                             clipboardManager.setText(text)

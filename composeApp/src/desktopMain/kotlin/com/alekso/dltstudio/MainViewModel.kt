@@ -267,4 +267,17 @@ class MainViewModel(
             searchResult[searchMessageIndex] = updatedMessage
         }
     }
+
+    fun updateComment(message: LogMessage, comment: String?) {
+        val updatedMessage = message.copy(comment = comment)
+        val logMessageIndex = logMessages.indexOf(message)
+        val searchMessageIndex = searchResult.indexOf(message)
+
+        if (logMessageIndex != -1) {
+            _logMessages[logMessageIndex] = updatedMessage
+        }
+        if (searchMessageIndex != -1) {
+            searchResult[searchMessageIndex] = updatedMessage
+        }
+    }
 }

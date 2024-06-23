@@ -70,6 +70,7 @@ fun LogsPanel(
     logsListSelectedRow: Int,
     searchListSelectedRow: Int,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
     println("recompose LogsPanel")
 
@@ -117,7 +118,8 @@ fun LogsPanel(
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
                             logMessages.getOrNull(logsListSelectedRow),
-                            logsListSelectedRow
+                            logsListSelectedRow,
+                            onCommentUpdated = onCommentUpdated,
                         )
                     }
                     splitter {
