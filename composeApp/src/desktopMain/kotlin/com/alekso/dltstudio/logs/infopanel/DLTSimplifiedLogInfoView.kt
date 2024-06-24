@@ -51,12 +51,14 @@ fun DLTSimplifiedInfoView(
                 TableRow(0, "", it.payload)
 
                 Header(
-                    modifier = paddingModifier,
+                    modifier = paddingModifier.padding(top = 8.dp),
                     text = "Comment:"
                 )
                 Row {
                     CustomEditText(
-                        modifier = Modifier.fillMaxWidth().height(44.dp).align(Alignment.Top),
+                        modifier = Modifier.fillMaxWidth().height(64.dp)
+                            .padding(top = 4.dp)
+                            .align(Alignment.Top),
                         singleLine = false,
                         value = comment ?: "",
                         onValueChange = {
@@ -64,10 +66,12 @@ fun DLTSimplifiedInfoView(
                         }
                     )
                 }
-                CustomButton(onClick = {
-                    onCommentUpdated(logMessage, comment)
-                }) {
-                    Text(text = "Add")
+                CustomButton(
+                    modifier = Modifier.padding(start = 6.dp),
+                    onClick = {
+                        onCommentUpdated(logMessage, if (comment.isNullOrEmpty()) null else comment)
+                    }) {
+                    Text(text = if (logMessage.comment != null) "Update" else "Add")
                 }
 
             }
