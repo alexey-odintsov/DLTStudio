@@ -72,7 +72,6 @@ fun LogsPanel(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
-    println("recompose LogsPanel")
 
     Column(modifier = modifier) {
         LogsToolbar(
