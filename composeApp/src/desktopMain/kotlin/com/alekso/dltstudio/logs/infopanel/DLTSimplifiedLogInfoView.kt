@@ -223,6 +223,6 @@ fun PreviewDLTSimplifiedInfoView2() {
         sizeBytes = 100,
     )
     DLTSimplifiedInfoView(
-        modifier = Modifier.height(400.dp).fillMaxWidth(), dltMessage = dltMessage, messageIndex = 0
+        modifier = Modifier.height(400.dp).fillMaxWidth(), logMessage = LogMessage(dltMessage), messageIndex = 0
     )
 }
