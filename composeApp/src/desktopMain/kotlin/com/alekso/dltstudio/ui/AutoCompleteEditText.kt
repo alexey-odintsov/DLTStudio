@@ -3,6 +3,7 @@ package com.alekso.dltstudio.ui
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -13,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
@@ -28,14 +30,14 @@ fun AutoCompleteEditText(
 ) {
 
     var expanded by remember { mutableStateOf(false) }
-    Box {
+    Box(modifier = modifier) {
         CustomEditText(
             value = value,
             onValueChange = {
                 expanded = true
                 onValueChange(it)
             },
-            modifier = modifier,
+            modifier = Modifier.fillMaxWidth(),
             singleLine = singleLine,
             interactionSource = interactionSource,
         )
@@ -43,7 +45,7 @@ fun AutoCompleteEditText(
         val filteringOptions = items.filter { it.contains(value, ignoreCase = true) }
         if (filteringOptions.isNotEmpty()) {
             DropdownMenu(
-                modifier = Modifier.focusable(false),
+                modifier = Modifier.focusable(false).fillMaxWidth(),
                 expanded = expanded,
                 onDismissRequest = {
                     expanded = false
@@ -62,6 +64,8 @@ fun AutoCompleteEditText(
                     ) {
                         Text(
                             text = selectionOption,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             fontSize = 12.sp,
                             lineHeight = 12.sp,
                         )

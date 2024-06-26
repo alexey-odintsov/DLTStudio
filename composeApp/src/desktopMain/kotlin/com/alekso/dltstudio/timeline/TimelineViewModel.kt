@@ -1,10 +1,12 @@
 package com.alekso.dltstudio.timeline
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
 import com.alekso.dltstudio.logs.colorfilters.FilterParameter
 import com.alekso.dltstudio.logs.colorfilters.TextCriteria
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
@@ -119,9 +121,9 @@ class TimelineViewModel(
         get() = if (timeEnd > 0 && timeStart > 0) ((timeEnd - timeStart) / 1000000).toInt() else 0
 
 
-    fun analyzeTimeline(dltMessages: List<DLTMessage>) {
+    fun analyzeTimeline(logMessages: SnapshotStateList<LogMessage>) {
         when (_analyzeState.value) {
-            AnalyzeState.IDLE -> startAnalyzing(dltMessages)
+            AnalyzeState.IDLE -> startAnalyzing(logMessages)
             AnalyzeState.ANALYZING -> stopAnalyzing()
         }
 
@@ -139,7 +141,7 @@ class TimelineViewModel(
         highlightedKeys.clear()
     }
 
-    private fun startAnalyzing(dltMessages: List<DLTMessage>) {
+    private fun startAnalyzing(dltMessages: SnapshotStateList<LogMessage>) {
         cleanup()
         _analyzeState.value = AnalyzeState.ANALYZING
         analyzeJob = CoroutineScope(Dispatchers.IO).launch {
@@ -165,7 +167,7 @@ class TimelineViewModel(
                 dltMessages.forEachIndexed { index, message ->
                     yield()
                     // timeStamps
-                    val ts = message.timeStampNano
+                    val ts = message.dltMessage.timeStampNano
                     if (ts > _timeEnd) {
                         _timeEnd = ts
                     }
@@ -176,7 +178,7 @@ class TimelineViewModel(
                     timelineFilters.forEachIndexed { i, timelineFilter ->
                         if (timelineFilter.enabled && regexps[i] != null) {
                             analyzeEntriesRegex(
-                                message,
+                                message.dltMessage,
                                 timelineFilter,
                                 regexps[i]!!,
                                 _userEntries[i]

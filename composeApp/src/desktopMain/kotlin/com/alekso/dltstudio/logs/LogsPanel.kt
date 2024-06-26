@@ -13,23 +13,25 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.LogRemoveContext
+import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
-import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.model.LogMessage
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
@@ -47,25 +49,17 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    dltMessages: List<DLTMessage>,
+    logMessages: SnapshotStateList<LogMessage>,
     // search
     searchState: SearchState,
-    searchResult: List<DLTMessage>,
+    searchResult: SnapshotStateList<LogMessage>,
     searchIndexes: List<Int>,
     searchAutoComplete: List<String>,
-    onSearchButtonClicked: (String) -> Unit,
-    onSearchUseRegexChanged: (Boolean) -> Unit,
     // color filters
     colorFilters: List<ColorFilter>,
-    onColorFilterUpdate: (Int, ColorFilter) -> Unit,
-    onColorFilterDelete: (Int) -> Unit,
-    onColorFilterMove: (Int, Int) -> Unit,
     // toolbar
     logsToolbarState: LogsToolbarState,
-    updateToolbarFatalCheck: (Boolean) -> Unit,
-    updateToolbarErrorCheck: (Boolean) -> Unit,
-    updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateToolbarWrapContentCheck: (Boolean) -> Unit,
+    logsToolbarCallbacks: LogsToolbarCallbacks,
     // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
@@ -75,33 +69,17 @@ fun LogsPanel(
     onSearchRowSelected: (Int, Int) -> Unit,
     logsListSelectedRow: Int,
     searchListSelectedRow: Int,
+    rowContextMenuCallbacks: RowContextMenuCallbacks,
+    onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
-    val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         LogsToolbar(
             logsToolbarState,
             searchState,
             searchAutoComplete,
-            onSearchButtonClicked,
-            updateToolbarFatalCheck,
-            updateToolbarErrorCheck,
-            updateToolbarWarningCheck,
-            updateToolbarWrapContentCheck,
-            onSearchUseRegexChanged,
-            onColorFiltersClicked = { dialogState.value = true }
+            callbacks = logsToolbarCallbacks,
         )
-
-        if (dialogState.value) {
-            ColorFiltersDialog(
-                visible = dialogState.value,
-                onDialogClosed = { dialogState.value = false },
-                colorFilters = colorFilters,
-                onColorFilterUpdate = onColorFilterUpdate,
-                onColorFilterDelete = onColorFilterDelete,
-                onColorFilterMove = onColorFilterMove,
-            )
-        }
 
         Divider()
         val mergedFilters = mutableListOf<ColorFilter>()
@@ -125,19 +103,22 @@ fun LogsPanel(
                     first(20.dp) {
                         LogsListPanel(
                             Modifier.fillMaxSize(),
-                            dltMessages,
+                            logMessages,
                             mergedFilters,
                             logsListSelectedRow,
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
-                            wrapContent = logsToolbarState.toolbarWrapContentChecked
+                            wrapContent = logsToolbarState.toolbarWrapContentChecked,
+                            showComments = logsToolbarState.toolbarCommentsChecked,
+                            rowContextMenuCallbacks = rowContextMenuCallbacks,
                         )
                     }
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            dltMessages.getOrNull(logsListSelectedRow),
-                            logsListSelectedRow
+                            logMessages.getOrNull(logsListSelectedRow),
+                            logsListSelectedRow,
+                            onCommentUpdated = onCommentUpdated,
                         )
                     }
                     splitter {
@@ -172,6 +153,8 @@ fun LogsPanel(
                     searchListState = searchListState,
                     onSearchRowSelected = onSearchRowSelected,
                     wrapContent = logsToolbarState.toolbarWrapContentChecked,
+                    showComments = logsToolbarState.toolbarCommentsChecked,
+                    rowContextMenuCallbacks = rowContextMenuCallbacks,
                 )
             }
             splitter {
@@ -202,28 +185,55 @@ fun LogsPanel(
 @Preview
 @Composable
 fun PreviewLogsPanel() {
+    val list = SnapshotStateList<LogMessage>()
+    list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
-        dltMessages = SampleData.getSampleDltMessages(20),
+        logMessages = list,
         searchState = SearchState(searchText = "Search text"),
-        searchResult = emptyList(),
+        searchResult = SnapshotStateList(),
         searchIndexes = emptyList(),
-        onSearchButtonClicked = { },
-        onSearchUseRegexChanged = { },
         colorFilters = emptyList(),
-        onColorFilterUpdate = { i, f -> },
-        onColorFilterDelete = { i -> },
-        onColorFilterMove = { i, o -> },
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
             toolbarWrapContentChecked = true,
+            toolbarCommentsChecked = false,
         ),
-        updateToolbarFatalCheck = { },
-        updateToolbarErrorCheck = { },
-        updateToolbarWarningCheck = { },
-        updateToolbarWrapContentCheck = {},
+        logsToolbarCallbacks = object : LogsToolbarCallbacks {
+            override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+
+            }
+
+            override fun updateToolbarFatalCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarErrorCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarWarningCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarCommentsCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarWrapContentCheck(checked: Boolean) {
+
+            }
+
+            override fun onSearchUseRegexChanged(checked: Boolean) {
+
+            }
+
+            override fun onColorFiltersClicked() {
+
+            }
+        },
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
         logsListState = LazyListState(),
@@ -233,5 +243,19 @@ fun PreviewLogsPanel() {
         logsListSelectedRow =0,
         searchListSelectedRow = 0,
         searchAutoComplete = emptyList(),
+        rowContextMenuCallbacks = object : RowContextMenuCallbacks {
+            override fun onCopyClicked(text: AnnotatedString) {
+
+            }
+
+            override fun onMarkClicked(i: Int, message: LogMessage) {
+
+            }
+
+            override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
+
+            }
+
+        },
     )
 }

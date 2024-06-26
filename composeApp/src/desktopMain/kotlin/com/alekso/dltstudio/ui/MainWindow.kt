@@ -19,11 +19,19 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.ExternalDragValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.onExternalDrag
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
+import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
+import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPanel
+import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
+import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -42,6 +50,7 @@ fun MainWindow(
     onProgressUpdate: (Float) -> Unit
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val clipboardManager = LocalClipboardManager.current
 
     var tabIndex by remember { mutableStateOf(0) }
     var offset by remember { mutableStateOf(0f) }
@@ -57,6 +66,7 @@ fun MainWindow(
                 toolbarErrorChecked = true,
                 toolbarWarningChecked = true,
                 toolbarWrapContentChecked = false,
+                toolbarCommentsChecked = false,
             )
         )
     }
@@ -68,22 +78,53 @@ fun MainWindow(
 
     // Logs toolbar
     val searchState by mainViewModel.searchState.collectAsState()
+    val colorFiltersDialogState = remember { mutableStateOf(false) }
 
-    val updateToolbarFatalCheck: (Boolean) -> Unit =
-        { checked ->
+    if (colorFiltersDialogState.value) {
+        ColorFiltersDialog(
+            visible = colorFiltersDialogState.value,
+            onDialogClosed = { colorFiltersDialogState.value = false },
+            colorFilters = mainViewModel.colorFilters,
+            onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
+            onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
+            onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
+        )
+    }
+
+
+    val logsToolbarCallbacks = object : LogsToolbarCallbacks {
+        override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+            mainViewModel.onSearchClicked(searchType, text)
+        }
+
+        override fun updateToolbarFatalCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
         }
-    val updateToolbarErrorCheck: (Boolean) -> Unit = { checked ->
-        logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
-    }
-    val updateToolbarWarningCheck: (Boolean) -> Unit =
-        { checked ->
+
+        override fun updateToolbarErrorCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWarningCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
         }
-    val updateToolbarWrapContentCheck: (Boolean) -> Unit =
-        { checked ->
+
+        override fun updateToolbarCommentsCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWrapContentCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
         }
+
+        override fun onSearchUseRegexChanged(checked: Boolean) {
+            mainViewModel.onSearchUseRegexChanged(checked)
+        }
+
+        override fun onColorFiltersClicked() {
+            colorFiltersDialogState.value = true
+        }
+    }
 
     val onDropCallback: (ExternalDragValue) -> Unit = {
         if (it.dragData is DragData.FilesList) {
@@ -106,35 +147,42 @@ fun MainWindow(
                     modifier = Modifier.weight(1f),
                     searchState = searchState,
                     searchAutoComplete = mainViewModel.searchAutocomplete,
-                    dltMessages = mainViewModel.dltMessages,
+                    logMessages = mainViewModel.logMessages,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
                     logsToolbarState = logsToolbarState,
-                    onSearchButtonClicked = { mainViewModel.onSearchClicked(it) },
-                    updateToolbarFatalCheck = updateToolbarFatalCheck,
-                    updateToolbarErrorCheck = updateToolbarErrorCheck,
-                    updateToolbarWarningCheck = updateToolbarWarningCheck,
-                    updateToolbarWrapContentCheck = updateToolbarWrapContentCheck,
-                    onSearchUseRegexChanged = { mainViewModel.onSearchUseRegexChanged(it) },
+                    logsToolbarCallbacks = logsToolbarCallbacks,
                     vSplitterState = vSplitterState,
                     hSplitterState = hSplitterState,
-                    onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
-                    onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
-                    onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
                     logsListState = mainViewModel.logsListState,
                     logsListSelectedRow = mainViewModel.logsListSelectedRow.value,
                     searchListSelectedRow = mainViewModel.searchListSelectedRow.value,
                     searchListState = mainViewModel.searchListState,
                     onLogsRowSelected = { i, r -> mainViewModel.onLogsRowSelected(coroutineScope, i, r) },
                     onSearchRowSelected = { i, r -> mainViewModel.onSearchRowSelected(coroutineScope, i, r) },
+                    onCommentUpdated = { logMessage, comment -> mainViewModel.updateComment(logMessage, comment) },
+                    rowContextMenuCallbacks = object : RowContextMenuCallbacks {
+                        override fun onCopyClicked(text: AnnotatedString) {
+                            clipboardManager.setText(text)
+                        }
+
+                        override fun onMarkClicked(i: Int, message: LogMessage) {
+                            mainViewModel.markMessage(i, message)
+                        }
+
+                        override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
+                            mainViewModel.removeMessages(context, filter)
+                        }
+
+                    }
                 )
             }
 
             1 -> TimeLinePanel(
                 modifier = Modifier.weight(1f),
                 timelineViewModel = timelineViewModel,
-                mainViewModel.dltMessages,
+                mainViewModel.logMessages,
                 offset,
                 offsetUpdateCallback,
                 scale,
@@ -142,8 +190,8 @@ fun MainWindow(
             )
         }
         Divider()
-        val statusText = if (mainViewModel.dltMessages.isNotEmpty()) {
-            "Messages: ${"%,d".format(mainViewModel.dltMessages.size)}"
+        val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
+            "Messages: ${"%,d".format(mainViewModel.logMessages.size)}"
         } else {
             "No file loaded"
         }
