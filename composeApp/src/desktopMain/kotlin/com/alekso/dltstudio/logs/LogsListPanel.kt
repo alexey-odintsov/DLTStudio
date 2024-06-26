@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.logs
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
@@ -7,6 +8,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
+import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.LogMessage
@@ -41,4 +45,35 @@ fun LogsListPanel(
             showComments = showComments,
         )
     }
+}
+
+@Preview
+@Composable
+fun PreviewLogsListPanel() {
+    val list = SnapshotStateList<LogMessage>()
+    list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it, true, "Test comment") })
+
+    LogsListPanel(
+        modifier = Modifier.fillMaxSize(),
+        messages = list,
+        colorFilters = emptyList(),
+        selectedRow = 1,
+        logsListState = LazyListState(),
+        onLogsRowSelected = { _, _ -> },
+        wrapContent = true,
+        rowContextMenuCallbacks = object: RowContextMenuCallbacks {
+            override fun onCopyClicked(text: AnnotatedString) {
+
+            }
+
+            override fun onMarkClicked(i: Int, message: LogMessage) {
+
+            }
+
+            override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
+
+            }
+        },
+        showComments = true,
+    )
 }
