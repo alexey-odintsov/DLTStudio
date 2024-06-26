@@ -27,7 +27,12 @@ import com.alekso.dltstudio.ui.Panel
 import com.alekso.dltstudio.ui.TabsPanel
 
 @Composable
-fun LogPreviewPanel(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
+fun LogPreviewPanel(
+    modifier: Modifier,
+    logMessage: LogMessage?,
+    messageIndex: Int,
+    onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
+) {
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
 
@@ -37,7 +42,10 @@ fun LogPreviewPanel(modifier: Modifier, logMessage: LogMessage?, messageIndex: I
 
             when (tabIndex) {
                 0 -> {
-                    DLTSimplifiedInfoView(logMessage = logMessage, messageIndex = messageIndex)
+                    DLTSimplifiedInfoView(
+                        logMessage = logMessage, messageIndex = messageIndex,
+                        onCommentUpdated = onCommentUpdated
+                    )
                 }
 
                 else -> {

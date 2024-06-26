@@ -37,6 +37,7 @@ fun LazyScrollable(
     listState: LazyListState,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    showComments: Boolean,
 ) {
     Column(modifier = modifier) {
 
@@ -109,6 +110,8 @@ fun LazyScrollable(
                             logTypeIndicator = logTypeIndicator,
                             wrapContent = wrapContent,
                             marked = logMessage.marked,
+                            comment = logMessage.comment,
+                            showComments = showComments,
                         )
                     }
                 }

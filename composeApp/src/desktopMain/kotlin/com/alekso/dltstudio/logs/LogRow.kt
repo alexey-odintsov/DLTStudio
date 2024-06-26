@@ -46,6 +46,8 @@ fun LogRow(
     logTypeIndicator: LogTypeIndicator? = null,
     wrapContent: Boolean,
     marked: Boolean = false,
+    comment: String? = null,
+    showComments: Boolean = false,
 ) {
     Column(
         modifier = modifier.then(
@@ -177,6 +179,28 @@ fun LogRow(
                 wrapContent = wrapContent,
             )
         }
+        if (showComments && comment != null) {
+            RowDivider()
+            Row(
+                modifier
+                    .height(IntrinsicSize.Max)
+                    .background(
+                        if (finalCellStyle != null) {
+                            finalCellStyle.backgroundColor ?: Color(250, 250, 250)
+                        } else {
+                            Color.White
+                        }
+                    )
+            ) {
+                Cell(
+                    modifier = Modifier.weight(1f).padding(start = 6.dp),
+                    cellStyle = finalCellStyle,
+                    text = comment,
+                    isComment = true,
+                    wrapContent = wrapContent,
+                )
+            }
+        }
         RowDivider()
     }
 }
@@ -205,16 +229,19 @@ fun RowDivider() {
 @Composable
 fun LogRowPreview() {
     val contents = listOf(
-        "Content",
-        "Another string with _ character",
-        "ÄÜË",
-        "0123456789-+=<>/?",
-        "汉语",
-        "~`!@#$%^&*()_+",
-        "Fatal error",
-        "",
-        "",
-        "This is the logs content strings, that doesn't fit in one line, let's repeat, This is the logs content strings, that doesn't fit in one line, let's repeat",
+        listOf("Content", null),
+        listOf("Another string with _ character", "This is a comment"),
+        listOf("ÄÜË", null),
+        listOf("0123456789-+=<>/?", "These strange numbers, they should mean something.."),
+        listOf("汉语", null),
+        listOf("~`!@#$%^&*()_+", null),
+        listOf("Fatal error", "Wow, fatal error!"),
+        listOf("", null),
+        listOf("hey-ho!", "No way, I've found that comment at last!"),
+        listOf(
+            "This is the logs content strings, that doesn't fit in one line, let's repeat, This is the logs content strings, that doesn't fit in one line, let's repeat",
+            "A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. "
+        ),
     )
     Column(modifier = Modifier.background(Color.Gray)) {
         (0..9).forEach { i ->
@@ -229,9 +256,10 @@ fun LogRowPreview() {
                 sessionId = "123",
                 applicationId = "AppId",
                 contextId = "Con",
-                content = contents[i],
+                content = contents[i][0] ?: "",
                 isHeader = i == 0,
                 cellStyle = when (i) {
+                    6 -> CellStyle(backgroundColor = Color.Green)
                     9 -> CellStyle(backgroundColor = Color.Yellow)
                     8 -> CellStyle(
                         backgroundColor = Color(0xE7, 0x62, 0x29),
@@ -246,6 +274,8 @@ fun LogRowPreview() {
                 ) else null,
                 wrapContent = true,
                 marked = i % 2 == 0,
+                comment = contents[i][1],
+                showComments = true,
             )
         }
     }

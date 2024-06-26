@@ -24,6 +24,7 @@ import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.ToggleImageButton
 import dtlstudio.composeapp.generated.resources.Res
 import dtlstudio.composeapp.generated.resources.icon_color_filters
+import dtlstudio.composeapp.generated.resources.icon_comments
 import dtlstudio.composeapp.generated.resources.icon_e
 import dtlstudio.composeapp.generated.resources.icon_f
 import dtlstudio.composeapp.generated.resources.icon_marked_logs
@@ -37,6 +38,7 @@ data class LogsToolbarState(
     val toolbarFatalChecked: Boolean,
     val toolbarErrorChecked: Boolean,
     val toolbarWarningChecked: Boolean,
+    val toolbarCommentsChecked: Boolean,
     val toolbarWrapContentChecked: Boolean,
 ) {
     companion object {
@@ -54,7 +56,21 @@ data class LogsToolbarState(
         fun updateToolbarWrapContentCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
             return state.copy(toolbarWrapContentChecked = newValue)
         }
+        fun updateToolbarCommentsCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
+            return state.copy(toolbarCommentsChecked = newValue)
+        }
     }
+}
+
+interface LogsToolbarCallbacks {
+    fun onSearchButtonClicked(searchType: SearchType, text: String)
+    fun updateToolbarFatalCheck(checked: Boolean)
+    fun updateToolbarErrorCheck(checked: Boolean)
+    fun updateToolbarWarningCheck(checked: Boolean)
+    fun updateToolbarCommentsCheck(checked: Boolean)
+    fun updateToolbarWrapContentCheck(checked: Boolean)
+    fun onSearchUseRegexChanged(checked: Boolean)
+    fun onColorFiltersClicked()
 }
 
 @Composable
@@ -62,13 +78,7 @@ fun LogsToolbar(
     state: LogsToolbarState,
     searchState: SearchState,
     searchAutoComplete: List<String>,
-    onSearchButtonClicked: (SearchType, String) -> Unit,
-    updateToolbarFatalCheck: (Boolean) -> Unit,
-    updateToolbarErrorCheck: (Boolean) -> Unit,
-    updateToolbarWarningCheck: (Boolean) -> Unit,
-    updateToolbarWrapContentCheck: (Boolean) -> Unit,
-    onSearchUseRegexChanged: (Boolean) -> Unit,
-    onColorFiltersClicked: () -> Unit,
+    callbacks: LogsToolbarCallbacks,
 ) {
     // Toolbar
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -77,28 +87,36 @@ fun LogsToolbar(
             icon = Res.drawable.icon_f,
             title = "Enable fatal logs highlight",
             checkedTintColor = Color.Red,
-            updateCheckedState = updateToolbarFatalCheck
+            updateCheckedState = callbacks::updateToolbarFatalCheck
         )
         ToggleImageButton(
             checkedState = state.toolbarErrorChecked,
             icon = Res.drawable.icon_e,
             title = "Enable error logs highlight",
             checkedTintColor = Color.Red,
-            updateCheckedState = updateToolbarErrorCheck
+            updateCheckedState = callbacks::updateToolbarErrorCheck
         )
         ToggleImageButton(
             checkedState = state.toolbarWarningChecked,
             icon = Res.drawable.icon_w,
             title = "Enable warning logs highlight",
             checkedTintColor = Color(0xE7, 0x62, 0x29),
-            updateCheckedState = updateToolbarWarningCheck
+            updateCheckedState = callbacks::updateToolbarWarningCheck
+        )
+
+        ToggleImageButton(
+            checkedState = state.toolbarCommentsChecked,
+            icon = Res.drawable.icon_comments,
+            title = "Toggle comments",
+            checkedTintColor = Color.Blue,
+            updateCheckedState = callbacks::updateToolbarCommentsCheck,
         )
 
         ImageButton(
             modifier = Modifier.size(32.dp),
             icon = Res.drawable.icon_color_filters,
             title = "Color filters",
-            onClick = onColorFiltersClicked
+            onClick = callbacks::onColorFiltersClicked
         )
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
@@ -111,7 +129,7 @@ fun LogsToolbar(
             },
             title = "Show marked logs",
             onClick = {
-                onSearchButtonClicked(SearchType.MarkedRows, "")
+                callbacks.onSearchButtonClicked(SearchType.MarkedRows, "")
             })
 
 
@@ -121,14 +139,14 @@ fun LogsToolbar(
             icon = Res.drawable.icon_regex,
             title = "Use Regex or Plain text search",
             checkedTintColor = Color.Blue,
-            updateCheckedState = onSearchUseRegexChanged
+            updateCheckedState = callbacks::onSearchUseRegexChanged
         )
 
         AutoCompleteEditText(
             modifier = Modifier.height(20.dp).weight(1f)
             .onKeyEvent { e ->
                 if (e.key == Key.Enter) {
-                    onSearchButtonClicked(SearchType.Text, text)
+                    callbacks.onSearchButtonClicked(SearchType.Text, text)
                     true
                 } else {
                     false
@@ -149,7 +167,7 @@ fun LogsToolbar(
             },
             title = "Search",
             onClick = {
-                onSearchButtonClicked(SearchType.Text, text)
+                callbacks.onSearchButtonClicked(SearchType.Text, text)
             })
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
@@ -159,7 +177,7 @@ fun LogsToolbar(
             icon = Res.drawable.icon_wordwrap,
             title = "Wrap content",
             checkedTintColor = Color.Blue,
-            updateCheckedState = updateToolbarWrapContentCheck,
+            updateCheckedState = callbacks::updateToolbarWrapContentCheck,
         )
 
 
@@ -175,15 +193,42 @@ fun PreviewLogsToolbar() {
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
             toolbarWrapContentChecked = true,
+            toolbarCommentsChecked = false,
         ),
         searchState = SearchState(),
         searchAutoComplete = emptyList(),
-        onSearchButtonClicked = { _, _ -> },
-        updateToolbarFatalCheck = {},
-        updateToolbarErrorCheck = {},
-        updateToolbarWarningCheck = {},
-        updateToolbarWrapContentCheck = {},
-        onSearchUseRegexChanged = {},
-        onColorFiltersClicked = {}
+        callbacks = object : LogsToolbarCallbacks {
+            override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+
+            }
+
+            override fun updateToolbarFatalCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarErrorCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarWarningCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarCommentsCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarWrapContentCheck(checked: Boolean) {
+
+            }
+
+            override fun onSearchUseRegexChanged(checked: Boolean) {
+
+            }
+
+            override fun onColorFiltersClicked() {
+
+            }
+        },
     )
 }
