@@ -33,7 +33,7 @@ object Preferences {
 
         if (platform.startsWith("Mac OS")) {
             val path =
-                "${System.getProperty("user.home")}/Library/Preferences/$PREFERENCES_FILES_NAME"
+                "${System.getProperty("user.home")}/$PREFERENCES_FILES_NAME"
             println("Preferences path $path")
             File(path)
         } else { // todo: Linux/Win implementation
