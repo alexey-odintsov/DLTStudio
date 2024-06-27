@@ -14,13 +14,17 @@ import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
+import com.alekso.logger.Log
 import java.io.File
 
 fun main() = application {
+    Log.r("===================")
+    Log.d("Application started")
     Preferences.loadFromFile()
     Window(
         onCloseRequest = {
             Preferences.saveToFile()
+            Log.d("Application closed")
             exitApplication()
         },
         title = "DTL Studio",
@@ -115,6 +119,11 @@ fun main() = application {
                         })
                     Item("Clear", onClick = { timelineViewModel.clearTimeLineFilters() })
                 }
+            }
+            Menu("About") {
+                Item(
+                    "Logs",
+                    onClick = {})
             }
         }
 

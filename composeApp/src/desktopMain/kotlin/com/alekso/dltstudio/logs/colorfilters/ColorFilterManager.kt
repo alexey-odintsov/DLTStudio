@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.logs.colorfilters
 
+import com.alekso.logger.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -15,7 +16,7 @@ class ColorFilterManager {
                 it.write(Gson().toJson(colorFilters))
             }
         } catch (e: Exception) {
-            println("Failed to save filters: $e")
+            Log.e("Failed to save filters: $e")
         }
     }
 
@@ -28,7 +29,7 @@ class ColorFilterManager {
             val type: Type = object : TypeToken<List<ColorFilter?>?>() {}.type
             filters = Gson().fromJson(json, type)
         } catch (e: Exception) {
-            println("Failed to load filters: $e")
+            Log.e("Failed to load filters: $e")
         }
         return filters
     }
