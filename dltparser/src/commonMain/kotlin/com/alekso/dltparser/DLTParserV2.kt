@@ -19,6 +19,7 @@ import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
 import com.alekso.dltparser.dlt.verbosepayload.Argument
 import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
+import com.alekso.logger.Log
 import java.io.EOFException
 import java.io.File
 
@@ -42,10 +43,10 @@ class DLTParserV2 : DLTParser {
         val startMs = System.currentTimeMillis()
 
         // todo: What to do with non-DLT files? silently skip?
-        println("Total ${files.size} file(s) with size: $totalSize bytes")
+        Log.d("Total ${files.size} file(s) with size: $totalSize bytes")
         files.forEach { file ->
             val fileSize = file.length()
-            println("Parsing '$file'")
+            Log.d("Parsing '$file'")
             ParserInputStream(file.inputStream().buffered(64 * 1024 * 1024)).use { stream ->
                 var i = 0L
                 var shouldLog: Boolean
@@ -96,7 +97,7 @@ class DLTParserV2 : DLTParser {
             }
         }
         progressCallback.invoke(1f)
-        println("Parsing complete in ${(System.currentTimeMillis() - startMs) / 1000} sec. Parsed ${messages.size} messages; $bytesRead bytes read and $skippedBytes skipped bytes")
+        Log.d("Parsing complete in ${(System.currentTimeMillis() - startMs) / 1000} sec. Parsed ${messages.size} messages; $bytesRead bytes read and $skippedBytes skipped bytes")
         return messages.sortedBy { it.timeStampNano }
     }
 
@@ -156,7 +157,7 @@ class DLTParserV2 : DLTParser {
                         payload.append(argumentString)
                     }
                 } catch (e: Exception) {
-                    println("$e SH: $standardHeader; EH: $extendedHeader;")
+                    Log.w("$e SH: $standardHeader; EH: $extendedHeader;")
                 }
                 i += payloadSize
 

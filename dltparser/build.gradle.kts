@@ -9,9 +9,11 @@ kotlin {
     sourceSets {
         val commonTest by getting {
             dependencies {
-                implementation(project(":logger"))
                 implementation(kotlin("test"))
             }
+        }
+        commonMain.dependencies {
+            implementation(project(":logger"))
         }
     }
 }
