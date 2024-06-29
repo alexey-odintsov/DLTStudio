@@ -334,7 +334,7 @@ class DLTParserV2 : DLTParser {
         } else if (typeInfo.typeFloat) {
             payloadSize = typeInfo.typeLengthBits / 8
         } else {
-//            throw IllegalStateException("Can't parse ${typeInfo}")
+            Log.e("Can't parse payload for typeInfo: ${typeInfo}")
             payloadSize = typeInfo.typeLengthBits / 8
         }
 
