@@ -90,10 +90,16 @@ data class DeviceView(
          */
         fun parse(text: String): List<DeviceView>? {
             val list = mutableListOf<DeviceView>()
-            val matches = Regex("""
+            val viewMatches = Regex(
+                """
                 \{(?<id2>[a-z0-9]+)?\s?(?<flags1>[A-Z\.]+)?\s?(?<flags2>[A-Z\.]+)?\s?(?<left>\d+),(?<top>\d+)-(?<right>\d+),(?<down>\d+)\s?(?<id>#[a-f0-9]+)?\s?(?<resid>[a-zA-Z0-9\-\_]+:id/[a-zA-Z0-9\_\-]+)?\s?(?<aid>aid\=[0-9]+)?\}
             """.trimIndent()).findAll(text)
-            for (match in matches) {
+            val rectMatches = Regex(
+                """
+                ((?<left>\d+)\,\s(?<top>\d+)((\,\s)|(\s-\s))(?<right>\d+)\,\s(?<down>\d+))
+            """.trimIndent()
+            ).findAll(text)
+            for (match in viewMatches) {
                 println(match.value)
                 list.add(
                     DeviceView(
@@ -106,6 +112,19 @@ data class DeviceView(
                         id = match.groups["resid"]?.value
                     )
                 )
+            }
+
+            for (match in rectMatches) {
+                println(match.value)
+                val rect = Rect(
+                    match.groups["left"]!!.value.toFloat(),
+                    match.groups["top"]!!.value.toFloat(),
+                    match.groups["right"]!!.value.toFloat(),
+                    match.groups["down"]!!.value.toFloat()
+                )
+                if (list.any { it.rect == rect }.not()) {
+                    list.add(DeviceView(rect = rect))
+                }
             }
             return list
         }
