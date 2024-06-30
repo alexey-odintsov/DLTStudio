@@ -9,12 +9,18 @@ private var dateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS").withZone(ZoneId.systemDefault())
 
 object Log {
-    private val path: String = "${System.getProperty("user.home")}/dltstudio.log"
-    private val file = File(path)
+    const val MAX_FILE_SIZE = 10_000_000L
+    const val LOG_FILE_NAME = "dltstudio.log"
 
     enum class Level {
         DEBUG, INFO, WARN, ERROR
     }
+
+
+    private val path: String = "${System.getProperty("user.home")}/$LOG_FILE_NAME"
+
+    private val file = File(path)
+
 
     fun d(message: String) = log(message, Level.DEBUG)
     fun w(message: String) = log(message, Level.WARN)
@@ -38,7 +44,8 @@ object Log {
     }
 
     private fun writeLog(text: String) {
-        if (file.length() > 10_000_000L) {
+        // todo Rotate log file
+        if (file.length() > MAX_FILE_SIZE) {
             file.writeText("\r\n$text")
         } else {
             file.appendText("\r\n$text")
