@@ -203,7 +203,7 @@ fun DrawScope.renderStateLabels(
     }
 }
 
-private var LABEL_WIDTH = 300.dp
+private var LABEL_WIDTH = 600.dp
 private var LABEL_HEIGHT = 12.dp
 private var LABEL_HALF_HEIGHT = LABEL_HEIGHT / 2f
 private var MAX_ITEM_HEIGHT_RATIO = 0.3f
