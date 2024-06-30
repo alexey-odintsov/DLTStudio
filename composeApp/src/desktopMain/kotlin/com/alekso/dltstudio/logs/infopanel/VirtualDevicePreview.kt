@@ -23,7 +23,6 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
@@ -74,16 +73,6 @@ fun VirtualDevicePreview(
                     val color = ColorPalette.getColor(i)
                     renderRectView(i, view, rectStyle, textMeasurer, color, scale)
                 }
-
-                // Debug info
-                drawText(
-                    size = Size(size.width, 200f),
-                    topLeft = Offset(4f, 4f),
-                    textMeasurer = textMeasurer,
-                    text = "Canvas: $size; scale: $scale",
-                    style = TextStyle(color = Color.Blue, fontSize = 10.sp)
-                )
-
             }
         }
     }
@@ -116,13 +105,12 @@ private fun DrawScope.renderRectView(
     color: Color,
     scale: Float
 ) {
-    val text = view.id ?: "unknown id"
+    val text = "$i: ${view.id ?: "unknown id"}"
     val textStyle = TextStyle(color = color, fontSize = 10.sp)
     val textSize = textMeasurer.measure(
-        text, style = textStyle, constraints = Constraints.fixed(
+        text, style = textStyle, constraints = Constraints.fixedWidth(
             width = (view.rect.width * scale).toInt(),
-            height = (view.rect.height.toInt() * scale).toInt(),
-        )
+        ), maxLines = 5, overflow = TextOverflow.Ellipsis
     ).size
     drawRect(
         color,
@@ -135,10 +123,12 @@ private fun DrawScope.renderRectView(
         textMeasurer = textMeasurer,
         text = text,
         topLeft = Offset(
+            1.dp.toPx() +
             (view.rect.left + view.rect.width / 2f) * scale - textSize.width / 2f,
             (view.rect.top + view.rect.height / 2f) * scale - textSize.height / 2f
         ),
         style = textStyle,
+        overflow = TextOverflow.Ellipsis
     )
 }
 
@@ -150,6 +140,10 @@ fun PreviewVirtualDevicePreview() {
         deviceSize = Size(600f, 300f),
         deviceViews = listOf(
             DeviceView(Rect(10f, 50f, 295f, 290f), id = "Left rect long name goes here again"),
+            DeviceView(
+                Rect(110f, 150f, 295f, 290f),
+                id = "Many many many many many many many lines. Second line goes here. Third line goes here. Fourth line goes here."
+            ),
             DeviceView(Rect(305f, 50f, 590f, 290f)),
         )
     )
