@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.ui
 
 import androidx.compose.runtime.Composable
+import com.alekso.logger.Log
 import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.UIManager
@@ -40,19 +41,19 @@ fun FileChooserDialog(
         dialogContext == FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE ) {
         if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             val file = fileChooser.selectedFile
-            println("choose file or folder is: $file")
+            Log.d("choose file or folder is: $file")
             onFileSelected(file)
         } else {
-            println("No Selection ")
+            Log.d("No Selection ")
             onFileSelected(null)
         }
     } else {
         if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             val file = fileChooser.selectedFile
-            println("choose file or folder is: $file")
+            Log.d("choose file or folder is: $file")
             onFileSelected(file)
         } else {
-            println("No Selection ")
+            Log.d("No Selection ")
             onFileSelected(null)
         }
     }

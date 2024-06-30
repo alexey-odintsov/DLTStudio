@@ -12,6 +12,7 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
+import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
@@ -128,7 +129,7 @@ class MainViewModel(
             searchResult.clear()
             searchIndexes.clear()
             val startMs = System.currentTimeMillis()
-            println("Start searching for $searchType '$searchText'")
+            Log.d("Start searching for $searchType '$searchText'")
 
             val temp = mutableListOf<LogMessage>()
             _logMessages.forEachIndexed { i, logMessage ->
@@ -164,7 +165,7 @@ class MainViewModel(
                 state = SearchState.State.IDLE
             )
             onProgressChanged(1f)
-            println("Search complete in ${(System.currentTimeMillis() - startMs) / 1000} sec.")
+            Log.d("Search complete in ${(System.currentTimeMillis() - startMs) / 1000} sec.")
         }
     }
 
@@ -172,7 +173,7 @@ class MainViewModel(
     val colorFilters = mutableStateListOf<ColorFilter>()
 
     fun onColorFilterUpdate(index: Int, updatedFilter: ColorFilter) {
-        println("onFilterUpdate $index $updatedFilter")
+        Log.d("onFilterUpdate $index $updatedFilter")
         if (index < 0 || index > colorFilters.size) {
             colorFilters.add(updatedFilter)
         } else colorFilters[index] = updatedFilter
@@ -209,7 +210,7 @@ class MainViewModel(
 
     fun removeMessages(type: LogRemoveContext, filter: String) {
         CoroutineScope(IO).launch {
-            println("start removing '$filter' $type")
+            Log.d("start removing '$filter' $type")
             var prevTs = System.currentTimeMillis()
             val filtered = _logMessages.filterIndexed { index, logMessage ->
                 val message = logMessage.dltMessage
@@ -251,7 +252,7 @@ class MainViewModel(
 //            searchResult.clear()
 //            searchResult.addAll(filteredSearch)
             onProgressChanged(1f)
-            println("done removing '$filter'")
+            Log.d("done removing '$filter'")
         }
     }
 

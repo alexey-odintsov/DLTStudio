@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.preferences
 
+import com.alekso.logger.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -29,15 +30,15 @@ object Preferences {
     private var state = State()
     private val file by lazy {
         val platform = System.getProperty("os.name")
-        println("Platform $platform")
+        Log.d("Platform $platform")
 
         if (platform.startsWith("Mac OS")) {
             val path =
                 "${System.getProperty("user.home")}/$PREFERENCES_FILES_NAME"
-            println("Preferences path $path")
+            Log.d("Preferences path $path")
             File(path)
         } else { // todo: Linux/Win implementation
-            println("Preferences default path directory")
+            Log.w("Preferences default path directory for other platforms")
             File(PREFERENCES_FILES_NAME)
         }
     }
@@ -86,7 +87,7 @@ object Preferences {
                 it.write(Gson().toJson(state))
             }
         } catch (e: Exception) {
-            println("Failed to save preferences: $e")
+            Log.e("Failed to save preferences: $e")
         }
     }
 
@@ -103,7 +104,7 @@ object Preferences {
                 state = Gson().fromJson(json, type)
             }
         } catch (e: Exception) {
-            println("Failed to load preferences: $e")
+            Log.e("Failed to load preferences: $e")
         }
     }
 }

@@ -13,6 +13,7 @@ kotlin {
         val desktopMain by getting
         
         commonMain.dependencies {
+            implementation(project(":logger"))
             implementation(project(":dltparser"))
             implementation(compose.runtime)
             implementation(compose.foundation)
