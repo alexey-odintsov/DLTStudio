@@ -38,7 +38,7 @@ import com.alekso.dltstudio.model.LogMessage
 import kotlin.math.min
 
 @Composable
-fun DevicePreview(
+fun DevicePreviewView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
     messageIndex: Int,
@@ -62,10 +62,17 @@ fun DevicePreview(
 
                 val deviceViews = DeviceView.parse(logMessage.dltMessage.payload)
                 if (deviceViews.isNullOrEmpty().not()) {
-                    DevicePreview(
+                    DevicePreviewView(
                         modifier = Modifier.fillMaxSize(),
                         deviceSize = Size(2880f, 960f),
                         deviceViews
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier.padding(start = 2.dp, end = 2.dp),
+                        text = "No preview found",
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = 11.sp,
                     )
                 }
             }
@@ -74,7 +81,7 @@ fun DevicePreview(
 }
 
 @Composable
-fun DevicePreview(
+fun DevicePreviewView(
     modifier: Modifier,
     deviceSize: Size,
     deviceViews: List<DeviceView>?,

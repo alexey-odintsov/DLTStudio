@@ -52,7 +52,7 @@ fun LogPreviewPanel(
                 }
 
                 2 -> {
-                    DevicePreview(logMessage = logMessage, messageIndex = messageIndex)
+                    DevicePreviewView(logMessage = logMessage, messageIndex = messageIndex)
                 }
 
                 else -> {}

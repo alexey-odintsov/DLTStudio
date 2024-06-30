@@ -3,7 +3,6 @@ package com.alekso.dltstudio.logs.infopanel
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
@@ -77,15 +75,6 @@ fun DLTSimplifiedInfoView(
                         onCommentUpdated(logMessage, if (comment.isNullOrEmpty()) null else comment)
                     }) {
                     Text(text = if (logMessage.comment != null) "Update" else "Add")
-                }
-
-                val deviceViews = DeviceView.parse(logMessage.dltMessage.payload)
-                if (deviceViews.isNullOrEmpty().not()) {
-                    DevicePreview(
-                        modifier = Modifier.fillMaxSize(),
-                        deviceSize = Size(2880f, 960f),
-                        deviceViews
-                    )
                 }
             }
         }
