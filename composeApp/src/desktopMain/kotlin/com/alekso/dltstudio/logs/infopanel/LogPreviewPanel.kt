@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,7 +37,7 @@ fun LogPreviewPanel(
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.background(MaterialTheme.colors.background)) {
         Panel(Modifier.fillMaxSize(), title = "Message Info") {
             TabsPanel(tabIndex, listOf("Simple", "Detailed", "Preview"), tabClickListener)
 
@@ -52,7 +53,7 @@ fun LogPreviewPanel(
                 }
 
                 2 -> {
-                    DevicePreviewView(logMessage = logMessage, messageIndex = messageIndex)
+                    DevicePreviewView(modifier = Modifier.fillMaxSize(), logMessage = logMessage, messageIndex = messageIndex)
                 }
 
                 else -> {}
