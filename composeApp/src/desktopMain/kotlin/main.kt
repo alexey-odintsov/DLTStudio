@@ -120,11 +120,6 @@ fun main() = application {
                     Item("Clear", onClick = { timelineViewModel.clearTimeLineFilters() })
                 }
             }
-            Menu("About") {
-                Item(
-                    "Logs",
-                    onClick = {})
-            }
         }
 
         if (stateIOpenFileDialog.visibility) {
