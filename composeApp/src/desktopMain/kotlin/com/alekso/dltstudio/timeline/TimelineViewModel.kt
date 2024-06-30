@@ -11,6 +11,7 @@ import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -151,7 +152,7 @@ class TimelineViewModel(
                 var _timeStart = Long.MAX_VALUE
                 var _timeEnd = Long.MIN_VALUE
 
-                println("Start Timeline building .. ${dltMessages.size} messages")
+                Log.d("Start Timeline building .. ${dltMessages.size} messages")
 
                 val regexps = mutableListOf<Regex?>()
                 // prefill timeline data holders
@@ -202,7 +203,7 @@ class TimelineViewModel(
                 }
                 onProgressChanged(1f)
             }
-            println("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
+            Log.d("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
         }
     }
 

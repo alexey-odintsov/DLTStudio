@@ -18,6 +18,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.TimeFormatter
+import com.alekso.logger.Log
 import java.time.Instant
 
 private const val TIME_MARK_SIZE_PX = 100
@@ -62,7 +63,7 @@ fun TimeRuler(
                         style = TextStyle(color = Color.Gray, fontSize = 10.sp)
                     )
                 } catch (e: Exception) {
-                    println("Can't render $i x: ${offsetSec * secSizePx + i * secSizePx}")
+                    Log.e("Can't render $i x: ${offsetSec * secSizePx + i * secSizePx}")
                 }
             }
 

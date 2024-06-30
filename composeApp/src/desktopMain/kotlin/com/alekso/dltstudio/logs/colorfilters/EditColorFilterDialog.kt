@@ -30,6 +30,7 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
+import com.alekso.logger.Log
 
 
 class EditDialogState(
@@ -46,7 +47,7 @@ fun EditColorFilterDialog(
     onFilterUpdate: (Int, ColorFilter) -> Unit,
     colorFilterIndex: Int,
 ) {
-    println("EditColorFilterDialog $colorFilter")
+    Log.d("EditColorFilterDialog $colorFilter")
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (colorFilterIndex >= 0) "Edit Color Filter" else "Add new color filter",

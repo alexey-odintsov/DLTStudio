@@ -12,6 +12,9 @@ kotlin {
                 implementation(kotlin("test"))
             }
         }
+        commonMain.dependencies {
+            implementation(project(":logger"))
+        }
     }
 }
 

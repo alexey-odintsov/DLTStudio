@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.timeline.filters
 
+import com.alekso.logger.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.io.File
@@ -15,7 +16,7 @@ class TimeLineFilterManager {
                 it.write(Gson().toJson(timelineFilters))
             }
         } catch (e: Exception) {
-            println("Failed to save filters: $e")
+            Log.e("Failed to save filters: $e")
         }
     }
 
@@ -28,7 +29,7 @@ class TimeLineFilterManager {
             val type: Type = object : TypeToken<List<TimelineFilter?>?>() {}.type
             filters = Gson().fromJson(json, type)
         } catch (e: Exception) {
-            println("Failed to load filters: $e")
+            Log.e("Failed to load filters: $e")
         }
         return filters
     }
