@@ -38,7 +38,7 @@ fun LogPreviewPanel(
 
     Column(modifier = modifier) {
         Panel(Modifier.fillMaxSize(), title = "Message Info") {
-            TabsPanel(tabIndex, listOf("Simple", "Detailed"), tabClickListener)
+            TabsPanel(tabIndex, listOf("Simple", "Detailed", "Preview"), tabClickListener)
 
             when (tabIndex) {
                 0 -> {
@@ -47,10 +47,15 @@ fun LogPreviewPanel(
                         onCommentUpdated = onCommentUpdated
                     )
                 }
-
-                else -> {
+                1 -> {
                     DLTDetailedInfoView(logMessage = logMessage, messageIndex = messageIndex)
                 }
+
+                2 -> {
+                    DevicePreview(logMessage = logMessage, messageIndex = messageIndex)
+                }
+
+                else -> {}
             }
 
         }
