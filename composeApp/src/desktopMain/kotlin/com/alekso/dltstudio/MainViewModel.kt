@@ -229,8 +229,10 @@ class MainViewModel(
                 }
             }
 
-            _logMessages.clear()
-            _logMessages.addAll(filtered)
+            withContext(Dispatchers.Swing) {
+                _logMessages.clear()
+                _logMessages.addAll(filtered)
+            }
             onProgressChanged(1f)
 
             // TODO: update searchIndexes as well otherwise they will be broken
