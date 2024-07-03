@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
@@ -66,9 +67,11 @@ fun LazyScrollable(
                         wrapContent = wrapContent,
                     )
                 }
+                itemsIndexed(
+                    items = logMessages,
+                    key = { _, log -> log.getKey() },
+                    contentType = { _, _ -> LogMessage::class }) { i, logMessage ->
 
-                items(logMessages.size) { i ->
-                    val logMessage = logMessages[i]
                     val dltMessage = logMessage.dltMessage
                     val cellStyle =
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
@@ -82,7 +85,7 @@ fun LazyScrollable(
                     val sSessionId: String = "${dltMessage.standardHeader.sessionId}"
                     val sApplicationId: String = "${dltMessage.extendedHeader?.applicationId}"
                     val sContextId: String = "${dltMessage.extendedHeader?.contextId}"
-                    val sContent: String = "${dltMessage.payload}"
+                    val sContent: String = dltMessage.payload
                     val logTypeIndicator: LogTypeIndicator? =
                         LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)
 
