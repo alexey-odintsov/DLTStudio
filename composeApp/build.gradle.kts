@@ -22,6 +22,7 @@ kotlin {
             implementation(libs.compose.splitpane)
             implementation(compose.components.resources)
             implementation(libs.gson)
+            implementation(libs.kotlin.coroutines.swing)
         }
 
         desktopMain.dependencies {

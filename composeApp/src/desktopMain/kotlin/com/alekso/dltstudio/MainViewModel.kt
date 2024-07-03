@@ -14,11 +14,14 @@ import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.swing.Swing
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import java.io.File
 
@@ -131,7 +134,6 @@ class MainViewModel(
             val startMs = System.currentTimeMillis()
             Log.d("Start searching for $searchType '$searchText'")
 
-            val temp = mutableListOf<LogMessage>()
             _logMessages.forEachIndexed { i, logMessage ->
                 yield()
                 val payload = logMessage.getMessageText()
@@ -145,20 +147,17 @@ class MainViewModel(
                     // marked rows search
                     || (searchType == SearchType.MarkedRows && logMessage.marked)
                 ) {
-                    temp.add(logMessage)
-                    searchIndexes.add(i)
+                    withContext(Dispatchers.Swing) {
+                        searchResult.add(logMessage)
+                        searchIndexes.add(i)
+                    }
                 }
                 val nowTs = System.currentTimeMillis()
                 if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                     prevTs = nowTs
                     onProgressChanged(i.toFloat() / logMessages.size)
-                    // debounced list update
-                    searchResult.clear()
-                    searchResult.addAll(temp)
                 }
             }
-            searchResult.clear()
-            searchResult.addAll(temp)
 
             _searchState.value = _searchState.value.copy(
                 searchText = searchText,
@@ -230,8 +229,10 @@ class MainViewModel(
                 }
             }
 
-            _logMessages.clear()
-            _logMessages.addAll(filtered)
+            withContext(Dispatchers.Swing) {
+                _logMessages.clear()
+                _logMessages.addAll(filtered)
+            }
             onProgressChanged(1f)
 
             // TODO: update searchIndexes as well otherwise they will be broken
