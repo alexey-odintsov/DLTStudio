@@ -16,4 +16,9 @@ data class LogMessage(
                 "${LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)?.logTypeSymbol ?: ""} " +
                 dltMessage.payload
     }
+
+    /**
+     * Unique key for log message
+     */
+    fun getKey(): String = "${dltMessage.timeStampNano}:${dltMessage.standardHeader.messageCounter}"
 }

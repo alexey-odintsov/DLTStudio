@@ -3,6 +3,7 @@ compose-plugin = "1.6.11" # https://github.com/JetBrains/compose-multiplatform/b
 junit = "4.13.2"
 kotlin = "2.0.0"
 gson = "2.8.6"
+coroutines = "1.8.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -10,6 +11,8 @@ kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 compose-splitpane = { group = "org.jetbrains.compose.components", name = "components-splitpane-desktop", version.ref = "compose-plugin" }
+#kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
