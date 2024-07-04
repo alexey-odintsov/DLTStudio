@@ -2,9 +2,11 @@ package com.alekso.dltstudio.model
 
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.LogTypeIndicator
+import java.util.concurrent.atomic.AtomicInteger
 
 data class LogMessage(
     val dltMessage: DLTMessage,
+    val key: String = "${counter.getAndIncrement()}",
     val marked: Boolean = false,
     val comment: String? = null,
 ) {
@@ -17,8 +19,8 @@ data class LogMessage(
                 dltMessage.payload
     }
 
-    /**
-     * Unique key for log message
-     */
-    fun getKey(): String = "${dltMessage.timeStampNano}:${dltMessage.standardHeader.messageCounter}"
+    companion object {
+        @Volatile
+        var counter = AtomicInteger(0)
+    }
 }

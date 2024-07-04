@@ -51,7 +51,9 @@ fun LogsListPanel(
 @Composable
 fun PreviewLogsListPanel() {
     val list = SnapshotStateList<LogMessage>()
-    list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it, true, "Test comment") })
+    list.addAll(
+        SampleData.getSampleDltMessages(20)
+            .map { LogMessage(dltMessage = it, marked = true, comment = "Test comment") })
 
     LogsListPanel(
         modifier = Modifier.fillMaxSize(),
