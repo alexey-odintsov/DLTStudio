@@ -5,6 +5,7 @@ import com.alekso.dltstudio.logs.LogTypeIndicator
 
 data class LogMessage(
     val dltMessage: DLTMessage,
+    val key: String = "${counter++}",
     val marked: Boolean = false,
     val comment: String? = null,
 ) {
@@ -17,8 +18,7 @@ data class LogMessage(
                 dltMessage.payload
     }
 
-    /**
-     * Unique key for log message
-     */
-    fun getKey(): String = "${dltMessage.timeStampNano}:${dltMessage.standardHeader.messageCounter}"
+    companion object {
+        var counter = 0
+    }
 }
