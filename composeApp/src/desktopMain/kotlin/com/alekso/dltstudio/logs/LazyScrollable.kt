@@ -3,6 +3,7 @@ package com.alekso.dltstudio.logs
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,14 +17,20 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.LogMessage
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -40,6 +47,8 @@ fun LazyScrollable(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     showComments: Boolean,
 ) {
+    val selectedIds = remember { mutableStateOf(emptySet<String>()) }
+
     Column(modifier = modifier) {
 
         val horizontalState = rememberScrollState()
@@ -50,7 +59,7 @@ fun LazyScrollable(
         }
 
         Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(columnModifier, listState) {
+            LazyColumn(columnModifier.listDragHandler(listState, selectedIds), listState) {
                 stickyHeader {
                     LogRow(
                         modifier = Modifier,
@@ -97,9 +106,12 @@ fun LazyScrollable(
                     ) {
                         LogRow(
                             modifier = Modifier.selectable(
-                                selected = i == selectedRow,
-                                onClick = { onRowSelected(i, index) }),
-                            isSelected = (i == selectedRow),
+                                selected = false, //selectedIds.value.contains(logMessage.getKey()), //i == selectedRow,
+                                onClick = {
+                                    selectedIds.value = mutableSetOf()
+                                    onRowSelected(i, index)
+                                }),
+                            isSelected = (selectedIds.value.contains(logMessage.getKey())), //(i == selectedRow),
                             index.toString(),
                             sTime,
                             sTimeOffset,
@@ -134,4 +146,39 @@ fun LazyScrollable(
             )
         }
     }
+}
+
+fun Modifier.listDragHandler(
+    listState: LazyListState,
+    selectedIds: MutableState<Set<String>>
+) = pointerInput(Unit) {
+    var isSelectionMode = false
+    detectVerticalDragGestures(
+        onDragStart = { offset ->
+            isSelectionMode = true
+            selectedIds.value = mutableSetOf()
+            val selectedItemKey = listState.gridItemKeyAtPosition(offset)
+            println("selectedItemKey: $selectedItemKey")
+        },
+        onDragCancel = {
+            isSelectionMode = false
+        },
+        onDragEnd = {
+            isSelectionMode = false
+        },
+        onVerticalDrag = { change, _ ->
+            if (isSelectionMode) {
+                listState.gridItemKeyAtPosition(change.position)?.let { key ->
+                    selectedIds.value = selectedIds.value.plus(key)
+                }
+            }
+        },
+    )
+}
+
+fun LazyListState.gridItemKeyAtPosition(hitPoint: Offset): String? {
+    val selectedItem = layoutInfo.visibleItemsInfo.find { itemInfo ->
+        (hitPoint.y.roundToInt() >= itemInfo.offset) && (hitPoint.y.roundToInt() < (itemInfo.offset + itemInfo.size))
+    }
+    return selectedItem?.key as? String
 }
