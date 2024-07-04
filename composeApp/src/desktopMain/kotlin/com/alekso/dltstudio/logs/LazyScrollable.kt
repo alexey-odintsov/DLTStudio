@@ -111,7 +111,7 @@ fun LazyScrollable(
                                     selectedIds.value = mutableSetOf()
                                     onRowSelected(i, index)
                                 }),
-                            isSelected = (selectedIds.value.contains(logMessage.getKey())), //(i == selectedRow),
+                            isSelected = (selectedIds.value.contains(logMessage.key)), //(i == selectedRow),
                             index.toString(),
                             sTime,
                             sTimeOffset,
