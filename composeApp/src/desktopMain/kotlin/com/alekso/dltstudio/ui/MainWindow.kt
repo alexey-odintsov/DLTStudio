@@ -30,6 +30,7 @@ import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
+import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
@@ -88,6 +89,17 @@ fun MainWindow(
             onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
             onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
             onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
+        )
+    }
+
+    val devicePreviewsDialogState = remember { mutableStateOf(false) }
+
+    if (devicePreviewsDialogState.value) {
+        VirtualDevicesDialog(
+            visible = devicePreviewsDialogState.value,
+            onDialogClosed = { devicePreviewsDialogState.value = false },
+            colorFilters = mainViewModel.virtualDevices,
+            onColorFilterDelete = { },
         )
     }
 

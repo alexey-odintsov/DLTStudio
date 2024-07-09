@@ -8,6 +8,7 @@ import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
+import com.alekso.dltstudio.logs.infopanel.VirtualDevice
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
@@ -169,6 +170,7 @@ class MainViewModel(
     }
 
 
+    val virtualDevices = mutableStateListOf<VirtualDevice>()
     val colorFilters = mutableStateListOf<ColorFilter>()
 
     fun onColorFilterUpdate(index: Int, updatedFilter: ColorFilter) {
