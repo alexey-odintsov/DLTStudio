@@ -69,7 +69,7 @@ fun LazyScrollable(
                 }
                 itemsIndexed(
                     items = logMessages,
-                    key = { _, log -> log.getKey() },
+                    key = { _, log -> log.key },
                     contentType = { _, _ -> LogMessage::class }) { i, logMessage ->
 
                     val dltMessage = logMessage.dltMessage
