@@ -100,6 +100,7 @@ fun MainWindow(
             onDialogClosed = { devicePreviewsDialogState.value = false },
             colorFilters = mainViewModel.virtualDevices,
             onColorFilterDelete = { },
+            onVirtualDeviceUpdate = { device -> mainViewModel.onVirtualDeviceUpdate(device) },
         )
     }
 

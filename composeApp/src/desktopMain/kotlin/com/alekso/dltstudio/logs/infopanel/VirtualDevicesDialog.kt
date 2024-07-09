@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -33,33 +35,34 @@ fun VirtualDevicesDialog(
     onDialogClosed: () -> Unit,
     colorFilters: List<VirtualDevice>,
     onColorFilterDelete: (Int) -> Unit,
+    onVirtualDeviceUpdate: (VirtualDevice) -> Unit,
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Virtual Devices",
         state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
-        //val editDialogState = remember { mutableStateOf(EditDialogState(false)) }
+        val editDialogState = remember { mutableStateOf(EditVirtualDeviceDialogState(false)) }
 
-//        if (editDialogState.value.visible) {
-//            EditColorFilterDialog(
-//                visible = editDialogState.value.visible,
-//                onDialogClosed = { editDialogState.value = EditDialogState(false) },
-//                colorFilter = editDialogState.value.filter,
-//                colorFilterIndex = editDialogState.value.filterIndex,
-//                onFilterUpdate = { i, filter ->
-//                    editDialogState.value.filter = filter
-//                    onColorFilterUpdate(i, filter)
-//                }
-//            )
-//        }
+        if (editDialogState.value.visible) {
+            EditVirtualDeviceDialog(
+                visible = editDialogState.value.visible,
+                onDialogClosed = { editDialogState.value = EditVirtualDeviceDialogState(false) },
+                device = editDialogState.value.device,
+                onItemUpdate = { virtualDevice ->
+                    editDialogState.value.device = virtualDevice
+                    onVirtualDeviceUpdate(virtualDevice)
+                }
+            )
+        }
 
         VirtualDevicesPanel(
             modifier = Modifier.fillMaxSize(),
-            colorFilters,
-            { i, filter -> //editDialogState.value = EditDialogState(true, filter, i)
+            items = colorFilters,
+            onEditItemClick = { filter ->
+                editDialogState.value = EditVirtualDeviceDialogState(true, filter)
             },
-            { i ->
+            onItemDelete = { i ->
                 onColorFilterDelete(i)
             },
         )
@@ -70,7 +73,7 @@ fun VirtualDevicesDialog(
 fun VirtualDevicesPanel(
     modifier: Modifier,
     items: List<VirtualDevice>,
-    onEditItemClick: (Int, VirtualDevice) -> Unit,
+    onEditItemClick: (VirtualDevice) -> Unit,
     onItemDelete: (Int) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize().padding(4.dp)) {
@@ -102,7 +105,7 @@ fun VirtualDevicesPanel(
                         icon = Res.drawable.icon_edit,
                         title = "Edit",
                         onClick = {
-                            onEditItemClick(i, item)
+                            onEditItemClick(item)
                         })
 
                     ImageButton(modifier = Modifier.size(28.dp),
@@ -117,12 +120,7 @@ fun VirtualDevicesPanel(
 
         CustomButton(
             modifier = Modifier,
-            onClick = {
-//                onEditFilterClick(
-//                    -1,
-//                    VirtualDevice(("New filter", mutableMapOf(), CellStyle.Default)
-//                )
-            },
+            onClick = { onEditItemClick(VirtualDevice.Empty) },
         ) {
             Text("Add device")
         }
@@ -141,7 +139,7 @@ fun PreviewVirtualDevicesDialog() {
     VirtualDevicesPanel(
         modifier = Modifier.height(400.dp).fillMaxWidth(),
         virtualDevices,
-        { _, _ -> },
+        { _ -> },
         { _ -> },
     )
 }

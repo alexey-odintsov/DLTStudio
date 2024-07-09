@@ -284,4 +284,15 @@ class MainViewModel(
             searchResult[searchMessageIndex] = updatedMessage
         }
     }
+
+    fun onVirtualDeviceUpdate(device: VirtualDevice) {
+        val existingDeviceIndex = virtualDevices.indexOfFirst { it.id == device.id }
+        if (existingDeviceIndex != -1) {
+            println("update device $device at index $existingDeviceIndex")
+            virtualDevices[existingDeviceIndex] = device
+        } else {
+            virtualDevices.add(device)
+            println("add new device $device")
+        }
+    }
 }

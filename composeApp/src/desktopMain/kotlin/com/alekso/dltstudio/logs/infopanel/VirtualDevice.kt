@@ -7,5 +7,7 @@ data class VirtualDevice(
     val name: String,
     val size: Size,
 ) {
-
+    companion object {
+        val Empty = VirtualDevice(-1, "", Size.Zero)
+    }
 }
