@@ -31,8 +31,10 @@ import com.alekso.dltstudio.ui.TabsPanel
 fun LogPreviewPanel(
     modifier: Modifier,
     logMessage: LogMessage?,
+    virtualDevices: List<VirtualDevice>,
     messageIndex: Int,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
+    onShowVirtualDeviceClicked: () -> Unit = {},
 ) {
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
@@ -53,7 +55,12 @@ fun LogPreviewPanel(
                 }
 
                 2 -> {
-                    DevicePreviewView(modifier = Modifier.fillMaxSize(), logMessage = logMessage, messageIndex = messageIndex)
+                    DevicePreviewView(
+                        modifier = Modifier.fillMaxSize(), logMessage = logMessage,
+                        virtualDevices = virtualDevices,
+                        messageIndex = messageIndex,
+                        onShowVirtualDeviceClicked = onShowVirtualDeviceClicked,
+                    )
                 }
 
                 else -> {}
@@ -118,5 +125,10 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 @Composable
 fun PreviewLogPreview() {
     val dltMessage = LogMessage(SampleData.getSampleDltMessages(1)[0])
-    LogPreviewPanel(Modifier.width(200.dp), logMessage = dltMessage, 0)
+    LogPreviewPanel(
+        Modifier.width(200.dp),
+        logMessage = dltMessage,
+        virtualDevices = emptyList(),
+        0
+    )
 }

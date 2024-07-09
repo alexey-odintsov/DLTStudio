@@ -29,6 +29,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
+import com.alekso.dltstudio.logs.infopanel.VirtualDevice
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
@@ -50,6 +51,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 fun LogsPanel(
     modifier: Modifier = Modifier,
     logMessages: SnapshotStateList<LogMessage>,
+    virtualDevices: List<VirtualDevice>,
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
@@ -71,6 +73,7 @@ fun LogsPanel(
     searchListSelectedRow: Int,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
+    onShowVirtualDeviceClicked: () -> Unit = {},
 ) {
 
     Column(modifier = modifier) {
@@ -117,7 +120,9 @@ fun LogsPanel(
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
                             logMessages.getOrNull(logsListSelectedRow),
+                            virtualDevices = virtualDevices,
                             logsListSelectedRow,
+                            onShowVirtualDeviceClicked = onShowVirtualDeviceClicked,
                             onCommentUpdated = onCommentUpdated,
                         )
                     }
@@ -243,6 +248,7 @@ fun PreviewLogsPanel() {
         logsListSelectedRow =0,
         searchListSelectedRow = 0,
         searchAutoComplete = emptyList(),
+        virtualDevices = emptyList(),
         rowContextMenuCallbacks = object : RowContextMenuCallbacks {
             override fun onCopyClicked(text: AnnotatedString) {
 

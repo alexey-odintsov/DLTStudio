@@ -17,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -25,15 +24,17 @@ import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
-import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
 
 @Composable
 fun DevicePreviewView(
     modifier: Modifier = Modifier,
+    virtualDevices: List<VirtualDevice>,
     logMessage: LogMessage?,
     messageIndex: Int,
+    onShowVirtualDeviceClicked: () -> Unit = {},
 ) {
     if (logMessage == null) return
 
@@ -58,22 +59,35 @@ fun DevicePreviewView(
                     fontSize = 11.sp,
                 )
             } else {
-                val deviceList = listOf(
-                    VirtualDevice(0, "Square", Size(1800f, 1800f)),
-                    VirtualDevice(1, "Wide", Size(3000f, 1200f)),
-                )
-                var currentDevice by rememberSaveable { mutableStateOf(deviceList[0]) }
-                CustomDropDown(modifier = Modifier.width(200.dp).padding(horizontal = 4.dp),
-                    items = deviceList.map { device -> "${device.name}: ${device.size.width.toInt()}x${device.size.height.toInt()}" },
-                    initialSelectedIndex = 0,
-                    onItemsSelected = { i ->
-                        currentDevice = deviceList[i]
-                    })
-                Row(modifier = Modifier.weight(1f).fillMaxWidth().background(Color.Gray)) {
-                    VirtualDevicePreview(
-                        modifier = Modifier.fillMaxSize(),
-                        deviceSize = currentDevice.size,
-                        deviceViews
+                var currentDevice by rememberSaveable { mutableStateOf<VirtualDevice?>(null) }
+                val device = currentDevice
+                CustomButton(
+                    modifier = Modifier.padding(0.dp),
+                    onClick = { onShowVirtualDeviceClicked() },
+                ) {
+                    Text("Manage devices")
+                }
+
+                if (device != null) {
+                    CustomDropDown(modifier = Modifier.width(200.dp).padding(horizontal = 4.dp)
+                        .background(Color.Red),
+                        items = virtualDevices.map { device -> "${device.name}: ${device.size.width.toInt()}x${device.size.height.toInt()}" },
+                        initialSelectedIndex = 0,
+                        onItemsSelected = { i ->
+                            currentDevice = virtualDevices[i]
+                        })
+
+                    Row(modifier = Modifier.weight(1f).fillMaxWidth().background(Color.Gray)) {
+                        VirtualDevicePreview(
+                            modifier = Modifier.fillMaxSize(),
+                            deviceSize = device.size,
+                            deviceViews
+                        )
+                    }
+                } else {
+                    Text(
+                        "No virtual device found, please create one",
+                        modifier = Modifier.padding(horizontal = 4.dp)
                     )
                 }
             }
@@ -106,6 +120,9 @@ fun PreviewDevicePreview() {
         sizeBytes = 100,
     )
     DevicePreviewView(
-        modifier = Modifier.fillMaxSize(), logMessage = LogMessage(dltMessage), messageIndex = 0
+        modifier = Modifier.fillMaxSize(),
+        logMessage = LogMessage(dltMessage),
+        messageIndex = 0,
+        virtualDevices = emptyList()
     )
 }

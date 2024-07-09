@@ -160,6 +160,7 @@ fun MainWindow(
                     searchState = searchState,
                     searchAutoComplete = mainViewModel.searchAutocomplete,
                     logMessages = mainViewModel.logMessages,
+                    virtualDevices = mainViewModel.virtualDevices,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
@@ -187,7 +188,8 @@ fun MainWindow(
                             mainViewModel.removeMessages(context, filter)
                         }
 
-                    }
+                    },
+                    onShowVirtualDeviceClicked = { devicePreviewsDialogState.value = true }
                 )
             }
 
