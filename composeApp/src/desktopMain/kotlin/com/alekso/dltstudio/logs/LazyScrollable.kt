@@ -19,6 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.TimeFormatter
@@ -98,7 +103,21 @@ fun LazyScrollable(
                         LogRow(
                             modifier = Modifier.selectable(
                                 selected = i == selectedRow,
-                                onClick = { onRowSelected(i, index) }),
+                                onClick = { onRowSelected(i, index) }
+                            ).onKeyEvent { e ->
+                                if (e.type == KeyEventType.KeyDown) {
+                                    when (e.key) {
+                                        Key.Spacebar -> {
+                                            rowContextMenuCallbacks.onMarkClicked(i, logMessage)
+                                            true
+                                        }
+
+                                        else -> {
+                                            false
+                                        }
+                                    }
+                                } else false
+                            },
                             isSelected = (i == selectedRow),
                             index.toString(),
                             sTime,
