@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.Panel
 import com.alekso.dltstudio.ui.TabsPanel
@@ -33,6 +34,7 @@ fun LogPreviewPanel(
     logMessage: LogMessage?,
     virtualDevices: List<VirtualDevice>,
     messageIndex: Int,
+    logInsight: LogInsight? = null,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
     onShowVirtualDeviceClicked: () -> Unit = {},
 ) {
@@ -47,6 +49,7 @@ fun LogPreviewPanel(
                 0 -> {
                     DLTSimplifiedInfoView(
                         logMessage = logMessage, messageIndex = messageIndex,
+                        insight = logInsight,
                         onCommentUpdated = onCommentUpdated
                     )
                 }

@@ -9,6 +9,8 @@ import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.infopanel.VirtualDevice
+import com.alekso.dltstudio.logs.insights.InsightsRepository
+import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
@@ -45,12 +47,14 @@ interface RowContextMenuCallbacks {
 
 class MainViewModel(
     private val dltParser: DLTParser,
-    private val onProgressChanged: (Float) -> Unit
+    private val onProgressChanged: (Float) -> Unit,
+    private val insightsRepository: InsightsRepository,
 ) {
 
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
         get() = _logMessages
+    val logInsight = mutableStateOf<LogInsight?>(null)
 
     val searchResult = mutableStateListOf<LogMessage>()
     val searchIndexes = mutableStateListOf<Int>()
@@ -69,6 +73,15 @@ class MainViewModel(
     fun onLogsRowSelected(coroutineScope: CoroutineScope, index: Int, rowId: Int) {
         coroutineScope.launch {
             logsListSelectedRow.value = rowId
+            onLogSelected(_logMessages[rowId])
+        }
+    }
+
+    private fun onLogSelected(logMessage: LogMessage) {
+        try {
+            logInsight.value = insightsRepository.findInsight(logMessage)
+        } catch (e: Exception) {
+            Log.e(e.toString())
         }
     }
 
@@ -76,6 +89,7 @@ class MainViewModel(
         coroutineScope.launch {
             if (searchListSelectedRow.value == index) { // simulate second click
                 logsListSelectedRow.value = rowId
+                onLogSelected(_logMessages[rowId])
                 logsListState.scrollToItem(rowId)
             } else {
                 searchListSelectedRow.value = index

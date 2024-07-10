@@ -31,6 +31,7 @@ import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
+import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
@@ -161,6 +162,7 @@ fun MainWindow(
                     searchState = searchState,
                     searchAutoComplete = mainViewModel.searchAutocomplete,
                     logMessages = mainViewModel.logMessages,
+                    logInsight = mainViewModel.logInsight.value,
                     virtualDevices = mainViewModel.virtualDevices,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
@@ -218,6 +220,10 @@ fun MainWindow(
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(MainViewModel(DLTParserV1(), {}), TimelineViewModel({}), 1f, {})
+        MainWindow(
+            MainViewModel(DLTParserV1(), {}, insightsRepository = InsightsRepository()),
+            TimelineViewModel({}),
+            1f,
+            {})
     }
 }
