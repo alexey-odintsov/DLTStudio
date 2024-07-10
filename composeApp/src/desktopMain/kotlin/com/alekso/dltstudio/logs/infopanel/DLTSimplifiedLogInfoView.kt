@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomEditText
@@ -30,6 +31,7 @@ fun DLTSimplifiedInfoView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
     messageIndex: Int,
+    insight: LogInsight? = null,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
     if (logMessage == null) return
@@ -73,7 +75,17 @@ fun DLTSimplifiedInfoView(
                     }) {
                     Text(text = if (logMessage.comment != null) "Update" else "Add")
                 }
-
+                if (insight != null) {
+                    Header(
+                        modifier = paddingModifier.padding(top = 8.dp),
+                        text = "Insight:"
+                    )
+                    TableRow(
+                        0,
+                        "",
+                        insight.text, // todo: To use AnnotatedString.fromHtml in compose 1.7.0-alpha07 and later
+                    )
+                }
             }
         }
     }

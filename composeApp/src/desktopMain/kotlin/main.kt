@@ -9,6 +9,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltstudio.MainViewModel
+import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
@@ -41,7 +42,11 @@ fun main() = application {
         val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
 
-        val mainViewModel = remember { MainViewModel(DLTParserV2(), onProgressUpdate) }
+        val mainViewModel = remember { MainViewModel(
+            dltParser = DLTParserV2(),
+            insightsRepository = InsightsRepository(),
+            onProgressChanged = onProgressUpdate,
+        ) }
         val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
 
         var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }

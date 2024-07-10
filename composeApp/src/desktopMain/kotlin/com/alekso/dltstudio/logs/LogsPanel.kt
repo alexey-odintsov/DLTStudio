@@ -28,6 +28,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
+import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
@@ -50,6 +51,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 fun LogsPanel(
     modifier: Modifier = Modifier,
     logMessages: SnapshotStateList<LogMessage>,
+    logInsight: LogInsight? = null,
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
@@ -116,8 +118,9 @@ fun LogsPanel(
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            logMessages.getOrNull(logsListSelectedRow),
-                            logsListSelectedRow,
+                            logMessage = logMessages.getOrNull(logsListSelectedRow),
+                            logInsight = logInsight,
+                            messageIndex = logsListSelectedRow,
                             onCommentUpdated = onCommentUpdated,
                         )
                     }
