@@ -1,9 +1,10 @@
 package com.alekso.dltstudio.timeline.filters
 
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
-import com.alekso.dltstudio.logs.colorfilters.FilterParameter
-import com.alekso.dltstudio.logs.colorfilters.TextCriteria
+import com.alekso.dltstudio.logs.filtering.FilterCriteria
+import com.alekso.dltstudio.logs.filtering.FilterParameter
+import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.logs.filtering.checkTextCriteria
 import com.alekso.dltstudio.timeline.TimeLineEntries
 import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineEvent
@@ -252,15 +253,6 @@ data class TimelineFilter(
             diagramType = DiagramType.Events,
             extractorType = ExtractorType.KeyValueGroups
         )
-
-
-        // TODO: merge duplicated code from ColorFilter
-        private fun checkTextCriteria(criteria: FilterCriteria, message: String?) =
-            when (criteria.textCriteria) {
-                TextCriteria.PlainText -> message?.contains(criteria.value) ?: false
-                TextCriteria.LowerCase -> message?.lowercase()?.contains(criteria.value) ?: false
-                TextCriteria.Regex -> message?.contains(criteria.value.toRegex()) ?: false
-            }
 
         // TODO: merge duplicated code from ColorFilter
         fun assessFilter(filter: TimelineFilter, message: DLTMessage): Boolean {

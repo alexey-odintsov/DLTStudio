@@ -28,9 +28,9 @@ import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltparser.dlt.extendedheader.MessageType
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
-import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
-import com.alekso.dltstudio.logs.colorfilters.FilterParameter
-import com.alekso.dltstudio.logs.colorfilters.TextCriteria
+import com.alekso.dltstudio.logs.filtering.FilterCriteria
+import com.alekso.dltstudio.logs.filtering.FilterParameter
+import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText

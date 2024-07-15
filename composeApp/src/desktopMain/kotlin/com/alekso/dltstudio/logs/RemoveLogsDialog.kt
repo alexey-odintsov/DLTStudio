@@ -1,62 +1,54 @@
-package com.alekso.dltstudio.logs.colorfilters
+package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
-import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltparser.dlt.extendedheader.MessageType
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
-import com.alekso.dltstudio.colors.ColorPickerDialog
-import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
-import com.alekso.logger.Log
 
 
-class EditDialogState(
+class RemoveLogsDialogState(
     var visible: Boolean,
-    var filter: ColorFilter = ColorFilter.Empty,
-    val filterIndex: Int = -1
+    val message: LogMessage? = null,
 )
 
 @Composable
-fun EditColorFilterDialog(
+fun RemoveLogsDialog(
     visible: Boolean,
+    message: LogMessage? = null,
+    onFilterClicked: (Map<FilterParameter, FilterCriteria>) -> Unit,
     onDialogClosed: () -> Unit,
-    colorFilter: ColorFilter,
-    onFilterUpdate: (Int, ColorFilter) -> Unit,
-    colorFilterIndex: Int,
 ) {
-    Log.d("EditColorFilterDialog $colorFilter")
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
-        title = if (colorFilterIndex >= 0) "Edit Color Filter" else "Add new color filter",
+        title = "Removing logs",
         state = rememberDialogState(width = 700.dp, height = 500.dp)
     ) {
-        EditColorFilterPanel(colorFilter, colorFilterIndex, onFilterUpdate, onDialogClosed)
+        RemoveLogsDialogPanel(message, onFilterClicked, onDialogClosed)
     }
 }
 
@@ -65,92 +57,53 @@ private val SEARCH_INPUT_SIZE_DP = 250.dp
 private val FILTER_TYPE = 150.dp
 
 @Composable
-fun EditColorFilterPanel(
-    filter: ColorFilter,
-    colorFilterIndex: Int,
-    onFilterUpdate: (Int, ColorFilter) -> Unit,
+fun RemoveLogsDialogPanel(
+    message: LogMessage? = null,
+    onFilterClicked: (Map<FilterParameter, FilterCriteria>) -> Unit,
     onDialogClosed: () -> Unit
 ) {
-    var filterName by rememberSaveable { mutableStateOf(filter.name) }
-    var messageType by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageType]?.value) }
-    var messageTypeInfo by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.MessageTypeInfo]?.value) }
-    var ecuId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.EcuId]?.value) }
-    var appId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.AppId]?.value) }
-    var contextId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.ContextId]?.value) }
-    var sessionId by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.SessionId]?.value) }
-    var payload by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]?.value) }
-    var payloadCriteria by rememberSaveable { mutableStateOf(filter.filters[FilterParameter.Payload]?.textCriteria) }
+
+    val filters = mapOf<FilterParameter, FilterCriteria>(
+        FilterParameter.EcuId to FilterCriteria(message?.dltMessage?.standardHeader?.ecuId ?: ""),
+        FilterParameter.SessionId to FilterCriteria(
+            message?.dltMessage?.standardHeader?.sessionId.toString()
+        ),
+        FilterParameter.ContextId to FilterCriteria(
+            message?.dltMessage?.extendedHeader?.contextId.toString()
+        ),
+        FilterParameter.AppId to FilterCriteria(
+            message?.dltMessage?.extendedHeader?.applicationId.toString()
+        ),
+        FilterParameter.MessageType to FilterCriteria(
+            message?.dltMessage?.extendedHeader?.messageInfo?.messageType.toString()
+        ),
+        FilterParameter.MessageTypeInfo to FilterCriteria(
+            message?.dltMessage?.extendedHeader?.messageInfo?.messageTypeInfo.toString()
+        ),
+        FilterParameter.Payload to FilterCriteria(message?.dltMessage?.payload.toString()),
+    )
+
+    var messageType by rememberSaveable { mutableStateOf(filters[FilterParameter.MessageType]?.value) }
+    var messageTypeInfo by rememberSaveable { mutableStateOf(filters[FilterParameter.MessageTypeInfo]?.value) }
+    var ecuId by rememberSaveable { mutableStateOf(filters[FilterParameter.EcuId]?.value) }
+    var appId by rememberSaveable { mutableStateOf(filters[FilterParameter.AppId]?.value) }
+    var contextId by rememberSaveable { mutableStateOf(filters[FilterParameter.ContextId]?.value) }
+    var sessionId by rememberSaveable { mutableStateOf(filters[FilterParameter.SessionId]?.value) }
+    var payload by rememberSaveable { mutableStateOf(filters[FilterParameter.Payload]?.value) }
+    var payloadCriteria by rememberSaveable { mutableStateOf(filters[FilterParameter.Payload]?.textCriteria) }
+
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
-    var filterCellStyle by remember { mutableStateOf(filter.cellStyle) }
-
-    val backgroundColorPickerDialogState = remember { mutableStateOf(false) }
-    val textColorPickerDialogState = remember { mutableStateOf(false) }
-
-    if (backgroundColorPickerDialogState.value) {
-        ColorPickerDialog(
-            visible = backgroundColorPickerDialogState.value,
-            onDialogClosed = { backgroundColorPickerDialogState.value = false },
-            initialColor = filterCellStyle.backgroundColor ?: Color.Green,
-            onColorUpdate = { newColor ->
-                filterCellStyle = filterCellStyle.copy(backgroundColor = newColor)
-                backgroundColorPickerDialogState.value = false
-            }
-        )
-    }
-
-    if (textColorPickerDialogState.value) {
-        ColorPickerDialog(
-            visible = textColorPickerDialogState.value,
-            onDialogClosed = { textColorPickerDialogState.value = false },
-            initialColor = filterCellStyle.textColor ?: Color.Black,
-            onColorUpdate = { newColor ->
-                filterCellStyle = filterCellStyle.copy(textColor = newColor)
-                textColorPickerDialogState.value = false
-            }
-        )
-    }
 
     Column(
         Modifier.width(1000.dp).padding(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(modifier = colNameStyle, text = "Name")
-            CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
-                value = filterName, onValueChange = {
-                    filterName = it
-                }
-            )
-        }
-        Row {
-            Text(modifier = colNameStyle, text = "Color")
-            val backgroundColor = filterCellStyle.backgroundColor ?: Color.Transparent
-            val textColor = filterCellStyle.textColor ?: Color.Black
-
-            TextButton(onClick = { backgroundColorPickerDialogState.value = true }) {
-                Text(
-                    text = "Background color",
-                    modifier = Modifier.height(20.dp).background(color = backgroundColor),
-                    textAlign = TextAlign.Center,
-                    color = textColor,
-                )
-            }
-            TextButton(onClick = { textColorPickerDialogState.value = true }) {
-                Text(
-                    text = "Text color",
-                    modifier = Modifier.height(20.dp).background(color = backgroundColor),
-                    textAlign = TextAlign.Center,
-                    color = textColor,
-                )
-            }
-        }
         Row {
             val items = mutableListOf("Any")
             items.addAll(MessageType.entries.map { it.name })
             var initialSelection =
-                items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
+                items.indexOfFirst { it == filters[FilterParameter.MessageType]?.value }
             if (initialSelection == -1) initialSelection = 0
 
             Text(modifier = colNameStyle, text = "Message Type")
@@ -170,7 +123,7 @@ fun EditColorFilterPanel(
             val items = mutableListOf("Any")
             items.addAll(MessageTypeInfo.entries.map { it.name })
             var initialSelection =
-                items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
+                items.indexOfFirst { it == filters[FilterParameter.MessageTypeInfo]?.value }
             if (initialSelection == -1) initialSelection = 0
 
             Text(modifier = colNameStyle, text = "Message Type Info")
@@ -276,17 +229,10 @@ fun EditColorFilterPanel(
                 map[FilterParameter.Payload] =
                     FilterCriteria(it, payloadCriteria ?: TextCriteria.PlainText)
             }
-            onFilterUpdate(
-                colorFilterIndex,
-                ColorFilter(
-                    name = filterName,
-                    filters = map,
-                    cellStyle = filterCellStyle
-                )
-            )
+            onFilterClicked(map)
             onDialogClosed()
         }) {
-            Text(text = if (colorFilterIndex >= 0) "Update" else "Add")
+            Text(text = "Remove logs")
         }
 
     }
@@ -294,14 +240,10 @@ fun EditColorFilterPanel(
 
 @Preview
 @Composable
-fun PreviewEditColorFilterDialog() {
-    val filter = ColorFilter(
-        "SIP",
-        mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
-        CellStyle(backgroundColor = Color.Gray, textColor = Color.White)
-    )
+fun PreviewRemoveLogsDialogPanel() {
+    val message = LogMessage(SampleData.getSampleDltMessages(1)[0])
 
     Column(Modifier.background(Color(238, 238, 238))) {
-        EditColorFilterPanel(filter, 0, { i, f -> }) {}
+        RemoveLogsDialogPanel(message, { f -> }) {}
     }
 }

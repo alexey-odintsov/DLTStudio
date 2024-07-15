@@ -7,6 +7,7 @@ import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.RowContextMenuCallbacks
+import kotlin.math.min
 
 @Composable
 fun RowContextMenu(
@@ -53,6 +54,22 @@ fun RowContextMenu(
         menuItems.add(ContextMenuItem("Remove session '$it'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.SessionId, it.toString())
         })
+    }
+
+    message.dltMessage.payload.let {
+        menuItems.add(
+            ContextMenuItem(
+                "Remove by text '${
+                    it.substring(
+                        0..<min(
+                            10,
+                            it.length
+                        )
+                    )
+                }..'"
+            ) {
+                rowContextMenuCallbacks.onRemoveDialogClicked(message)
+            })
     }
 
     message.dltMessage.timeStampNano.let {
