@@ -29,6 +29,8 @@ import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.logs.RemoveLogsDialog
+import com.alekso.dltstudio.logs.RemoveLogsDialogState
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.search.SearchType
@@ -92,6 +94,23 @@ fun MainWindow(
         )
     }
 
+    val removeLogsDialogState = remember {
+        mutableStateOf(
+            RemoveLogsDialogState(
+                visible = false,
+                message = null
+            )
+        )
+    }
+
+    if (removeLogsDialogState.value.visible) {
+        RemoveLogsDialog(
+            visible = removeLogsDialogState.value.visible,
+            message = removeLogsDialogState.value.message,
+            onDialogClosed = { removeLogsDialogState.value = RemoveLogsDialogState(false) },
+            onFilterClicked = { f -> mainViewModel.removeMessagesByFilters(f) },
+        )
+    }
 
     val logsToolbarCallbacks = object : LogsToolbarCallbacks {
         override fun onSearchButtonClicked(searchType: SearchType, text: String) {
@@ -177,6 +196,9 @@ fun MainWindow(
                             mainViewModel.removeMessages(context, filter)
                         }
 
+                        override fun onRemoveDialogClicked(message: LogMessage) {
+                            removeLogsDialogState.value = RemoveLogsDialogState(true, message)
+                        }
                     }
                 )
             }

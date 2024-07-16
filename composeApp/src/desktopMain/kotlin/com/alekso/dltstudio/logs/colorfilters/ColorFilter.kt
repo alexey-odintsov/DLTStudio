@@ -4,27 +4,11 @@ import androidx.compose.ui.graphics.Color
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.CellStyle
+import com.alekso.dltstudio.logs.filtering.FilterCriteria
+import com.alekso.dltstudio.logs.filtering.FilterParameter
+import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.logs.filtering.checkTextCriteria
 
-enum class FilterParameter {
-    Payload,
-    EcuId,
-    AppId,
-    ContextId,
-    SessionId,
-    MessageType,
-    MessageTypeInfo,
-}
-
-enum class TextCriteria {
-    PlainText,
-    LowerCase,
-    Regex
-}
-
-data class FilterCriteria(
-    val value: String,
-    val textCriteria: TextCriteria
-)
 
 data class ColorFilter(
     val name: String,
@@ -73,13 +57,6 @@ data class ColorFilter(
         }
 
     }
-
-    private fun checkTextCriteria(criteria: FilterCriteria, message: String?) =
-        when (criteria.textCriteria) {
-            TextCriteria.PlainText -> message?.contains(criteria.value) ?: false
-            TextCriteria.LowerCase -> message?.lowercase()?.contains(criteria.value) ?: false
-            TextCriteria.Regex -> message?.contains(criteria.value.toRegex()) ?: false
-        }
 
     companion object {
         val Empty = ColorFilter("New filter", mutableMapOf(), CellStyle.Default)
