@@ -46,7 +46,7 @@ fun RemoveLogsDialog(
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Removing logs",
-        state = rememberDialogState(width = 700.dp, height = 500.dp)
+        state = rememberDialogState(width = 550.dp, height = 300.dp)
     ) {
         RemoveLogsDialogPanel(message, onFilterClicked, onDialogClosed)
     }
@@ -243,7 +243,7 @@ fun RemoveLogsDialogPanel(
 fun PreviewRemoveLogsDialogPanel() {
     val message = LogMessage(SampleData.getSampleDltMessages(1)[0])
 
-    Column(Modifier.background(Color(238, 238, 238))) {
+    Column(Modifier.width(550.dp).background(Color(238, 238, 238))) {
         RemoveLogsDialogPanel(message, { f -> }) {}
     }
 }
