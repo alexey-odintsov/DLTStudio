@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
@@ -46,7 +48,7 @@ fun RemoveLogsDialog(
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Removing logs",
-        state = rememberDialogState(width = 550.dp, height = 300.dp)
+        state = rememberDialogState(width = 400.dp, height = 320.dp)
     ) {
         RemoveLogsDialogPanel(message, onFilterClicked, onDialogClosed)
     }
@@ -179,19 +181,13 @@ fun RemoveLogsDialogPanel(
             )
         }
 
+        val items = mutableListOf<String>()
+        items.addAll(TextCriteria.entries.map { it.name })
+        var initialSelection = items.indexOfFirst { it == payloadCriteria?.name }
+        if (initialSelection == -1) initialSelection = 0
+
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Payload")
-            CustomEditText(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
-                value = payload ?: "", onValueChange = {
-                    payload = it
-                }
-            )
-            val items = mutableListOf<String>()
-            items.addAll(TextCriteria.entries.map { it.name })
-            var initialSelection = items.indexOfFirst { it == payloadCriteria?.name }
-            if (initialSelection == -1) initialSelection = 0
-
             CustomDropDown(
                 modifier = Modifier.width(FILTER_TYPE).padding(horizontal = 4.dp),
                 items = items,
@@ -202,7 +198,15 @@ fun RemoveLogsDialogPanel(
                     } else null
                 }
             )
-
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CustomEditText(
+                modifier = Modifier.fillMaxWidth().height(66.dp).align(Alignment.Top),
+                singleLine = false,
+                value = payload ?: "", onValueChange = {
+                    payload = it
+                }
+            )
         }
 
         CustomButton(onClick = {
