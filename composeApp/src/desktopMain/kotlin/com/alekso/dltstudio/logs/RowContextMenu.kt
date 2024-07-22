@@ -55,6 +55,13 @@ fun RowContextMenu(
         })
     }
 
+    message.dltMessage.payload.let {
+        menuItems.add(
+            ContextMenuItem("Remove by custom attributes") {
+                rowContextMenuCallbacks.onRemoveDialogClicked(message)
+            })
+    }
+
     message.dltMessage.timeStampNano.let {
         menuItems.add(ContextMenuItem("Remove rows before") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.BeforeTimestamp, it.toString())

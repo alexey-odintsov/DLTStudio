@@ -253,18 +253,10 @@ fun PreviewLogsPanel() {
         searchAutoComplete = emptyList(),
         virtualDevices = emptyList(),
         rowContextMenuCallbacks = object : RowContextMenuCallbacks {
-            override fun onCopyClicked(text: AnnotatedString) {
-
-            }
-
-            override fun onMarkClicked(i: Int, message: LogMessage) {
-
-            }
-
-            override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
-
-            }
-
+            override fun onCopyClicked(text: AnnotatedString) = Unit
+            override fun onMarkClicked(i: Int, message: LogMessage) = Unit
+            override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit
+            override fun onRemoveDialogClicked(message: LogMessage) = Unit
         },
     )
 }

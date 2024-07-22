@@ -6,8 +6,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
+import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
+import com.alekso.dltstudio.logs.filtering.FilterCriteria
+import com.alekso.dltstudio.logs.filtering.FilterParameter
+import com.alekso.dltstudio.logs.filtering.checkTextCriteria
 import com.alekso.dltstudio.logs.infopanel.VirtualDevice
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.insights.LogInsight
@@ -37,12 +41,14 @@ enum class LogRemoveContext {
     SessionId,
     BeforeTimestamp,
     AfterTimestamp,
+    Payload
 }
 
 interface RowContextMenuCallbacks {
     fun onCopyClicked(text: AnnotatedString)
     fun onMarkClicked(i: Int, message: LogMessage)
     fun onRemoveClicked(context: LogRemoveContext, filter: String)
+    fun onRemoveDialogClicked(message: LogMessage)
 }
 
 class MainViewModel(
@@ -223,6 +229,74 @@ class MainViewModel(
         colorFilters.clear()
     }
 
+    private fun assessFilter(
+        filters: Map<FilterParameter, FilterCriteria>,
+        message: DLTMessage
+    ): Boolean {
+        return filters.all {
+            val criteria = it.value
+            return@all when (it.key) {
+                FilterParameter.MessageType -> {
+                    checkTextCriteria(
+                        criteria,
+                        message.extendedHeader?.messageInfo?.messageType?.name
+                    )
+                }
+
+                FilterParameter.MessageTypeInfo -> {
+                    checkTextCriteria(
+                        criteria,
+                        message.extendedHeader?.messageInfo?.messageTypeInfo?.name
+                    )
+                }
+
+                FilterParameter.EcuId -> {
+                    checkTextCriteria(criteria, message.standardHeader.ecuId)
+                }
+
+                FilterParameter.ContextId -> {
+                    checkTextCriteria(criteria, message.extendedHeader?.contextId)
+                }
+
+                FilterParameter.AppId -> {
+                    checkTextCriteria(criteria, message.extendedHeader?.applicationId)
+                }
+
+                FilterParameter.SessionId -> {
+                    criteria.value.isNotEmpty() && message.standardHeader.sessionId == criteria.value.toInt()
+                }
+
+                FilterParameter.Payload -> {
+                    checkTextCriteria(criteria, message.payload)
+                }
+            }
+        }
+    }
+
+    fun removeMessagesByFilters(filters: Map<FilterParameter, FilterCriteria>) {
+        CoroutineScope(IO).launch {
+            Log.d("start removing by '$filters'")
+            var prevTs = System.currentTimeMillis()
+            val filtered = _logMessages.filterIndexed { index, logMessage ->
+                val message = logMessage.dltMessage
+                val nowTs = System.currentTimeMillis()
+                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
+                    prevTs = nowTs
+                    onProgressChanged(index.toFloat() / _logMessages.size)
+                }
+
+                !assessFilter(filters, message)
+            }
+
+            withContext(Dispatchers.Swing) {
+                _logMessages.clear()
+                _logMessages.addAll(filtered)
+            }
+            onProgressChanged(1f)
+            Log.d("done removing by filters '$filters'")
+        }
+    }
+
     fun removeMessages(type: LogRemoveContext, filter: String) {
         CoroutineScope(IO).launch {
             Log.d("start removing '$filter' $type")
@@ -242,6 +316,9 @@ class MainViewModel(
                     LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() != filter
                     LogRemoveContext.BeforeTimestamp -> message.timeStampNano >= filter.toLong()
                     LogRemoveContext.AfterTimestamp -> message.timeStampNano <= filter.toLong()
+                    LogRemoveContext.Payload -> {
+                        true
+                    }
                 }
             }
 

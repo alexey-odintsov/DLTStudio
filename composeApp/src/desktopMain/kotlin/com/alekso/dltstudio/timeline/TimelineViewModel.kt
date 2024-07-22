@@ -3,9 +3,9 @@ package com.alekso.dltstudio.timeline
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.logs.colorfilters.FilterCriteria
-import com.alekso.dltstudio.logs.colorfilters.FilterParameter
-import com.alekso.dltstudio.logs.colorfilters.TextCriteria
+import com.alekso.dltstudio.logs.filtering.FilterCriteria
+import com.alekso.dltstudio.logs.filtering.FilterParameter
+import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
