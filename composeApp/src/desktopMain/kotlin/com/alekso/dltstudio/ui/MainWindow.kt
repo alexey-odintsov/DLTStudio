@@ -26,6 +26,7 @@ import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
+import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceMock
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
@@ -243,7 +244,12 @@ fun MainWindow(
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
         MainWindow(
-            MainViewModel(DLTParserV1(), {}, insightsRepository = InsightsRepository()),
+            MainViewModel(
+                DLTParserV1(),
+                {},
+                insightsRepository = InsightsRepository(),
+                virtualDeviceRepository = VirtualDeviceMock()
+            ),
             TimelineViewModel({}),
             1f,
             {})

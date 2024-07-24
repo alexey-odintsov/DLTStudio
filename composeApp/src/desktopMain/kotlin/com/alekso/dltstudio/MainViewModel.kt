@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
@@ -55,6 +56,7 @@ class MainViewModel(
     private val dltParser: DLTParser,
     private val onProgressChanged: (Float) -> Unit,
     private val insightsRepository: InsightsRepository,
+    private val virtualDeviceRepository: VirtualDeviceRepository,
 ) {
 
     private val _logMessages = mutableStateListOf<LogMessage>()
