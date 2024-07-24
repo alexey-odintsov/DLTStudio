@@ -1,9 +1,9 @@
 package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Text
@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -55,73 +56,75 @@ fun TimelinePercentageView(
         )
     }
 
-    Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
-        if (entries == null) return@Canvas
+    Spacer(modifier = modifier.background(Color.Gray).clipToBounds().drawWithCache {
+        onDrawBehind {
+            if (entries == null) return@onDrawBehind
 
-        val height = size.height
-        val width = size.width
-        val verticalPaddingPx = verticalPaddingDp.toPx()
-        val availableHeight = height - verticalPaddingPx * 2
-        val secSizePx: Float = timeFrame.calculateSecSizePx(width)
+            val height = size.height
+            val width = size.width
+            val verticalPaddingPx = verticalPaddingDp.toPx()
+            val availableHeight = height - verticalPaddingPx * 2
+            val secSizePx: Float = timeFrame.calculateSecSizePx(width)
 
-        renderVerticalSeries(
-            seriesCount,
-            availableHeight,
-            verticalPaddingPx,
-            width,
-        )
-
-        if (showVerticalSeries) {
-            renderSecondsVerticalLines(timeFrame, secSizePx, height)
-        }
-
-        // Draw values
-        val map = entries.map
-        map.keys.forEachIndexed { index, key ->
-            val items = map[key]
-            renderLines(
-                viewStyle,
-                items,
-                splitTimeSec,
-                timeFrame,
-                secSizePx,
+            renderVerticalSeries(
+                seriesCount,
                 availableHeight,
                 verticalPaddingPx,
-                100f,
-                ColorPalette.getColor(index),
-                highlightedKey,
-                key
+                width,
             )
-        }
 
-        if (highlightedKey != null) {
-            val items = map[highlightedKey]
-            renderLines(
-                viewStyle,
-                items,
-                splitTimeSec,
-                timeFrame,
-                secSizePx,
+            if (showVerticalSeries) {
+                renderSecondsVerticalLines(timeFrame, secSizePx, height)
+            }
+
+            // Draw values
+            val map = entries.map
+            map.keys.forEachIndexed { index, key ->
+                val items = map[key]
+                renderLines(
+                    viewStyle,
+                    items,
+                    splitTimeSec,
+                    timeFrame,
+                    secSizePx,
+                    availableHeight,
+                    verticalPaddingPx,
+                    100f,
+                    ColorPalette.getColor(index),
+                    highlightedKey,
+                    key
+                )
+            }
+
+            if (highlightedKey != null) {
+                val items = map[highlightedKey]
+                renderLines(
+                    viewStyle,
+                    items,
+                    splitTimeSec,
+                    timeFrame,
+                    secSizePx,
+                    availableHeight,
+                    verticalPaddingPx,
+                    100f,
+                    Color.Green,
+                    highlightedKey,
+                    highlightedKey
+                )
+            }
+
+            renderLabels(
+                0f,
+                100f,
+                seriesCount,
                 availableHeight,
                 verticalPaddingPx,
-                100f,
-                Color.Green,
-                highlightedKey,
-                highlightedKey
+                textMeasurer,
+                "%",
+                seriesTextStyle
             )
         }
-
-        renderLabels(
-            0f,
-            100f,
-            seriesCount,
-            availableHeight,
-            verticalPaddingPx,
-            textMeasurer,
-            "%",
-            seriesTextStyle
-        )
-    }
+    })
 }
 
 

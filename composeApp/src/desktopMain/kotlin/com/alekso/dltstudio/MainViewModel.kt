@@ -62,7 +62,7 @@ class MainViewModel(
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
         get() = _logMessages
-    val logInsight = mutableStateOf<LogInsight?>(null)
+    val logInsights = mutableStateListOf<LogInsight>()
 
     val searchResult = mutableStateListOf<LogMessage>()
     val searchIndexes = mutableStateListOf<Int>()
@@ -87,7 +87,8 @@ class MainViewModel(
 
     private fun onLogSelected(logMessage: LogMessage) {
         try {
-            logInsight.value = insightsRepository.findInsight(logMessage)
+            logInsights.clear()
+            logInsights.addAll(insightsRepository.findInsight(logMessage))
         } catch (e: Exception) {
             Log.e(e.toString())
         }

@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
@@ -34,7 +35,7 @@ fun LogPreviewPanel(
     logMessage: LogMessage?,
     virtualDevices: List<VirtualDevice>,
     messageIndex: Int,
-    logInsight: LogInsight? = null,
+    logInsights: SnapshotStateList<LogInsight>? = null,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
     onShowVirtualDeviceClicked: () -> Unit = {},
 ) {
@@ -49,7 +50,7 @@ fun LogPreviewPanel(
                 0 -> {
                     DLTSimplifiedInfoView(
                         logMessage = logMessage, messageIndex = messageIndex,
-                        insight = logInsight,
+                        insights = logInsights,
                         onCommentUpdated = onCommentUpdated
                     )
                 }

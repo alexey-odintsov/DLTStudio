@@ -1,7 +1,6 @@
 package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
@@ -166,19 +165,15 @@ fun DrawScope.renderLabels(
     seriesTextStyle: TextStyle
 ) {
     val step = (maxValue - minValue) / (seriesCount - 1)
-    val textHeight = seriesTextStyle.fontSize.toPx() + 2.dp.toPx()
 
     for (i in 0..<seriesCount) {
         val y = calculateY(seriesCount, i, size.height - verticalPaddingPx * 2)
+        val measureResult = textMeasurer.measure(
+            "${"%.0f".format(maxValue - (i * step))}$seriesPostfix",
+            style = seriesTextStyle
+        )
         drawText(
-            textMeasurer = textMeasurer,
-            size = Size(200.dp.toPx(), textHeight),
-            text = "${"%.0f".format(maxValue - (i * step))}$seriesPostfix",
-            topLeft = Offset(
-                3.dp.toPx(),
-                y + textHeight / 2f
-            ),
-            style = seriesTextStyle,
+            measureResult, topLeft = Offset(3.dp.toPx(), y + measureResult.size.height / 2f)
         )
     }
 }
@@ -193,19 +188,14 @@ fun DrawScope.renderStateLabels(
 ) {
     for (i in 0..<seriesCount) {
         val y = calculateY(seriesCount, i, availableHeight)
+        val measureResult = textMeasurer.measure(states[i], style = seriesTextStyle)
         drawText(
-            textMeasurer,
-            size = Size(LABEL_WIDTH.toPx(), LABEL_HEIGHT.toPx()),
-            text = states[i],
-            topLeft = Offset(3.dp.toPx(), y - LABEL_HALF_HEIGHT.toPx() + verticalPaddingPx),
-            style = seriesTextStyle
+            measureResult,
+            topLeft = Offset(3.dp.toPx(), y - measureResult.size.height / 2f + verticalPaddingPx),
         )
     }
 }
 
-private var LABEL_WIDTH = 600.dp
-private var LABEL_HEIGHT = 12.dp
-private var LABEL_HALF_HEIGHT = LABEL_HEIGHT / 2f
 private var MAX_ITEM_HEIGHT_RATIO = 0.3f
 
 fun calculateY(seriesCount: Int, i: Int, availableHeight: Float): Float {

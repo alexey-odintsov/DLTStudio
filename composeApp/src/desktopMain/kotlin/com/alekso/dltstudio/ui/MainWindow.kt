@@ -182,7 +182,7 @@ fun MainWindow(
                     searchState = searchState,
                     searchAutoComplete = mainViewModel.searchAutocomplete,
                     logMessages = mainViewModel.logMessages,
-                    logInsight = mainViewModel.logInsight.value,
+                    logInsights = mainViewModel.logInsights,
                     virtualDevices = mainViewModel.virtualDevices,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
