@@ -28,7 +28,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.toSize
 import com.alekso.dltstudio.colors.ColorPalette
 import kotlin.math.max
 import kotlin.math.min
@@ -107,11 +106,12 @@ private fun DrawScope.renderRectView(
 ) {
     val text = "$i: ${view.id ?: "unknown id"}"
     val textStyle = TextStyle(color = color, fontSize = 10.sp)
-    val textSize = textMeasurer.measure(
+    val textResult = textMeasurer.measure(
         text, style = textStyle, constraints = Constraints.fixedWidth(
             width = (view.rect.width * scale).toInt(),
         ), maxLines = 5, overflow = TextOverflow.Ellipsis
-    ).size
+    )
+
     drawRect(
         color,
         Offset(view.rect.left, view.rect.top) * scale,
@@ -119,16 +119,12 @@ private fun DrawScope.renderRectView(
         style = rectStyle
     )
     drawText(
-        size = textSize.toSize(),
-        textMeasurer = textMeasurer,
-        text = text,
+        textResult,
         topLeft = Offset(
             1.dp.toPx() +
-            (view.rect.left + view.rect.width / 2f) * scale - textSize.width / 2f,
-            (view.rect.top + view.rect.height / 2f) * scale - textSize.height / 2f
+                    (view.rect.left + view.rect.width / 2f) * scale - textResult.size.width / 2f,
+            (view.rect.top + view.rect.height / 2f) * scale - textResult.size.height / 2f
         ),
-        style = textStyle,
-        overflow = TextOverflow.Ellipsis
     )
 }
 

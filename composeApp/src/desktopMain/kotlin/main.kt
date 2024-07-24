@@ -49,7 +49,7 @@ fun main() = application {
 
         val virtualDeviceRepository: VirtualDeviceRepository by lazy {
             VirtualDeviceRepositoryImpl(
-                database = DBFactory().createDatabase(),//getRoomDatabase(getDatabaseBuilder()),
+                database = DBFactory().createDatabase(),
                 scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
             )
         }
