@@ -1,9 +1,9 @@
 package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -52,65 +53,67 @@ fun TimelineEventView(
         )
     }
 
-    Canvas(modifier = modifier.background(Color.Gray).clipToBounds()) {
-        if (entries == null || entries.states.size < 1) return@Canvas
+    Spacer(modifier = modifier.background(Color.Gray).clipToBounds().drawWithCache {
+        onDrawBehind {
+            if (entries == null || entries.states.size < 1) return@onDrawBehind
 
-        val height = size.height
-        val width = size.width
-        val verticalPaddingPx = verticalPaddingDp.toPx()
-        val availableHeight = height - verticalPaddingPx * 2
-        val secSizePx: Float = timeFrame.calculateSecSizePx(width)
-        val seriesCount = entries.states.size
+            val height = size.height
+            val width = size.width
+            val verticalPaddingPx = verticalPaddingDp.toPx()
+            val availableHeight = height - verticalPaddingPx * 2
+            val secSizePx: Float = timeFrame.calculateSecSizePx(width)
+            val seriesCount = entries.states.size
 
-        renderVerticalSeries(
-            seriesCount,
-            availableHeight,
-            verticalPaddingPx,
-            width,
-        )
-
-        if (showVerticalSeries) {
-            renderSecondsVerticalLines(timeFrame, secSizePx, height)
-        }
-
-        val map = entries.map
-        map.keys.forEachIndexed { index, key ->
-            val items = map[key]
-            renderEvents(
-                entries.states,
-                items,
-                timeFrame,
-                secSizePx,
-                verticalPaddingPx,
-                ColorPalette.getColor(index, alpha = 0.5f),
-                highlightedKey,
-                key,
+            renderVerticalSeries(
                 seriesCount,
                 availableHeight,
-            )
-        }
-
-        if (highlightedKey != null) {
-            val items = map[highlightedKey]
-            renderEvents(
-                entries.states,
-                items,
-                timeFrame,
-                secSizePx,
                 verticalPaddingPx,
-                Color.Green,
-                highlightedKey,
-                highlightedKey,
-                seriesCount,
-                availableHeight,
+                width,
+            )
+
+            if (showVerticalSeries) {
+                renderSecondsVerticalLines(timeFrame, secSizePx, height)
+            }
+
+            val map = entries.map
+            map.keys.forEachIndexed { index, key ->
+                val items = map[key]
+                renderEvents(
+                    entries.states,
+                    items,
+                    timeFrame,
+                    secSizePx,
+                    verticalPaddingPx,
+                    ColorPalette.getColor(index, alpha = 0.5f),
+                    highlightedKey,
+                    key,
+                    seriesCount,
+                    availableHeight,
+                )
+            }
+
+            if (highlightedKey != null) {
+                val items = map[highlightedKey]
+                renderEvents(
+                    entries.states,
+                    items,
+                    timeFrame,
+                    secSizePx,
+                    verticalPaddingPx,
+                    Color.Green,
+                    highlightedKey,
+                    highlightedKey,
+                    seriesCount,
+                    availableHeight,
+                )
+            }
+
+            renderStateLabels(
+                entries.states, seriesCount, verticalPaddingPx,
+                textMeasurer, seriesTextStyle, availableHeight
             )
         }
-
-        renderStateLabels(
-            entries.states, seriesCount, verticalPaddingPx,
-            textMeasurer, seriesTextStyle, availableHeight
-        )
-    }
+    })
 }
 
 
@@ -135,7 +138,7 @@ fun PreviewTimelineEventView() {
     val crash2 = TimeLineEventEntry(ts + 2_000_000, key2, TimeLineEvent("CRASH", "info 1"))
     val anr1 = TimeLineEventEntry(ts + 4_000_000, key1, TimeLineEvent("ANR", "info 1"))
     val lowMemory = TimeLineEventEntry(ts + 3_780_000, key1, TimeLineEvent("LOWMEMORY", "info 1"))
-    val wtf = TimeLineEventEntry(ts + 4_380_000, key1, TimeLineEvent("WTF", "info 1"))
+    val wtf = TimeLineEventEntry(ts + 4_380_000, key1, TimeLineEvent("com.company-name.long-package-name.some-category.activity-name", "info 1"))
     val event1 = TimeLineEventEntry(ts + 5_380_000, key1, TimeLineEvent("EVENT 1", "info 1"))
     val event2 = TimeLineEventEntry(ts + 2_180_000, key1, TimeLineEvent("EVENT 2", "info 1"))
     val event3 = TimeLineEventEntry(ts + 1_380_000, key1, TimeLineEvent("EVENT 3", "info 1"))
