@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -31,7 +32,7 @@ fun DLTSimplifiedInfoView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
     messageIndex: Int,
-    insight: LogInsight? = null,
+    insights: SnapshotStateList<LogInsight>? = null,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
     if (logMessage == null) return
@@ -75,10 +76,11 @@ fun DLTSimplifiedInfoView(
                     }) {
                     Text(text = if (logMessage.comment != null) "Update" else "Add")
                 }
-                if (insight != null) {
+
+                insights?.forEachIndexed { index, insight ->
                     Header(
                         modifier = paddingModifier.padding(top = 8.dp),
-                        text = "Insight:"
+                        text = "Insight $index:"
                     )
                     TableRow(
                         0,

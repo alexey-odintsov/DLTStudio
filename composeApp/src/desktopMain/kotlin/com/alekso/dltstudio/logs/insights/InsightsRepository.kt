@@ -24,10 +24,15 @@ class InsightsRepository {
         // todo: load insights from persistent storage
         insightRules.value = listOf(
             LogInsightRule(
+                "TimeStamp",
+                "Possible TimeStamp found: {ts}",
+                """.*(?<ts>[0-9]{10}).*"""
+            ),
+            LogInsightRule(
                 "Choreographer: Skipped frames",
                 "Process {pid} was doing heavy work on the main thread. This led to skipped {frames} frames.\rRecommendation is to check whether the app is doing some heavy operations on the main thread and offload them",
                 "Choreographer\\[(?<pid>\\d+)\\].*kipped (?<frames>\\d+) frames.*main thread"
-            )
+            ),
         )
 
         // Compile rules
@@ -39,18 +44,17 @@ class InsightsRepository {
         }
     }
 
-    fun findInsight(logMessage: LogMessage): LogInsight? {
+    fun findInsight(logMessage: LogMessage): List<LogInsight> {
+        val insights = mutableListOf<LogInsight>()
         insightRules.value.forEach { rule ->
             val compiledRule = compiledRules[rule.name]
             val text = logMessage.dltMessage.payload
             if (compiledRule != null && text.contains(compiledRule.regex)) {
                 val matches = compiledRule.regex.find(logMessage.dltMessage.payload)!!
-                return LogInsight(name = rule.name, text = fillInsightText(rule, matches))
-            } else {
-                return null
+                insights.add(LogInsight(name = rule.name, text = fillInsightText(rule, matches)))
             }
         }
-        return null
+        return insights
     }
 
     private fun fillInsightText(rule: LogInsightRule, matches: MatchResult): String {
