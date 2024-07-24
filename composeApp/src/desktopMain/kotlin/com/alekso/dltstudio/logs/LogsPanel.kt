@@ -51,7 +51,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 fun LogsPanel(
     modifier: Modifier = Modifier,
     logMessages: SnapshotStateList<LogMessage>,
-    logInsight: LogInsight? = null,
+    logInsights: SnapshotStateList<LogInsight>? = null,
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
@@ -119,7 +119,7 @@ fun LogsPanel(
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
                             logMessage = logMessages.getOrNull(logsListSelectedRow),
-                            logInsight = logInsight,
+                            logInsights = logInsights,
                             messageIndex = logsListSelectedRow,
                             onCommentUpdated = onCommentUpdated,
                         )

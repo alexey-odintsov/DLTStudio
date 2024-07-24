@@ -168,7 +168,7 @@ fun MainWindow(
                     searchState = searchState,
                     searchAutoComplete = mainViewModel.searchAutocomplete,
                     logMessages = mainViewModel.logMessages,
-                    logInsight = mainViewModel.logInsight.value,
+                    logInsights = mainViewModel.logInsights,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
