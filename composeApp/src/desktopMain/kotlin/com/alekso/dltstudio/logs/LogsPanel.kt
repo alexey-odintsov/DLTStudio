@@ -30,7 +30,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
-import com.alekso.dltstudio.logs.infopanel.VirtualDevice
+import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage

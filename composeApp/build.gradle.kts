@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -33,7 +32,6 @@ kotlin {
             implementation(libs.gson)
             implementation(libs.kotlin.coroutines.swing)
             implementation(libs.androidx.room.runtime)
-            implementation(libs.androidx.room.compiler)
             implementation(libs.sqlite.bundled)
         }
 
@@ -80,12 +78,6 @@ room {
 //Room step5  KSP For processing Room annotations , Otherwise we will get Is Room annotation processor correctly configured? error
 dependencies {
     // Update: https://issuetracker.google.com/u/0/issues/342905180
-    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+//    add("kspCommonMainMetadata", libs.androidx.room.compiler)
+    add("ksp", libs.androidx.room.compiler) // Fices AppDatabase_Impl not found
 }
-
-//Room step6 part 2 make all source sets to depend on kspCommonMainKotlinMetadata:  Update: https://issuetracker.google.com/u/0/issues/342905180
-//tasks.withType<KotlinCompilationTask<*>>().configureEach {
-//    if (name != "kspCommonMainKotlinMetadata") {
-//        dependsOn("kspCommonMainKotlinMetadata")
-//    }
-//}

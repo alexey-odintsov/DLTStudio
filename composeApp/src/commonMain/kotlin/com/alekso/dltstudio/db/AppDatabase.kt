@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceDao
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 
-@Database(entities = [VirtualDeviceEntity::class], version = 1)
+@Database(entities = [VirtualDeviceEntity::class], version = 1, exportSchema = false)
 abstract class AppDatabase: RoomDatabase(), DB {
 
     abstract fun getVirtualDeviceDao(): VirtualDeviceDao

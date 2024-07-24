@@ -102,9 +102,9 @@ fun MainWindow(
         VirtualDevicesDialog(
             visible = devicePreviewsDialogState.value,
             onDialogClosed = { devicePreviewsDialogState.value = false },
-            colorFilters = mainViewModel.virtualDevices,
-            onColorFilterDelete = { },
+            virtualDevices = mainViewModel.virtualDevices,
             onVirtualDeviceUpdate = { device -> mainViewModel.onVirtualDeviceUpdate(device) },
+            onVirtualDeviceDelete = { device -> mainViewModel.onVirtualDeviceDelete(device) },
         )
     }
 

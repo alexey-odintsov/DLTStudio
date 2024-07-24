@@ -25,6 +25,7 @@ import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
 import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
 
@@ -36,12 +37,11 @@ fun DevicePreviewView(
     messageIndex: Int,
     onShowVirtualDeviceClicked: () -> Unit = {},
 ) {
-    if (logMessage == null) return
-
+    var deviceViews: List<DeviceView>? = null
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)
 
     Column(modifier = modifier.verticalScroll(rememberScrollState())) {
-        logMessage.dltMessage.let {
+        logMessage?.dltMessage?.let { message ->
             Header(
                 modifier = paddingModifier, text = "Device Preview for #$messageIndex:"
             )
@@ -49,8 +49,8 @@ fun DevicePreviewView(
 //                "${TimeFormatter.formatDateTime(it.timeStampNano)} " + "${it.extendedHeader?.applicationId} " + "${it.extendedHeader?.contextId} "
 //            TableRow(0, "", headerText)
 //            TableRow(0, "", it.payload)
-
-            val deviceViews = DeviceView.parse(logMessage.dltMessage.payload)
+//        }
+            deviceViews = DeviceView.parse(message.payload)
             if (deviceViews.isNullOrEmpty()) {
                 Text(
                     modifier = Modifier.padding(start = 2.dp, end = 2.dp),
@@ -58,39 +58,37 @@ fun DevicePreviewView(
                     fontFamily = FontFamily.Monospace,
                     fontSize = 11.sp,
                 )
-            } else {
-                var currentDevice by rememberSaveable { mutableStateOf<VirtualDevice?>(null) }
-                val device = currentDevice
-                CustomButton(
-                    modifier = Modifier.padding(0.dp),
-                    onClick = { onShowVirtualDeviceClicked() },
-                ) {
-                    Text("Manage devices")
-                }
-
-                if (device != null) {
-                    CustomDropDown(modifier = Modifier.width(200.dp).padding(horizontal = 4.dp)
-                        .background(Color.Red),
-                        items = virtualDevices.map { device -> "${device.name}: ${device.size.width.toInt()}x${device.size.height.toInt()}" },
-                        initialSelectedIndex = 0,
-                        onItemsSelected = { i ->
-                            currentDevice = virtualDevices[i]
-                        })
-
-                    Row(modifier = Modifier.weight(1f).fillMaxWidth().background(Color.Gray)) {
-                        VirtualDevicePreview(
-                            modifier = Modifier.fillMaxSize(),
-                            deviceSize = device.size,
-                            deviceViews
-                        )
-                    }
-                } else {
-                    Text(
-                        "No virtual device found, please create one",
-                        modifier = Modifier.padding(horizontal = 4.dp)
-                    )
-                }
             }
+        }
+
+        var currentDevice by rememberSaveable { mutableStateOf(virtualDevices.firstOrNull()) }
+        CustomButton(
+            modifier = Modifier.padding(0.dp),
+            onClick = { onShowVirtualDeviceClicked() },
+        ) {
+            Text("Manage devices")
+        }
+
+        if (currentDevice != null) {
+            CustomDropDown(modifier = Modifier.width(200.dp).padding(horizontal = 4.dp),
+                items = virtualDevices.map { device -> "${device.name}: ${device.size.width.toInt()}x${device.size.height.toInt()}" },
+                initialSelectedIndex = 0,
+                onItemsSelected = { i ->
+                    currentDevice = virtualDevices[i]
+                })
+
+            Row(modifier = Modifier.weight(1f).fillMaxWidth().background(Color.Gray)) {
+                VirtualDevicePreview(
+                    modifier = Modifier.fillMaxSize(),
+                    deviceSize = currentDevice!!.size,
+                    deviceViews
+                )
+            }
+        } else {
+            Text(
+                "No virtual device found, please create one",
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
         }
     }
 }

@@ -9,6 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 interface VirtualDeviceRepository {
     suspend fun insert(item: VirtualDeviceEntity)
 
+    suspend fun delete(item: VirtualDeviceEntity)
+
     suspend fun count(): Int
 
     fun getAllAsFlow(): Flow<List<VirtualDeviceEntity>>
@@ -20,6 +22,10 @@ class VirtualDeviceMock : VirtualDeviceRepository {
 
     override suspend fun insert(item: VirtualDeviceEntity) {
         virtualDevicesFlow.value.add(item)
+    }
+
+    override suspend fun delete(item: VirtualDeviceEntity) {
+        virtualDevicesFlow.value.remove(item)
     }
 
     override suspend fun count(): Int {
@@ -39,6 +45,10 @@ class VirtualDeviceRepositoryImpl(
 
     override suspend fun insert(item: VirtualDeviceEntity) {
         database.getVirtualDeviceDao().insert(item)
+    }
+
+    override suspend fun delete(item: VirtualDeviceEntity) {
+        database.getVirtualDeviceDao().delete(item)
     }
 
     override suspend fun count(): Int {

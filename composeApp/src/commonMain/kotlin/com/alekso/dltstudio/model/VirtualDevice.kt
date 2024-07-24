@@ -1,9 +1,9 @@
-package com.alekso.dltstudio.logs.infopanel
+package com.alekso.dltstudio.model
 
 import androidx.compose.ui.geometry.Size
 
 data class VirtualDevice(
-    val id: Int,
+    val id: Long,
     val name: String,
     val size: Size,
 ) {

@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomEditText
 

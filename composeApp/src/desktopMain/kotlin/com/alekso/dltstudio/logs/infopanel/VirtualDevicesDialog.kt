@@ -22,6 +22,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.ImageButton
 import dtlstudio.composeapp.generated.resources.Res
@@ -33,9 +34,9 @@ import dtlstudio.composeapp.generated.resources.icon_edit
 fun VirtualDevicesDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
-    colorFilters: List<VirtualDevice>,
-    onColorFilterDelete: (Int) -> Unit,
+    virtualDevices: List<VirtualDevice>,
     onVirtualDeviceUpdate: (VirtualDevice) -> Unit,
+    onVirtualDeviceDelete: (VirtualDevice) -> Unit,
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
@@ -58,12 +59,12 @@ fun VirtualDevicesDialog(
 
         VirtualDevicesPanel(
             modifier = Modifier.fillMaxSize(),
-            items = colorFilters,
-            onEditItemClick = { filter ->
-                editDialogState.value = EditVirtualDeviceDialogState(true, filter)
+            items = virtualDevices,
+            onEditItemClick = { item ->
+                editDialogState.value = EditVirtualDeviceDialogState(true, item)
             },
-            onItemDelete = { i ->
-                onColorFilterDelete(i)
+            onItemDelete = { item ->
+                onVirtualDeviceDelete(item)
             },
         )
     }
@@ -74,7 +75,7 @@ fun VirtualDevicesPanel(
     modifier: Modifier,
     items: List<VirtualDevice>,
     onEditItemClick: (VirtualDevice) -> Unit,
-    onItemDelete: (Int) -> Unit,
+    onItemDelete: (VirtualDevice) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize().padding(4.dp)) {
         LazyColumn(Modifier.weight(1f).fillMaxWidth()) {
@@ -112,7 +113,7 @@ fun VirtualDevicesPanel(
                         icon = Res.drawable.icon_delete,
                         title = "Delete",
                         onClick = {
-                            onItemDelete(i)
+                            onItemDelete(item)
                         })
                 }
             }
