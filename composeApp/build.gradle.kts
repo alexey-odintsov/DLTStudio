@@ -11,12 +11,6 @@ plugins {
 kotlin {
     jvm("desktop")
 
-    // Room step6 part1 for adding ksp src directory to use AppDatabase::class.instantiateImpl() in iosMain:
-    // Due to https://issuetracker.google.com/u/0/issues/342905180
-    sourceSets.commonMain {
-        kotlin.srcDir("build/generated/ksp/metadata")
-    }
-
     sourceSets {
         val desktopMain by getting
 
@@ -70,14 +64,10 @@ compose.desktop {
 
 task("testClasses")
 
-//Room step3: path where we want to generate the schemas
 room {
     schemaDirectory("$projectDir/schemas")
 }
 
-//Room step5  KSP For processing Room annotations , Otherwise we will get Is Room annotation processor correctly configured? error
 dependencies {
-    // Update: https://issuetracker.google.com/u/0/issues/342905180
-//    add("kspCommonMainMetadata", libs.androidx.room.compiler)
-    add("ksp", libs.androidx.room.compiler) // Fices AppDatabase_Impl not found
+    add("ksp", libs.androidx.room.compiler) // Fixes AppDatabase_Impl not found
 }
