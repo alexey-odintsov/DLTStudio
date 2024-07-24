@@ -100,7 +100,6 @@ data class DeviceView(
             """.trimIndent()
             ).findAll(text)
             for (match in viewMatches) {
-                println(match.value)
                 list.add(
                     DeviceView(
                         Rect(

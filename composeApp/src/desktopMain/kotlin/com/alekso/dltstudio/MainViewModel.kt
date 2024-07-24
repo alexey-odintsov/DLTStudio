@@ -396,12 +396,20 @@ class MainViewModel(
     fun onVirtualDeviceUpdate(device: VirtualDevice) {
         CoroutineScope(IO).launch {
             virtualDeviceRepository.insert(
-                VirtualDeviceEntity(
-                    id = device.id,
-                    title = device.name,
-                    width = device.size.width,
-                    height = device.size.height
-                )
+                if (device.id >= 0) {
+                    VirtualDeviceEntity(
+                        id = device.id,
+                        title = device.name,
+                        width = device.size.width,
+                        height = device.size.height
+                    )
+                } else {
+                    VirtualDeviceEntity(
+                        title = device.name,
+                        width = device.size.width,
+                        height = device.size.height
+                    )
+                }
             )
         }
     }
