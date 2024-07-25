@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -147,13 +146,6 @@ fun TimeLinePanel(
                 scale = scale,
                 offsetSeconds = offsetSec
             )
-
-            Text(
-                "Time range: ${TimeFormatter.formatDateTime(timelineViewModel.timeStart)} .. ${
-                    TimeFormatter.formatDateTime(timelineViewModel.timeEnd)
-                }"
-            )
-            Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
 
             Row {
                 Box(modifier = Modifier.width(LEGEND_WIDTH_DP))
