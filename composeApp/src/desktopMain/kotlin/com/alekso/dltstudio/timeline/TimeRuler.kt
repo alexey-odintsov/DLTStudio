@@ -53,14 +53,13 @@ fun TimeRuler(
         if (secSizePx < Float.POSITIVE_INFINITY && timeMarksCount > 0) {
             for (i in 0..totalSeconds step timeMarksCount) {
                 try {
-                    drawText(
-                        textMeasurer,
+                    val textResult = textMeasurer.measure(
                         text = TimeFormatter.formatTime(timeStart + i * 1000000),
-                        topLeft = Offset(
-                            offsetSec * secSizePx + i * secSizePx,
-                            30f
-                        ),
-                        style = TextStyle(color = Color.Gray, fontSize = 10.sp)
+                        style = TextStyle(color = Color.Gray, fontSize = 10.sp),
+                    )
+                    drawText(
+                        textResult,
+                        topLeft = Offset(offsetSec * secSizePx + i * secSizePx, 30f),
                     )
                 } catch (e: Exception) {
                     Log.e("Can't render $i x: ${offsetSec * secSizePx + i * secSizePx}")
@@ -101,11 +100,10 @@ fun PreviewTimeRuler() {
         Divider()
 
         for (i in 1..15) {
-
             TimeRuler(
                 modifier = Modifier.fillMaxWidth(),
                 offsetSec = 0f,
-                scale = 2 * i.toFloat(),
+                scale = i.toFloat(),
                 timeStart = ts,
                 timeEnd = te,
                 totalSeconds = totalSeconds,
