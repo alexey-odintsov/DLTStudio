@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -71,7 +72,7 @@ fun DevicePreviewView(
 
         if (currentDevice != null) {
             CustomDropDown(modifier = Modifier.width(200.dp).padding(horizontal = 4.dp),
-                items = virtualDevices.map { device -> "${device.name}: ${device.size.width.toInt()}x${device.size.height.toInt()}" },
+                items = virtualDevices.map { device -> "${device.name}: ${device.width}x${device.height}" },
                 initialSelectedIndex = 0,
                 onItemsSelected = { i ->
                     currentDevice = virtualDevices[i]
@@ -80,8 +81,11 @@ fun DevicePreviewView(
             Row(modifier = Modifier.weight(1f).fillMaxWidth().background(Color.Gray)) {
                 VirtualDevicePreview(
                     modifier = Modifier.fillMaxSize(),
-                    deviceSize = currentDevice!!.size,
-                    deviceViews
+                    deviceSize = Size(
+                        currentDevice!!.width.toFloat(),
+                        currentDevice!!.height.toFloat()
+                    ),
+                    deviceViews = deviceViews,
                 )
             }
         } else {

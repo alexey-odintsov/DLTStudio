@@ -12,5 +12,4 @@ abstract class AppDatabase: RoomDatabase() {
 
 }
 
-
-internal const val dbFileName = "app_room_db.db"
+internal const val dbFileName = "dtl_studio.db"

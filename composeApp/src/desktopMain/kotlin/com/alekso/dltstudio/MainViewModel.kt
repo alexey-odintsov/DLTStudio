@@ -400,14 +400,14 @@ class MainViewModel(
                     VirtualDeviceEntity(
                         id = device.id,
                         title = device.name,
-                        width = device.size.width,
-                        height = device.size.height
+                        width = device.width,
+                        height = device.height
                     )
                 } else {
                     VirtualDeviceEntity(
                         title = device.name,
-                        width = device.size.width,
-                        height = device.size.height
+                        width = device.width,
+                        height = device.height
                     )
                 }
             )

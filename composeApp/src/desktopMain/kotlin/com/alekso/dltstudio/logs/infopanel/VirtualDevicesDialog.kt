@@ -18,7 +18,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
@@ -97,7 +96,7 @@ fun VirtualDevicesPanel(
                         modifier = Modifier.padding(horizontal = 4.dp)
                     ) {
                         Text(
-                            text = "${item.size.width.toInt()}x${item.size.height.toInt()}",
+                            text = "${item.width}x${item.height}",
                             modifier = Modifier.wrapContentWidth(),
                         )
                     }
@@ -133,8 +132,8 @@ fun VirtualDevicesPanel(
 @Composable
 fun PreviewVirtualDevicesDialog() {
     val virtualDevices = mutableListOf(
-        VirtualDevice(1, "Square", Size(1500f, 1500f)),
-        VirtualDevice(2, "Wide", Size(2000f, 900f)),
+        VirtualDevice(1, "Square", width = 1500, height = 1500),
+        VirtualDevice(2, "Wide", width = 2000, height = 900),
     )
 
     VirtualDevicesPanel(
