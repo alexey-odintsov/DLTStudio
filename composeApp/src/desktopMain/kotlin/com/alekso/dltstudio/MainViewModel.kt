@@ -7,11 +7,16 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
+import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
+import com.alekso.dltstudio.db.virtualdevice.toVirtualDevice
+import com.alekso.dltstudio.db.virtualdevice.toVirtualDeviceEntity
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
+import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
@@ -22,6 +27,7 @@ import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -54,6 +60,7 @@ class MainViewModel(
     private val dltParser: DLTParser,
     private val onProgressChanged: (Float) -> Unit,
     private val insightsRepository: InsightsRepository,
+    private val virtualDeviceRepository: VirtualDeviceRepository,
 ) {
 
     private val _logMessages = mutableStateListOf<LogMessage>()
@@ -64,6 +71,7 @@ class MainViewModel(
     val searchResult = mutableStateListOf<LogMessage>()
     val searchIndexes = mutableStateListOf<Int>()
     val searchAutocomplete = mutableStateListOf<String>()
+    val virtualDevices = mutableStateListOf<VirtualDevice>()
 
     private var parseJob: Job? = null
     private var searchJob: Job? = null
@@ -74,6 +82,16 @@ class MainViewModel(
     val searchListState = LazyListState()
     var searchListSelectedRow = mutableStateOf(0)
 
+    init {
+        CoroutineScope(IO).launch {
+            virtualDeviceRepository.getAllAsFlow().collect {
+                withContext(Main) {
+                    virtualDevices.clear()
+                    virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
+                }
+            }
+        }
+    }
 
     fun onLogsRowSelected(coroutineScope: CoroutineScope, index: Int, rowId: Int) {
         coroutineScope.launch {
@@ -372,6 +390,33 @@ class MainViewModel(
         }
         if (searchMessageIndex != -1) {
             searchResult[searchMessageIndex] = updatedMessage
+        }
+    }
+
+    fun onVirtualDeviceUpdate(device: VirtualDevice) {
+        CoroutineScope(IO).launch {
+            virtualDeviceRepository.insert(
+                if (device.id >= 0) {
+                    VirtualDeviceEntity(
+                        id = device.id,
+                        title = device.name,
+                        width = device.width,
+                        height = device.height
+                    )
+                } else {
+                    VirtualDeviceEntity(
+                        title = device.name,
+                        width = device.width,
+                        height = device.height
+                    )
+                }
+            )
+        }
+    }
+
+    fun onVirtualDeviceDelete(device: VirtualDevice) {
+        CoroutineScope(IO).launch {
+            virtualDeviceRepository.delete(device.toVirtualDeviceEntity())
         }
     }
 }

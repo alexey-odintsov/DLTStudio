@@ -4,14 +4,16 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.room)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         commonMain.dependencies {
             implementation(project(":logger"))
             implementation(project(":dltparser"))
@@ -23,6 +25,8 @@ kotlin {
             implementation(compose.components.resources)
             implementation(libs.gson)
             implementation(libs.kotlin.coroutines.swing)
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
         }
 
         desktopMain.dependencies {
@@ -59,3 +63,11 @@ compose.desktop {
 }
 
 task("testClasses")
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+    add("ksp", libs.androidx.room.compiler) // Fixes AppDatabase_Impl not found
+}

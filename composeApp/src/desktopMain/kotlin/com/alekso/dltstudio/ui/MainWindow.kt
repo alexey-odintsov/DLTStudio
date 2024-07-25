@@ -26,12 +26,14 @@ import com.alekso.dltparser.DLTParserV1
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
+import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceMock
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
 import com.alekso.dltstudio.logs.RemoveLogsDialog
 import com.alekso.dltstudio.logs.RemoveLogsDialogState
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
+import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
@@ -91,6 +93,18 @@ fun MainWindow(
             onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
             onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
             onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
+        )
+    }
+
+    val devicePreviewsDialogState = remember { mutableStateOf(false) }
+
+    if (devicePreviewsDialogState.value) {
+        VirtualDevicesDialog(
+            visible = devicePreviewsDialogState.value,
+            onDialogClosed = { devicePreviewsDialogState.value = false },
+            virtualDevices = mainViewModel.virtualDevices,
+            onVirtualDeviceUpdate = { device -> mainViewModel.onVirtualDeviceUpdate(device) },
+            onVirtualDeviceDelete = { device -> mainViewModel.onVirtualDeviceDelete(device) },
         )
     }
 
@@ -169,6 +183,7 @@ fun MainWindow(
                     searchAutoComplete = mainViewModel.searchAutocomplete,
                     logMessages = mainViewModel.logMessages,
                     logInsights = mainViewModel.logInsights,
+                    virtualDevices = mainViewModel.virtualDevices,
                     searchResult = mainViewModel.searchResult,
                     searchIndexes = mainViewModel.searchIndexes,
                     colorFilters = mainViewModel.colorFilters,
@@ -199,7 +214,8 @@ fun MainWindow(
                         override fun onRemoveDialogClicked(message: LogMessage) {
                             removeLogsDialogState.value = RemoveLogsDialogState(true, message)
                         }
-                    }
+                    },
+                    onShowVirtualDeviceClicked = { devicePreviewsDialogState.value = true }
                 )
             }
 
@@ -223,11 +239,17 @@ fun MainWindow(
     }
 }
 
+@Preview
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
         MainWindow(
-            MainViewModel(DLTParserV1(), {}, insightsRepository = InsightsRepository()),
+            MainViewModel(
+                DLTParserV1(),
+                {},
+                insightsRepository = InsightsRepository(),
+                virtualDeviceRepository = VirtualDeviceMock()
+            ),
             TimelineViewModel({}),
             1f,
             {})
