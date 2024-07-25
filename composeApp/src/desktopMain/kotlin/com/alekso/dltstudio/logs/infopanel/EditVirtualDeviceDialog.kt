@@ -13,7 +13,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,7 +42,7 @@ fun EditVirtualDeviceDialog(
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (device.id >= 0) "Edit virtual device" else "Add new virtual device",
-        state = rememberDialogState(width = 700.dp, height = 500.dp)
+        state = rememberDialogState(width = 400.dp)
     ) {
         EditVirtualDevicePanel(
             device = device,
@@ -60,10 +60,11 @@ fun EditVirtualDevicePanel(
     device: VirtualDevice,
     onDeviceUpdate: (VirtualDevice) -> Unit,
     onDialogClosed: () -> Unit,
+
 ) {
-    var deviceName by rememberSaveable { mutableStateOf(device.name) }
-    var deviceWidth by rememberSaveable { mutableStateOf(device.size.width.toInt()) }
-    var deviceHeight by rememberSaveable { mutableStateOf(device.size.height.toInt()) }
+    var deviceName by remember { mutableStateOf(device.name) }
+    var deviceWidth by remember { mutableStateOf(device.size.width.toInt()) }
+    var deviceHeight by remember { mutableStateOf(device.size.height.toInt()) }
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
     Column(
@@ -85,7 +86,7 @@ fun EditVirtualDevicePanel(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(modifier = colNameStyle, text = "width")
+                Text(modifier = colNameStyle, text = "Width")
                 CustomEditText(
                     modifier = Modifier.width(COL_VALUE),
                     value = deviceWidth.toString(),
@@ -96,7 +97,7 @@ fun EditVirtualDevicePanel(
             }
 
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(modifier = colNameStyle, text = "height")
+                Text(modifier = colNameStyle, text = "Height")
                 CustomEditText(
                     modifier = Modifier.width(COL_VALUE),
                     value = deviceHeight.toString(),
@@ -108,9 +109,10 @@ fun EditVirtualDevicePanel(
         }
 
         CustomButton(onClick = {
+
             onDeviceUpdate(
                 VirtualDevice(
-                    id = device.id, // TODO: Increase index
+                    id = device.id,
                     name = deviceName,
                     size = Size(width = deviceWidth.toFloat(), height = deviceHeight.toFloat())
                 )
