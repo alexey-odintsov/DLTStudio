@@ -30,6 +30,8 @@ data class TimelineFilter(
         IndexOf
     }
 
+    val key: String = "$filters$extractPattern".hashCode().toString()
+
     enum class DiagramType(val description: String) {
 
 

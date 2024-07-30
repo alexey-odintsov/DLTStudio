@@ -177,13 +177,13 @@ fun TimeLinePanel(
                             TimelineLegend(
                                 modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                                 title = timelineFilter.name,
-                                entries = timelineViewModel.userEntries.getOrNull(index),
+                                entries = timelineViewModel.userEntriesMap[timelineFilter.key],
                                 { key ->
-                                    if (index in 0..<timelineViewModel.highlightedKeys.size) {
-                                        timelineViewModel.highlightedKeys[index] = key
+                                    if (index in 0..<timelineViewModel.highlightedKeysMap.size) {
+                                        timelineViewModel.highlightedKeysMap[timelineFilter.key] = key
                                     }
                                 },
-                                highlightedKey = timelineViewModel.highlightedKeys.getOrNull(index)
+                                highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                             )
                             when (timelineFilter.diagramType) {
                                 TimelineFilter.DiagramType.Percentage -> {
@@ -192,11 +192,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimeLinePercentageEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLinePercentageEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
-                                            index
-                                        )
+                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -206,11 +204,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimeLineMinMaxEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineMinMaxEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
-                                            index
-                                        )
+                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -220,11 +216,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.userEntries.getOrNull(index) as TimeLineStateEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineStateEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
-                                            index
-                                        )
+                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -233,11 +227,9 @@ fun TimeLinePanel(
                                         .onPointerEvent(
                                             PointerEventType.Move,
                                             onEvent = { dragCallback(it, size.width) }),
-                                    entries = timelineViewModel.userEntries.getOrNull(index) as TimeLineEventEntries?,
+                                    entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineEventEntries?,
                                     timeFrame = timeFrame,
-                                    highlightedKey = timelineViewModel.highlightedKeys.getOrNull(
-                                        index
-                                    )
+                                    highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                 )
                             }
                         }
