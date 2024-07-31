@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.timeline
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
@@ -29,8 +30,8 @@ class TimelineViewModel(
 ) {
     private var analyzeJob: Job? = null
 
-    var userEntries = mutableStateListOf<TimeLineEntries<*>>()
-    var highlightedKeys = mutableStateListOf<String?>()
+    var userEntriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
+    var highlightedKeysMap = mutableStateMapOf<String, String?>()
 
     private var _analyzeState: MutableStateFlow<AnalyzeState> = MutableStateFlow(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
@@ -138,8 +139,8 @@ class TimelineViewModel(
     private fun cleanup() {
         timeStart = Long.MAX_VALUE
         timeEnd = Long.MIN_VALUE
-        userEntries.clear()
-        highlightedKeys.clear()
+        userEntriesMap.clear()
+        highlightedKeysMap.clear()
     }
 
     private fun startAnalyzing(dltMessages: SnapshotStateList<LogMessage>) {
@@ -148,7 +149,7 @@ class TimelineViewModel(
         analyzeJob = CoroutineScope(Dispatchers.IO).launch {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
-                val _userEntries = mutableStateListOf<TimeLineEntries<*>>()
+                val _userEntries = mutableStateMapOf<String, TimeLineEntries<*>>()
                 var _timeStart = Long.MAX_VALUE
                 var _timeEnd = Long.MIN_VALUE
 
@@ -157,8 +158,8 @@ class TimelineViewModel(
                 val regexps = mutableListOf<Regex?>()
                 // prefill timeline data holders
                 timelineFilters.forEachIndexed { index, timelineFilter ->
-                    _userEntries.add(timelineFilter.diagramType.createEntries())
-                    highlightedKeys.add(index, null)
+                    _userEntries[timelineFilter.key] = timelineFilter.diagramType.createEntries()
+                    highlightedKeysMap[timelineFilter.key] = null
 
                     // precompile regex in advance
                     regexps.add(index, timelineFilter.extractPattern?.toRegex())
@@ -182,7 +183,7 @@ class TimelineViewModel(
                                 message.dltMessage,
                                 timelineFilter,
                                 regexps[i]!!,
-                                _userEntries[i]
+                                _userEntries[timelineFilter.key]!!
                             )
                         }
                     }
@@ -195,8 +196,8 @@ class TimelineViewModel(
 
                 withContext(Dispatchers.Default) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
-                    userEntries.clear()
-                    userEntries.addAll(_userEntries)
+                    userEntriesMap.clear()
+                    userEntriesMap.putAll(_userEntries)
                     timeStart = _timeStart
                     timeEnd = _timeEnd
                     _analyzeState.value = AnalyzeState.IDLE
@@ -240,10 +241,6 @@ class TimelineViewModel(
             val temp = timelineFilters[index]
             timelineFilters[index] = timelineFilters[index + offset]
             timelineFilters[index + offset] = temp
-
-            val temp2 = userEntries[index]
-            userEntries[index] = userEntries[index + offset]
-            userEntries[index + offset] = temp2
         }
     }
 
@@ -263,5 +260,14 @@ class TimelineViewModel(
 
     fun clearTimeLineFilters() {
         timelineFilters.clear()
+    }
+
+    fun retrieveEntriesForFilter(filter: TimelineFilter): TimeLineEntries<*>? {
+        return when (filter.diagramType) {
+            TimelineFilter.DiagramType.Percentage -> userEntriesMap[filter.key] as? TimeLinePercentageEntries
+            TimelineFilter.DiagramType.MinMaxValue -> userEntriesMap[filter.key] as? TimeLineMinMaxEntries
+            TimelineFilter.DiagramType.State -> userEntriesMap[filter.key] as? TimeLineStateEntries
+            TimelineFilter.DiagramType.Events -> userEntriesMap[filter.key] as? TimeLineEventEntries
+        }
     }
 }
