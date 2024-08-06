@@ -267,6 +267,8 @@ class TimelineViewModel(
             TimelineFilter.DiagramType.Percentage -> userEntriesMap[filter.key] as? TimeLinePercentageEntries
             TimelineFilter.DiagramType.MinMaxValue -> userEntriesMap[filter.key] as? TimeLineMinMaxEntries
             TimelineFilter.DiagramType.State -> userEntriesMap[filter.key] as? TimeLineStateEntries
+            TimelineFilter.DiagramType.SingleState -> userEntriesMap[filter.key] as? TimeLineSingleStateEntries
+            TimelineFilter.DiagramType.Duration -> userEntriesMap[filter.key] as? TimeLineDurationEntries
             TimelineFilter.DiagramType.Events -> userEntriesMap[filter.key] as? TimeLineEventEntries
         }
     }

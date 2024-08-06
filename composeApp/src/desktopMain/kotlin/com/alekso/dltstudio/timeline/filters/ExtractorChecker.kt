@@ -42,6 +42,26 @@ object ExtractorChecker {
                                 }
                             }
 
+
+                            TimelineFilter.DiagramType.SingleState -> {
+                                val matches = Regex(extractPattern).find(testPayload)
+                                if (matches != null) {
+                                    val key: String = matches.groups["key"]?.value ?: "key"
+                                    val value: String? = matches.groups["value"]?.value
+                                    groupsTestValue = "$key -> $value"
+                                }
+                            }
+
+                            TimelineFilter.DiagramType.Duration -> {
+                                val matches = Regex(extractPattern).find(testPayload)
+                                if (matches != null) {
+                                    val key: String = matches.groups["key"]?.value ?: "key"
+                                    val begin: String? = matches.groups["begin"]?.value
+                                    val end: String? = matches.groups["end"]?.value
+                                    groupsTestValue = "$key -> $begin / $end"
+                                }
+                            }
+
                             TimelineFilter.DiagramType.Events -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {

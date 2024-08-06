@@ -3,8 +3,9 @@ package com.alekso.dltstudio.timeline.filters
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
-import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
+import com.alekso.dltstudio.timeline.TimeLineDurationEntries
+import com.alekso.dltstudio.timeline.TimeLineDurationEntry
 import com.alekso.dltstudio.timeline.TimeLineEntries
 import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineEvent
@@ -12,6 +13,8 @@ import com.alekso.dltstudio.timeline.TimeLineEventEntries
 import com.alekso.dltstudio.timeline.TimeLineEventEntry
 import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries
 import com.alekso.dltstudio.timeline.TimeLinePercentageEntries
+import com.alekso.dltstudio.timeline.TimeLineSingleStateEntries
+import com.alekso.dltstudio.timeline.TimeLineSingleStateEntry
 import com.alekso.dltstudio.timeline.TimeLineStateEntries
 import com.alekso.dltstudio.timeline.TimeLineStateEntry
 
@@ -179,6 +182,104 @@ data class TimelineFilter(
 
             override fun createEntries(): TimeLineEntries<*> = TimeLineStateEntries()
         },
+
+        SingleState(description = "Shows states changes for single value") { // User switch
+            override fun extractEntry(
+                regex: Regex,
+                payload: String,
+                entries: TimeLineEntries<*>,
+                message: DLTMessage,
+                filter: TimelineFilter
+            ) {
+                val matches = regex.find(payload)!!
+
+                when (filter.extractorType) {
+                    ExtractorType.KeyValueNamed -> {
+                        val key: String = matches.groups["key"]?.value ?: "key"
+                        val value: String? = matches.groups["value"]?.value
+
+                        if (value != null) {
+                            (entries as TimeLineSingleStateEntries).addEntry(
+                                TimeLineSingleStateEntry(
+                                    message.timeStampNano,
+                                    key,
+                                    value
+                                )
+                            )
+                        }
+                    }
+
+                    ExtractorType.KeyValueGroups -> {
+                        if (matches.groups.size > 2) {
+                            for (i in 1..3) {
+                                val key = matches.groups[i]?.value
+                                val value = matches.groups[i + 1]?.value
+                                if (key != null && value != null) {
+                                    (entries as TimeLineSingleStateEntries).addEntry(
+                                        TimeLineSingleStateEntry(
+                                            message.timeStampNano,
+                                            key,
+                                            value
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun createEntries(): TimeLineEntries<*> = TimeLineSingleStateEntries()
+        },
+
+        Duration(description = "Shows duration bars") { // User switch
+            override fun extractEntry(
+                regex: Regex,
+                payload: String,
+                entries: TimeLineEntries<*>,
+                message: DLTMessage,
+                filter: TimelineFilter
+            ) {
+                val matches = regex.find(payload)!!
+
+                when (filter.extractorType) {
+                    ExtractorType.KeyValueNamed -> {
+                        val key: String = matches.groups["key"]?.value ?: "key"
+                        val begin: String? = matches.groups["begin"]?.value
+                        val end: String? = matches.groups["end"]?.value
+                        (entries as TimeLineDurationEntries).addEntry(
+                            TimeLineDurationEntry(
+                                message.timeStampNano,
+                                key,
+                                Pair(begin, end)
+                            )
+                        )
+                    }
+
+                    ExtractorType.KeyValueGroups -> {
+                        if (matches.groups.size > 2) {
+                            for (i in 1..3) {
+                                val key = matches.groups[i]?.value
+                                val begin = matches.groups[i + 1]?.value
+                                val end = matches.groups[i + 2]?.value
+                                if (key != null) {
+                                    (entries as TimeLineDurationEntries).addEntry(
+                                        TimeLineDurationEntry(
+                                            message.timeStampNano,
+                                            key,
+                                            Pair(begin, end)
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            override fun createEntries(): TimeLineEntries<*> = TimeLineDurationEntries()
+        },
+
         Events(description = "Shows events that occur over the time")  {
             override fun extractEntry(
                 regex: Regex,
