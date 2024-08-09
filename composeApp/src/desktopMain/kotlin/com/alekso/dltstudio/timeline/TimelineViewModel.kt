@@ -10,7 +10,8 @@ import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
-import com.alekso.dltstudio.timeline.filters.EntriesExtractor
+import com.alekso.dltstudio.timeline.filters.NonNamedEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.NamedEntriesExtractor
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.logger.Log
@@ -217,10 +218,26 @@ class TimelineViewModel(
         entries: TimeLineEntries<*>
     ) {
         if (filter.extractPattern == null) return
+        val nonNamedExtractor = NonNamedEntriesExtractor()
+        val namedExtractor = NamedEntriesExtractor()
 
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
-                EntriesExtractor.extractEntry(message, filter, regex, entries)
+                when (filter.extractorType) {
+                    TimelineFilter.ExtractorType.KeyValueNamed -> namedExtractor.extractEntry(
+                        message,
+                        filter,
+                        regex,
+                        entries
+                    )
+
+                    TimelineFilter.ExtractorType.KeyValueGroups -> nonNamedExtractor.extractEntry(
+                        message,
+                        filter,
+                        regex,
+                        entries
+                    )
+                }
             }
         } catch (e: Exception) {
             // ignore
