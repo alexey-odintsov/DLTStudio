@@ -10,6 +10,8 @@ import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
+import com.alekso.dltstudio.timeline.filters.NonNamedEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.NamedEntriesExtractor
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.logger.Log
@@ -216,10 +218,26 @@ class TimelineViewModel(
         entries: TimeLineEntries<*>
     ) {
         if (filter.extractPattern == null) return
+        val nonNamedExtractor = NonNamedEntriesExtractor()
+        val namedExtractor = NamedEntriesExtractor()
 
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
-                filter.diagramType.extractEntry(regex, message.payload, entries, message, filter)
+                when (filter.extractorType) {
+                    TimelineFilter.ExtractorType.KeyValueNamed -> namedExtractor.extractEntry(
+                        message,
+                        filter,
+                        regex,
+                        entries
+                    )
+
+                    TimelineFilter.ExtractorType.KeyValueGroups -> nonNamedExtractor.extractEntry(
+                        message,
+                        filter,
+                        regex,
+                        entries
+                    )
+                }
             }
         } catch (e: Exception) {
             // ignore
@@ -267,6 +285,8 @@ class TimelineViewModel(
             TimelineFilter.DiagramType.Percentage -> userEntriesMap[filter.key] as? TimeLinePercentageEntries
             TimelineFilter.DiagramType.MinMaxValue -> userEntriesMap[filter.key] as? TimeLineMinMaxEntries
             TimelineFilter.DiagramType.State -> userEntriesMap[filter.key] as? TimeLineStateEntries
+            TimelineFilter.DiagramType.SingleState -> userEntriesMap[filter.key] as? TimeLineSingleStateEntries
+            TimelineFilter.DiagramType.Duration -> userEntriesMap[filter.key] as? TimeLineDurationEntries
             TimelineFilter.DiagramType.Events -> userEntriesMap[filter.key] as? TimeLineEventEntries
         }
     }

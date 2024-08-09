@@ -51,9 +51,11 @@ import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
+import com.alekso.dltstudio.timeline.graph.TimelineDurationView
 import com.alekso.dltstudio.timeline.graph.TimelineEventView
 import com.alekso.dltstudio.timeline.graph.TimelineMinMaxValueView
 import com.alekso.dltstudio.timeline.graph.TimelinePercentageView
+import com.alekso.dltstudio.timeline.graph.TimelineSingleStateView
 import com.alekso.dltstudio.timeline.graph.TimelineStateView
 
 private val LEGEND_WIDTH_DP = 250.dp
@@ -217,6 +219,30 @@ fun TimeLinePanel(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
                                         entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineStateEntries?,
+                                        timeFrame = timeFrame,
+                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                    )
+                                }
+
+                                TimelineFilter.DiagramType.SingleState -> {
+                                    TimelineSingleStateView(
+                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                            .onPointerEvent(
+                                                PointerEventType.Move,
+                                                onEvent = { dragCallback(it, size.width) }),
+                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineSingleStateEntries?,
+                                        timeFrame = timeFrame,
+                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                    )
+                                }
+
+                                TimelineFilter.DiagramType.Duration -> {
+                                    TimelineDurationView(
+                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                            .onPointerEvent(
+                                                PointerEventType.Move,
+                                                onEvent = { dragCallback(it, size.width) }),
+                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineDurationEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
