@@ -4,13 +4,7 @@ import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
-import com.alekso.dltstudio.timeline.TimeLineDurationEntries
-import com.alekso.dltstudio.timeline.TimeLineEntries
-import com.alekso.dltstudio.timeline.TimeLineEventEntries
-import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries
-import com.alekso.dltstudio.timeline.TimeLinePercentageEntries
-import com.alekso.dltstudio.timeline.TimeLineSingleStateEntries
-import com.alekso.dltstudio.timeline.TimeLineStateEntries
+import com.alekso.dltstudio.timeline.DiagramType
 
 const val NO_KEY = "no_key"
 
@@ -33,65 +27,7 @@ data class TimelineFilter(
         val required: Boolean = false,
     )
 
-    enum class DiagramType(val description: String) {
-        Percentage(description = "Shows values change from in 0..100% range") { // CPU Usage
-            override fun createEntries(): TimeLineEntries<*> = TimeLinePercentageEntries()
-        },
-        MinMaxValue(description = "Shows values change from in 0..Max range") { // Memory usage
-            override fun createEntries(): TimeLineEntries<*> = TimeLineMinMaxEntries()
-        },
-        State(description = "Shows values change from given states") { // User switch
-            override fun createEntries(): TimeLineEntries<*> = TimeLineStateEntries()
-        },
 
-        SingleState(description = "Shows states changes for single value") { // User switch
-            override fun createEntries(): TimeLineEntries<*> = TimeLineSingleStateEntries()
-        },
-
-        Duration(description = "Shows duration bars") { // User switch
-            override fun createEntries(): TimeLineEntries<*> = TimeLineDurationEntries()
-        },
-
-        Events(description = "Shows events that occur over the time")  {
-            override fun createEntries(): TimeLineEntries<*> = TimeLineEventEntries()
-        },
-        ;
-
-        abstract fun createEntries(): TimeLineEntries<*>
-
-        enum class PercentageParams(val param: ExtractorParam) {
-            KEY(ExtractorParam("key", "key value of the entry")),
-            VALUE(ExtractorParam("value", "value of the entry")),
-        }
-
-        enum class MinMaxParams(val param: ExtractorParam) {
-            KEY(ExtractorParam("key", "key value of the entry")),
-            VALUE(ExtractorParam("value", "value of the entry")),
-        }
-
-        enum class StateParams(val param: ExtractorParam) {
-            KEY(ExtractorParam("key", "key value of the entry")),
-            VALUE(ExtractorParam("value", "New state value", required = true)),
-            OLD_VALUE(ExtractorParam("oldvalue", "Previous state value", required = true)),
-        }
-
-        enum class SingleStateParams(val param: ExtractorParam) {
-            KEY(ExtractorParam("key", "key value of the entry")),
-            VALUE(ExtractorParam("value", "New state value", required = true)),
-        }
-
-        enum class DurationParams(val param: ExtractorParam) {
-            KEY(ExtractorParam("key", "key value of the entry")),
-            BEGIN(ExtractorParam("begin", "No description yet")),
-            END(ExtractorParam("begin", "No description yet")),
-        }
-
-        enum class EventParams(val param: ExtractorParam) {
-            KEY(ExtractorParam("key", "key value of the entry")),
-            VALUE(ExtractorParam("value", "Event value", required = true)),
-        }
-
-    }
 
     enum class ExtractorType {
         KeyValueNamed,

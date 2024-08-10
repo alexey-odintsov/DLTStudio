@@ -48,7 +48,7 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("ALD", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("SYST", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.State,
+            diagramType = DiagramType.State,
             extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
@@ -59,7 +59,7 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("RMAN", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("CRSH", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Events,
+            diagramType = DiagramType.Events,
             extractorType = TimelineFilter.ExtractorType.KeyValueNamed
         ),
         TimelineFilter(
@@ -70,7 +70,7 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage,
+            diagramType = DiagramType.Percentage,
             extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
@@ -81,7 +81,7 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("CPUS", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage,
+            diagramType = DiagramType.Percentage,
             extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
@@ -92,7 +92,7 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage,
+            diagramType = DiagramType.Percentage,
             extractorType = TimelineFilter.ExtractorType.KeyValueNamed
         ),
         TimelineFilter(
@@ -103,7 +103,7 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("MEMT", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.MinMaxValue,
+            diagramType = DiagramType.MinMaxValue,
             extractorType = TimelineFilter.ExtractorType.KeyValueGroups
         ),
         TimelineFilter(
@@ -114,7 +114,7 @@ class TimelineViewModel(
                 FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
                 FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
             ),
-            diagramType = TimelineFilter.DiagramType.Percentage,
+            diagramType = DiagramType.Percentage,
             extractorType = TimelineFilter.ExtractorType.KeyValueNamed
         ),
     )
@@ -282,12 +282,12 @@ class TimelineViewModel(
 
     fun retrieveEntriesForFilter(filter: TimelineFilter): TimeLineEntries<*>? {
         return when (filter.diagramType) {
-            TimelineFilter.DiagramType.Percentage -> userEntriesMap[filter.key] as? TimeLinePercentageEntries
-            TimelineFilter.DiagramType.MinMaxValue -> userEntriesMap[filter.key] as? TimeLineMinMaxEntries
-            TimelineFilter.DiagramType.State -> userEntriesMap[filter.key] as? TimeLineStateEntries
-            TimelineFilter.DiagramType.SingleState -> userEntriesMap[filter.key] as? TimeLineSingleStateEntries
-            TimelineFilter.DiagramType.Duration -> userEntriesMap[filter.key] as? TimeLineDurationEntries
-            TimelineFilter.DiagramType.Events -> userEntriesMap[filter.key] as? TimeLineEventEntries
+            DiagramType.Percentage -> userEntriesMap[filter.key] as? TimeLinePercentageEntries
+            DiagramType.MinMaxValue -> userEntriesMap[filter.key] as? TimeLineMinMaxEntries
+            DiagramType.State -> userEntriesMap[filter.key] as? TimeLineStateEntries
+            DiagramType.SingleState -> userEntriesMap[filter.key] as? TimeLineSingleStateEntries
+            DiagramType.Duration -> userEntriesMap[filter.key] as? TimeLineDurationEntries
+            DiagramType.Events -> userEntriesMap[filter.key] as? TimeLineEventEntries
         }
     }
 }

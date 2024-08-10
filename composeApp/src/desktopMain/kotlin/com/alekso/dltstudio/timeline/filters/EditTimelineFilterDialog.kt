@@ -31,6 +31,7 @@ import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
@@ -111,7 +112,7 @@ fun EditTimelineFilterPanel(
 
             Row {
                 val items = mutableListOf<String>()
-                items.addAll(TimelineFilter.DiagramType.entries.map { it.name })
+                items.addAll(DiagramType.entries.map { it.name })
                 var initialSelection = items.indexOfFirst { it == filter.diagramType.name }
                 if (initialSelection == -1) initialSelection = 0
 
@@ -129,7 +130,7 @@ fun EditTimelineFilterPanel(
                     modifier = Modifier.width(COL_PATTERN)
                         .offset(x = COL_NAME_SIZE_DP)
                         .padding(horizontal = 4.dp),
-                    text = TimelineFilter.DiagramType.entries.first { it.name == diagramType }.description
+                    text = DiagramType.entries.first { it.name == diagramType }.description
                 )
             }
 
@@ -213,27 +214,6 @@ fun EditTimelineFilterPanel(
                 )
             }
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(modifier = colNameStyle, text = "Extract pattern")
-            }
-            Row {
-                CustomEditText(
-                    modifier = Modifier.wrapContentHeight(Alignment.Top).fillMaxWidth()
-                        .align(Alignment.Top),
-                    singleLine = false,
-                    value = extractPattern ?: "", onValueChange = {
-                        extractPattern = it
-                        groupsTestValue = ExtractorChecker.testRegex(
-                            extractPattern = extractPattern,
-                            testPayload = testPayload,
-                            diagramType = TimelineFilter.DiagramType.valueOf(diagramType),
-                            extractorType = TimelineFilter.ExtractorType.valueOf(extractorType),
-                        )
-                    }
-                )
-            }
-
-
             Row {
                 val items = mutableListOf<String>()
                 items.addAll(TimelineFilter.ExtractorType.entries.map { it.name })
@@ -246,6 +226,47 @@ fun EditTimelineFilterPanel(
                     items = items,
                     initialSelectedIndex = initialSelection,
                     onItemsSelected = { i -> extractorType = items[i] }
+                )
+            }
+
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(modifier = colNameStyle, text = "Extract pattern")
+            }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                filter.diagramType.params.forEach { (p, param) ->
+                    Text(modifier = colNameStyle, text = "${param.key} (required: ${param.required}) – ${param.description})")
+                }
+            }
+            Row {
+                val items = mutableListOf<String>()
+                items.addAll(TimelineFilter.ExtractorType.entries.map { it.name })
+                var initialSelection = items.indexOfFirst { it == filter.extractorType.name }
+                if (initialSelection == -1) initialSelection = 0
+
+                Text(modifier = colNameStyle, text = "Extractor type")
+                CustomDropDown(
+                    modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+                    items = items,
+                    initialSelectedIndex = initialSelection,
+                    onItemsSelected = { i -> extractorType = items[i] }
+                )
+            }
+
+            Row {
+                CustomEditText(
+                    modifier = Modifier.wrapContentHeight(Alignment.Top).fillMaxWidth()
+                        .align(Alignment.Top),
+                    singleLine = false,
+                    value = extractPattern ?: "", onValueChange = {
+                        extractPattern = it
+                        groupsTestValue = ExtractorChecker.testRegex(
+                            extractPattern = extractPattern,
+                            testPayload = testPayload,
+                            diagramType = DiagramType.valueOf(diagramType),
+                            extractorType = TimelineFilter.ExtractorType.valueOf(extractorType),
+                        )
+                    }
                 )
             }
 
@@ -302,7 +323,7 @@ fun EditTimelineFilterPanel(
                     name = filterName,
                     filters = map,
                     extractPattern = extractPattern,
-                    diagramType = TimelineFilter.DiagramType.valueOf(diagramType),
+                    diagramType = DiagramType.valueOf(diagramType),
                     extractorType = TimelineFilter.ExtractorType.valueOf(extractorType),
                     testClause = testPayload,
                 )
@@ -322,7 +343,7 @@ fun PreviewEditTimelineFilterDialog() {
         name = "CPU Usage by PID", enabled = true,
         filters = mutableMapOf(),
         extractPattern = """(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?""",
-        diagramType = TimelineFilter.DiagramType.Percentage,
+        diagramType = DiagramType.Percentage,
         extractorType = TimelineFilter.ExtractorType.KeyValueNamed,
         testClause = "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%",
     )

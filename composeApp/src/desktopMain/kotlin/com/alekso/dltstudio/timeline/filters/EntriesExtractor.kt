@@ -1,6 +1,8 @@
 package com.alekso.dltstudio.timeline.filters
 
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.timeline.DiagramType
+import com.alekso.dltstudio.timeline.Param
 import com.alekso.dltstudio.timeline.TimeLineDurationEntries
 import com.alekso.dltstudio.timeline.TimeLineDurationEntry
 import com.alekso.dltstudio.timeline.TimeLineEntries
@@ -14,12 +16,6 @@ import com.alekso.dltstudio.timeline.TimeLineSingleStateEntries
 import com.alekso.dltstudio.timeline.TimeLineSingleStateEntry
 import com.alekso.dltstudio.timeline.TimeLineStateEntries
 import com.alekso.dltstudio.timeline.TimeLineStateEntry
-import com.alekso.dltstudio.timeline.filters.TimelineFilter.DiagramType.DurationParams
-import com.alekso.dltstudio.timeline.filters.TimelineFilter.DiagramType.EventParams
-import com.alekso.dltstudio.timeline.filters.TimelineFilter.DiagramType.MinMaxParams
-import com.alekso.dltstudio.timeline.filters.TimelineFilter.DiagramType.PercentageParams
-import com.alekso.dltstudio.timeline.filters.TimelineFilter.DiagramType.SingleStateParams
-import com.alekso.dltstudio.timeline.filters.TimelineFilter.DiagramType.StateParams
 
 interface EntriesExtractor {
     fun extractEntry(
@@ -40,7 +36,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
         val matches = regex.find(message.payload)!!
 
         when (filter.diagramType) {
-            TimelineFilter.DiagramType.Percentage -> {
+            DiagramType.Percentage -> {
                 if (matches.groups.size > 2) {
                     for (i in 1..<matches.groups.size step 2) {
                         val key = matches.groups[i]?.value
@@ -58,7 +54,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.MinMaxValue -> {
+            DiagramType.MinMaxValue -> {
                 if (matches.groups.size > 2) {
                     for (i in 1..<matches.groups.size step 2) {
                         val key = matches.groups[i]?.value
@@ -76,7 +72,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.State -> {
+            DiagramType.State -> {
                 if (matches.groups.size > 2) {
                     for (i in 1..3) {
                         val key = matches.groups[i]?.value
@@ -95,7 +91,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.SingleState -> {
+            DiagramType.SingleState -> {
                 if (matches.groups.size > 2) {
                     for (i in 1..3) {
                         val key = matches.groups[i]?.value
@@ -113,7 +109,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.Duration -> {
+            DiagramType.Duration -> {
                 if (matches.groups.size > 2) {
                     for (i in 1..3) {
                         val key = matches.groups[i]?.value
@@ -132,7 +128,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.Events -> Unit
+            DiagramType.Events -> Unit
         }
     }
 }
@@ -145,12 +141,13 @@ class NamedEntriesExtractor : EntriesExtractor {
         entries: TimeLineEntries<*>
     ) {
         val matches = regex.find(message.payload)!!
+        val diagramParams = filter.diagramType.params
 
         when (filter.diagramType) {
-            TimelineFilter.DiagramType.Percentage -> {
-                val key: String =
-                    matches.groups[PercentageParams.KEY.param.key]?.value ?: NO_KEY
-                val value: String? = matches.groups[PercentageParams.VALUE.param.key]?.value
+            DiagramType.Percentage -> {
+                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
+                val value: String? = matches.groups[diagramParams[Param.VALUE]?.key!!]?.value
+
                 if (value != null) {
                     (entries as TimeLinePercentageEntries).addEntry(
                         TimeLineEntry(
@@ -162,10 +159,10 @@ class NamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.MinMaxValue -> {
-                val key: String =
-                    matches.groups[MinMaxParams.KEY.param.key]?.value ?: NO_KEY
-                val value: String? = matches.groups[MinMaxParams.VALUE.param.key]?.value
+            DiagramType.MinMaxValue -> {
+                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
+                val value: String? = matches.groups[diagramParams[Param.VALUE]?.key!!]?.value
+
                 if (value != null) {
                     (entries as TimeLineMinMaxEntries).addEntry(
                         TimeLineEntry(
@@ -177,11 +174,11 @@ class NamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.State -> {
-                val key: String = matches.groups[StateParams.KEY.param.key]?.value ?: NO_KEY
-                val value: String? = matches.groups[StateParams.VALUE.param.key]?.value
-                val oldValue: String? =
-                    matches.groups[StateParams.OLD_VALUE.param.key]?.value
+            DiagramType.State -> {
+                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
+                val value: String? = matches.groups[diagramParams[Param.VALUE]?.key!!]?.value
+                val oldValue: String? = matches.groups[diagramParams[Param.OLD_VALUE]?.key!!]?.value
+
                 if (value != null && oldValue != null) {
                     (entries as TimeLineStateEntries).addEntry(
                         TimeLineStateEntry(
@@ -193,11 +190,9 @@ class NamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.SingleState -> {
-                val key: String =
-                    matches.groups[SingleStateParams.KEY.param.key]?.value ?: NO_KEY
-                val value: String? =
-                    matches.groups[SingleStateParams.VALUE.param.key]?.value
+            DiagramType.SingleState -> {
+                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
+                val value: String? = matches.groups[diagramParams[Param.VALUE]?.key!!]?.value
 
                 if (value != null) {
                     (entries as TimeLineSingleStateEntries).addEntry(
@@ -210,11 +205,10 @@ class NamedEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            TimelineFilter.DiagramType.Duration -> {
-                val key: String =
-                    matches.groups[DurationParams.KEY.param.key]?.value ?: NO_KEY
-                val begin: String? = matches.groups[DurationParams.BEGIN.param.key]?.value
-                val end: String? = matches.groups[DurationParams.END.param.key]?.value
+            DiagramType.Duration -> {
+                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
+                val begin: String? = matches.groups[diagramParams[Param.BEGIN]?.key!!]?.value
+                val end: String? = matches.groups[diagramParams[Param.END]?.key!!]?.value
 
                 (entries as TimeLineDurationEntries).addEntry(
                     TimeLineDurationEntry(
@@ -226,9 +220,10 @@ class NamedEntriesExtractor : EntriesExtractor {
             }
 
 
-            TimelineFilter.DiagramType.Events -> {
-                val key: String = matches.groups[EventParams.KEY.param.key]?.value ?: NO_KEY
-                val value: String? = matches.groups[EventParams.VALUE.param.key]?.value
+            DiagramType.Events -> {
+                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
+                val value: String? = matches.groups[diagramParams[Param.VALUE]?.key!!]?.value
+
                 if (value != null) {
                     (entries as TimeLineEventEntries).addEntry(
                         TimeLineEventEntry(

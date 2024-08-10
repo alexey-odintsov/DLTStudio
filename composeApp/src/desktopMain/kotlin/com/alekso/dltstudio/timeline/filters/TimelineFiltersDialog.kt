@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.ImageButton
@@ -152,7 +153,7 @@ fun PreviewTimelineFiltersDialog() {
             name = "CPU Usage by PID", enabled = true,
             filters = mutableMapOf(),
             extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
-            diagramType = TimelineFilter.DiagramType.Percentage,
+            diagramType = DiagramType.Percentage,
             extractorType = TimelineFilter.ExtractorType.KeyValueNamed
         )
     )

@@ -1,3 +1,4 @@
+import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.ExtractorChecker
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import org.junit.Assert
@@ -18,7 +19,7 @@ class ExtractPatternRegexTest {
                 extractPattern,
                 testPayload,
                 TimelineFilter.ExtractorType.KeyValueGroups,
-                TimelineFilter.DiagramType.Percentage,
+                DiagramType.Percentage,
                 true
             ) == expectedText
         )
@@ -38,7 +39,7 @@ class ExtractPatternRegexTest {
                 extractPattern,
                 testPayload,
                 TimelineFilter.ExtractorType.KeyValueGroups,
-                TimelineFilter.DiagramType.Percentage,
+                DiagramType.Percentage,
                 false
             ) == expectedText
         )
