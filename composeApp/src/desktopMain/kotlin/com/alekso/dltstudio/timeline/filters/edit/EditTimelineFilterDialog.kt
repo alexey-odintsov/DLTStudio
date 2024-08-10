@@ -18,9 +18,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltstudio.logs.filtering.FilterCriteria
-import com.alekso.dltstudio.logs.filtering.FilterParameter
-import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.ui.CustomButton
@@ -42,7 +39,14 @@ fun EditTimelineFilterDialog(
     onFilterUpdate: (Int, TimelineFilter) -> Unit,
     filterIndex: Int,
 ) {
-    val dialogViewModel = remember { EditTimelineFilterViewModel(timelineFilter) }
+    val dialogViewModel = remember {
+        EditTimelineFilterViewModel(
+            filterIndex,
+            timelineFilter,
+            onFilterUpdate,
+            onDialogClosed
+        )
+    }
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (filterIndex >= 0) "Edit Timeline Filter" else "Add new Timeline filter",
@@ -101,39 +105,7 @@ fun EditTimelineFilterPanel(
             }
         }
 
-        CustomButton(onClick = {
-            val map = mutableMapOf<FilterParameter, FilterCriteria>()
-            viewModel.messageType?.let {
-                map[FilterParameter.MessageType] = FilterCriteria(it, TextCriteria.PlainText)
-            }
-            viewModel.messageTypeInfo?.let {
-                map[FilterParameter.MessageTypeInfo] = FilterCriteria(it, TextCriteria.PlainText)
-            }
-            viewModel.ecuId?.let {
-                map[FilterParameter.EcuId] = FilterCriteria(it, TextCriteria.PlainText)
-            }
-            viewModel.appId?.let {
-                map[FilterParameter.AppId] = FilterCriteria(it, TextCriteria.PlainText)
-            }
-            viewModel.contextId?.let {
-                map[FilterParameter.ContextId] = FilterCriteria(it, TextCriteria.PlainText)
-            }
-            viewModel.sessionId?.let {
-                map[FilterParameter.SessionId] = FilterCriteria(it, TextCriteria.PlainText)
-            }
-            onFilterUpdate(
-                filterIndex,
-                TimelineFilter(
-                    name = viewModel.filterName,
-                    filters = map,
-                    extractPattern = viewModel.extractPattern,
-                    diagramType = DiagramType.valueOf(viewModel.diagramType),
-                    extractorType = TimelineFilter.ExtractorType.valueOf(viewModel.extractorType),
-                    testClause = viewModel.testPayload,
-                )
-            )
-            onDialogClosed()
-        }) {
+        CustomButton(onClick = viewModel::onUpdateClicked) {
             Text(text = if (filterIndex >= 0) "Update" else "Add")
         }
 
@@ -154,7 +126,7 @@ fun PreviewEditTimelineFilterDialog() {
 
     Column(Modifier.background(Color(238, 238, 238))) {
         EditTimelineFilterPanel(
-            EditTimelineFilterViewModel(filter),
+            EditTimelineFilterViewModel(0, filter, { i, f -> }, {}),
             filter,
             0,
             { _, _ -> },
