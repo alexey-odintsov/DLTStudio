@@ -28,17 +28,12 @@ private val colNameStyle = Modifier.padding(horizontal = 4.dp)
 @Composable
 fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
     Row {
-        val items = mutableListOf<String>()
-        items.addAll(DiagramType.entries.map { it.name })
-        var initialSelection = items.indexOfFirst { it == viewModel.filter.diagramType.name }
-        if (initialSelection == -1) initialSelection = 0
-
         Text(modifier = colNameStyle, text = "Diagram Type")
         CustomDropDown(
             modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
-            items = items,
-            initialSelectedIndex = initialSelection,
-            onItemsSelected = { i -> viewModel.diagramType = items[i] }
+            items = viewModel.diagramTypeItems,
+            initialSelectedIndex = viewModel.diagramTypeSelectionIndex,
+            onItemsSelected = viewModel::onDiagramTypeSelected
         )
     }
 

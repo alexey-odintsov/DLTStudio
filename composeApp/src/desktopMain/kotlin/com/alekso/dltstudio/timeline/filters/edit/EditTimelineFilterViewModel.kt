@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.timeline.filters.edit
 
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alekso.dltparser.dlt.extendedheader.MessageType
@@ -9,6 +10,7 @@ import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 
 class EditTimelineFilterViewModel(
     val filterIndex: Int,
@@ -31,19 +33,49 @@ class EditTimelineFilterViewModel(
     var testPayload by mutableStateOf(filter.testClause)
     var groupsTestValue by mutableStateOf("")
 
-    val messageTypeItems = mutableListOf("Any") // todo: Rename to messageTypeItems
-    var initialSelection by mutableStateOf(messageTypeItems.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value })
+    val messageTypeItems = mutableStateListOf("Any")
+    var messageTypeSelectionIndex by mutableStateOf(0)
+
+    val messageTypeInfoItems = mutableStateListOf("Any")
+    var messageTypeInfoSelectionIndex by mutableStateOf(0)
+
+    val diagramTypeItems = mutableStateListOf<String>()
+    var diagramTypeSelectionIndex by mutableStateOf(0)
+
+
 
     init {
         messageTypeItems.addAll(MessageType.entries.map { it.name })
-        if (initialSelection == -1) initialSelection = 0
+        messageTypeSelectionIndex = messageTypeItems.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
+        if (messageTypeSelectionIndex == -1) messageTypeSelectionIndex = 0
+
+        messageTypeInfoItems.addAll(MessageTypeInfo.entries.map { it.name })
+        messageTypeInfoSelectionIndex = messageTypeInfoItems.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
+        if (messageTypeInfoSelectionIndex == -1) messageTypeInfoSelectionIndex = 0
+
+        diagramTypeItems.addAll(DiagramType.entries.map { it.name })
+        diagramTypeSelectionIndex = diagramTypeItems.indexOfFirst { it == filter.diagramType.name }
+        if (diagramTypeSelectionIndex == -1) diagramTypeSelectionIndex = 0
 
     }
 
     fun onMessageTypeChanged(i: Int) {
+        messageTypeSelectionIndex = i
         messageType = if (i > 0) {
             messageTypeItems[i]
         } else null
+    }
+
+    fun onMessageTypeInfoChanged(i: Int) {
+        messageTypeInfoSelectionIndex = i
+        messageTypeInfo = if (i > 0) {
+            messageTypeInfoItems[i]
+        } else null
+    }
+
+    fun onDiagramTypeSelected(i: Int) {
+        diagramTypeSelectionIndex = i
+        diagramType = diagramTypeItems[i]
     }
 
     fun onUpdateClicked() {

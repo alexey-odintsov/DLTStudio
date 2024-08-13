@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
@@ -62,8 +63,6 @@ fun EditTimelineFilterDialog(
     }
 }
 
-private val COL_NAME_SIZE_DP = 150.dp
-private val COL_VALUE = 250.dp
 private val colNameStyle = Modifier.padding(horizontal = 4.dp)
 
 
@@ -78,11 +77,9 @@ fun EditTimelineFilterPanel(
 
     Column(
         Modifier.width(1000.dp).padding(4.dp),
-
         ) {
         Column(
-            modifier = Modifier.weight(1f)
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
 
@@ -90,14 +87,17 @@ fun EditTimelineFilterPanel(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(modifier = colNameStyle, text = "Name")
                 CustomEditText(
-                    modifier = Modifier.width(COL_VALUE * 2),
+                    modifier = Modifier.fillMaxWidth(),
                     value = viewModel.filterName, onValueChange = {
                         viewModel.filterName = it
                     }
                 )
             }
 
-            TabsPanel(0, listOf("Filtering", "Extraction"), { i -> viewModel.tabIndex = i })
+            TabsPanel(
+                viewModel.tabIndex,
+                listOf("Filtering", "Extraction"),
+                { i -> viewModel.tabIndex = i })
             when (viewModel.tabIndex) {
                 0 -> EditTimelineFilterFilterPanel(viewModel)
 

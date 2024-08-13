@@ -32,28 +32,18 @@ fun EditTimelineFilterFilterPanel(
         CustomDropDown(
             modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
             items = viewModel.messageTypeItems,
-            initialSelectedIndex = viewModel.initialSelection,
+            initialSelectedIndex = viewModel.messageTypeSelectionIndex,
             onItemsSelected = viewModel::onMessageTypeChanged
         )
     }
 
     Row {
-        val items = mutableListOf("Any")
-        items.addAll(MessageTypeInfo.entries.map { it.name })
-        var initialSelection =
-            items.indexOfFirst { it == viewModel.filter.filters[FilterParameter.MessageTypeInfo]?.value }
-        if (initialSelection == -1) initialSelection = 0
-
         Text(modifier = colNameStyle.width(COL_NAME_SIZE_DP), text = "Message Type Info")
         CustomDropDown(
             modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
-            items = items,
-            initialSelectedIndex = initialSelection,
-            onItemsSelected = { i ->
-                viewModel.messageTypeInfo = if (i > 0) {
-                    items[i]
-                } else null
-            }
+            items = viewModel.messageTypeInfoItems,
+            initialSelectedIndex = viewModel.messageTypeInfoSelectionIndex,
+            onItemsSelected = viewModel::onMessageTypeInfoChanged
         )
     }
 
