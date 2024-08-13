@@ -45,9 +45,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
 
             Row {
                 Text(
-                    modifier = Modifier.width(COL_PATTERN)
-                        .offset(x = COL_NAME_SIZE_DP)
-                        .padding(horizontal = 4.dp),
+                    modifier = Modifier.width(COL_PATTERN).padding(horizontal = 4.dp),
                     text = DiagramType.entries.first { it.name == viewModel.diagramType }.description
                 )
             }
