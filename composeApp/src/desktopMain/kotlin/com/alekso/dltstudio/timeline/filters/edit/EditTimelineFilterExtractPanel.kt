@@ -87,10 +87,10 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
         }
     }
 
-    Row {
+    Column {
+        Text(modifier = colNameStyle, text = "Extraction regexp:")
         CustomEditText(
-            modifier = Modifier.wrapContentHeight(Alignment.Top).fillMaxWidth()
-                .align(Alignment.Top),
+            modifier = Modifier.wrapContentHeight(Alignment.Top).fillMaxWidth(),
             singleLine = false,
             value = viewModel.extractPattern ?: "", onValueChange = {
                 viewModel.extractPattern = it
@@ -107,7 +107,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
     // Regex check
     Divider(modifier = Modifier.padding(top = 16.dp, bottom = 8.dp))
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(modifier = colNameStyle, text = "Regex check")
+        Text(modifier = colNameStyle, text = "Regex check (Put your payload to test)")
     }
     Row(
         verticalAlignment = Alignment.CenterVertically
