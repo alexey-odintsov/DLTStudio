@@ -60,7 +60,7 @@ object TimelinePreviewFactory {
                     },
                     timeFrame = timeFrame,
                     highlightedKey = null,
-                    seriesCount = 6,
+                    seriesCount = 8,
                 )
             }
 
@@ -127,6 +127,6 @@ object TimelinePreviewFactory {
 @Composable
 fun PreviewDiagramPreviews() {
     Box {
-        TimelinePreviewFactory.getPreview(DiagramType.Percentage, Modifier.width(200.dp).height(200.dp))
+        TimelinePreviewFactory.getPreview(DiagramType.MinMaxValue, Modifier.width(200.dp).height(200.dp))
     }
 }
