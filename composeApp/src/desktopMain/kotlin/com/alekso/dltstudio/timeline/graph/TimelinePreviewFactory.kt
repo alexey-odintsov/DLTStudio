@@ -1,7 +1,12 @@
 package com.alekso.dltstudio.timeline.graph
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineDurationEntries
@@ -27,10 +32,11 @@ object TimelinePreviewFactory {
                 TimelinePercentageView(
                     modifier = modifier,
                     entries = TimeLinePercentageEntries().also {
-                        it.addEntry(TimeLineEntry(1_000_000L, "a", 15f))
-                        it.addEntry(TimeLineEntry(2_000_000L, "a", 55f))
-                        it.addEntry(TimeLineEntry(3_000_000L, "a", 87f))
-                        it.addEntry(TimeLineEntry(4_000_000L, "a", 48f))
+                        it.addEntry(TimeLineEntry(1_000_000L, "a", 20f))
+                        it.addEntry(TimeLineEntry(2_000_000L, "a", 42f))
+                        it.addEntry(TimeLineEntry(3_000_000L, "a", 25f))
+                        it.addEntry(TimeLineEntry(4_000_000L, "a", 79f))
+                        it.addEntry(TimeLineEntry(5_000_000L, "a", 59f))
                     },
                     timeFrame = timeFrame,
                     highlightedKey = null
@@ -41,13 +47,20 @@ object TimelinePreviewFactory {
                 TimelineMinMaxValueView(
                     modifier = modifier,
                     entries = TimeLineMinMaxEntries().also {
-                        it.addEntry(TimeLineEntry(1_000_000L, "a", 15f))
-                        it.addEntry(TimeLineEntry(2_000_000L, "a", 55f))
-                        it.addEntry(TimeLineEntry(3_000_000L, "a", 87f))
-                        it.addEntry(TimeLineEntry(4_000_000L, "a", 48f))
+                        it.addEntry(TimeLineEntry(500_000L, "a", 48f))
+                        it.addEntry(TimeLineEntry(1_500_000L, "a", 68f))
+                        it.addEntry(TimeLineEntry(2_500_000L, "a", 55f))
+                        it.addEntry(TimeLineEntry(3_500_000L, "a", 92f))
+                        it.addEntry(TimeLineEntry(4_500_000L, "a", 96f))
+
+                        it.addEntry(TimeLineEntry(1_000_000L, "b", 15f))
+                        it.addEntry(TimeLineEntry(2_000_000L, "b", 20f))
+                        it.addEntry(TimeLineEntry(3_000_000L, "b", 45f))
+                        it.addEntry(TimeLineEntry(4_000_000L, "b", 55f))
                     },
                     timeFrame = timeFrame,
-                    highlightedKey = null
+                    highlightedKey = null,
+                    seriesCount = 6,
                 )
             }
 
@@ -69,7 +82,7 @@ object TimelinePreviewFactory {
                 TimelineSingleStateView(
                     modifier = modifier,
                     entries = TimeLineSingleStateEntries().also {
-                        it.addEntry(TimeLineSingleStateEntry(1_000_000L, "a", "DRIVING"))
+                        it.addEntry(TimeLineSingleStateEntry(1_500_000L, "a", "DRIVING"))
                         it.addEntry(TimeLineSingleStateEntry(2_000_000L, "a", "STOPPED"))
                         it.addEntry(TimeLineSingleStateEntry(3_000_000L, "a", "PARKED"))
                         it.addEntry(TimeLineSingleStateEntry(4_000_000L, "a", "OFF"))
@@ -83,8 +96,8 @@ object TimelinePreviewFactory {
                 TimelineDurationView(
                     modifier = modifier,
                     entries = TimeLineDurationEntries().also {
-                        it.addEntry(TimeLineDurationEntry(1_000_000L, "onCreate", Pair("begin", null)))
-                        it.addEntry(TimeLineDurationEntry(2_000_000L, "onCreate", Pair(null, "end")))
+                        it.addEntry(TimeLineDurationEntry(2_000_000L, "onCreate", Pair("begin", null)))
+                        it.addEntry(TimeLineDurationEntry(3_000_000L, "onCreate", Pair(null, "end")))
                         it.addEntry(TimeLineDurationEntry(3_000_000L, "onStart", Pair("begin", null)))
                         it.addEntry(TimeLineDurationEntry(4_000_000L, "onStart", Pair(null, "end")))
                     },
@@ -97,15 +110,23 @@ object TimelinePreviewFactory {
                 TimelineEventView(
                     modifier = modifier,
                     entries = TimeLineEventEntries().also {
-                        it.addEntry(TimeLineEventEntry(1_000_000L, "app1", TimeLineEvent("CRASH", null)))
-                        it.addEntry(TimeLineEventEntry(2_000_000L, "app2", TimeLineEvent("CRASH", null)))
-                        it.addEntry(TimeLineEventEntry(3_000_000L, "app1", TimeLineEvent("ANR", null)))
-                        it.addEntry(TimeLineEventEntry(4_000_000L, "service1", TimeLineEvent("WTF", null)))
+                        it.addEntry(TimeLineEventEntry(2_000_000L, "app1", TimeLineEvent("CRASH", null)))
+                        it.addEntry(TimeLineEventEntry(3_000_000L, "app2", TimeLineEvent("CRASH", null)))
+                        it.addEntry(TimeLineEventEntry(4_000_000L, "app1", TimeLineEvent("ANR", null)))
+                        it.addEntry(TimeLineEventEntry(2_500_000L, "service1", TimeLineEvent("WTF", null)))
                     },
                     timeFrame = timeFrame,
                     highlightedKey = null
                 )
             }
         }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewDiagramPreviews() {
+    Box {
+        TimelinePreviewFactory.getPreview(DiagramType.Percentage, Modifier.width(200.dp).height(200.dp))
     }
 }
