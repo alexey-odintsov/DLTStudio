@@ -1,11 +1,13 @@
 package com.alekso.dltstudio.timeline.filters
 
+import com.alekso.dltstudio.timeline.DiagramType
+
 object ExtractorChecker {
     fun testRegex(
         extractPattern: String?,
         testPayload: String?,
         extractorType: TimelineFilter.ExtractorType,
-        diagramType: TimelineFilter.DiagramType,
+        diagramType: DiagramType,
         global: Boolean = false
     ): String {
         var groupsTestValue = ""
@@ -14,7 +16,7 @@ object ExtractorChecker {
                 when (extractorType) {
                     TimelineFilter.ExtractorType.KeyValueNamed -> {
                         when (diagramType) {
-                            TimelineFilter.DiagramType.Percentage -> {
+                            DiagramType.Percentage -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"
@@ -23,7 +25,7 @@ object ExtractorChecker {
                                 }
                             }
 
-                            TimelineFilter.DiagramType.MinMaxValue -> {
+                            DiagramType.MinMaxValue -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"
@@ -32,7 +34,7 @@ object ExtractorChecker {
                                 }
                             }
 
-                            TimelineFilter.DiagramType.State -> {
+                            DiagramType.State -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"
@@ -42,7 +44,27 @@ object ExtractorChecker {
                                 }
                             }
 
-                            TimelineFilter.DiagramType.Events -> {
+
+                            DiagramType.SingleState -> {
+                                val matches = Regex(extractPattern).find(testPayload)
+                                if (matches != null) {
+                                    val key: String = matches.groups["key"]?.value ?: "key"
+                                    val value: String? = matches.groups["value"]?.value
+                                    groupsTestValue = "$key -> $value"
+                                }
+                            }
+
+                            DiagramType.Duration -> {
+                                val matches = Regex(extractPattern).find(testPayload)
+                                if (matches != null) {
+                                    val key: String = matches.groups["key"]?.value ?: "key"
+                                    val begin: String? = matches.groups["begin"]?.value
+                                    val end: String? = matches.groups["end"]?.value
+                                    groupsTestValue = "$key -> $begin / $end"
+                                }
+                            }
+
+                            DiagramType.Events -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"

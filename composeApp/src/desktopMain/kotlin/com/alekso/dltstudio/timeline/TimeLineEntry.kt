@@ -7,12 +7,30 @@ open class TimeLineEntry<T>(
     open val value: T
 )
 
-
+/**
+ * State that requires new and old values
+ */
 data class TimeLineStateEntry(
     override val timestamp: Long,
     override val key: String,
     override val value: Pair<String, String>
 ) : TimeLineEntry<Pair<String, String>>(timestamp, key, value)
+
+/**
+ * State that requires only one current value
+ */
+data class TimeLineSingleStateEntry(
+    override val timestamp: Long,
+    override val key: String,
+    override val value: String,
+) : TimeLineEntry<String>(timestamp, key, value)
+
+
+data class TimeLineDurationEntry(
+    override val timestamp: Long,
+    override val key: String,
+    override val value: Pair<String?, String?>,
+) : TimeLineEntry<Pair<String?, String?>>(timestamp, key, value)
 
 data class TimeLineEvent(
     val event: String,
@@ -44,6 +62,34 @@ class TimeLineStateEntries : TimeLineEntries<TimeLineStateEntry>() {
         }
         if (!states.contains(entry.value.second)) {
             states.add(entry.value.second)
+        }
+    }
+}
+
+class TimeLineSingleStateEntries : TimeLineEntries<TimeLineSingleStateEntry>() {
+    val states = mutableListOf<String>()
+    override fun addEntry(entry: TimeLineSingleStateEntry) {
+        if (!map.containsKey(entry.key)) {
+            map[entry.key] = mutableListOf()
+        }
+        map[entry.key]?.add(entry)
+
+        if (!states.contains(entry.value)) {
+            states.add(entry.value)
+        }
+    }
+}
+
+class TimeLineDurationEntries : TimeLineEntries<TimeLineDurationEntry>() {
+    val states = mutableListOf<String>()
+    override fun addEntry(entry: TimeLineDurationEntry) {
+        if (!map.containsKey(entry.key)) {
+            map[entry.key] = mutableListOf()
+        }
+        map[entry.key]?.add(entry)
+
+        if (!states.contains(entry.key)) {
+            states.add(entry.key)
         }
     }
 }

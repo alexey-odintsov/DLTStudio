@@ -49,11 +49,12 @@ import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.SampleData
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.model.LogMessage
-import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
+import com.alekso.dltstudio.timeline.graph.TimelineDurationView
 import com.alekso.dltstudio.timeline.graph.TimelineEventView
 import com.alekso.dltstudio.timeline.graph.TimelineMinMaxValueView
 import com.alekso.dltstudio.timeline.graph.TimelinePercentageView
+import com.alekso.dltstudio.timeline.graph.TimelineSingleStateView
 import com.alekso.dltstudio.timeline.graph.TimelineStateView
 
 private val LEGEND_WIDTH_DP = 250.dp
@@ -186,7 +187,7 @@ fun TimeLinePanel(
                                 highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                             )
                             when (timelineFilter.diagramType) {
-                                TimelineFilter.DiagramType.Percentage -> {
+                                DiagramType.Percentage -> {
                                     TimelinePercentageView(
                                         modifier = Modifier.height(200.dp).fillMaxWidth()
                                             .onPointerEvent(
@@ -198,7 +199,7 @@ fun TimeLinePanel(
                                     )
                                 }
 
-                                TimelineFilter.DiagramType.MinMaxValue -> {
+                                DiagramType.MinMaxValue -> {
                                     TimelineMinMaxValueView(
                                         modifier = Modifier.height(200.dp).fillMaxWidth()
                                             .onPointerEvent(
@@ -210,7 +211,7 @@ fun TimeLinePanel(
                                     )
                                 }
 
-                                TimelineFilter.DiagramType.State -> {
+                                DiagramType.State -> {
                                     TimelineStateView(
                                         modifier = Modifier.height(200.dp).fillMaxWidth()
                                             .onPointerEvent(
@@ -222,7 +223,31 @@ fun TimeLinePanel(
                                     )
                                 }
 
-                                TimelineFilter.DiagramType.Events -> TimelineEventView(
+                                DiagramType.SingleState -> {
+                                    TimelineSingleStateView(
+                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                            .onPointerEvent(
+                                                PointerEventType.Move,
+                                                onEvent = { dragCallback(it, size.width) }),
+                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineSingleStateEntries?,
+                                        timeFrame = timeFrame,
+                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                    )
+                                }
+
+                                DiagramType.Duration -> {
+                                    TimelineDurationView(
+                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                            .onPointerEvent(
+                                                PointerEventType.Move,
+                                                onEvent = { dragCallback(it, size.width) }),
+                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineDurationEntries?,
+                                        timeFrame = timeFrame,
+                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                    )
+                                }
+
+                                DiagramType.Events -> TimelineEventView(
                                     modifier = Modifier.height(200.dp).fillMaxWidth()
                                         .onPointerEvent(
                                             PointerEventType.Move,
