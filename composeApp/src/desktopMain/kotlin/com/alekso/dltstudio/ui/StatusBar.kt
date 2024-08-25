@@ -22,8 +22,7 @@ import com.alekso.dltstudio.AppTheme
 fun StatusBar(modifier: Modifier = Modifier, progress: Float, statusText: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier//.height(30.dp)
-            .padding(4.dp)
+        modifier = modifier.padding(4.dp)
     ) {
         Text(modifier = Modifier.weight(1f), text = statusText)
         if (progress > 0f) {

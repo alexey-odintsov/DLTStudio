@@ -92,9 +92,7 @@ fun Cell(
                 )
             } else {
                 Text(
-                    modifier = Modifier.padding(end = 1.dp)
-                        //.height(18.dp)
-                        .then(modifier),
+                    modifier = Modifier.padding(end = 1.dp).then(modifier),
                     maxLines = 1,
                     textAlign = textAlign,
                     fontSize = LocalLogsTextStyle.current.fontSize,
