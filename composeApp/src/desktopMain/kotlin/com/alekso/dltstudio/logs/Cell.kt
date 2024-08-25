@@ -4,7 +4,6 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alekso.dltstudio.LocalLogsTextStyle
 
 data class CellStyle(
     val backgroundColor: Color? = null, val textColor: Color? = null
@@ -81,8 +81,9 @@ fun Cell(
                 Text(
                     modifier = Modifier.padding(end = 1.dp).then(modifier),
                     textAlign = textAlign,
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
+                    fontSize = LocalLogsTextStyle.current.fontSize,
+                    lineHeight = LocalLogsTextStyle.current.lineHeight,
+                    fontFamily = LocalLogsTextStyle.current.fontFamily,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight(if (isHeader) 600 else 400),
                     softWrap = true,
@@ -91,11 +92,14 @@ fun Cell(
                 )
             } else {
                 Text(
-                    modifier = Modifier.padding(end = 1.dp).height(12.dp).then(modifier),
+                    modifier = Modifier.padding(end = 1.dp)
+                        //.height(18.dp)
+                        .then(modifier),
                     maxLines = 1,
                     textAlign = textAlign,
-                    fontSize = 10.sp,
-                    fontFamily = FontFamily.Monospace,
+                    fontSize = LocalLogsTextStyle.current.fontSize,
+                    lineHeight = LocalLogsTextStyle.current.lineHeight,
+                    fontFamily = LocalLogsTextStyle.current.fontFamily,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight(if (isHeader) 600 else 400),
                     text = text,
