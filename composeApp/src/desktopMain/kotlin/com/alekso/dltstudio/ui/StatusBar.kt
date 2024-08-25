@@ -16,12 +16,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alekso.dltstudio.AppTheme
 
 @Composable
 fun StatusBar(modifier: Modifier = Modifier, progress: Float, statusText: String) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.height(30.dp).padding(4.dp)
+        modifier = modifier.padding(4.dp)
     ) {
         Text(modifier = Modifier.weight(1f), text = statusText)
         if (progress > 0f) {
@@ -36,6 +37,7 @@ fun StatusBar(modifier: Modifier = Modifier, progress: Float, statusText: String
                 Text(
                     modifier = Modifier.align(Alignment.Center),
                     fontSize = 9.sp,
+                    lineHeight = 10.sp,
                     color = if (progress > 0.5f) Color.White else Color.DarkGray,
                     text = "%.1f%%".format(progress * 100f)
                 )
@@ -53,9 +55,11 @@ fun PreviewStatusBarNoSession() {
 @Preview
 @Composable
 fun PreviewStatusBarInProgress() {
-    StatusBar(
-        Modifier.background(Color.LightGray),
-        0.4f,
-        "/user/test/file.dlt"
-    )
+    AppTheme {
+        StatusBar(
+            Modifier.background(Color.LightGray),
+            0.4f,
+            "/user/test/file.dlt"
+        )
+    }
 }
