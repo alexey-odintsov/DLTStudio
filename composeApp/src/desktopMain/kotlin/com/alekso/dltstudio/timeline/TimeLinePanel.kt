@@ -180,9 +180,7 @@ fun TimeLinePanel(
                                 title = timelineFilter.name,
                                 entries = timelineViewModel.userEntriesMap[timelineFilter.key],
                                 { key ->
-                                    if (index in 0..<timelineViewModel.highlightedKeysMap.size) {
-                                        timelineViewModel.highlightedKeysMap[timelineFilter.key] = key
-                                    }
+                                    timelineViewModel.highlightedKeysMap[timelineFilter.key] = key
                                 },
                                 highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                             )
