@@ -2,7 +2,7 @@
 compose-plugin = "1.6.11" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
 junit = "4.13.2"
 kotlin = "2.0.0"
-gson = "2.8.6"
+gson = "2.8.9"
 coroutines = "1.8.1"
 androidx-room = "2.7.0-alpha05"
 sqlite = "2.5.0-SNAPSHOT"
