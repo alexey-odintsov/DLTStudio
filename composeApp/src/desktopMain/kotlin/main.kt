@@ -28,6 +28,10 @@ import java.io.File
 fun main() = application {
     Log.r("===================")
     Log.d("Application started")
+
+    Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+        Log.e("Uncaught exception occurred in $thread: $throwable\n${throwable.stackTraceToString()}")
+    }
     Preferences.loadFromFile()
     Window(
         onCloseRequest = {
