@@ -39,7 +39,13 @@ fun DeviceAnalysePanel(
     val predefinedCommands = remember { listOf(
         "adb devices",
         "adb shell dumpsys -l",
+        "adb shell dumpsys cpuinfo",
         "adb shell dumpsys meminfo",
+        "adb shell dumpsys gpu",
+        "adb shell dumpsys hardware_properties",
+        "adb shell dumpsys runtime",
+        "adb shell dumpsys user",
+        "adb shell dumpsys window",
         "adb shell dumpsys meminfo package_name|pid [-d]",
         "adb shell dumpsys procstats --hours 1",
         "adb shell dumpsys gfxinfo package-name",
