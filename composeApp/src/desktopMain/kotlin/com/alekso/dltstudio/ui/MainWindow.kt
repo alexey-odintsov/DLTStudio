@@ -27,6 +27,8 @@ import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceMock
+import com.alekso.dltstudio.device.analyse.DeviceAnalysePanel
+import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
@@ -51,6 +53,7 @@ import java.net.URI
 fun MainWindow(
     mainViewModel: MainViewModel,
     timelineViewModel: TimelineViewModel,
+    deviceAnalyzeViewModel: DeviceAnalyzeViewModel,
     progress: Float,
     onProgressUpdate: (Float) -> Unit
 ) {
@@ -144,11 +147,13 @@ fun MainWindow(
         }
 
         override fun updateToolbarCommentsCheck(checked: Boolean) {
-            logsToolbarState = LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
+            logsToolbarState =
+                LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
         }
 
         override fun updateToolbarWrapContentCheck(checked: Boolean) {
-            logsToolbarState = LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
+            logsToolbarState =
+                LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
         }
 
         override fun onSearchUseRegexChanged(checked: Boolean) {
@@ -173,7 +178,7 @@ fun MainWindow(
     }
 
     Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
-        TabsPanel(tabIndex, listOf("Logs", "Timeline"), tabClickListener)
+        TabsPanel(tabIndex, listOf("Logs", "Timeline", "Device Analyse"), tabClickListener)
 
         when (tabIndex) {
             0 -> {
@@ -195,9 +200,26 @@ fun MainWindow(
                     logsListSelectedRow = mainViewModel.logsListSelectedRow.value,
                     searchListSelectedRow = mainViewModel.searchListSelectedRow.value,
                     searchListState = mainViewModel.searchListState,
-                    onLogsRowSelected = { i, r -> mainViewModel.onLogsRowSelected(coroutineScope, i, r) },
-                    onSearchRowSelected = { i, r -> mainViewModel.onSearchRowSelected(coroutineScope, i, r) },
-                    onCommentUpdated = { logMessage, comment -> mainViewModel.updateComment(logMessage, comment) },
+                    onLogsRowSelected = { i, r ->
+                        mainViewModel.onLogsRowSelected(
+                            coroutineScope,
+                            i,
+                            r
+                        )
+                    },
+                    onSearchRowSelected = { i, r ->
+                        mainViewModel.onSearchRowSelected(
+                            coroutineScope,
+                            i,
+                            r
+                        )
+                    },
+                    onCommentUpdated = { logMessage, comment ->
+                        mainViewModel.updateComment(
+                            logMessage,
+                            comment
+                        )
+                    },
                     rowContextMenuCallbacks = object : RowContextMenuCallbacks {
                         override fun onCopyClicked(text: AnnotatedString) {
                             clipboardManager.setText(text)
@@ -228,6 +250,11 @@ fun MainWindow(
                 scale,
                 scaleUpdateCallback
             )
+
+            2 -> DeviceAnalysePanel(
+                modifier = Modifier.weight(1f),
+                deviceAnalyzeViewModel = deviceAnalyzeViewModel
+            )
         }
         Divider()
         val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
@@ -251,6 +278,7 @@ fun PreviewMainWindow() {
                 virtualDeviceRepository = VirtualDeviceMock()
             ),
             TimelineViewModel({}),
+            DeviceAnalyzeViewModel({}),
             1f,
             {})
     }
