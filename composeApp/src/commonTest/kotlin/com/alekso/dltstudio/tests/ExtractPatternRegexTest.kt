@@ -1,3 +1,5 @@
+package com.alekso.dltstudio.tests
+
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.ExtractorChecker
 import com.alekso.dltstudio.timeline.filters.TimelineFilter

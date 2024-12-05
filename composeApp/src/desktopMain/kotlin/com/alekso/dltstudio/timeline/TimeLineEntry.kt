@@ -1,11 +1,17 @@
 package com.alekso.dltstudio.timeline
 
 
-open class TimeLineEntry<T>(
+abstract class TimeLineEntry<T>(
     open val timestamp: Long,
     open val key: String,
     open val value: T
 )
+
+data class TimeLineFloatEntry(
+    override val timestamp: Long,
+    override val key: String,
+    override val value: Float
+) : TimeLineEntry<Float>(timestamp, key, value)
 
 /**
  * State that requires new and old values
@@ -145,7 +151,7 @@ private class Test {
         list.add(2, TimeLineStateEntries())
 
         val percentageEntries = list[1] as TimeLinePercentageEntries
-        percentageEntries.addEntry(TimeLineEntry<Float>(0L, "a", 1f))
+        percentageEntries.addEntry(TimeLineFloatEntry(0L, "a", 1f))
     }
 
 }

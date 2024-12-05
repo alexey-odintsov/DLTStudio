@@ -10,8 +10,8 @@ import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
-import com.alekso.dltstudio.timeline.filters.NonNamedEntriesExtractor
-import com.alekso.dltstudio.timeline.filters.NamedEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.NonNamedEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.NamedEntriesExtractor
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.logger.Log

@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.timeline.filters
+package com.alekso.dltstudio.timeline.filters.extractors
 
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.timeline.DiagramType
@@ -10,14 +10,31 @@ import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineEvent
 import com.alekso.dltstudio.timeline.TimeLineEventEntries
 import com.alekso.dltstudio.timeline.TimeLineEventEntry
+import com.alekso.dltstudio.timeline.TimeLineFloatEntry
 import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries
 import com.alekso.dltstudio.timeline.TimeLinePercentageEntries
 import com.alekso.dltstudio.timeline.TimeLineSingleStateEntries
 import com.alekso.dltstudio.timeline.TimeLineSingleStateEntry
 import com.alekso.dltstudio.timeline.TimeLineStateEntries
 import com.alekso.dltstudio.timeline.TimeLineStateEntry
+import com.alekso.dltstudio.timeline.filters.NO_KEY
+import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import kotlin.text.get
 
 interface EntriesExtractor {
+    interface ExtractionType
+
+    fun extractEntry(
+        message: DLTMessage,
+        regex: Regex,
+        extractionType: ExtractionType,
+    ): List<TimeLineEntry<*>>
+}
+
+
+
+@Deprecated("Use EntriesExtractor")
+interface EntriesExtractorOld {
     fun extractEntry(
         message: DLTMessage,
         filter: TimelineFilter,
@@ -26,7 +43,7 @@ interface EntriesExtractor {
     )
 }
 
-class NonNamedEntriesExtractor : EntriesExtractor {
+class NonNamedEntriesExtractor : EntriesExtractorOld {
     override fun extractEntry(
         message: DLTMessage,
         filter: TimelineFilter,
@@ -36,14 +53,14 @@ class NonNamedEntriesExtractor : EntriesExtractor {
         val matches = regex.find(message.payload)!!
 
         when (filter.diagramType) {
-            DiagramType.Percentage -> {
+            DiagramType.Percentage -> {// todo: Mode extraction to Diagram implementations
                 if (matches.groups.size > 2) {
                     for (i in 1..<matches.groups.size step 2) {
                         val key = matches.groups[i]?.value
                         val value = matches.groups[i + 1]?.value
                         if (key != null && value != null) {
                             (entries as TimeLinePercentageEntries).addEntry(
-                                TimeLineEntry(
+                                TimeLineFloatEntry(
                                     message.timeStampNano,
                                     key,
                                     value.toFloat()
@@ -61,7 +78,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
                         val value = matches.groups[i + 1]?.value
                         if (key != null && value != null) {
                             (entries as TimeLineMinMaxEntries).addEntry(
-                                TimeLineEntry(
+                                TimeLineFloatEntry(
                                     message.timeStampNano,
                                     key,
                                     value.toFloat()
@@ -133,7 +150,7 @@ class NonNamedEntriesExtractor : EntriesExtractor {
     }
 }
 
-class NamedEntriesExtractor : EntriesExtractor {
+class NamedEntriesExtractor : EntriesExtractorOld {
     override fun extractEntry(
         message: DLTMessage,
         filter: TimelineFilter,
@@ -150,7 +167,7 @@ class NamedEntriesExtractor : EntriesExtractor {
 
                 if (value != null) {
                     (entries as TimeLinePercentageEntries).addEntry(
-                        TimeLineEntry(
+                        TimeLineFloatEntry(
                             message.timeStampNano,
                             key,
                             value.toFloat()
@@ -165,7 +182,7 @@ class NamedEntriesExtractor : EntriesExtractor {
 
                 if (value != null) {
                     (entries as TimeLineMinMaxEntries).addEntry(
-                        TimeLineEntry(
+                        TimeLineFloatEntry(
                             message.timeStampNano,
                             key,
                             value.toFloat()
