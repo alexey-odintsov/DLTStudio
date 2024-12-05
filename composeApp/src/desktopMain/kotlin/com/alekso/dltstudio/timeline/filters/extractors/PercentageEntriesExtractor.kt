@@ -6,7 +6,7 @@ import com.alekso.dltstudio.timeline.TimeLineFloatEntry
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.ExtractionType
 
 class PercentageEntriesExtractor : EntriesExtractor {
-    enum class MinMaxExtractionType : ExtractionType {
+    enum class PercentageExtractionType : ExtractionType {
         NAMED_GROUPS,
         GROUPS_KEY_VALUE,
     }
@@ -22,7 +22,7 @@ class PercentageEntriesExtractor : EntriesExtractor {
             regex.toPattern().namedGroups().entries.associateBy({ it.value }) { it.key }
 
         when (extractionType) {
-            MinMaxExtractionType.NAMED_GROUPS -> {
+            PercentageExtractionType.NAMED_GROUPS -> {
                 matches.groups.forEachIndexed { index, group ->
                     if (index > 0 && group != null) {
                         if (index < matches.groups.size) {
@@ -41,7 +41,7 @@ class PercentageEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            MinMaxExtractionType.GROUPS_KEY_VALUE -> {
+            PercentageExtractionType.GROUPS_KEY_VALUE -> {
                 if (matches.groups.size > 2) {
                     for (i in 1..<matches.groups.size step 2) {
                         val key = matches.groups[i]?.value
@@ -52,21 +52,6 @@ class PercentageEntriesExtractor : EntriesExtractor {
                             )
                         }
                     }
-                }
-                matches.groups.forEachIndexed { index, group ->
-
-                    if (index > 0 && group != null) {
-                        if (index < matches.groups.size) {
-                            val key = namedGroupsMap[index]
-                            val value = group.value
-                            if (key != null && value != null) {
-                                list.add(
-                                    TimeLineFloatEntry(message.timeStampNano, key, value.toFloat())
-                                )
-                            }
-                        }
-                    }
-
                 }
             }
         }

@@ -12,7 +12,7 @@ class MinMaxEntriesExtractorTest {
     private val extractor = MinMaxEntriesExtractor()
 
     @Test
-    fun `Test MinMaxGroupsEntriesExtractor using named groups`() {
+    fun `Test MinMaxEntriesExtractor using named groups`() {
         val dltMessage = Utils.dltMessage(
             timeStampNano = 1234567890L, payload = "12345 67 890"
         )
@@ -27,11 +27,11 @@ class MinMaxEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage, pattern.toRegex(), MinMaxEntriesExtractor.MinMaxExtractionType.NAMED_GROUPS
         ).toSet()
-        assertEquals(actual, expected)
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun `Test MinMaxGroupsEntriesExtractor with dynamic group names`() {
+    fun `Test MinMaxEntriesExtractor with dynamic group names`() {
         val dltMessage = Utils.dltMessage(
             timeStampNano = 1234567890L, payload = "cpu0: 12 cpu1: 34 cpu3: 66"
         )
@@ -48,7 +48,7 @@ class MinMaxEntriesExtractorTest {
             pattern.toRegex(),
             MinMaxEntriesExtractor.MinMaxExtractionType.GROUPS_KEY_VALUE
         ).toSet()
-        assertEquals(actual, expected)
+        assertEquals(expected, actual)
     }
 
 }

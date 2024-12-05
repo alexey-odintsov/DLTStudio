@@ -12,7 +12,7 @@ class PercentageEntriesExtractorTest {
     private val extractor = PercentageEntriesExtractor()
 
     @Test
-    fun `Test MinMaxGroupsEntriesExtractor using named groups`() {
+    fun `Test PercentageEntriesExtractor using named groups`() {
         val dltMessage = Utils.dltMessage(
             timeStampNano = 1234567890L, payload = "12% 67% 89%"
         )
@@ -27,13 +27,13 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            PercentageEntriesExtractor.MinMaxExtractionType.NAMED_GROUPS
+            PercentageEntriesExtractor.PercentageExtractionType.NAMED_GROUPS
         ).toSet()
-        assertEquals(actual, expected)
+        assertEquals(expected, actual)
     }
 
     @Test
-    fun `Test MinMaxGroupsEntriesExtractor with dynamic group names`() {
+    fun `Test PercentageEntriesExtractor with dynamic group names`() {
         val dltMessage = Utils.dltMessage(
             timeStampNano = 1234567890L, payload = "cpu0: 12% cpu1: 34% cpu3: 66%"
         )
@@ -48,9 +48,9 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            PercentageEntriesExtractor.MinMaxExtractionType.GROUPS_KEY_VALUE
+            PercentageEntriesExtractor.PercentageExtractionType.GROUPS_KEY_VALUE
         ).toSet()
-        assertEquals(actual, expected)
+        assertEquals(expected, actual)
     }
 
 }

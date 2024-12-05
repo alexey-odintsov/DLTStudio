@@ -53,21 +53,6 @@ class MinMaxEntriesExtractor : EntriesExtractor {
                         }
                     }
                 }
-                matches.groups.forEachIndexed { index, group ->
-
-                    if (index > 0 && group != null) {
-                        if (index < matches.groups.size) {
-                            val key = namedGroupsMap[index]
-                            val value = group.value
-                            if (key != null && value != null) {
-                                list.add(
-                                    TimeLineFloatEntry(message.timeStampNano, key, value.toFloat())
-                                )
-                            }
-                        }
-                    }
-
-                }
             }
         }
 
