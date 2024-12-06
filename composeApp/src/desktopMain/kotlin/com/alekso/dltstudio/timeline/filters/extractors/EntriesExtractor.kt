@@ -50,24 +50,7 @@ class NonNamedEntriesExtractor : EntriesExtractorOld {
             DiagramType.Percentage -> {}
             DiagramType.MinMaxValue -> {}
             DiagramType.State -> {}
-
-            DiagramType.SingleState -> {
-                if (matches.groups.size > 2) {
-                    for (i in 1..3) {
-                        val key = matches.groups[i]?.value
-                        val value = matches.groups[i + 1]?.value
-                        if (key != null && value != null) {
-                            (entries as TimeLineSingleStateEntries).addEntry(
-                                TimeLineSingleStateEntry(
-                                    message.timeStampNano,
-                                    key,
-                                    value
-                                )
-                            )
-                        }
-                    }
-                }
-            }
+            DiagramType.SingleState -> {}
 
             DiagramType.Duration -> {
                 if (matches.groups.size > 2) {
@@ -107,21 +90,7 @@ class NamedEntriesExtractor : EntriesExtractorOld {
             DiagramType.Percentage -> {}
             DiagramType.MinMaxValue -> {}
             DiagramType.State -> {}
-
-            DiagramType.SingleState -> {
-                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
-                val value: String? = matches.groups[diagramParams[Param.VALUE]?.key!!]?.value
-
-                if (value != null) {
-                    (entries as TimeLineSingleStateEntries).addEntry(
-                        TimeLineSingleStateEntry(
-                            message.timeStampNano,
-                            key,
-                            value
-                        )
-                    )
-                }
-            }
+            DiagramType.SingleState -> {}
 
             DiagramType.Duration -> {
                 val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
