@@ -19,19 +19,17 @@ class StateEntriesExtractor : EntriesExtractor {
     ): List<TimeLineEntry<*>> {
         val matches = regex.find(message.payload)!!
         val list = mutableListOf<TimeLineEntry<*>>()
-        val namedGroupsMap =
-            regex.toPattern().namedGroups().entries.associateBy({ it.value }) { it.key }
 
         when (extractionType) {
             StateExtractionType.NAMED_GROUPS -> {
                 matches.groups.forEachIndexed { index, group ->
                     if (index > 0 && group != null) {
                         if (index < matches.groups.size) {
-                            val key: String = matches.groups["key"]?.value ?: NO_KEY
-                            val value: String? = matches.groups["value"]?.value
-                            val oldValue: String? = matches.groups["oldvalue"]?.value
+                            val key: String = matches.groups[NAME_KEY]?.value ?: NO_KEY
+                            val value: String? = matches.groups[NAME_VALUE]?.value
+                            val oldValue: String? = matches.groups[NAME_OLD_VALUE]?.value
 
-                            if (key != null && value != null && oldValue != null) {
+                            if (value != null && oldValue != null) {
                                 list.add(
                                     TimeLineStateEntry(
                                         message.timeStampNano,
@@ -48,9 +46,9 @@ class StateEntriesExtractor : EntriesExtractor {
 
             StateExtractionType.GROUPS_KEY_VALUE -> {
                 if (matches.groups.size > 2) {
-                    val key = matches.groups[1]?.value
-                    val value = matches.groups[2]?.value
-                    val oldValue = matches.groups[3]?.value
+                    val key = matches.groups[INDEX_KEY + 1]?.value
+                    val value = matches.groups[INDEX_VALUE + 1]?.value
+                    val oldValue = matches.groups[INDEX_OLD_VALUE + 1]?.value
                     if (key != null && value != null && oldValue != null) {
                         list.add(
                             TimeLineStateEntry(message.timeStampNano, key, Pair(value, oldValue))
@@ -61,5 +59,14 @@ class StateEntriesExtractor : EntriesExtractor {
         }
 
         return list
+    }
+
+    companion object {
+        const val NAME_KEY = "key"
+        const val NAME_VALUE = "value"
+        const val NAME_OLD_VALUE = "oldvalue"
+        const val INDEX_KEY = 0
+        const val INDEX_VALUE = 1
+        const val INDEX_OLD_VALUE = 2
     }
 }

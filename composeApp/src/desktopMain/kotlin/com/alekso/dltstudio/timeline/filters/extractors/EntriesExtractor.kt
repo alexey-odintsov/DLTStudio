@@ -192,19 +192,6 @@ class NamedEntriesExtractor : EntriesExtractorOld {
             }
 
             DiagramType.State -> {
-                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
-                val value: String? = matches.groups[diagramParams[Param.VALUE]?.key!!]?.value
-                val oldValue: String? = matches.groups[diagramParams[Param.OLD_VALUE]?.key!!]?.value
-
-                if (value != null && oldValue != null) {
-                    (entries as TimeLineStateEntries).addEntry(
-                        TimeLineStateEntry(
-                            message.timeStampNano,
-                            key,
-                            Pair(value, oldValue)
-                        )
-                    )
-                }
             }
 
             DiagramType.SingleState -> {

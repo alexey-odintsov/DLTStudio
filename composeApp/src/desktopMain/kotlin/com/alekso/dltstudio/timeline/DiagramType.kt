@@ -8,7 +8,8 @@ enum class Param {
     OLD_VALUE,
     BEGIN,
     END,
-};
+}
+
 enum class DiagramType(val description: String) {
 
     Percentage(description = "Shows how values change over time as a proportion of the whole. A good examples could be CPU usage.") {
