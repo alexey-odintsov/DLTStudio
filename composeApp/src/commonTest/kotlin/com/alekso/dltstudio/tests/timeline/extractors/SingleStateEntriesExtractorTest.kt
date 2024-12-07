@@ -28,7 +28,7 @@ class SingleStateEntriesExtractorTest {
             pattern.toRegex(),
             EntriesExtractor.ExtractionType.KeyValueNamed
         ).toSet()
-        assertEquals(actual, expected)
+        assertEquals(expected, actual)
     }
 
     @Test
