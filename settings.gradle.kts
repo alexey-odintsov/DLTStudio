@@ -1,4 +1,4 @@
-rootProject.name = "DTLStudio"
+rootProject.name = "DLTStudio"
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {

@@ -24,9 +24,9 @@ import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.ImageButton
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.icon_delete
-import dtlstudio.composeapp.generated.resources.icon_edit
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.icon_delete
+import dltstudio.composeapp.generated.resources.icon_edit
 
 
 @Composable

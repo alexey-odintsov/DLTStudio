@@ -9,7 +9,7 @@ import com.alekso.dltparser.tests.testdata.TestData
 class DLTParserV1Tests {
 
     @Test
-    fun `DTLParserV1 parse DLT_MESSAGE_1`() {
+    fun `DLTParserV1 parse DLT_MESSAGE_1`() {
         val data = TestData.DLT_MESSAGE_1.map { it.toByte() }.toByteArray()
         val actual = DLTParserV1().parseDLTMessage(data, 0, true)
         val expected = TestData.DLT_MESSAGE_1_PARSED
@@ -17,7 +17,7 @@ class DLTParserV1Tests {
     }
 
     @Test
-    fun `DTLParserV1 parse DLT_MESSAGE_2`() {
+    fun `DLTParserV1 parse DLT_MESSAGE_2`() {
         val data = TestData.DLT_MESSAGE_2.map { it.toByte() }.toByteArray()
         val actual = DLTParserV1().parseDLTMessage(data, 0, true)
         val expected = TestData.DLT_MESSAGE_2_PARSED
@@ -26,7 +26,7 @@ class DLTParserV1Tests {
 
     @Ignore
     @Test
-    fun `DTLParserV1 parse DLT_MESSAGE_BROKEN_1`() {
+    fun `DLTParserV1 parse DLT_MESSAGE_BROKEN_1`() {
         val data = TestData.DLT_MESSAGE_BROKEN_1.map { it.toByte() }.toByteArray()
         val actual = DLTParserV1().parseDLTMessage(data, 0, true)
         val expected = TestData.DLT_MESSAGE_BROKEN_1_PARSED
