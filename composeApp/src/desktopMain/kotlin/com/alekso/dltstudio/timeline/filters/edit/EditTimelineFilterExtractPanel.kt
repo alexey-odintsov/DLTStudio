@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -25,7 +24,6 @@ import com.alekso.dltstudio.timeline.graph.TimelinePreviewFactory
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
 
-private val COL_NAME_SIZE_DP = 150.dp
 private val COL_VALUE = 250.dp
 private val COL_PATTERN = 400.dp
 private val colNameStyle = Modifier.padding(horizontal = 4.dp)

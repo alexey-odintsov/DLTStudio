@@ -3,6 +3,7 @@ package com.alekso.dltstudio.tests.timeline.extractors
 import com.alekso.dltstudio.tests.Utils
 import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineSingleStateEntry
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.filters.extractors.SingleStateEntriesExtractor
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,7 @@ class SingleStateEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            SingleStateEntriesExtractor.StateExtractionType.NAMED_GROUPS
+            EntriesExtractor.ExtractionType.KeyValueNamed
         ).toSet()
         assertEquals(actual, expected)
     }
@@ -44,7 +45,7 @@ class SingleStateEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            SingleStateEntriesExtractor.StateExtractionType.GROUPS_KEY_VALUE
+            EntriesExtractor.ExtractionType.KeyValueGroups
         ).toSet()
         assertEquals(expected, actual)
     }

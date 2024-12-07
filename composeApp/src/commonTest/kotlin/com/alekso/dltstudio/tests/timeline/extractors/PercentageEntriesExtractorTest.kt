@@ -3,6 +3,7 @@ package com.alekso.dltstudio.tests.timeline.extractors
 import com.alekso.dltstudio.tests.Utils
 import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineFloatEntry
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.filters.extractors.PercentageEntriesExtractor
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -27,7 +28,7 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            PercentageEntriesExtractor.PercentageExtractionType.NAMED_GROUPS
+            EntriesExtractor.ExtractionType.KeyValueNamed
         ).toSet()
         assertEquals(expected, actual)
     }
@@ -48,7 +49,7 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            PercentageEntriesExtractor.PercentageExtractionType.GROUPS_KEY_VALUE
+            EntriesExtractor.ExtractionType.KeyValueGroups
         ).toSet()
         assertEquals(expected, actual)
     }

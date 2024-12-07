@@ -3,6 +3,7 @@ package com.alekso.dltstudio.tests.timeline.extractors
 import com.alekso.dltstudio.tests.Utils
 import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineFloatEntry
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.filters.extractors.MinMaxEntriesExtractor
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -25,7 +26,7 @@ class MinMaxEntriesExtractorTest {
         ).toSet()
 
         val actual = extractor.extractEntry(
-            dltMessage, pattern.toRegex(), MinMaxEntriesExtractor.MinMaxExtractionType.NAMED_GROUPS
+            dltMessage, pattern.toRegex(), EntriesExtractor.ExtractionType.KeyValueNamed
         ).toSet()
         assertEquals(expected, actual)
     }
@@ -46,7 +47,7 @@ class MinMaxEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            MinMaxEntriesExtractor.MinMaxExtractionType.GROUPS_KEY_VALUE
+            EntriesExtractor.ExtractionType.KeyValueGroups
         ).toSet()
         assertEquals(expected, actual)
     }

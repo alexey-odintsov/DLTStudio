@@ -4,6 +4,7 @@ import com.alekso.dltstudio.tests.Utils
 import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineEvent
 import com.alekso.dltstudio.timeline.TimeLineEventEntry
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.filters.extractors.EventEntriesExtractor
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -30,7 +31,7 @@ class EventEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EventEntriesExtractor.EventExtractionType.NAMED_GROUPS
+            EntriesExtractor.ExtractionType.KeyValueNamed
         ).toSet()
         assertEquals(actual, expected)
     }
