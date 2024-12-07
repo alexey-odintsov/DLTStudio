@@ -26,7 +26,6 @@ interface EntriesExtractor {
 }
 
 
-
 @Deprecated("Use EntriesExtractor")
 interface EntriesExtractorOld {
     fun extractEntry(
@@ -51,26 +50,7 @@ class NonNamedEntriesExtractor : EntriesExtractorOld {
             DiagramType.MinMaxValue -> {}
             DiagramType.State -> {}
             DiagramType.SingleState -> {}
-
-            DiagramType.Duration -> {
-                if (matches.groups.size > 2) {
-                    for (i in 1..3) {
-                        val key = matches.groups[i]?.value
-                        val begin = matches.groups[i + 1]?.value
-                        val end = matches.groups[i + 2]?.value
-                        if (key != null) {
-                            (entries as TimeLineDurationEntries).addEntry(
-                                TimeLineDurationEntry(
-                                    message.timeStampNano,
-                                    key,
-                                    Pair(begin, end)
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-
+            DiagramType.Duration -> {}
             DiagramType.Events -> Unit
         }
     }
@@ -91,21 +71,7 @@ class NamedEntriesExtractor : EntriesExtractorOld {
             DiagramType.MinMaxValue -> {}
             DiagramType.State -> {}
             DiagramType.SingleState -> {}
-
-            DiagramType.Duration -> {
-                val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
-                val begin: String? = matches.groups[diagramParams[Param.BEGIN]?.key!!]?.value
-                val end: String? = matches.groups[diagramParams[Param.END]?.key!!]?.value
-
-                (entries as TimeLineDurationEntries).addEntry(
-                    TimeLineDurationEntry(
-                        message.timeStampNano,
-                        key,
-                        Pair(begin, end)
-                    )
-                )
-            }
-
+            DiagramType.Duration -> {}
 
             DiagramType.Events -> {
                 val key: String = matches.groups[diagramParams[Param.KEY]?.key!!]?.value ?: NO_KEY
