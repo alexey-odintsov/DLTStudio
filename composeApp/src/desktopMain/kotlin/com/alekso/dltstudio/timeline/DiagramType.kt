@@ -1,14 +1,8 @@
 package com.alekso.dltstudio.timeline
 
-import com.alekso.dltstudio.timeline.filters.TimelineFilter.ExtractorParam
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.ExtractorParam
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.Param
 
-enum class Param {
-    KEY,
-    VALUE,
-    OLD_VALUE,
-    BEGIN,
-    END,
-}
 
 enum class DiagramType(val description: String) {
 
@@ -48,7 +42,7 @@ enum class DiagramType(val description: String) {
         override val params: Map<Param, ExtractorParam> = mapOf(
             Param.KEY to ExtractorParam("key", "Key value of the entry"),
             Param.BEGIN to ExtractorParam("begin", "Begin event marker"),
-            Param.END to ExtractorParam("begin", "End event marker"),
+            Param.END to ExtractorParam("end", "End event marker"),
         )
     },
 

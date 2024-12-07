@@ -1,45 +1,34 @@
 package com.alekso.dltstudio.timeline.filters.extractors
 
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineSingleStateEntry
 import com.alekso.dltstudio.timeline.filters.NO_KEY
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.ExtractionType
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.Param
 
 class SingleStateEntriesExtractor : EntriesExtractor {
-    enum class StateExtractionType : ExtractionType {
-        NAMED_GROUPS,
-        GROUPS_KEY_VALUE,
-    }
 
     override fun extractEntry(
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
-    ): List<TimeLineEntry<*>> {
+    ): List<TimeLineSingleStateEntry> {
         val matches = regex.find(message.payload)!!
-        val list = mutableListOf<TimeLineEntry<*>>()
+        val list = mutableListOf<TimeLineSingleStateEntry>()
 
         when (extractionType) {
-            StateExtractionType.NAMED_GROUPS -> {
-                matches.groups.forEachIndexed { index, group ->
-                    if (index > 0 && group != null) {
-                        if (index < matches.groups.size) {
-                            val key: String = matches.groups[NAME_KEY]?.value ?: NO_KEY
-                            val value: String? = matches.groups[NAME_VALUE]?.value
+            ExtractionType.KeyValueNamed -> {
+                val key: String = matches.groups[Param.KEY.value]?.value ?: NO_KEY
+                val value: String? = matches.groups[Param.VALUE.value]?.value
 
-                            if (value != null) {
-                                list.add(
-                                    TimeLineSingleStateEntry(message.timeStampNano, key, value)
-                                )
-                            }
-                        }
-
-                    }
+                if (value != null) {
+                    list.add(
+                        TimeLineSingleStateEntry(message.timeStampNano, key, value)
+                    )
                 }
             }
 
-            StateExtractionType.GROUPS_KEY_VALUE -> {
+            ExtractionType.KeyValueGroups -> {
                 if (matches.groups.size > 2) {
                     val key = matches.groups[INDEX_KEY + 1]?.value
                     val value = matches.groups[INDEX_VALUE + 1]?.value
@@ -56,8 +45,6 @@ class SingleStateEntriesExtractor : EntriesExtractor {
     }
 
     companion object {
-        const val NAME_KEY = "key"
-        const val NAME_VALUE = "value"
         const val INDEX_KEY = 0
         const val INDEX_VALUE = 1
     }

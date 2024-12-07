@@ -11,6 +11,7 @@ import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 
 class EditTimelineFilterViewModel(
     val filterIndex: Int,
@@ -105,7 +106,7 @@ class EditTimelineFilterViewModel(
                 filters = map,
                 extractPattern = extractPattern,
                 diagramType = DiagramType.valueOf(diagramType),
-                extractorType = TimelineFilter.ExtractorType.valueOf(extractorType),
+                extractorType = EntriesExtractor.ExtractionType.valueOf(extractorType),
                 testClause = testPayload,
             )
         )

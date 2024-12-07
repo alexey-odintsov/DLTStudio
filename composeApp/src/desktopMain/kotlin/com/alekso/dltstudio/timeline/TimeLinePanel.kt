@@ -178,7 +178,7 @@ fun TimeLinePanel(
                             TimelineLegend(
                                 modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                                 title = timelineFilter.name,
-                                entries = timelineViewModel.userEntriesMap[timelineFilter.key],
+                                entries = timelineViewModel.entriesMap[timelineFilter.key],
                                 { key ->
                                     timelineViewModel.highlightedKeysMap[timelineFilter.key] = key
                                 },

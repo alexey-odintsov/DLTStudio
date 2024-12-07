@@ -1,70 +1,32 @@
 package com.alekso.dltstudio.timeline.filters.extractors
 
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.timeline.DiagramType
-import com.alekso.dltstudio.timeline.TimeLineEntries
 import com.alekso.dltstudio.timeline.TimeLineEntry
-import com.alekso.dltstudio.timeline.filters.TimelineFilter
 
 interface EntriesExtractor {
-    interface ExtractionType
+    enum class ExtractionType {
+        KeyValueGroups,
+        KeyValueNamed,
+    }
+
+    enum class Param(val value: String) {
+        KEY("key"),
+        VALUE("value"),
+        INFO("info"),
+        OLD_VALUE("oldvalue"),
+        BEGIN("begin"),
+        END("end"),
+    }
+
+    data class ExtractorParam(
+        val key: String,
+        val description: String,
+        val required: Boolean = false,
+    )
 
     fun extractEntry(
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
     ): List<TimeLineEntry<*>>
-}
-
-
-@Deprecated("Use EntriesExtractor")
-interface EntriesExtractorOld {
-    fun extractEntry(
-        message: DLTMessage,
-        filter: TimelineFilter,
-        regex: Regex,
-        entries: TimeLineEntries<*>
-    )
-}
-
-class NonNamedEntriesExtractor : EntriesExtractorOld {
-    override fun extractEntry(
-        message: DLTMessage,
-        filter: TimelineFilter,
-        regex: Regex,
-        entries: TimeLineEntries<*>
-    ) {
-        val matches = regex.find(message.payload)!!
-
-        when (filter.diagramType) {
-            DiagramType.Percentage -> {}
-            DiagramType.MinMaxValue -> {}
-            DiagramType.State -> {}
-            DiagramType.SingleState -> {}
-            DiagramType.Duration -> {}
-            DiagramType.Events -> Unit
-        }
-    }
-}
-
-class NamedEntriesExtractor : EntriesExtractorOld {
-    override fun extractEntry(
-        message: DLTMessage,
-        filter: TimelineFilter,
-        regex: Regex,
-        entries: TimeLineEntries<*>
-    ) {
-        val matches = regex.find(message.payload)!!
-        val diagramParams = filter.diagramType.params
-
-        when (filter.diagramType) {
-            DiagramType.Percentage -> {}
-            DiagramType.MinMaxValue -> {}
-            DiagramType.State -> {}
-            DiagramType.SingleState -> {}
-            DiagramType.Duration -> {}
-            DiagramType.Events -> {}
-        }
-    }
-
 }

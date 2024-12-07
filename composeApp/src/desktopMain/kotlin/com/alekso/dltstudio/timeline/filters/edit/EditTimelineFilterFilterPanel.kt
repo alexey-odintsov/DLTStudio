@@ -12,10 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
-import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
 
@@ -96,7 +95,7 @@ fun PreviewEditTimelineFilterFilterPanel() {
         filters = mutableMapOf(),
         extractPattern = """(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?""",
         diagramType = DiagramType.Percentage,
-        extractorType = TimelineFilter.ExtractorType.KeyValueNamed,
+        extractorType = EntriesExtractor.ExtractionType.KeyValueNamed,
         testClause = "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%",
     )
 

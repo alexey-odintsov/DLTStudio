@@ -9,8 +9,8 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineDurationEntry
-import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineEventEntry
+import com.alekso.dltstudio.timeline.TimeLineFloatEntry
 import com.alekso.dltstudio.timeline.TimeLineSingleStateEntry
 import com.alekso.dltstudio.timeline.TimeLineStateEntry
 import com.alekso.dltstudio.timeline.TimeLineViewStyle
@@ -18,7 +18,7 @@ import com.alekso.dltstudio.timeline.TimeLineViewStyle
 
 fun DrawScope.renderLines(
     viewStyle: TimeLineViewStyle,
-    items: MutableList<TimeLineEntry<Float>>?,
+    items: MutableList<TimeLineFloatEntry>?,
     splitTimeSec: Float,
     timeFrame: TimeFrame,
     secSizePx: Float,

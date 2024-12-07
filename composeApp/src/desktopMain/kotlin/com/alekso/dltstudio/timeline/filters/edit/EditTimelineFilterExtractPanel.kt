@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.ExtractorChecker
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.graph.TimelinePreviewFactory
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
@@ -52,7 +53,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
 
             Row {
                 val items = mutableListOf<String>()
-                items.addAll(TimelineFilter.ExtractorType.entries.map { it.name })
+                items.addAll(EntriesExtractor.ExtractionType.entries.map { it.name })
                 var initialSelection =
                     items.indexOfFirst { it == viewModel.filter.extractorType.name }
                 if (initialSelection == -1) initialSelection = 0
@@ -98,7 +99,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
                     extractPattern = viewModel.extractPattern,
                     testPayload = viewModel.testPayload,
                     diagramType = DiagramType.valueOf(viewModel.diagramType),
-                    extractorType = TimelineFilter.ExtractorType.valueOf(viewModel.extractorType),
+                    extractorType = EntriesExtractor.ExtractionType.valueOf(viewModel.extractorType),
                 )
             }
         )
@@ -139,7 +140,7 @@ fun PreviewEditTimelineFilterExtractPanel() {
         filters = mutableMapOf(),
         extractPattern = """(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?""",
         diagramType = DiagramType.Percentage,
-        extractorType = TimelineFilter.ExtractorType.KeyValueNamed,
+        extractorType = EntriesExtractor.ExtractionType.KeyValueNamed,
         testClause = "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%",
     )
 

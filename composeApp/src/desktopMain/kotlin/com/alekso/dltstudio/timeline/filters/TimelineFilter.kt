@@ -5,6 +5,7 @@ import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
 import com.alekso.dltstudio.timeline.DiagramType
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.ExtractionType
 
 const val NO_KEY = "no_key"
 
@@ -15,24 +16,11 @@ data class TimelineFilter(
     val filters: Map<FilterParameter, FilterCriteria>,
     val extractPattern: String? = null, // regex only
     val diagramType: DiagramType,
-    val extractorType: ExtractorType,
+    val extractorType: ExtractionType,
     val testClause: String? = null,
     ) {
 
     val key: String = "$filters$extractPattern".hashCode().toString()
-
-    data class ExtractorParam(
-        val key: String,
-        val description: String,
-        val required: Boolean = false,
-    )
-
-
-
-    enum class ExtractorType {
-        KeyValueNamed,
-        KeyValueGroups,
-    }
 
     companion object {
         val Empty = TimelineFilter(
@@ -41,7 +29,7 @@ data class TimelineFilter(
             filters = emptyMap(),
             extractPattern = null,
             diagramType = DiagramType.Events,
-            extractorType = ExtractorType.KeyValueGroups
+            extractorType = ExtractionType.KeyValueNamed
         )
 
         // TODO: merge duplicated code from ColorFilter

@@ -1,30 +1,26 @@
 package com.alekso.dltstudio.timeline.filters.extractors
 
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineEvent
 import com.alekso.dltstudio.timeline.TimeLineEventEntry
 import com.alekso.dltstudio.timeline.filters.NO_KEY
-import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.ExtractionType
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.*
 
 class EventEntriesExtractor : EntriesExtractor {
-    enum class EventExtractionType : ExtractionType {
-        NAMED_GROUPS,
-    }
 
     override fun extractEntry(
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
-    ): List<TimeLineEntry<*>> {
+    ): List<TimeLineEventEntry> {
         val matches = regex.find(message.payload)!!
-        val list = mutableListOf<TimeLineEntry<*>>()
+        val list = mutableListOf<TimeLineEventEntry>()
 
         when (extractionType) {
-            EventExtractionType.NAMED_GROUPS -> {
-                val key: String = matches.groups[NAME_KEY]?.value ?: NO_KEY
-                val value: String? = matches.groups[NAME_VALUE]?.value
-                val info: String? = matches.groups[NAME_INFO]?.value
+            ExtractionType.KeyValueNamed -> {
+                val key: String = matches.groups[Param.KEY.value]?.value ?: NO_KEY
+                val value: String? = matches.groups[Param.VALUE.value]?.value
+                val info: String? = matches.groups[Param.INFO.value]?.value
 
                 if (value != null) {
                     list.add(
@@ -36,14 +32,11 @@ class EventEntriesExtractor : EntriesExtractor {
                     )
                 }
             }
+
+            ExtractionType.KeyValueGroups -> throw UnsupportedOperationException()
         }
 
         return list
     }
 
-    companion object {
-        const val NAME_KEY = "key"
-        const val NAME_VALUE = "value"
-        const val NAME_INFO = "info"
-    }
 }

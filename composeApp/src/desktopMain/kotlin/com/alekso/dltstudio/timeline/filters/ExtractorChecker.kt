@@ -1,20 +1,22 @@
 package com.alekso.dltstudio.timeline.filters
 
 import com.alekso.dltstudio.timeline.DiagramType
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 
 object ExtractorChecker {
     fun testRegex(
         extractPattern: String?,
         testPayload: String?,
-        extractorType: TimelineFilter.ExtractorType,
+        extractorType: EntriesExtractor.ExtractionType,
         diagramType: DiagramType,
         global: Boolean = false
     ): String {
+        // todo: Use EntriesExtractor
         var groupsTestValue = ""
         if (extractPattern != null && testPayload != null) {
             try {
                 when (extractorType) {
-                    TimelineFilter.ExtractorType.KeyValueNamed -> {
+                    EntriesExtractor.ExtractionType.KeyValueNamed -> {
                         when (diagramType) {
                             DiagramType.Percentage -> {
                                 val matches = Regex(extractPattern).find(testPayload)
@@ -76,7 +78,7 @@ object ExtractorChecker {
                         }
                     }
 
-                    TimelineFilter.ExtractorType.KeyValueGroups -> {
+                    EntriesExtractor.ExtractionType.KeyValueGroups -> {
                         if (global) {
                             val matches = Regex(extractPattern).findAll(testPayload)
                             groupsTestValue =

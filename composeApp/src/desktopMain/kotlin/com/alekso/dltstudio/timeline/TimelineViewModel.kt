@@ -10,10 +10,15 @@ import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
-import com.alekso.dltstudio.timeline.filters.extractors.NonNamedEntriesExtractor
-import com.alekso.dltstudio.timeline.filters.extractors.NamedEntriesExtractor
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltstudio.timeline.filters.extractors.DurationEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.EventEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.MinMaxEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.PercentageEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.SingleStateEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.StateEntriesExtractor
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +37,7 @@ class TimelineViewModel(
 ) {
     private var analyzeJob: Job? = null
 
-    var userEntriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
+    var entriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
     var highlightedKeysMap = mutableStateMapOf<String, String?>()
 
     private var _analyzeState: MutableStateFlow<AnalyzeState> = MutableStateFlow(AnalyzeState.IDLE)
@@ -49,7 +54,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("SYST", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.State,
-            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
         ),
         TimelineFilter(
             name = "Crashes",
@@ -60,7 +65,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CRSH", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Events,
-            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
+            extractorType = EntriesExtractor.ExtractionType.KeyValueNamed
         ),
         TimelineFilter(
             name = "CPUC",
@@ -71,7 +76,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
         ),
         TimelineFilter(
             name = "CPUS",
@@ -82,7 +87,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUS", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
         ),
         TimelineFilter(
             name = "CPUP",
@@ -93,7 +98,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
+            extractorType = EntriesExtractor.ExtractionType.KeyValueNamed
         ),
         TimelineFilter(
             name = "MEMT",
@@ -104,7 +109,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("MEMT", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.MinMaxValue,
-            extractorType = TimelineFilter.ExtractorType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
         ),
         TimelineFilter(
             name = "GPU Load",
@@ -115,7 +120,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
+            extractorType = EntriesExtractor.ExtractionType.KeyValueNamed
         ),
     )
 
@@ -141,7 +146,7 @@ class TimelineViewModel(
     private fun cleanup() {
         timeStart = Long.MAX_VALUE
         timeEnd = Long.MIN_VALUE
-        userEntriesMap.clear()
+        entriesMap.clear()
         highlightedKeysMap.clear()
     }
 
@@ -167,7 +172,7 @@ class TimelineViewModel(
                     regexps.add(index, timelineFilter.extractPattern?.toRegex())
                 }
 
-                var prevTs  = System.currentTimeMillis()
+                var prevTs = System.currentTimeMillis()
                 dltMessages.forEachIndexed { index, message ->
                     yield()
                     // timeStamps
@@ -198,8 +203,8 @@ class TimelineViewModel(
 
                 withContext(Dispatchers.Default) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
-                    userEntriesMap.clear()
-                    userEntriesMap.putAll(_userEntries)
+                    entriesMap.clear()
+                    entriesMap.putAll(_userEntries)
                     timeStart = _timeStart
                     timeEnd = _timeEnd
                     _analyzeState.value = AnalyzeState.IDLE
@@ -218,25 +223,50 @@ class TimelineViewModel(
         entries: TimeLineEntries<*>
     ) {
         if (filter.extractPattern == null) return
-        val nonNamedExtractor = NonNamedEntriesExtractor()
-        val namedExtractor = NamedEntriesExtractor()
 
         try {
             if (TimelineFilter.assessFilter(filter, message)) {
-                when (filter.extractorType) {
-                    TimelineFilter.ExtractorType.KeyValueNamed -> namedExtractor.extractEntry(
-                        message,
-                        filter,
-                        regex,
-                        entries
-                    )
+                when (filter.diagramType) {
+                    DiagramType.Percentage -> {
+                        PercentageEntriesExtractor().extractEntry(
+                            message,
+                            regex,
+                            filter.extractorType
+                        ).forEach { e -> (entries as TimeLinePercentageEntries).addEntry(e) }
+                    }
 
-                    TimelineFilter.ExtractorType.KeyValueGroups -> nonNamedExtractor.extractEntry(
-                        message,
-                        filter,
-                        regex,
-                        entries
-                    )
+                    DiagramType.MinMaxValue -> {
+                        MinMaxEntriesExtractor().extractEntry(message, regex, filter.extractorType)
+                            .forEach { e -> (entries as TimeLineMinMaxEntries).addEntry(e) }
+                    }
+
+                    DiagramType.State -> {
+                        StateEntriesExtractor().extractEntry(message, regex, filter.extractorType)
+                            .forEach { e -> (entries as TimeLineStateEntries).addEntry(e) }
+                    }
+
+                    DiagramType.SingleState -> {
+                        SingleStateEntriesExtractor().extractEntry(
+                            message,
+                            regex,
+                            filter.extractorType
+                        )
+                            .forEach { e -> (entries as TimeLineSingleStateEntries).addEntry(e) }
+                    }
+
+                    DiagramType.Duration -> {
+                        DurationEntriesExtractor().extractEntry(
+                            message,
+                            regex,
+                            filter.extractorType
+                        )
+                            .forEach { e -> (entries as TimeLineDurationEntries).addEntry(e) }
+                    }
+
+                    DiagramType.Events -> {
+                        EventEntriesExtractor().extractEntry(message, regex, filter.extractorType)
+                            .forEach { e -> (entries as TimeLineEventEntries).addEntry(e) }
+                    }
                 }
             }
         } catch (e: Exception) {
@@ -282,12 +312,12 @@ class TimelineViewModel(
 
     fun retrieveEntriesForFilter(filter: TimelineFilter): TimeLineEntries<*>? {
         return when (filter.diagramType) {
-            DiagramType.Percentage -> userEntriesMap[filter.key] as? TimeLinePercentageEntries
-            DiagramType.MinMaxValue -> userEntriesMap[filter.key] as? TimeLineMinMaxEntries
-            DiagramType.State -> userEntriesMap[filter.key] as? TimeLineStateEntries
-            DiagramType.SingleState -> userEntriesMap[filter.key] as? TimeLineSingleStateEntries
-            DiagramType.Duration -> userEntriesMap[filter.key] as? TimeLineDurationEntries
-            DiagramType.Events -> userEntriesMap[filter.key] as? TimeLineEventEntries
+            DiagramType.Percentage -> entriesMap[filter.key] as? TimeLinePercentageEntries
+            DiagramType.MinMaxValue -> entriesMap[filter.key] as? TimeLineMinMaxEntries
+            DiagramType.State -> entriesMap[filter.key] as? TimeLineStateEntries
+            DiagramType.SingleState -> entriesMap[filter.key] as? TimeLineSingleStateEntries
+            DiagramType.Duration -> entriesMap[filter.key] as? TimeLineDurationEntries
+            DiagramType.Events -> entriesMap[filter.key] as? TimeLineEventEntries
         }
     }
 }
