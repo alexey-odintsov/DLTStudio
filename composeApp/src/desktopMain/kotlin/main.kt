@@ -40,7 +40,7 @@ fun main() = application {
             Log.d("Application closed")
             exitApplication()
         },
-        title = "DTL Studio",
+        title = "DLT Studio",
         state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
 

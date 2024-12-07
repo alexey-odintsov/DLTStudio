@@ -22,17 +22,17 @@ import com.alekso.dltstudio.ui.AutoCompleteEditText
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.ToggleImageButton
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.icon_color_filters
-import dtlstudio.composeapp.generated.resources.icon_comments
-import dtlstudio.composeapp.generated.resources.icon_e
-import dtlstudio.composeapp.generated.resources.icon_f
-import dtlstudio.composeapp.generated.resources.icon_marked_logs
-import dtlstudio.composeapp.generated.resources.icon_regex
-import dtlstudio.composeapp.generated.resources.icon_search
-import dtlstudio.composeapp.generated.resources.icon_stop
-import dtlstudio.composeapp.generated.resources.icon_w
-import dtlstudio.composeapp.generated.resources.icon_wordwrap
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.icon_color_filters
+import dltstudio.composeapp.generated.resources.icon_comments
+import dltstudio.composeapp.generated.resources.icon_e
+import dltstudio.composeapp.generated.resources.icon_f
+import dltstudio.composeapp.generated.resources.icon_marked_logs
+import dltstudio.composeapp.generated.resources.icon_regex
+import dltstudio.composeapp.generated.resources.icon_search
+import dltstudio.composeapp.generated.resources.icon_stop
+import dltstudio.composeapp.generated.resources.icon_w
+import dltstudio.composeapp.generated.resources.icon_wordwrap
 
 data class LogsToolbarState(
     val toolbarFatalChecked: Boolean,
