@@ -13,7 +13,7 @@ class TimeLineFilterManager {
     fun saveToFile(timelineFilters: List<TimelineFilter>, file: File) {
         try {
             FileWriter(file).use {
-                it.write(Gson().toJson(timelineFilters))
+                it.write(saveFilters(timelineFilters))
             }
         } catch (e: Exception) {
             Log.e("Failed to save filters: $e")
@@ -21,17 +21,24 @@ class TimeLineFilterManager {
     }
 
     fun loadFromFile(file: File): List<TimelineFilter>? {
-        var filters: List<TimelineFilter>? = null
         try {
             val json = FileReader(file).use {
                 it.readText()
             }
-            val type: Type = object : TypeToken<List<TimelineFilter?>?>() {}.type
-            filters = Gson().fromJson(json, type)
+            return parseFilters(json)
         } catch (e: Exception) {
             Log.e("Failed to load filters: $e")
         }
-        return filters
+        return null
+    }
+
+    fun saveFilters(timelineFilters: List<TimelineFilter>): String {
+        return Gson().toJson(timelineFilters)
+    }
+
+    fun parseFilters(jsonContent: String): List<TimelineFilter>? {
+        val type: Type = object : TypeToken<List<TimelineFilter?>?>() {}.type
+        return Gson().fromJson(jsonContent, type)
     }
 
 }
