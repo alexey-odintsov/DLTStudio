@@ -9,15 +9,15 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.icon_color_filters
-import dtlstudio.composeapp.generated.resources.icon_fit
-import dtlstudio.composeapp.generated.resources.icon_left
-import dtlstudio.composeapp.generated.resources.icon_right
-import dtlstudio.composeapp.generated.resources.icon_run
-import dtlstudio.composeapp.generated.resources.icon_stop
-import dtlstudio.composeapp.generated.resources.icon_zoom_in
-import dtlstudio.composeapp.generated.resources.icon_zoom_out
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.icon_color_filters
+import dltstudio.composeapp.generated.resources.icon_fit
+import dltstudio.composeapp.generated.resources.icon_left
+import dltstudio.composeapp.generated.resources.icon_right
+import dltstudio.composeapp.generated.resources.icon_run
+import dltstudio.composeapp.generated.resources.icon_stop
+import dltstudio.composeapp.generated.resources.icon_zoom_in
+import dltstudio.composeapp.generated.resources.icon_zoom_out
 
 @Composable
 fun TimelineToolbar(

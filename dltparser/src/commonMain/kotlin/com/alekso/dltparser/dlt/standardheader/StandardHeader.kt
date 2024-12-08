@@ -17,15 +17,15 @@ data class StandardHeader(
     /**
      * Which ECU has sent message
      */
-    val ecuId: String?,
+    val ecuId: String? = null,
     /**
      * Source of a log/trace within ECU
      */
-    val sessionId: Int?,
+    val sessionId: Int? = null,
     /**
      * When message was generated
      */
-    val timeStamp: UInt?,
+    val timeStamp: UInt? = null,
 ) {
 
     fun getSize(): Int {

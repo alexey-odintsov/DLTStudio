@@ -1,18 +1,32 @@
 [versions]
-compose-plugin = "1.6.11" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
+compose-plugin = "1.7.1" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
 junit = "4.13.2"
 kotlin = "2.0.0"
-gson = "2.8.6"
+coroutines = "1.8.1"
+androidx-room = "2.7.0-alpha05"
+sqlite = "2.5.0-SNAPSHOT"
+ksp = "2.0.0-1.0.23"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
-gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 compose-splitpane = { group = "org.jetbrains.compose.components", name = "components-splitpane-desktop", version.ref = "compose-plugin" }
+#kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
+kotlin-serializaion = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.3" }
+
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
+androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "androidx-room" }
+androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+sqlite-bundled = { module = "androidx.sqlite:sqlite-bundled", version.ref = "sqlite" }
 
 [plugins]
 jetbrainsCompose = { id = "org.jetbrains.compose", version.ref = "compose-plugin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 org-jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+room = { id = "androidx.room", version.ref = "androidx-room" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }

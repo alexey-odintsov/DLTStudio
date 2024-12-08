@@ -1,5 +1,8 @@
+package com.alekso.dltstudio.tests
+
+import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.ExtractorChecker
-import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import org.junit.Assert
 import org.junit.Test
 
@@ -17,8 +20,8 @@ class ExtractPatternRegexTest {
             ExtractorChecker.testRegex(
                 extractPattern,
                 testPayload,
-                TimelineFilter.ExtractorType.KeyValueGroups,
-                TimelineFilter.DiagramType.Percentage,
+                EntriesExtractor.ExtractionType.GroupsManyEntries,
+                DiagramType.Percentage,
                 true
             ) == expectedText
         )
@@ -37,8 +40,8 @@ class ExtractPatternRegexTest {
             ExtractorChecker.testRegex(
                 extractPattern,
                 testPayload,
-                TimelineFilter.ExtractorType.KeyValueGroups,
-                TimelineFilter.DiagramType.Percentage,
+                EntriesExtractor.ExtractionType.GroupsManyEntries,
+                DiagramType.Percentage,
                 false
             ) == expectedText
         )

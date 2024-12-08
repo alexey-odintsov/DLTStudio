@@ -1,6 +1,8 @@
 package com.alekso.dltstudio.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,21 +16,32 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.DragData
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.ExternalDragValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.onExternalDrag
+import androidx.compose.ui.draganddrop.DragAndDropEvent
+import androidx.compose.ui.draganddrop.DragAndDropTarget
+import androidx.compose.ui.draganddrop.DragData
+import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV1
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
+import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceMock
+import com.alekso.dltstudio.device.analyse.DeviceAnalysePanel
+import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
 import com.alekso.dltstudio.logs.LogsPanel
+import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.logs.RemoveLogsDialog
+import com.alekso.dltstudio.logs.RemoveLogsDialogState
+import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
+import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
+import com.alekso.dltstudio.logs.insights.InsightsRepository
+import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import dtlstudio.composeapp.generated.resources.Res
@@ -41,12 +54,17 @@ import java.io.File
 import java.net.URI
 
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalSplitPaneApi::class)
+@OptIn(
+    ExperimentalComposeUiApi::class,
+    ExperimentalSplitPaneApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 @Preview
 fun MainWindow(
     mainViewModel: MainViewModel,
     timelineViewModel: TimelineViewModel,
+    deviceAnalyzeViewModel: DeviceAnalyzeViewModel,
     progress: Float,
     onProgressUpdate: (Float) -> Unit
 ) {
@@ -67,6 +85,7 @@ fun MainWindow(
                 toolbarErrorChecked = true,
                 toolbarWarningChecked = true,
                 toolbarWrapContentChecked = false,
+                toolbarCommentsChecked = false,
             )
         )
     }
@@ -78,111 +97,223 @@ fun MainWindow(
 
     // Logs toolbar
     val searchState by mainViewModel.searchState.collectAsState()
+    val colorFiltersDialogState = remember { mutableStateOf(false) }
 
-    val updateToolbarFatalCheck: (Boolean) -> Unit =
-        { checked ->
+    if (colorFiltersDialogState.value) {
+        ColorFiltersDialog(
+            visible = colorFiltersDialogState.value,
+            onDialogClosed = { colorFiltersDialogState.value = false },
+            colorFilters = mainViewModel.colorFilters,
+            onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
+            onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
+            onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
+        )
+    }
+
+    val devicePreviewsDialogState = remember { mutableStateOf(false) }
+
+    if (devicePreviewsDialogState.value) {
+        VirtualDevicesDialog(
+            visible = devicePreviewsDialogState.value,
+            onDialogClosed = { devicePreviewsDialogState.value = false },
+            virtualDevices = mainViewModel.virtualDevices,
+            onVirtualDeviceUpdate = { device -> mainViewModel.onVirtualDeviceUpdate(device) },
+            onVirtualDeviceDelete = { device -> mainViewModel.onVirtualDeviceDelete(device) },
+        )
+    }
+
+    val removeLogsDialogState = remember {
+        mutableStateOf(
+            RemoveLogsDialogState(
+                visible = false,
+                message = null
+            )
+        )
+    }
+
+    if (removeLogsDialogState.value.visible) {
+        RemoveLogsDialog(
+            visible = removeLogsDialogState.value.visible,
+            message = removeLogsDialogState.value.message,
+            onDialogClosed = { removeLogsDialogState.value = RemoveLogsDialogState(false) },
+            onFilterClicked = { f -> mainViewModel.removeMessagesByFilters(f) },
+        )
+    }
+
+    val logsToolbarCallbacks = object : LogsToolbarCallbacks {
+        override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+            mainViewModel.onSearchClicked(searchType, text)
+        }
+
+        override fun updateToolbarFatalCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
         }
-    val updateToolbarErrorCheck: (Boolean) -> Unit = { checked ->
-        logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
-    }
-    val updateToolbarWarningCheck: (Boolean) -> Unit =
-        { checked ->
+
+        override fun updateToolbarErrorCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWarningCheck(checked: Boolean) {
             logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
         }
-    val updateToolbarWrapContentCheck: (Boolean) -> Unit =
-        { checked ->
-            logsToolbarState = LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
+
+        override fun updateToolbarCommentsCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
         }
 
-    val onDropCallback: (ExternalDragValue) -> Unit = {
-        if (it.dragData is DragData.FilesList) {
-            val dragFilesList = it.dragData as DragData.FilesList
-            val pathList = dragFilesList.readFiles()
+        override fun updateToolbarWrapContentCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
+        }
 
-            if (pathList.isNotEmpty()) {
-                val filesList = pathList.map { path -> File(URI.create(path.substring(5)).path) }
-                mainViewModel.parseFile(filesList)
-            }
+        override fun onSearchUseRegexChanged(checked: Boolean) {
+            mainViewModel.onSearchUseRegexChanged(checked)
+        }
+
+        override fun onColorFiltersClicked() {
+            colorFiltersDialogState.value = true
         }
     }
 
-    Column(modifier = Modifier.onExternalDrag(onDrop = onDropCallback)) {
-        TabsPanel(
-            tabIndex,
-            listOf(stringResource(Res.string.tab_logs), stringResource(Res.string.tab_timeline)),
-            tabClickListener
-        )
+    Column(
+        modifier = Modifier.dragAndDropTarget(
+            shouldStartDragAndDrop = {
+                true
+            },
+            target = object : DragAndDropTarget {
+                override fun onDrop(event: DragAndDropEvent): Boolean {
+                    if (event.dragData() is DragData.FilesList) {
+                        val dragFilesList = event.dragData() as DragData.FilesList
+                        val pathList = dragFilesList.readFiles()
 
-        when (tabIndex) {
-            0 -> {
-                LogsPanel(
-                    modifier = Modifier.weight(1f),
-                    searchState = searchState,
-                    searchAutoComplete = mainViewModel.searchAutocomplete,
-                    dltMessages = mainViewModel.dltMessages,
-                    searchResult = mainViewModel.searchResult,
-                    searchIndexes = mainViewModel.searchIndexes,
-                    colorFilters = mainViewModel.colorFilters,
-                    logsToolbarState = logsToolbarState,
-                    onSearchButtonClicked = { mainViewModel.onSearchClicked(it) },
-                    updateToolbarFatalCheck = updateToolbarFatalCheck,
-                    updateToolbarErrorCheck = updateToolbarErrorCheck,
-                    updateToolbarWarningCheck = updateToolbarWarningCheck,
-                    updateToolbarWrapContentCheck = updateToolbarWrapContentCheck,
-                    onSearchUseRegexChanged = { mainViewModel.onSearchUseRegexChanged(it) },
-                    vSplitterState = vSplitterState,
-                    hSplitterState = hSplitterState,
-                    onColorFilterDelete = { mainViewModel.onColorFilterDelete(it) },
-                    onColorFilterUpdate = { i, f -> mainViewModel.onColorFilterUpdate(i, f) },
-                    onColorFilterMove = { i, o -> mainViewModel.onColorFilterMove(i, o) },
-                    logsListState = mainViewModel.logsListState,
-                    logsListSelectedRow = mainViewModel.logsListSelectedRow.value,
-                    searchListSelectedRow = mainViewModel.searchListSelectedRow.value,
-                    searchListState = mainViewModel.searchListState,
-                    onLogsRowSelected = { i, r -> mainViewModel.onLogsRowSelected(coroutineScope, i, r) },
-                    onSearchRowSelected = { i, r -> mainViewModel.onSearchRowSelected(coroutineScope, i, r) },
-                    rowContextMenuCallbacks = object : RowContextMenuCallbacks {
-                        override fun onCopyClicked(text: AnnotatedString) {
-                            clipboardManager.setText(text)
+                        if (pathList.isNotEmpty()) {
+                            val filesList =
+                                pathList.map { path -> File(URI.create(path.substring(5)).path) }
+                            mainViewModel.parseFile(filesList)
                         }
-
-                        override fun onMarkClicked(i: Int, message: DLTMessage) {
-                            // TODO: Mark row
-                        }
-
-                        override fun onRemoveClicked(context: LogRemoveContext, filter: String) {
-                            mainViewModel.removeMessages(context, filter)
-                        }
-
+                        return true
                     }
+                    return false
+                }
+            }))
+        {
+            TabsPanel(
+                tabIndex,
+                listOf(
+                    stringResource(Res.string.tab_logs),
+                    stringResource(Res.string.tab_timeline),
+                    "Device Analyse",
+                    ),
+                tabClickListener
+            )
+
+            when (tabIndex) {
+                0 -> {
+                    LogsPanel(
+                        modifier = Modifier.weight(1f),
+                        searchState = searchState,
+                        searchAutoComplete = mainViewModel.searchAutocomplete,
+                        logMessages = mainViewModel.logMessages,
+                        logInsights = mainViewModel.logInsights,
+                        virtualDevices = mainViewModel.virtualDevices,
+                        searchResult = mainViewModel.searchResult,
+                        searchIndexes = mainViewModel.searchIndexes,
+                        colorFilters = mainViewModel.colorFilters,
+                        logsToolbarState = logsToolbarState,
+                        logsToolbarCallbacks = logsToolbarCallbacks,
+                        vSplitterState = vSplitterState,
+                        hSplitterState = hSplitterState,
+                        logsListState = mainViewModel.logsListState,
+                        logsListSelectedRow = mainViewModel.logsListSelectedRow.value,
+                        searchListSelectedRow = mainViewModel.searchListSelectedRow.value,
+                        searchListState = mainViewModel.searchListState,
+                        onLogsRowSelected = { i, r ->
+                            mainViewModel.onLogsRowSelected(
+                                coroutineScope,
+                                i,
+                                r
+                            )
+                        },
+                        onSearchRowSelected = { i, r ->
+                            mainViewModel.onSearchRowSelected(
+                                coroutineScope,
+                                i,
+                                r
+                            )
+                        },
+                        onCommentUpdated = { logMessage, comment ->
+                            mainViewModel.updateComment(
+                                logMessage,
+                                comment
+                            )
+                        },
+                        rowContextMenuCallbacks = object : RowContextMenuCallbacks {
+                            override fun onCopyClicked(text: AnnotatedString) {
+                                clipboardManager.setText(text)
+                            }
+
+                            override fun onMarkClicked(i: Int, message: LogMessage) {
+                                mainViewModel.markMessage(i, message)
+                            }
+
+                            override fun onRemoveClicked(
+                                context: LogRemoveContext,
+                                filter: String
+                            ) {
+                                mainViewModel.removeMessages(context, filter)
+                            }
+
+                            override fun onRemoveDialogClicked(message: LogMessage) {
+                                removeLogsDialogState.value =
+                                    RemoveLogsDialogState(true, message)
+                            }
+                        },
+                        onShowVirtualDeviceClicked = {
+                            devicePreviewsDialogState.value = true
+                        }
+                    )
+                }
+
+                1 -> TimeLinePanel(
+                    modifier = Modifier.weight(1f),
+                    timelineViewModel = timelineViewModel,
+                    mainViewModel.logMessages,
+                    offset,
+                    offsetUpdateCallback,
+                    scale,
+                    scaleUpdateCallback
+                )
+
+                2 -> DeviceAnalysePanel(
+                    modifier = Modifier.weight(1f),
+                    deviceAnalyzeViewModel = deviceAnalyzeViewModel
                 )
             }
-
-            1 -> TimeLinePanel(
-                modifier = Modifier.weight(1f),
-                timelineViewModel = timelineViewModel,
-                mainViewModel.dltMessages,
-                offset,
-                offsetUpdateCallback,
-                scale,
-                scaleUpdateCallback
-            )
+            Divider()
+            val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
+                "Messages: ${"%,d".format(mainViewModel.logMessages.size)}"
+            } else {
+                "No file loaded"
+            }
+            StatusBar(modifier = Modifier.fillMaxWidth(), progress, statusText)
         }
-        Divider()
-        val statusText = if (mainViewModel.dltMessages.isNotEmpty()) {
-            "Messages: ${"%,d".format(mainViewModel.dltMessages.size)}"
-        } else {
-            "No file loaded"
-        }
-        StatusBar(modifier = Modifier.fillMaxWidth(), progress, statusText)
-    }
 }
 
 @Preview
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(MainViewModel(DLTParserV1(), {}), TimelineViewModel({}), 1f, {})
+        MainWindow(
+            MainViewModel(
+                DLTParserV1(),
+                {},
+                insightsRepository = InsightsRepository(),
+                virtualDeviceRepository = VirtualDeviceMock()
+            ),
+            TimelineViewModel({}),
+            DeviceAnalyzeViewModel({}),
+            1f,
+            {})
     }
 }

@@ -1,11 +1,11 @@
 package com.alekso.dltstudio.preferences
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.alekso.logger.Log
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.lang.reflect.Type
 
 
 private const val PREFERENCES_FILES_NAME = "dlt_studio_preferences.txt"
@@ -29,15 +29,15 @@ object Preferences {
     private var state = State()
     private val file by lazy {
         val platform = System.getProperty("os.name")
-        println("Platform $platform")
+        Log.d("Platform $platform")
 
         if (platform.startsWith("Mac OS")) {
             val path =
-                "${System.getProperty("user.home")}/Library/Preferences/$PREFERENCES_FILES_NAME"
-            println("Preferences path $path")
+                "${System.getProperty("user.home")}/$PREFERENCES_FILES_NAME"
+            Log.d("Preferences path $path")
             File(path)
         } else { // todo: Linux/Win implementation
-            println("Preferences default path directory")
+            Log.w("Preferences default path directory for other platforms")
             File(PREFERENCES_FILES_NAME)
         }
     }
@@ -83,10 +83,10 @@ object Preferences {
     fun saveToFile() {
         try {
             FileWriter(file).use {
-                it.write(Gson().toJson(state))
+                it.write(Json.encodeToString(state))
             }
         } catch (e: Exception) {
-            println("Failed to save preferences: $e")
+            Log.e("Failed to save preferences: $e")
         }
     }
 
@@ -99,11 +99,10 @@ object Preferences {
                 val json = FileReader(file).use {
                     it.readText()
                 }
-                val type: Type = object : TypeToken<State>() {}.type
-                state = Gson().fromJson(json, type)
+                state = Json.decodeFromString(json)
             }
         } catch (e: Exception) {
-            println("Failed to load preferences: $e")
+            Log.e("Failed to load preferences: $e")
         }
     }
 }

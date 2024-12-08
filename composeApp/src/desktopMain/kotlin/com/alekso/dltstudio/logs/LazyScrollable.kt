@@ -11,24 +11,31 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.model.LogMessage
 
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
-    dltMessages: List<DLTMessage>,
+    logMessages: SnapshotStateList<LogMessage>,
     indexes: List<Int>? = null,
     colorFilters: List<ColorFilter>,
     selectedRow: Int,
@@ -36,6 +43,7 @@ fun LazyScrollable(
     listState: LazyListState,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    showComments: Boolean,
 ) {
     Column(modifier = modifier) {
 
@@ -64,35 +72,52 @@ fun LazyScrollable(
                         wrapContent = wrapContent,
                     )
                 }
+                itemsIndexed(
+                    items = logMessages,
+                    key = { _, log -> log.key },
+                    contentType = { _, _ -> LogMessage::class }) { i, logMessage ->
 
-                items(dltMessages.size) { i ->
-                    val message = dltMessages[i]
+                    val dltMessage = logMessage.dltMessage
                     val cellStyle =
-                        colorFilters.firstOrNull { filter -> filter.assess(message) }?.cellStyle
+                        colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
                     val index: Int = if (indexes != null) indexes[i] else i
-                    val sTime: String = TimeFormatter.formatDateTime(message.timeStampNano)
+                    val sTime: String = TimeFormatter.formatDateTime(dltMessage.timeStampNano)
                     val sTimeOffset: String =
-                        if (message.standardHeader.timeStamp != null) "%.4f".format(message.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
-                    val sEcu: String = message.ecuId
-                    val sEcuId: String = "${message.standardHeader.ecuId}"
-                    val sSessionId: String = "${message.standardHeader.sessionId}"
-                    val sApplicationId: String = "${message.extendedHeader?.applicationId}"
-                    val sContextId: String = "${message.extendedHeader?.contextId}"
-                    val sContent: String = "${message.payload}"
+                        if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
+                    val sEcu: String = dltMessage.ecuId
+                    val sEcuId: String = "${dltMessage.standardHeader.ecuId}"
+                    val sSessionId: String = "${dltMessage.standardHeader.sessionId}"
+                    val sApplicationId: String = "${dltMessage.extendedHeader?.applicationId}"
+                    val sContextId: String = "${dltMessage.extendedHeader?.contextId}"
+                    val sContent: String = dltMessage.payload
                     val logTypeIndicator: LogTypeIndicator? =
-                        LogTypeIndicator.fromMessageType(message.extendedHeader?.messageInfo?.messageTypeInfo)
+                        LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)
 
                     RowContextMenu(
                         i = i,
-                        message = message,
+                        message = logMessage,
+                        rowContent = "$index $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent",
                         rowContextMenuCallbacks = rowContextMenuCallbacks,
-                        rowContent = "$index $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent"
                     ) {
                         LogRow(
                             modifier = Modifier.selectable(
                                 selected = i == selectedRow,
-                                onClick = { onRowSelected(i, index) }),
+                                onClick = { onRowSelected(i, index) }
+                            ).onKeyEvent { e ->
+                                if (e.type == KeyEventType.KeyDown) {
+                                    when (e.key) {
+                                        Key.Spacebar -> {
+                                            rowContextMenuCallbacks.onMarkClicked(i, logMessage)
+                                            true
+                                        }
+
+                                        else -> {
+                                            false
+                                        }
+                                    }
+                                } else false
+                            },
                             isSelected = (i == selectedRow),
                             index.toString(),
                             sTime,
@@ -106,6 +131,9 @@ fun LazyScrollable(
                             cellStyle = cellStyle,
                             logTypeIndicator = logTypeIndicator,
                             wrapContent = wrapContent,
+                            marked = logMessage.marked,
+                            comment = logMessage.comment,
+                            showComments = showComments,
                         )
                     }
                 }

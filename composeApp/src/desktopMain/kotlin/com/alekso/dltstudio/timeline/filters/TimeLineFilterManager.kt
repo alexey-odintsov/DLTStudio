@@ -1,36 +1,45 @@
 package com.alekso.dltstudio.timeline.filters
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.alekso.logger.Log
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.lang.reflect.Type
 
 
 class TimeLineFilterManager {
     fun saveToFile(timelineFilters: List<TimelineFilter>, file: File) {
         try {
             FileWriter(file).use {
-                it.write(Gson().toJson(timelineFilters))
+                it.write(saveFilters(timelineFilters))
             }
         } catch (e: Exception) {
-            println("Failed to save filters: $e")
+            Log.e("Failed to save filters: $e")
         }
     }
 
     fun loadFromFile(file: File): List<TimelineFilter>? {
-        var filters: List<TimelineFilter>? = null
         try {
             val json = FileReader(file).use {
                 it.readText()
             }
-            val type: Type = object : TypeToken<List<TimelineFilter?>?>() {}.type
-            filters = Gson().fromJson(json, type)
+            return parseFilters(json)
         } catch (e: Exception) {
-            println("Failed to load filters: $e")
+            Log.e("Failed to load filters: $e")
         }
-        return filters
+        return null
+    }
+
+    fun saveFilters(timelineFilters: List<TimelineFilter>): String {
+        return Json.encodeToString(timelineFilters)
+    }
+
+    fun parseFilters(jsonContent: String): List<TimelineFilter>? {
+        val migrated = jsonContent
+            .replace("KeyValueNamed", "NamedGroupsOneEntry")
+            .replace("KeyValueGroups", "GroupsManyEntries")
+        return Json.decodeFromString<List<TimelineFilter>?>(migrated)
     }
 
 }

@@ -1,20 +1,24 @@
 package com.alekso.dltstudio.timeline.filters
 
+import com.alekso.dltstudio.timeline.DiagramType
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
+
 object ExtractorChecker {
     fun testRegex(
         extractPattern: String?,
         testPayload: String?,
-        extractorType: TimelineFilter.ExtractorType,
-        diagramType: TimelineFilter.DiagramType,
+        extractorType: EntriesExtractor.ExtractionType,
+        diagramType: DiagramType,
         global: Boolean = false
     ): String {
+        // todo: Use EntriesExtractor
         var groupsTestValue = ""
         if (extractPattern != null && testPayload != null) {
             try {
                 when (extractorType) {
-                    TimelineFilter.ExtractorType.KeyValueNamed -> {
+                    EntriesExtractor.ExtractionType.NamedGroupsManyEntries -> {
                         when (diagramType) {
-                            TimelineFilter.DiagramType.Percentage -> {
+                            DiagramType.Percentage -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"
@@ -23,7 +27,7 @@ object ExtractorChecker {
                                 }
                             }
 
-                            TimelineFilter.DiagramType.MinMaxValue -> {
+                            DiagramType.MinMaxValue -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"
@@ -32,7 +36,7 @@ object ExtractorChecker {
                                 }
                             }
 
-                            TimelineFilter.DiagramType.State -> {
+                            DiagramType.State -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"
@@ -42,7 +46,27 @@ object ExtractorChecker {
                                 }
                             }
 
-                            TimelineFilter.DiagramType.Events -> {
+
+                            DiagramType.SingleState -> {
+                                val matches = Regex(extractPattern).find(testPayload)
+                                if (matches != null) {
+                                    val key: String = matches.groups["key"]?.value ?: "key"
+                                    val value: String? = matches.groups["value"]?.value
+                                    groupsTestValue = "$key -> $value"
+                                }
+                            }
+
+                            DiagramType.Duration -> {
+                                val matches = Regex(extractPattern).find(testPayload)
+                                if (matches != null) {
+                                    val key: String = matches.groups["key"]?.value ?: "key"
+                                    val begin: String? = matches.groups["begin"]?.value
+                                    val end: String? = matches.groups["end"]?.value
+                                    groupsTestValue = "$key -> $begin / $end"
+                                }
+                            }
+
+                            DiagramType.Events -> {
                                 val matches = Regex(extractPattern).find(testPayload)
                                 if (matches != null) {
                                     val key: String = matches.groups["key"]?.value ?: "key"
@@ -54,7 +78,7 @@ object ExtractorChecker {
                         }
                     }
 
-                    TimelineFilter.ExtractorType.KeyValueGroups -> {
+                    EntriesExtractor.ExtractionType.GroupsManyEntries -> {
                         if (global) {
                             val matches = Regex(extractPattern).findAll(testPayload)
                             groupsTestValue =
@@ -85,6 +109,8 @@ object ExtractorChecker {
                             }
                         }
                     }
+
+                    EntriesExtractor.ExtractionType.NamedGroupsOneEntry -> TODO()
                 }
             } catch (e: Exception) {
                 groupsTestValue = "Invalid regex ${e.printStackTrace()}"

@@ -10,7 +10,7 @@ import com.alekso.dltparser.tests.testdata.TestData
 class DLTParserV2Tests {
 
     @Test
-    fun `DTLParserV2 parse DLT_MESSAGE_1`() {
+    fun `DLTParserV2 parse DLT_MESSAGE_1`() {
         val data = TestData.DLT_MESSAGE_1.map { it.toByte() }.toByteArray().inputStream()
         val pis = ParserInputStream(data).also { it.skipNBytes(4) }
         val actual = DLTParserV2().parseDLTMessage(pis, 0, true)
@@ -19,7 +19,7 @@ class DLTParserV2Tests {
     }
 
     @Test
-    fun `DTLParserV2 parse DLT_MESSAGE_2`() {
+    fun `DLTParserV2 parse DLT_MESSAGE_2`() {
         val data = TestData.DLT_MESSAGE_2.map { it.toByte() }.toByteArray().inputStream()
         val pis = ParserInputStream(data).also { it.skipNBytes(4) }
         val actual = DLTParserV2().parseDLTMessage(pis, 0, true)
@@ -29,7 +29,7 @@ class DLTParserV2Tests {
 
     @Ignore
     @Test
-    fun `DTLParserV2 parse DLT_MESSAGE_BROKEN_1`() {
+    fun `DLTParserV2 parse DLT_MESSAGE_BROKEN_1`() {
         val data = TestData.DLT_MESSAGE_BROKEN_1.map { it.toByte() }.toByteArray().inputStream()
         val pis = ParserInputStream(data).also { it.skipNBytes(4) }
         val actual = DLTParserV2().parseDLTMessage(pis, 0, true)

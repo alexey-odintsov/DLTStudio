@@ -4,14 +4,14 @@ import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
-import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.RowContextMenuCallbacks
 
 @Composable
 fun RowContextMenu(
     i: Int,
-    message: DLTMessage,
+    message: LogMessage,
     rowContent: String,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     content: @Composable () -> Unit
@@ -20,16 +20,21 @@ fun RowContextMenu(
         ContextMenuItem("Copy") {
             rowContextMenuCallbacks.onCopyClicked(AnnotatedString(rowContent))
         },
-        ContextMenuItem("Mark") { rowContextMenuCallbacks.onMarkClicked(i, message) },
+        ContextMenuItem(if (message.marked) "Unmark" else "Mark") {
+            rowContextMenuCallbacks.onMarkClicked(
+                i,
+                message
+            )
+        },
         )
 
-    message.extendedHeader?.let {
+    message.dltMessage.extendedHeader?.let {
         menuItems.add(ContextMenuItem("Remove context '${it.contextId}'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.ContextId, it.contextId)
         })
     }
 
-    message.extendedHeader?.let {
+    message.dltMessage.extendedHeader?.let {
         menuItems.add(ContextMenuItem("Remove application '${it.applicationId}'") {
             rowContextMenuCallbacks.onRemoveClicked(
                 LogRemoveContext.ApplicationId,
@@ -38,19 +43,26 @@ fun RowContextMenu(
         })
     }
 
-    message.standardHeader.ecuId?.let {
+    message.dltMessage.standardHeader.ecuId?.let {
         menuItems.add(ContextMenuItem("Remove ecu '$it'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.EcuId, it)
         })
     }
 
-    message.standardHeader.sessionId?.let {
+    message.dltMessage.standardHeader.sessionId?.let {
         menuItems.add(ContextMenuItem("Remove session '$it'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.SessionId, it.toString())
         })
     }
 
-    message.timeStampNano.let {
+    message.dltMessage.payload.let {
+        menuItems.add(
+            ContextMenuItem("Remove by custom attributes") {
+                rowContextMenuCallbacks.onRemoveDialogClicked(message)
+            })
+    }
+
+    message.dltMessage.timeStampNano.let {
         menuItems.add(ContextMenuItem("Remove rows before") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.BeforeTimestamp, it.toString())
         })

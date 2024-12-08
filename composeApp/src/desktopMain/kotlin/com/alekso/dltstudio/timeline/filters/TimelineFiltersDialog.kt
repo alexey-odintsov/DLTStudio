@@ -20,14 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltstudio.timeline.DiagramType
+import com.alekso.dltstudio.timeline.filters.edit.EditTimelineFilterDialog
+import com.alekso.dltstudio.timeline.filters.edit.EditTimelineFilterDialogState
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.ImageButton
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.icon_delete
-import dtlstudio.composeapp.generated.resources.icon_down
-import dtlstudio.composeapp.generated.resources.icon_edit
-import dtlstudio.composeapp.generated.resources.icon_up
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.icon_delete
+import dltstudio.composeapp.generated.resources.icon_down
+import dltstudio.composeapp.generated.resources.icon_edit
+import dltstudio.composeapp.generated.resources.icon_up
 
 
 @Composable
@@ -50,8 +54,8 @@ fun TimelineFiltersDialog(
             EditTimelineFilterDialog(
                 visible = editDialogState.value.visible,
                 onDialogClosed = { editDialogState.value = EditTimelineFilterDialogState(false) },
-                colorFilter = editDialogState.value.filter,
-                colorFilterIndex = editDialogState.value.filterIndex,
+                timelineFilter = editDialogState.value.filter,
+                filterIndex = editDialogState.value.filterIndex,
                 onFilterUpdate = { i, filter ->
                     editDialogState.value.filter = filter
                     onTimelineFilterUpdate(i, filter)
@@ -152,8 +156,8 @@ fun PreviewTimelineFiltersDialog() {
             name = "CPU Usage by PID", enabled = true,
             filters = mutableMapOf(),
             extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
-            diagramType = TimelineFilter.DiagramType.Percentage,
-            extractorType = TimelineFilter.ExtractorType.KeyValueNamed
+            diagramType = DiagramType.Percentage,
+            extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries
         )
     )
 

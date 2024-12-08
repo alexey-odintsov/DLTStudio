@@ -9,40 +9,66 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.SampleData
+import com.alekso.dltstudio.logs.insights.LogInsight
+import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.ui.Panel
 import com.alekso.dltstudio.ui.TabsPanel
 
 @Composable
-fun LogPreviewPanel(modifier: Modifier, dltMessage: DLTMessage?, messageIndex: Int) {
+fun LogPreviewPanel(
+    modifier: Modifier,
+    logMessage: LogMessage?,
+    virtualDevices: List<VirtualDevice>,
+    messageIndex: Int,
+    logInsights: SnapshotStateList<LogInsight>? = null,
+    onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
+    onShowVirtualDeviceClicked: () -> Unit = {},
+) {
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
 
-    Column(modifier = modifier) {
+    Column(modifier = modifier.background(MaterialTheme.colors.background)) {
         Panel(Modifier.fillMaxSize(), title = "Message Info") {
-            TabsPanel(tabIndex, listOf("Simple", "Detailed"), tabClickListener)
+            TabsPanel(tabIndex, listOf("Simple", "Detailed", "Preview"), tabClickListener)
 
             when (tabIndex) {
                 0 -> {
-                    DLTSimplifiedInfoView(dltMessage = dltMessage, messageIndex = messageIndex)
+                    DLTSimplifiedInfoView(
+                        logMessage = logMessage, messageIndex = messageIndex,
+                        insights = logInsights,
+                        onCommentUpdated = onCommentUpdated
+                    )
+                }
+                1 -> {
+                    DLTDetailedInfoView(logMessage = logMessage, messageIndex = messageIndex)
                 }
 
-                else -> {
-                    DLTDetailedInfoView(dltMessage = dltMessage, messageIndex = messageIndex)
+                2 -> {
+                    DevicePreviewView(
+                        modifier = Modifier.fillMaxSize(), logMessage = logMessage,
+                        virtualDevices = virtualDevices,
+                        messageIndex = messageIndex,
+                        onShowVirtualDeviceClicked = onShowVirtualDeviceClicked,
+                    )
                 }
+
+                else -> {}
             }
 
         }
@@ -103,6 +129,11 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 @Preview
 @Composable
 fun PreviewLogPreview() {
-    val dltMessage = SampleData.getSampleDltMessages(1)[0]
-    LogPreviewPanel(Modifier.width(200.dp), dltMessage = dltMessage, 0)
+    val dltMessage = LogMessage(SampleData.getSampleDltMessages(1)[0])
+    LogPreviewPanel(
+        Modifier.width(200.dp),
+        logMessage = dltMessage,
+        virtualDevices = emptyList(),
+        0
+    )
 }

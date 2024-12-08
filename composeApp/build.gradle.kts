@@ -4,15 +4,19 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.room)
+    alias(libs.plugins.ksp)
+    kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
 kotlin {
     jvm("desktop")
-    
+
     sourceSets {
         val desktopMain by getting
-        
+
         commonMain.dependencies {
+            implementation(project(":logger"))
             implementation(project(":dltparser"))
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -20,7 +24,10 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.compose.splitpane)
             implementation(compose.components.resources)
-            implementation(libs.gson)
+            implementation(libs.kotlin.coroutines.swing)
+            implementation(libs.androidx.room.runtime)
+            implementation(libs.sqlite.bundled)
+            implementation(libs.kotlin.serializaion)
         }
 
         desktopMain.dependencies {
@@ -50,10 +57,18 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.alekso.dtlstudio"
+            packageName = "com.alekso.dltstudio"
             packageVersion = "1.0.0"
         }
     }
 }
 
 task("testClasses")
+
+room {
+    schemaDirectory("$projectDir/schemas")
+}
+
+dependencies {
+    add("ksp", libs.androidx.room.compiler) // Fixes AppDatabase_Impl not found
+}
