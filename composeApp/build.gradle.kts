@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.room)
     alias(libs.plugins.ksp)
+    kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
 kotlin {
@@ -23,10 +24,10 @@ kotlin {
             implementation(compose.ui)
             implementation(libs.compose.splitpane)
             implementation(compose.components.resources)
-            implementation(libs.gson)
             implementation(libs.kotlin.coroutines.swing)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.kotlin.serializaion)
         }
 
         desktopMain.dependencies {

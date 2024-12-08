@@ -1,19 +1,17 @@
 package com.alekso.dltstudio.logs.colorfilters
 
 import com.alekso.logger.Log
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.lang.reflect.Type
-
 
 class ColorFilterManager {
     fun saveToFile(colorFilters: List<ColorFilter>, file: File) {
         try {
             FileWriter(file).use {
-                it.write(Gson().toJson(colorFilters))
+                it.write(Json.encodeToString(colorFilters))
             }
         } catch (e: Exception) {
             Log.e("Failed to save filters: $e")
@@ -26,8 +24,7 @@ class ColorFilterManager {
             val json = FileReader(file).use {
                 it.readText()
             }
-            val type: Type = object : TypeToken<List<ColorFilter?>?>() {}.type
-            filters = Gson().fromJson(json, type)
+            filters = Json.decodeFromString(json)
         } catch (e: Exception) {
             Log.e("Failed to load filters: $e")
         }

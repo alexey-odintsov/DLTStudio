@@ -1,12 +1,11 @@
 package com.alekso.dltstudio.preferences
 
 import com.alekso.logger.Log
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.lang.reflect.Type
 
 
 private const val PREFERENCES_FILES_NAME = "dlt_studio_preferences.txt"
@@ -84,7 +83,7 @@ object Preferences {
     fun saveToFile() {
         try {
             FileWriter(file).use {
-                it.write(Gson().toJson(state))
+                it.write(Json.encodeToString(state))
             }
         } catch (e: Exception) {
             Log.e("Failed to save preferences: $e")
@@ -100,8 +99,7 @@ object Preferences {
                 val json = FileReader(file).use {
                     it.readText()
                 }
-                val type: Type = object : TypeToken<State>() {}.type
-                state = Gson().fromJson(json, type)
+                state = Json.decodeFromString(json)
             }
         } catch (e: Exception) {
             Log.e("Failed to load preferences: $e")
