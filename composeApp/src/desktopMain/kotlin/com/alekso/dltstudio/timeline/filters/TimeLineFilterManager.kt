@@ -36,7 +36,10 @@ class TimeLineFilterManager {
     }
 
     fun parseFilters(jsonContent: String): List<TimelineFilter>? {
-        return Json.decodeFromString<List<TimelineFilter>?>(jsonContent)
+        val migrated = jsonContent
+            .replace("KeyValueNamed", "NamedGroupsOneEntry")
+            .replace("KeyValueGroups", "GroupsManyEntries")
+        return Json.decodeFromString<List<TimelineFilter>?>(migrated)
     }
 
 }
