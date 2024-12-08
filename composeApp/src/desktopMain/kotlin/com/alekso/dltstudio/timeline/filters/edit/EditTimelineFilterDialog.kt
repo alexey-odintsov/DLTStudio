@@ -21,6 +21,7 @@ import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.CustomEditText
 import com.alekso.dltstudio.ui.TabsPanel
@@ -51,7 +52,7 @@ fun EditTimelineFilterDialog(
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (filterIndex >= 0) "Edit Timeline Filter" else "Add new Timeline filter",
-        state = rememberDialogState(width = 700.dp, height = 500.dp)
+        state = rememberDialogState(width = 700.dp, height = 600.dp)
     ) {
         EditTimelineFilterPanel(
             dialogViewModel,
@@ -120,7 +121,7 @@ fun PreviewEditTimelineFilterDialog() {
         filters = mutableMapOf(),
         extractPattern = """(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?""",
         diagramType = DiagramType.Percentage,
-        extractorType = TimelineFilter.ExtractorType.KeyValueNamed,
+        extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries,
         testClause = "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%",
     )
 

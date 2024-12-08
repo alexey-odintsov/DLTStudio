@@ -5,12 +5,12 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alekso.dltparser.dlt.extendedheader.MessageType
+import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 
 class EditTimelineFilterViewModel(
     val filterIndex: Int,
@@ -29,7 +29,7 @@ class EditTimelineFilterViewModel(
     var contextId by mutableStateOf(filter.filters[FilterParameter.ContextId]?.value)
     var sessionId by mutableStateOf(filter.filters[FilterParameter.SessionId]?.value)
     var extractPattern by mutableStateOf(filter.extractPattern)
-    var extractorType by mutableStateOf(filter.extractorType.name)
+    var extractorType by mutableStateOf(filter.extractorType)
     var testPayload by mutableStateOf(filter.testClause)
     var groupsTestValue by mutableStateOf("")
 
@@ -105,7 +105,7 @@ class EditTimelineFilterViewModel(
                 filters = map,
                 extractPattern = extractPattern,
                 diagramType = DiagramType.valueOf(diagramType),
-                extractorType = TimelineFilter.ExtractorType.valueOf(extractorType),
+                extractorType = extractorType,
                 testClause = testPayload,
             )
         )

@@ -11,10 +11,10 @@ import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineDurationEntries
 import com.alekso.dltstudio.timeline.TimeLineDurationEntry
-import com.alekso.dltstudio.timeline.TimeLineEntry
 import com.alekso.dltstudio.timeline.TimeLineEvent
 import com.alekso.dltstudio.timeline.TimeLineEventEntries
 import com.alekso.dltstudio.timeline.TimeLineEventEntry
+import com.alekso.dltstudio.timeline.TimeLineFloatEntry
 import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries
 import com.alekso.dltstudio.timeline.TimeLinePercentageEntries
 import com.alekso.dltstudio.timeline.TimeLineSingleStateEntries
@@ -32,11 +32,11 @@ object TimelinePreviewFactory {
                 TimelinePercentageView(
                     modifier = modifier,
                     entries = TimeLinePercentageEntries().also {
-                        it.addEntry(TimeLineEntry(1_000_000L, "a", 20f))
-                        it.addEntry(TimeLineEntry(2_000_000L, "a", 42f))
-                        it.addEntry(TimeLineEntry(3_000_000L, "a", 25f))
-                        it.addEntry(TimeLineEntry(4_000_000L, "a", 79f))
-                        it.addEntry(TimeLineEntry(5_000_000L, "a", 59f))
+                        it.addEntry(TimeLineFloatEntry(1_000_000L, "a", 20f))
+                        it.addEntry(TimeLineFloatEntry(2_000_000L, "a", 42f))
+                        it.addEntry(TimeLineFloatEntry(3_000_000L, "a", 25f))
+                        it.addEntry(TimeLineFloatEntry(4_000_000L, "a", 79f))
+                        it.addEntry(TimeLineFloatEntry(5_000_000L, "a", 59f))
                     },
                     timeFrame = timeFrame,
                     highlightedKey = null
@@ -47,16 +47,16 @@ object TimelinePreviewFactory {
                 TimelineMinMaxValueView(
                     modifier = modifier,
                     entries = TimeLineMinMaxEntries().also {
-                        it.addEntry(TimeLineEntry(500_000L, "a", 48f))
-                        it.addEntry(TimeLineEntry(1_500_000L, "a", 68f))
-                        it.addEntry(TimeLineEntry(2_500_000L, "a", 55f))
-                        it.addEntry(TimeLineEntry(3_500_000L, "a", 92f))
-                        it.addEntry(TimeLineEntry(4_500_000L, "a", 96f))
+                        it.addEntry(TimeLineFloatEntry(500_000L, "a", 48f))
+                        it.addEntry(TimeLineFloatEntry(1_500_000L, "a", 68f))
+                        it.addEntry(TimeLineFloatEntry(2_500_000L, "a", 55f))
+                        it.addEntry(TimeLineFloatEntry(3_500_000L, "a", 92f))
+                        it.addEntry(TimeLineFloatEntry(4_500_000L, "a", 96f))
 
-                        it.addEntry(TimeLineEntry(1_000_000L, "b", 15f))
-                        it.addEntry(TimeLineEntry(2_000_000L, "b", 20f))
-                        it.addEntry(TimeLineEntry(3_000_000L, "b", 45f))
-                        it.addEntry(TimeLineEntry(4_000_000L, "b", 55f))
+                        it.addEntry(TimeLineFloatEntry(1_000_000L, "b", 15f))
+                        it.addEntry(TimeLineFloatEntry(2_000_000L, "b", 20f))
+                        it.addEntry(TimeLineFloatEntry(3_000_000L, "b", 45f))
+                        it.addEntry(TimeLineFloatEntry(4_000_000L, "b", 55f))
                     },
                     timeFrame = timeFrame,
                     highlightedKey = null,

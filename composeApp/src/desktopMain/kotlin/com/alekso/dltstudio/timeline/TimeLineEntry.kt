@@ -1,11 +1,17 @@
 package com.alekso.dltstudio.timeline
 
 
-open class TimeLineEntry<T>(
+abstract class TimeLineEntry<T>(
     open val timestamp: Long,
     open val key: String,
     open val value: T
 )
+
+data class TimeLineFloatEntry(
+    override val timestamp: Long,
+    override val key: String,
+    override val value: Float
+) : TimeLineEntry<Float>(timestamp, key, value)
 
 /**
  * State that requires new and old values
@@ -94,8 +100,8 @@ class TimeLineDurationEntries : TimeLineEntries<TimeLineDurationEntry>() {
     }
 }
 
-class TimeLinePercentageEntries : TimeLineEntries<TimeLineEntry<Float>>() {
-    override fun addEntry(entry: TimeLineEntry<Float>) {
+class TimeLinePercentageEntries : TimeLineEntries<TimeLineFloatEntry>() {
+    override fun addEntry(entry: TimeLineFloatEntry) {
         if (!map.containsKey(entry.key)) {
             map[entry.key] = mutableListOf()
         }
@@ -116,10 +122,10 @@ class TimeLineEventEntries : TimeLineEntries<TimeLineEventEntry>() {
     }
 }
 
-class TimeLineMinMaxEntries : TimeLineEntries<TimeLineEntry<Float>>() {
+class TimeLineMinMaxEntries : TimeLineEntries<TimeLineFloatEntry>() {
     var minValue: Float = 0f
     var maxValue: Float = 0f
-    override fun addEntry(entry: TimeLineEntry<Float>) {
+    override fun addEntry(entry: TimeLineFloatEntry) {
         if (!map.containsKey(entry.key)) {
             map[entry.key] = mutableListOf()
         }
@@ -133,19 +139,4 @@ class TimeLineMinMaxEntries : TimeLineEntries<TimeLineEntry<Float>>() {
             maxValue = entryValue
         }
     }
-}
-
-private class Test {
-
-    val list = mutableListOf<TimeLineEntries<*>>()
-
-    fun run() {
-        list.add(0, TimeLinePercentageEntries())
-        list.add(1, TimeLineMinMaxEntries())
-        list.add(2, TimeLineStateEntries())
-
-        val percentageEntries = list[1] as TimeLinePercentageEntries
-        percentageEntries.addEntry(TimeLineEntry<Float>(0L, "a", 1f))
-    }
-
 }

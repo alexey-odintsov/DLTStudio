@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.colors.ColorPalette
 import com.alekso.dltstudio.timeline.TimeFrame
-import com.alekso.dltstudio.timeline.TimeLineEntry
+import com.alekso.dltstudio.timeline.TimeLineFloatEntry
 import com.alekso.dltstudio.timeline.TimeLinePercentageEntries
 import com.alekso.dltstudio.timeline.TimeLineViewStyle
 import java.time.Instant
@@ -139,25 +139,25 @@ fun PreviewTimelineView() {
     val entries = TimeLinePercentageEntries()
 
     entries.map[key1] = mutableListOf(
-        TimeLineEntry(ts + 50_000, key1, 10f),
-        TimeLineEntry(ts + 550_000, key1, 49f),
-        TimeLineEntry(ts + 1_050_000, key1, 50f),
-        TimeLineEntry(ts + 1_450_000, key1, 70f),
-        TimeLineEntry(ts + 2_000_000, key1, 83f),
-        TimeLineEntry(ts + 3_300_000, key1, 100f),
-        TimeLineEntry(ts + 4_400_000, key1, 100f),
-        TimeLineEntry(ts + 4_500_000, key1, 40f),
-        TimeLineEntry(ts + 5_000_000, key1, 0f),
-        TimeLineEntry(ts + 6_000_000, key1, 0f),
+        TimeLineFloatEntry(ts + 50_000, key1, 10f),
+        TimeLineFloatEntry(ts + 550_000, key1, 49f),
+        TimeLineFloatEntry(ts + 1_050_000, key1, 50f),
+        TimeLineFloatEntry(ts + 1_450_000, key1, 70f),
+        TimeLineFloatEntry(ts + 2_000_000, key1, 83f),
+        TimeLineFloatEntry(ts + 3_300_000, key1, 100f),
+        TimeLineFloatEntry(ts + 4_400_000, key1, 100f),
+        TimeLineFloatEntry(ts + 4_500_000, key1, 40f),
+        TimeLineFloatEntry(ts + 5_000_000, key1, 0f),
+        TimeLineFloatEntry(ts + 6_000_000, key1, 0f),
     )
     entries.map[key2] = mutableListOf(
-        TimeLineEntry(ts + 200_000, key2, 0f),
-        TimeLineEntry(ts + 2_100_000, key2, 0f),
-        TimeLineEntry(ts + 2_700_000, key2, 4f),
-        TimeLineEntry(ts + 3_400_000, key2, 42f),
-        TimeLineEntry(ts + 3_560_000, key2, 63f),
-        TimeLineEntry(ts + 4_000_000, key2, 72f),
-        TimeLineEntry(ts + 6_800_000, key2, 100f),
+        TimeLineFloatEntry(ts + 200_000, key2, 0f),
+        TimeLineFloatEntry(ts + 2_100_000, key2, 0f),
+        TimeLineFloatEntry(ts + 2_700_000, key2, 4f),
+        TimeLineFloatEntry(ts + 3_400_000, key2, 42f),
+        TimeLineFloatEntry(ts + 3_560_000, key2, 63f),
+        TimeLineFloatEntry(ts + 4_000_000, key2, 72f),
+        TimeLineFloatEntry(ts + 6_800_000, key2, 100f),
     )
 
     Column {

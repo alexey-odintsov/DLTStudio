@@ -1,3 +1,5 @@
+package com.alekso.dltstudio.tests
+
 import androidx.compose.ui.geometry.Rect
 import com.alekso.dltstudio.logs.infopanel.DeviceView
 import org.junit.Assert

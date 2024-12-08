@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -20,20 +19,21 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.ExtractorChecker
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.graph.TimelinePreviewFactory
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
 
-private val COL_NAME_SIZE_DP = 150.dp
 private val COL_VALUE = 250.dp
 private val COL_PATTERN = 400.dp
 private val colNameStyle = Modifier.padding(horizontal = 4.dp)
+private val paragraph = Modifier.padding(top = 4.dp)
 
 @Composable
 fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
     Row {
         Column(Modifier.weight(1f)) {
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(modifier = colNameStyle, text = "Diagram Type")
                 CustomDropDown(
                     modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
@@ -43,16 +43,14 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
                 )
             }
 
-            Row {
-                Text(
-                    modifier = Modifier.width(COL_PATTERN).padding(horizontal = 4.dp),
-                    text = DiagramType.entries.first { it.name == viewModel.diagramType }.description
-                )
-            }
+            Text(
+                modifier = Modifier.width(COL_PATTERN).padding(horizontal = 4.dp).then(paragraph),
+                text = DiagramType.entries.first { it.name == viewModel.diagramType }.description
+            )
 
-            Row {
+            Row(modifier = paragraph, verticalAlignment = Alignment.CenterVertically) {
                 val items = mutableListOf<String>()
-                items.addAll(TimelineFilter.ExtractorType.entries.map { it.name })
+                items.addAll(EntriesExtractor.ExtractionType.entries.map { it.name })
                 var initialSelection =
                     items.indexOfFirst { it == viewModel.filter.extractorType.name }
                 if (initialSelection == -1) initialSelection = 0
@@ -62,20 +60,34 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
                     modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
                     items = items,
                     initialSelectedIndex = initialSelection,
-                    onItemsSelected = { i -> viewModel.extractorType = items[i] }
+                    onItemsSelected = { i ->
+                        viewModel.extractorType = EntriesExtractor.ExtractionType.valueOf(items[i])
+                    }
                 )
             }
 
+            Text(modifier = colNameStyle.then(paragraph), text = viewModel.extractorType.description)
 
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(modifier = colNameStyle, text = "Extract parameters")
-            }
-            Column() {
-                DiagramType.entries.first { it.name == viewModel.diagramType }.params.forEach { (p, param) ->
-                    Text(
-                        modifier = Modifier.fillMaxWidth().padding(start = 14.dp, end = 4.dp),
-                        text = "(?<${param.key}>.*) – Required: ${param.required}. ${param.description}"
-                    )
+            when (viewModel.extractorType) {
+                EntriesExtractor.ExtractionType.NamedGroupsOneEntry -> {
+                    Row(modifier = paragraph, verticalAlignment = Alignment.CenterVertically) {
+                        Text(modifier = colNameStyle, text = "Extract parameters")
+                    }
+                    Column {
+                        DiagramType.entries.first { it.name == viewModel.diagramType }.params.forEach { (p, param) ->
+                            Text(
+                                modifier = Modifier.fillMaxWidth().padding(start = 14.dp, end = 4.dp),
+                                text = "(?<${param.key}>.*) – Required: ${param.required}. ${param.description}"
+                            )
+                        }
+                    }
+
+                }
+                EntriesExtractor.ExtractionType.NamedGroupsManyEntries -> {
+
+                }
+                EntriesExtractor.ExtractionType.GroupsManyEntries -> {
+
                 }
             }
         }
@@ -98,7 +110,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
                     extractPattern = viewModel.extractPattern,
                     testPayload = viewModel.testPayload,
                     diagramType = DiagramType.valueOf(viewModel.diagramType),
-                    extractorType = TimelineFilter.ExtractorType.valueOf(viewModel.extractorType),
+                    extractorType = viewModel.extractorType,
                 )
             }
         )
@@ -139,7 +151,7 @@ fun PreviewEditTimelineFilterExtractPanel() {
         filters = mutableMapOf(),
         extractPattern = """(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?(cpu\d+?):\s?(\d+(?>.\d+)?)%\s?""",
         diagramType = DiagramType.Percentage,
-        extractorType = TimelineFilter.ExtractorType.KeyValueNamed,
+        extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries,
         testClause = "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%",
     )
 

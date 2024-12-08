@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.icon_w
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.icon_w
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 

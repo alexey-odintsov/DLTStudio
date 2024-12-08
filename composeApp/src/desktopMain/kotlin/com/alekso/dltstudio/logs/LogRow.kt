@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.icon_mark
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource
 
 

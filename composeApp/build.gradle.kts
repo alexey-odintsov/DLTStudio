@@ -56,7 +56,7 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.alekso.dtlstudio"
+            packageName = "com.alekso.dltstudio"
             packageVersion = "1.0.0"
         }
     }

@@ -30,6 +30,8 @@ import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceMock
+import com.alekso.dltstudio.device.analyse.DeviceAnalysePanel
+import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
 import com.alekso.dltstudio.logs.LogsPanel
 import com.alekso.dltstudio.logs.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.LogsToolbarState
@@ -58,6 +60,7 @@ import java.net.URI
 fun MainWindow(
     mainViewModel: MainViewModel,
     timelineViewModel: TimelineViewModel,
+    deviceAnalyzeViewModel: DeviceAnalyzeViewModel,
     progress: Float,
     onProgressUpdate: (Float) -> Unit
 ) {
@@ -191,7 +194,7 @@ fun MainWindow(
                 }
             }))
         {
-            TabsPanel(tabIndex, listOf("Logs", "Timeline"), tabClickListener)
+            TabsPanel(tabIndex, listOf("Logs", "Timeline", "Device Analyse"), tabClickListener)
 
             when (tabIndex) {
                 0 -> {
@@ -269,6 +272,11 @@ fun MainWindow(
                     scale,
                     scaleUpdateCallback
                 )
+
+                2 -> DeviceAnalysePanel(
+                    modifier = Modifier.weight(1f),
+                    deviceAnalyzeViewModel = deviceAnalyzeViewModel
+                )
             }
             Divider()
             val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
@@ -292,6 +300,7 @@ fun PreviewMainWindow() {
                 virtualDeviceRepository = VirtualDeviceMock()
             ),
             TimelineViewModel({}),
+            DeviceAnalyzeViewModel({}),
             1f,
             {})
     }
