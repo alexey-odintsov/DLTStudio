@@ -1,12 +1,11 @@
 package com.alekso.dltstudio.timeline.filters
 
 import com.alekso.logger.Log
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.lang.reflect.Type
 
 
 class TimeLineFilterManager {
@@ -33,12 +32,11 @@ class TimeLineFilterManager {
     }
 
     fun saveFilters(timelineFilters: List<TimelineFilter>): String {
-        return Gson().toJson(timelineFilters)
+        return Json.encodeToString(timelineFilters)
     }
 
     fun parseFilters(jsonContent: String): List<TimelineFilter>? {
-        val type: Type = object : TypeToken<List<TimelineFilter?>?>() {}.type
-        return Gson().fromJson(jsonContent, type)
+        return Json.decodeFromString<List<TimelineFilter>?>(jsonContent)
     }
 
 }

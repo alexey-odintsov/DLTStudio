@@ -6,10 +6,11 @@ import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor.ExtractionType
+import kotlinx.serialization.Serializable
 
 const val NO_KEY = "no_key"
 
-
+@Serializable
 data class TimelineFilter(
     val name: String,
     val enabled: Boolean = true,
@@ -18,7 +19,7 @@ data class TimelineFilter(
     val diagramType: DiagramType,
     val extractorType: ExtractionType,
     val testClause: String? = null,
-    ) {
+) {
 
     val key: String = "$filters$extractPattern".hashCode().toString()
 
