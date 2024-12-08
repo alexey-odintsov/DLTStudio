@@ -52,7 +52,7 @@ fun EditTimelineFilterDialog(
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (filterIndex >= 0) "Edit Timeline Filter" else "Add new Timeline filter",
-        state = rememberDialogState(width = 700.dp, height = 500.dp)
+        state = rememberDialogState(width = 700.dp, height = 600.dp)
     ) {
         EditTimelineFilterPanel(
             dialogViewModel,
