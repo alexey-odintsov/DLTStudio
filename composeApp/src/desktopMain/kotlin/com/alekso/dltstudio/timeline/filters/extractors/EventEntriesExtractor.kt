@@ -17,7 +17,7 @@ class EventEntriesExtractor : EntriesExtractor {
         val list = mutableListOf<TimeLineEventEntry>()
 
         when (extractionType) {
-            ExtractionType.KeyValueNamed -> {
+            ExtractionType.NamedGroupsOneEntry -> {
                 val key: String = matches.groups[Param.KEY.value]?.value ?: NO_KEY
                 val value: String? = matches.groups[Param.VALUE.value]?.value
                 val info: String? = matches.groups[Param.INFO.value]?.value
@@ -33,7 +33,8 @@ class EventEntriesExtractor : EntriesExtractor {
                 }
             }
 
-            ExtractionType.KeyValueGroups -> throw UnsupportedOperationException()
+            ExtractionType.GroupsManyEntries -> throw UnsupportedOperationException()
+            ExtractionType.NamedGroupsManyEntries -> throw UnsupportedOperationException()
         }
 
         return list

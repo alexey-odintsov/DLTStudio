@@ -54,7 +54,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("SYST", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.State,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries
         ),
         TimelineFilter(
             name = "Crashes",
@@ -65,7 +65,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CRSH", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Events,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueNamed
+            extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries
         ),
         TimelineFilter(
             name = "CPUC",
@@ -76,7 +76,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries
         ),
         TimelineFilter(
             name = "CPUS",
@@ -87,7 +87,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUS", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries
         ),
         TimelineFilter(
             name = "CPUP",
@@ -98,7 +98,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueNamed
+            extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries
         ),
         TimelineFilter(
             name = "MEMT",
@@ -109,7 +109,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("MEMT", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.MinMaxValue,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueGroups
+            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries
         ),
         TimelineFilter(
             name = "GPU Load",
@@ -120,7 +120,7 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueNamed
+            extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries
         ),
     )
 
@@ -130,12 +130,11 @@ class TimelineViewModel(
         get() = if (timeEnd > 0 && timeStart > 0) ((timeEnd - timeStart) / 1000000).toInt() else 0
 
 
-    fun analyzeTimeline(logMessages: SnapshotStateList<LogMessage>) {
+    fun onAnalyzeClicked(logMessages: SnapshotStateList<LogMessage>) {
         when (_analyzeState.value) {
             AnalyzeState.IDLE -> startAnalyzing(logMessages)
             AnalyzeState.ANALYZING -> stopAnalyzing()
         }
-
     }
 
     private fun stopAnalyzing() {

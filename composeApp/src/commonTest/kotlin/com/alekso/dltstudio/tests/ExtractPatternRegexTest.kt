@@ -20,7 +20,7 @@ class ExtractPatternRegexTest {
             ExtractorChecker.testRegex(
                 extractPattern,
                 testPayload,
-                EntriesExtractor.ExtractionType.KeyValueGroups,
+                EntriesExtractor.ExtractionType.GroupsManyEntries,
                 DiagramType.Percentage,
                 true
             ) == expectedText
@@ -40,7 +40,7 @@ class ExtractPatternRegexTest {
             ExtractorChecker.testRegex(
                 extractPattern,
                 testPayload,
-                EntriesExtractor.ExtractionType.KeyValueGroups,
+                EntriesExtractor.ExtractionType.GroupsManyEntries,
                 DiagramType.Percentage,
                 false
             ) == expectedText

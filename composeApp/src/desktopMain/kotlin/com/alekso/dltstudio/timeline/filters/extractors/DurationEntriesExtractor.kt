@@ -17,7 +17,7 @@ class DurationEntriesExtractor : EntriesExtractor {
         val list = mutableListOf<TimeLineDurationEntry>()
 
         when (extractionType) {
-            ExtractionType.KeyValueNamed -> {
+            ExtractionType.NamedGroupsOneEntry -> {
                 val key: String = matches.groups[Param.KEY.value]?.value ?: NO_KEY
                 val begin: String? = matches.groups[Param.BEGIN.value]?.value
                 val end: String? = matches.groups[Param.END.value]?.value
@@ -27,7 +27,8 @@ class DurationEntriesExtractor : EntriesExtractor {
                 )
             }
 
-            ExtractionType.KeyValueGroups -> throw UnsupportedOperationException()
+            ExtractionType.GroupsManyEntries -> throw UnsupportedOperationException()
+            ExtractionType.NamedGroupsManyEntries -> throw UnsupportedOperationException()
         }
 
         return list

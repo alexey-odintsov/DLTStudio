@@ -13,7 +13,7 @@ class PercentageEntriesExtractorTest {
     private val extractor = PercentageEntriesExtractor()
 
     @Test
-    fun `Test PercentageEntriesExtractor using named groups`() {
+    fun `Test PercentageEntriesExtractor named groups many entries`() {
         val dltMessage = Utils.dltMessage(
             timeStampNano = 1234567890L, payload = "12% 67% 89%"
         )
@@ -28,7 +28,26 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EntriesExtractor.ExtractionType.KeyValueNamed
+            EntriesExtractor.ExtractionType.NamedGroupsManyEntries
+        ).toSet()
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `Test PercentageEntriesExtractor named groups one entry, empty key`() {
+        val dltMessage = Utils.dltMessage(
+            timeStampNano = 1234567890L, payload = "GPU Load: 5.18%, Preemptions: 39"
+        )
+        val pattern = """GPU Load:\s+(?<value>\d+.\d+)%(?<key>)"""
+
+        val expected = listOf<TimeLineEntry<*>>(
+            TimeLineFloatEntry(1234567890L, "", 5.18f),
+        ).toSet()
+
+        val actual = extractor.extractEntry(
+            dltMessage,
+            pattern.toRegex(),
+            EntriesExtractor.ExtractionType.NamedGroupsOneEntry
         ).toSet()
         assertEquals(expected, actual)
     }
@@ -49,7 +68,7 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EntriesExtractor.ExtractionType.KeyValueGroups
+            EntriesExtractor.ExtractionType.GroupsManyEntries
         ).toSet()
         assertEquals(expected, actual)
     }

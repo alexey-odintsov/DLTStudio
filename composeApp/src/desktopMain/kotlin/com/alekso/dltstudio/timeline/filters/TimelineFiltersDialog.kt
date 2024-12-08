@@ -157,7 +157,7 @@ fun PreviewTimelineFiltersDialog() {
             filters = mutableMapOf(),
             extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
             diagramType = DiagramType.Percentage,
-            extractorType = EntriesExtractor.ExtractionType.KeyValueNamed
+            extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries
         )
     )
 
