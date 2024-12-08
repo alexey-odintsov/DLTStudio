@@ -44,9 +44,9 @@ import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.timeline.TimeLinePanel
 import com.alekso.dltstudio.timeline.TimelineViewModel
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.tab_logs
-import dtlstudio.composeapp.generated.resources.tab_timeline
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.tab_logs
+import dltstudio.composeapp.generated.resources.tab_timeline
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.rememberSplitPaneState

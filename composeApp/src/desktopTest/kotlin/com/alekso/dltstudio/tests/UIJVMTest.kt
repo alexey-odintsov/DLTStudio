@@ -3,9 +3,9 @@ package com.alekso.dltstudio.tests
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.alekso.dltstudio.ui.TabsPanel
-import dtlstudio.composeapp.generated.resources.Res
-import dtlstudio.composeapp.generated.resources.tab_logs
-import dtlstudio.composeapp.generated.resources.tab_timeline
+import dltstudio.composeapp.generated.resources.Res
+import dltstudio.composeapp.generated.resources.tab_logs
+import dltstudio.composeapp.generated.resources.tab_timeline
 import kotlinx.coroutines.test.runTest
 import org.jetbrains.compose.resources.getString
 import org.junit.Rule
