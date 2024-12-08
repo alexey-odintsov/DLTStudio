@@ -17,7 +17,7 @@ class SingleStateEntriesExtractor : EntriesExtractor {
         val list = mutableListOf<TimeLineSingleStateEntry>()
 
         when (extractionType) {
-            ExtractionType.KeyValueNamed -> {
+            ExtractionType.NamedGroupsOneEntry -> {
                 val key: String = matches.groups[Param.KEY.value]?.value ?: NO_KEY
                 val value: String? = matches.groups[Param.VALUE.value]?.value
 
@@ -27,8 +27,9 @@ class SingleStateEntriesExtractor : EntriesExtractor {
                     )
                 }
             }
+            ExtractionType.NamedGroupsManyEntries -> throw UnsupportedOperationException()
 
-            ExtractionType.KeyValueGroups -> {
+            ExtractionType.GroupsManyEntries -> {
                 if (matches.groups.size > 2) {
                     val key = matches.groups[INDEX_KEY + 1]?.value
                     val value = matches.groups[INDEX_VALUE + 1]?.value

@@ -124,7 +124,7 @@ fun TimeLinePanel(
                 offsetUpdate(0f)
             },
             analyzeState = timelineViewModel.analyzeState.value,
-            onAnalyzeClick = { timelineViewModel.analyzeTimeline(logMessages) },
+            onAnalyzeClick = { timelineViewModel.onAnalyzeClicked(logMessages) },
             onTimelineFiltersClicked = { dialogState.value = true },
         )
 

@@ -30,12 +30,12 @@ class DurationEntriesExtractorTest {
         val actual1 = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            ExtractionType.KeyValueNamed
+            ExtractionType.NamedGroupsOneEntry
         )
         val actual2 = extractor.extractEntry(
             dltMessage2,
             pattern.toRegex(),
-            ExtractionType.KeyValueNamed
+            ExtractionType.NamedGroupsOneEntry
         )
         val actual = (actual1 + actual2).toSet()
         assertEquals(expected, actual)

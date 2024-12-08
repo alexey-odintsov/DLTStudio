@@ -29,7 +29,7 @@ data class TimelineFilter(
             filters = emptyMap(),
             extractPattern = null,
             diagramType = DiagramType.Events,
-            extractorType = ExtractionType.KeyValueNamed
+            extractorType = ExtractionType.NamedGroupsManyEntries
         )
 
         // TODO: merge duplicated code from ColorFilter

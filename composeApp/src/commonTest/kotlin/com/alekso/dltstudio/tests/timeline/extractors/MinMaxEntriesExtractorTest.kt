@@ -26,7 +26,24 @@ class MinMaxEntriesExtractorTest {
         ).toSet()
 
         val actual = extractor.extractEntry(
-            dltMessage, pattern.toRegex(), EntriesExtractor.ExtractionType.KeyValueNamed
+            dltMessage, pattern.toRegex(), EntriesExtractor.ExtractionType.NamedGroupsManyEntries
+        ).toSet()
+        assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `Test MinMaxEntriesExtractor using named groups one entry`() {
+        val dltMessage = Utils.dltMessage(
+            timeStampNano = 1234567890L, payload = "MaxRSS: 345"
+        )
+        val pattern = """(?<key>MaxRSS):\s(?<value>\d+)"""
+
+        val expected = listOf<TimeLineEntry<*>>(
+            TimeLineFloatEntry(1234567890L, "MaxRSS", 345f),
+        ).toSet()
+
+        val actual = extractor.extractEntry(
+            dltMessage, pattern.toRegex(), EntriesExtractor.ExtractionType.NamedGroupsOneEntry
         ).toSet()
         assertEquals(expected, actual)
     }
@@ -47,7 +64,7 @@ class MinMaxEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EntriesExtractor.ExtractionType.KeyValueGroups
+            EntriesExtractor.ExtractionType.GroupsManyEntries
         ).toSet()
         assertEquals(expected, actual)
     }

@@ -16,7 +16,7 @@ object ExtractorChecker {
         if (extractPattern != null && testPayload != null) {
             try {
                 when (extractorType) {
-                    EntriesExtractor.ExtractionType.KeyValueNamed -> {
+                    EntriesExtractor.ExtractionType.NamedGroupsManyEntries -> {
                         when (diagramType) {
                             DiagramType.Percentage -> {
                                 val matches = Regex(extractPattern).find(testPayload)
@@ -78,7 +78,7 @@ object ExtractorChecker {
                         }
                     }
 
-                    EntriesExtractor.ExtractionType.KeyValueGroups -> {
+                    EntriesExtractor.ExtractionType.GroupsManyEntries -> {
                         if (global) {
                             val matches = Regex(extractPattern).findAll(testPayload)
                             groupsTestValue =
@@ -109,6 +109,8 @@ object ExtractorChecker {
                             }
                         }
                     }
+
+                    EntriesExtractor.ExtractionType.NamedGroupsOneEntry -> TODO()
                 }
             } catch (e: Exception) {
                 groupsTestValue = "Invalid regex ${e.printStackTrace()}"

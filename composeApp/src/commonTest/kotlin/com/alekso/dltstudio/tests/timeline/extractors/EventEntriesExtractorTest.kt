@@ -33,7 +33,7 @@ class EventEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EntriesExtractor.ExtractionType.KeyValueNamed
+            EntriesExtractor.ExtractionType.NamedGroupsOneEntry
         ).toSet()
         assertEquals(expected, actual)
     }
