@@ -20,9 +20,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.LocalLogsTextStyle
+import com.alekso.dltstudio.utils.ColorSerializer
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class CellStyle(
-    val backgroundColor: Color? = null, val textColor: Color? = null
+    @Serializable(with = ColorSerializer::class)
+    val backgroundColor: Color? = null,
+    @Serializable(with = ColorSerializer::class)
+    val textColor: Color? = null
 ) {
     companion object {
         val Default = CellStyle()

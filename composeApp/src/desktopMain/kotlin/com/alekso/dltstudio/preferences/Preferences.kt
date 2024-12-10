@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.preferences
 
 import com.alekso.logger.Log
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File
@@ -13,13 +14,14 @@ private const val MAX_RECENT_SEARCH = 10
 private const val MAX_RECENT_COLOR_FILTER = 5
 private const val MAX_RECENT_TIMELINE_FILTER = 5
 
-
+@Serializable
 data class RecentFile(
     val absolutePath: String,
     val fileName: String,
 )
 
 object Preferences {
+    @Serializable
     class State(
         var recentColorFilters: MutableList<RecentFile> = mutableListOf(),
         var recentTimelineFilters: MutableList<RecentFile> = mutableListOf(),
