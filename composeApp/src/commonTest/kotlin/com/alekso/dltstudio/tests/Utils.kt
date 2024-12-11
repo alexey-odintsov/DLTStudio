@@ -54,7 +54,7 @@ object Utils {
                         payload.toByteArray()
                     )
                 )
-            ).asText(),
+            ),
             84
         )
     }
