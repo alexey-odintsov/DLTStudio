@@ -289,7 +289,6 @@ fun MainWindow(
                     logMessages = mainViewModel.logMessages,
                     analyzeState = filesViewModel.analyzeState.value,
                     files = filesViewModel.filesEntriesMap,
-                    filesFlts = filesViewModel.filesEntriesFLSTMap,
                 )
 
             }
