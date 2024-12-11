@@ -13,6 +13,8 @@ import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 
 object TestData {
 
+    const val _0A00 = "${0x0a.toChar()}${0x00.toChar()}"
+
     // @formatter:off
     val DLT_MESSAGE_1 = listOf(
         0x44, 0x4C, 0x54, 0x01, 0x06, 0x8D, 0x85, 0x65, 0x8B, 0xD5, 0x04, 0x00, 0x4D, 0x47, 0x55,
@@ -57,7 +59,7 @@ object TestData {
                     ),
                     2,
                     63,
-                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
+                    "Page flip enqueued on connector 260 with handler 0x73d8005740$_0A00".toByteArray()
                 )
             )
         ),
@@ -114,7 +116,7 @@ object TestData {
                     ),
                     2,
                     164,
-                    "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A".toByteArray()
+                    "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A$_0A00".toByteArray()
                 )
             )
         ),
@@ -182,7 +184,7 @@ object TestData {
                     ),
                     2,
                     63,
-                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
+                    "Page flip enqueued on connector 260 with handler 0x73d8005740$_0A00".toByteArray()
                 )
             )
         ),
