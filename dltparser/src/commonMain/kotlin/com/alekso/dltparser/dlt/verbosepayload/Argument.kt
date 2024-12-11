@@ -43,7 +43,10 @@ data class Argument(
                 }
 
             typeInfo.typeBool -> if (payload[0] == 0.toByte()) "FALSE" else "TRUE"
-            else -> payload.toHex() // TODO: Add other types
+            else -> {
+                //Log.w("Can't parse payload for typeInfo: ${typeInfo}")
+                payload.toHex() // TODO: Add other types
+            }
         }
         return result.replace("\u0000", "").replace("\n", "")
     }

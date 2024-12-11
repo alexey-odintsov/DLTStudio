@@ -13,7 +13,7 @@ class EventEntriesExtractor : EntriesExtractor {
         regex: Regex,
         extractionType: ExtractionType,
     ): List<TimeLineEventEntry> {
-        val matches = regex.find(message.payload)!!
+        val matches = regex.find(message.payload?.asText() ?: "")!!
         val list = mutableListOf<TimeLineEventEntry>()
 
         when (extractionType) {

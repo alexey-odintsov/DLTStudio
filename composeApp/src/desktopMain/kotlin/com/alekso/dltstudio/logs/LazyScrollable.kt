@@ -90,7 +90,7 @@ fun LazyScrollable(
                     val sSessionId: String = "${dltMessage.standardHeader.sessionId}"
                     val sApplicationId: String = "${dltMessage.extendedHeader?.applicationId}"
                     val sContextId: String = "${dltMessage.extendedHeader?.contextId}"
-                    val sContent: String = dltMessage.payload
+                    val sContent: String = dltMessage.payload?.asText() ?: ""
                     val logTypeIndicator: LogTypeIndicator? =
                         LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)
 

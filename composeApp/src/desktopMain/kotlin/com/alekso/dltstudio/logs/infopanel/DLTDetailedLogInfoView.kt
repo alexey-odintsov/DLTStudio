@@ -8,7 +8,10 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
+import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
+import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 import com.alekso.dltparser.toBinary
 import com.alekso.dltparser.toHex
 import com.alekso.dltstudio.model.LogMessage
@@ -144,7 +147,45 @@ fun DLTDetailedInfoView(
                     text = "Payload:"
                 )
 
-                TableRow(0, "", it.payload)
+                if (it.payload != null) {
+                    when (val payload = it.payload) {
+                        is VerbosePayload -> {
+                            Header(
+                                modifier = paddingModifier,
+                                text = "Verbose payload (${payload.arguments.size} arguments):"
+                            )
+                            payload.arguments.forEachIndexed { index, it ->
+                                TableRow(
+                                    0, "",
+                                    "#$index ${it.typeInfo.getTypeString()} ${it.payloadSize} bytes"
+                                )
+                                TableRow(0, "", it.getPayloadAsText())
+                            }
+                        }
+
+                        is NonVerbosePayload -> {
+                            Header(
+                                modifier = paddingModifier,
+                                text = "Non-Verbose payload:"
+                            )
+                            MonoText(
+                                modifier = paddingModifier,
+                                text = payload.asText()
+                            )
+                        }
+
+                        is ControlMessagePayload -> {
+                            Header(
+                                modifier = paddingModifier,
+                                text = "Control Message payload:"
+                            )
+                            MonoText(
+                                modifier = paddingModifier,
+                                text = payload.asText()
+                            )
+                        }
+                    }
+                }
             }
         }
     }

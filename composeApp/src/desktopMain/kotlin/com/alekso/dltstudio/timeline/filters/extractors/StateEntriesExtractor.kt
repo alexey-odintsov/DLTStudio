@@ -12,7 +12,7 @@ class StateEntriesExtractor : EntriesExtractor {
         regex: Regex,
         extractionType: ExtractionType,
     ): List<TimeLineStateEntry> {
-        val matches = regex.find(message.payload)!!
+        val matches = regex.find(message.payload?.asText() ?: "")!!
         val list = mutableListOf<TimeLineStateEntry>()
 
         when (extractionType) {

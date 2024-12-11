@@ -88,7 +88,9 @@ data class DeviceView(
          *         return out.toString();
          *     }
          */
-        fun parse(text: String): List<DeviceView>? {
+        fun parse(text: String?): List<DeviceView>? {
+            if (text == null) return null
+
             val list = mutableListOf<DeviceView>()
             val viewMatches = Regex(
                 """

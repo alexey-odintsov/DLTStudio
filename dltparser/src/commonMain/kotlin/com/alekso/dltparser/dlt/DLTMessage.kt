@@ -16,7 +16,7 @@ data class DLTMessage(
     val ecuId: String,
     val standardHeader: StandardHeader,
     val extendedHeader: ExtendedHeader?,
-    val payload: String,
+    val payload: Payload?,
     // meta info
     val sizeBytes: Int,
 ) {

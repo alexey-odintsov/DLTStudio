@@ -10,6 +10,7 @@ import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
 import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.Payload
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
 import com.alekso.dltparser.dlt.extendedheader.MessageType
@@ -19,6 +20,7 @@ import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
 import com.alekso.dltparser.dlt.verbosepayload.Argument
 import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
+import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 import com.alekso.logger.Log
 import java.io.EOFException
 import java.io.File
@@ -52,7 +54,7 @@ class DLTParserV2 : DLTParser {
                 var shouldLog: Boolean
                 var bufByte: Byte
 
-                var prevTs  = System.currentTimeMillis()
+                var prevTs = System.currentTimeMillis()
 
                 while (i < fileSize) { // while (stream.available() > 4) is twice slow and unreliable in some implementations
                     try {
@@ -131,10 +133,11 @@ class DLTParserV2 : DLTParser {
             i += extendedHeader.getSize()
         }
 
-        val payload = StringBuilder()
+        var payload: Payload? = null
 
         if (extendedHeader != null) {
             if (extendedHeader.messageInfo.verbose) {
+                val arguments = mutableListOf<Argument>()
                 if (DEBUG_LOG && shouldLog) {
                     println(
                         "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
@@ -142,24 +145,22 @@ class DLTParserV2 : DLTParser {
                 }
                 val payloadSize =
                     (standardHeader.length.toLong() - standardHeader.getSize() - extendedHeader.getSize()).toInt()
+                var payloadSelfSize = 0
                 try {
                     for (argumentIndex in 0..<extendedHeader.argumentsCount.toInt()) {
-
                         val verbosePayloadArgument = parseVerbosePayload(
                             shouldLog,
                             stream,
                             if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
                         )
-                        val argumentString = verbosePayloadArgument.getPayloadAsText()
-                        if (payload.isNotEmpty() && !payload.endsWith(" ") && !argumentString.startsWith(" ")) {
-                            payload.append(" ")
-                        }
-                        payload.append(argumentString)
+                        arguments.add(verbosePayloadArgument)
+                        payloadSelfSize += verbosePayloadArgument.getSize()
                     }
                 } catch (e: Exception) {
                     Log.w("$e SH: $standardHeader; EH: $extendedHeader;")
                 }
                 i += payloadSize
+                payload = VerbosePayload(arguments)
 
             } else if (extendedHeader.messageInfo.messageType == MessageType.DLT_TYPE_CONTROL) {
                 val payloadSize =
@@ -176,11 +177,11 @@ class DLTParserV2 : DLTParser {
                     payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
                 }
                 if ((payloadSize - payloadOffset) > 0) {
-                    payload.append(ControlMessagePayload(
+                    payload = ControlMessagePayload(
                         messageId,
                         response,
                         stream.readNBytes(payloadSize - payloadOffset)
-                    ).asText())
+                    )
                 }
 
             } else {
@@ -190,18 +191,20 @@ class DLTParserV2 : DLTParser {
                 val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
 
                 if ((payloadSize - payloadOffset) > 0) {
-                    payload.append(NonVerbosePayload(messageId, stream.readNBytes(payloadSize - payloadOffset)).asText())
+                    payload =
+                        NonVerbosePayload(messageId, stream.readNBytes(payloadSize - payloadOffset))
                 }
             }
         }
-//        if (DEBUG_LOG && shouldLog) {
-//            println("")
-//        }
-        if (payload.endsWith("\n")) {
-            payload.deleteCharAt(payload.length - 1)
-        }
 
-        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload.toString(), (i - offset).toInt())
+        return DLTMessage(
+            timeStampNano,
+            ecuId,
+            standardHeader,
+            extendedHeader,
+            payload,
+            (i - offset).toInt()
+        )
     }
 
     private fun parseStandardHeader(

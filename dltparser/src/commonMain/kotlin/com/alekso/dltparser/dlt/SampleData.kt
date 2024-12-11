@@ -50,12 +50,47 @@ object SampleData {
                             ), 12, 10, "TEST MESSAGE".toByteArray()
                         )
                     )
-                ).asText(),
+                ),
                 122
             )
             list.add(dltMessage)
         }
 
         return list
+    }
+
+    fun sampleDLTMessage(payloadText: String): DLTMessage {
+        val payload = payloadText.toByteArray()
+        val standardHeader = StandardHeader(
+            headerType = HeaderType(
+                64.toByte(),
+                useExtendedHeader = false,
+                payloadBigEndian = true,
+                withEcuId = false,
+                withSessionId = false,
+                withTimestamp = false,
+                versionNumber = 1,
+            ),
+            1.toUByte(),
+            10.toUShort()
+        )
+        return DLTMessage(
+            1L,
+            "ECU",
+            standardHeader = standardHeader,
+            extendedHeader = null,
+            payload = VerbosePayload(
+                listOf(
+                    Argument(
+                        60,
+                        typeInfo = TypeInfo(),
+                        additionalSize = 1,
+                        payloadSize = payload.size,
+                        payload = payload
+                    )
+                )
+            ),
+            sizeBytes = 100,
+        )
     }
 }
