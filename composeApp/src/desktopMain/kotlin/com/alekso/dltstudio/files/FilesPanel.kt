@@ -27,8 +27,7 @@ fun FilesPanel(
     viewModel: FilesViewModel,
     logMessages: List<LogMessage>,
     analyzeState: FilesState,
-    files: SnapshotStateMap<String, FileEntry>,
-    filesFlts: SnapshotStateMap<String, FileEntryFLST>
+    files: SnapshotStateMap<Long, FileEntry>,
 ) {
     Column(Modifier.padding(4.dp)) {
         CustomButton(
@@ -38,7 +37,7 @@ fun FilesPanel(
             Text(text = if (analyzeState == FilesState.IDLE) "Search for files" else "Stop search")
         }
 
-        if (filesFlts.isEmpty()) {
+        if (files.isEmpty()) {
             Text("Files will be shown here..")
         } else {
             LazyColumn(Modifier.weight(1f)) {
@@ -52,11 +51,11 @@ fun FilesPanel(
                     )
                 }
                 itemsIndexed(
-                    items = filesFlts.keys.toList().sorted(),
+                    items = files.keys.toList().sorted(),
                     key = { _, key -> key },
-                    contentType = { _, _ -> FileEntryFLST::class }
+                    contentType = { _, _ -> FileEntry::class }
                 ) { i, key ->
-                    val fileEntry = filesFlts[key]
+                    val fileEntry = files[key]
                     if (fileEntry != null) {
                         FileItem(
                             i = i.toString(),

@@ -25,15 +25,13 @@ class FilesViewModel(
 
     private var analyzeJob: Job? = null
 
-    var filesEntriesMap = mutableStateMapOf<String, FileEntry>()
-    var filesEntriesFLSTMap = mutableStateMapOf<String, FileEntryFLST>()
+    var filesEntriesMap = mutableStateMapOf<Long, FileEntry>()
 
     private var _analyzeState: MutableStateFlow<FilesState> = MutableStateFlow(FilesState.IDLE)
     val analyzeState: StateFlow<FilesState> = _analyzeState
 
     private fun cleanup() {
         filesEntriesMap.clear()
-        filesEntriesFLSTMap.clear()
     }
 
     fun startFilesSearch(logMessages: List<LogMessage>) {
@@ -62,7 +60,7 @@ class FilesViewModel(
                 dltMessages.forEachIndexed { index, message ->
                     yield()
 
-                    fileExtractor.searchForFiles(message.dltMessage.payload)
+                    fileExtractor.searchForFiles(message.dltMessage.payload?.asText() ?: "")
                     val nowTs = System.currentTimeMillis()
                     if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                         prevTs = nowTs
@@ -73,9 +71,7 @@ class FilesViewModel(
                 withContext(Dispatchers.Default) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     filesEntriesMap.clear()
-                    filesEntriesMap.putAll(fileExtractor.filesEntriesMap)
-                    filesEntriesFLSTMap.clear()
-                    filesEntriesFLSTMap.putAll(fileExtractor.filesFLSTEntriesMap)
+                    filesEntriesMap.putAll(fileExtractor.filesMap)
                     _analyzeState.value = FilesState.IDLE
                 }
                 onProgressChanged(1f)
