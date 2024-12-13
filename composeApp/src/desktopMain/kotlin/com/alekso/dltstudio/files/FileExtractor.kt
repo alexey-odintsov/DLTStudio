@@ -10,7 +10,7 @@ class FileEntry {
     var creationDate: String = ""
     var numberOfPackages: Int = 0
     var bufferSize: Int = 0
-    val bytes = arrayOf<ByteArray>()
+    var bytes: Array<ByteArray>? = null
 }
 
 /**
@@ -79,6 +79,7 @@ class FileExtractor {
                 fileEntry.creationDate = creationDate
                 fileEntry.numberOfPackages = numberOfPackages
                 fileEntry.bufferSize = bufferSize
+                fileEntry.bytes = Array<ByteArray>(numberOfPackages, { i -> ByteArray(1) })
 
                 filesMap[serialNumber] = fileEntry
             }
@@ -91,11 +92,11 @@ class FileExtractor {
                 val hexData: String? = matches.groups["hexdata"]?.value
                 val fileEntry = filesMap[serialNumber]
 
-                if (fileEntry != null && hexData != null && packageNum >= 0) {
-                    fileEntry.bytes[packageNum] =
-                        hexData.split(" ")
-                            .map { it.toInt(16).toByte() }
-                            .toByteArray()
+                val bytes = fileEntry?.bytes
+                if (fileEntry != null && hexData != null && packageNum >= 0 && bytes != null) {
+                    bytes[packageNum - 1] = hexData.split(" ")
+                        .map { it.toInt(16).toByte() }
+                        .toByteArray()
                 }
             }
         }

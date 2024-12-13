@@ -44,7 +44,8 @@ class FilesViewModel(
 
     private fun stopAnalyzing() {
         analyzeJob?.cancel()
-        _analyzeState.value = FilesState.IDLE    }
+        _analyzeState.value = FilesState.IDLE
+    }
 
     fun startAnalyzing(dltMessages: List<LogMessage>) {
         cleanup()
@@ -56,11 +57,15 @@ class FilesViewModel(
 
                 Log.d("Start Files analyzing .. ${dltMessages.size} messages")
 
-                var prevTs  = System.currentTimeMillis()
+                var prevTs = System.currentTimeMillis()
                 dltMessages.forEachIndexed { index, message ->
                     yield()
 
-                    fileExtractor.searchForFiles(message.dltMessage.payload?.asText() ?: "")
+                    try {
+                        fileExtractor.searchForFiles(message.dltMessage.payload)
+                    } catch (e: Exception) {
+                        Log.e(e.toString())
+                    }
                     val nowTs = System.currentTimeMillis()
                     if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                         prevTs = nowTs
