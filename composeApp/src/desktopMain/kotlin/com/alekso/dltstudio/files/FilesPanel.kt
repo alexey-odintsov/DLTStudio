@@ -2,6 +2,7 @@ package com.alekso.dltstudio.files
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -57,12 +58,16 @@ fun FilesPanel(
                 ) { i, key ->
                     val fileEntry = files[key]
                     if (fileEntry != null) {
-                        FileItem(
-                            i = i.toString(),
-                            name = fileEntry.name,
-                            size = fileEntry.size.toString(),
-                            date = fileEntry.creationDate
-                        )
+                        Row(Modifier.clickable(onClick = {
+                            println(String(fileEntry.getContent() ?: byteArrayOf()))
+                        })) {
+                            FileItem(
+                                i = i.toString(),
+                                name = fileEntry.name,
+                                size = fileEntry.size.toString(),
+                                date = fileEntry.creationDate
+                            )
+                        }
                     } else {
                         Text("$i Empty file!")
                     }

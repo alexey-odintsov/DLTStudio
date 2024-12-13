@@ -11,6 +11,10 @@ class FileEntry {
     var numberOfPackages: Int = 0
     var bufferSize: Int = 0
     var bytes: Array<ByteArray>? = null
+
+    fun getContent(): ByteArray? {
+        return bytes?.flatMap { it.asList() }?.toByteArray()
+    }
 }
 
 /**
