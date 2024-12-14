@@ -15,6 +15,10 @@ class FileEntry {
     fun getContent(): ByteArray? {
         return bytes?.flatMap { it.asList() }?.toByteArray()
     }
+
+    fun getExtension(): String {
+        return name.substringAfterLast(".")
+    }
 }
 
 /**

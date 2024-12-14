@@ -58,9 +58,7 @@ fun FilesPanel(
                 ) { i, key ->
                     val fileEntry = files[key]
                     if (fileEntry != null) {
-                        Row(Modifier.clickable(onClick = {
-                            println(String(fileEntry.getContent() ?: byteArrayOf()))
-                        })) {
+                        Row(Modifier.clickable(onClick = { viewModel.onFileClicked(fileEntry) })) {
                             FileItem(
                                 i = i.toString(),
                                 name = fileEntry.name,

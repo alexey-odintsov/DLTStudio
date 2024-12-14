@@ -84,4 +84,17 @@ class FilesViewModel(
             Log.d("Done analyzing files ${System.currentTimeMillis() - start}ms")
         }
     }
+
+    fun onFileClicked(entry: FileEntry) {
+        when (entry.getExtension()) {
+            "png" -> {
+                // todo: Show image
+            }
+            "txt" -> {
+                // todo: Show text content
+            }
+            else -> {}
+        }
+//        println(String(entry.getContent() ?: byteArrayOf()))
+    }
 }
