@@ -1,21 +1,41 @@
 package com.alekso.dltstudio.files
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.ImageBitmap
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.decodeToImageBitmap
 
 enum class FilesState {
     IDLE,
     ANALYZING
 }
+
+abstract class PreviewState(
+    open val type: Type = Type.None,
+    open val entry: FileEntry? = null,
+) {
+    enum class Type {
+        None,
+        Text,
+        Image,
+    }
+}
+
+data class TextPreviewState(override val entry: FileEntry) : PreviewState(Type.Text, entry)
+data class ImagePreviewState(override val entry: FileEntry, val imageBitmap: ImageBitmap) :
+    PreviewState(Type.Image, entry)
+
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
@@ -23,12 +43,15 @@ class FilesViewModel(
     private val onProgressChanged: (Float) -> Unit
 ) {
 
+    private var _previewState: MutableState<PreviewState?> = mutableStateOf(null)
+    val previewState: State<PreviewState?> = _previewState
+
     private var analyzeJob: Job? = null
 
     var filesEntriesMap = mutableStateMapOf<Long, FileEntry>()
 
-    private var _analyzeState: MutableStateFlow<FilesState> = MutableStateFlow(FilesState.IDLE)
-    val analyzeState: StateFlow<FilesState> = _analyzeState
+    private var _analyzeState: MutableState<FilesState> = mutableStateOf(FilesState.IDLE)
+    val analyzeState: State<FilesState> = _analyzeState
 
     private fun cleanup() {
         filesEntriesMap.clear()
@@ -85,16 +108,30 @@ class FilesViewModel(
         }
     }
 
+    @OptIn(ExperimentalResourceApi::class)
     fun onFileClicked(entry: FileEntry) {
-        when (entry.getExtension()) {
-            "png" -> {
-                // todo: Show image
+        CoroutineScope(Dispatchers.IO).launch {
+            println("On file clicked ${entry.name}")
+
+            when (entry.getExtension()) {
+                "png" -> {
+                    val bytes = entry.getContent()
+                    if (bytes != null) {
+                        _previewState.value = ImagePreviewState(
+                            entry = entry,
+                            imageBitmap = bytes.decodeToImageBitmap()
+                        )
+                    }
+                }
+
+                "txt" -> {
+                    _previewState.value = TextPreviewState(entry = entry)
+                }
+
+                else -> {
+                    _previewState.value = null
+                }
             }
-            "txt" -> {
-                // todo: Show text content
-            }
-            else -> {}
         }
-//        println(String(entry.getContent() ?: byteArrayOf()))
     }
 }

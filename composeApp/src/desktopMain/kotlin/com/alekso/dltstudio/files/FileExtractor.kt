@@ -3,14 +3,43 @@ package com.alekso.dltstudio.files
 import androidx.compose.runtime.mutableStateMapOf
 
 
-class FileEntry {
-    var serialNumber: Long = 0L
-    var name: String = ""
-    var size: Long = 0L
-    var creationDate: String = ""
-    var numberOfPackages: Int = 0
-    var bufferSize: Int = 0
-    var bytes: Array<ByteArray>? = null
+data class FileEntry(
+    var serialNumber: Long = 0L,
+    var name: String = "",
+    var size: Long = 0L,
+    var creationDate: String = "",
+    var numberOfPackages: Int = 0,
+    var bufferSize: Int = 0,
+    var bytes: Array<ByteArray>? = null,
+) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as FileEntry
+
+        if (serialNumber != other.serialNumber) return false
+        if (size != other.size) return false
+        if (numberOfPackages != other.numberOfPackages) return false
+        if (bufferSize != other.bufferSize) return false
+        if (name != other.name) return false
+        if (creationDate != other.creationDate) return false
+        if (!bytes.contentDeepEquals(other.bytes)) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = serialNumber.hashCode()
+        result = 31 * result + size.hashCode()
+        result = 31 * result + numberOfPackages
+        result = 31 * result + bufferSize
+        result = 31 * result + name.hashCode()
+        result = 31 * result + creationDate.hashCode()
+        result = 31 * result + (bytes?.contentDeepHashCode() ?: 0)
+        return result
+    }
+
 
     fun getContent(): ByteArray? {
         return bytes?.flatMap { it.asList() }?.toByteArray()
