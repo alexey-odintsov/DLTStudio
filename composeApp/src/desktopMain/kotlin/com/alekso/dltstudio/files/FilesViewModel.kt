@@ -134,4 +134,8 @@ class FilesViewModel(
             }
         }
     }
+
+    fun closePreviewDialog() {
+        _previewState.value = null
+    }
 }
