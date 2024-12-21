@@ -15,7 +15,7 @@ object SampleData {
         val list = mutableListOf<DLTMessage>()
 
         for (i in 0..size) {
-            val dltMessage = DLTMessage(
+            val dltMessage = StringDLTMessage(
                 21142234 + i.toLong(), "MGUA",
                 StandardHeader(
                     HeaderType(0.toByte(), true, true, true, true, true, 1),
@@ -50,7 +50,7 @@ object SampleData {
                             ), 12, 10, "TEST MESSAGE".toByteArray()
                         )
                     )
-                ).asText(),
+                ).asText().toByteArray(),
                 122
             )
             list.add(dltMessage)

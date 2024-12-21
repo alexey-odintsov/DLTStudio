@@ -42,31 +42,31 @@ data class TimelineFilter(
                         FilterParameter.MessageType -> {
                             checkTextCriteria(
                                 criteria,
-                                message.extendedHeader?.messageInfo?.messageType?.name
+                                message.messageType?.name
                             )
                         }
 
                         FilterParameter.MessageTypeInfo -> {
                             checkTextCriteria(
                                 criteria,
-                                message.extendedHeader?.messageInfo?.messageTypeInfo?.name
+                                message.messageTypeInfo?.name
                             )
                         }
 
                         FilterParameter.EcuId -> {
-                            checkTextCriteria(criteria, message.standardHeader.ecuId)
+                            checkTextCriteria(criteria, message.ecuId)
                         }
 
                         FilterParameter.ContextId -> {
-                            checkTextCriteria(criteria, message.extendedHeader?.contextId)
+                            checkTextCriteria(criteria, message.contextId)
                         }
 
                         FilterParameter.AppId -> {
-                            checkTextCriteria(criteria, message.extendedHeader?.applicationId)
+                            checkTextCriteria(criteria, message.applicationId)
                         }
 
                         FilterParameter.SessionId -> {
-                            message.standardHeader.sessionId == criteria.value.toInt()
+                            message.sessionId == criteria.value.toInt()
                         }
 
                         FilterParameter.Payload -> true

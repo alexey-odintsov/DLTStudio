@@ -66,21 +66,21 @@ fun RemoveLogsDialogPanel(
 ) {
 
     val filters = mapOf<FilterParameter, FilterCriteria>(
-        FilterParameter.EcuId to FilterCriteria(message?.dltMessage?.standardHeader?.ecuId ?: ""),
+        FilterParameter.EcuId to FilterCriteria(message?.dltMessage?.ecuId ?: ""),
         FilterParameter.SessionId to FilterCriteria(
-            message?.dltMessage?.standardHeader?.sessionId.toString()
+            message?.dltMessage?.sessionId.toString()
         ),
         FilterParameter.ContextId to FilterCriteria(
-            message?.dltMessage?.extendedHeader?.contextId.toString()
+            message?.dltMessage?.contextId.toString()
         ),
         FilterParameter.AppId to FilterCriteria(
-            message?.dltMessage?.extendedHeader?.applicationId.toString()
+            message?.dltMessage?.applicationId.toString()
         ),
         FilterParameter.MessageType to FilterCriteria(
-            message?.dltMessage?.extendedHeader?.messageInfo?.messageType.toString()
+            message?.dltMessage?.messageType.toString()
         ),
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            message?.dltMessage?.extendedHeader?.messageInfo?.messageTypeInfo.toString()
+            message?.dltMessage?.messageTypeInfo.toString()
         ),
         FilterParameter.Payload to FilterCriteria(message?.dltMessage?.payload.toString()),
     )

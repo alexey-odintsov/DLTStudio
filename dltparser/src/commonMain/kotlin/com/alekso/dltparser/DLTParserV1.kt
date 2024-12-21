@@ -12,6 +12,7 @@ import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
 import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
 import com.alekso.dltparser.dlt.Payload
+import com.alekso.dltparser.dlt.StringDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.MessageType
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltparser.dlt.standardheader.HeaderType
@@ -170,12 +171,12 @@ class DLTParserV1: DLTParser {
         if (payloadString.endsWith("\n")) {
             payloadString.removeRange(payloadString.length - 2..<payloadString.length)
         }
-        return DLTMessage(
+        return StringDLTMessage(
             timeStampNano,
             ecuId,
             standardHeader,
             extendedHeader,
-            payloadString,
+            payloadString.toByteArray(),
             i - offset
         )
     }

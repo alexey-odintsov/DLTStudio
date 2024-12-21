@@ -10,6 +10,7 @@ import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
 import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.StringDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
 import com.alekso.dltparser.dlt.extendedheader.MessageType
@@ -201,7 +202,9 @@ class DLTParserV2 : DLTParser {
             payload.deleteCharAt(payload.length - 1)
         }
 
-        return DLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader, payload.toString(), (i - offset).toInt())
+        return StringDLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader,
+            payload.toString().toByteArray(),
+            (i - offset).toInt())
     }
 
     private fun parseStandardHeader(

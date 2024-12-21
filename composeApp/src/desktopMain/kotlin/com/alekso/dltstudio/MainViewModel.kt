@@ -256,35 +256,35 @@ class MainViewModel(
                 FilterParameter.MessageType -> {
                     checkTextCriteria(
                         criteria,
-                        message.extendedHeader?.messageInfo?.messageType?.name
+                        message.messageType?.name
                     )
                 }
 
                 FilterParameter.MessageTypeInfo -> {
                     checkTextCriteria(
                         criteria,
-                        message.extendedHeader?.messageInfo?.messageTypeInfo?.name
+                        message.messageTypeInfo?.name
                     )
                 }
 
                 FilterParameter.EcuId -> {
-                    checkTextCriteria(criteria, message.standardHeader.ecuId)
+                    checkTextCriteria(criteria, message.ecuId)
                 }
 
                 FilterParameter.ContextId -> {
-                    checkTextCriteria(criteria, message.extendedHeader?.contextId)
+                    checkTextCriteria(criteria, message.contextId)
                 }
 
                 FilterParameter.AppId -> {
-                    checkTextCriteria(criteria, message.extendedHeader?.applicationId)
+                    checkTextCriteria(criteria, message.applicationId)
                 }
 
                 FilterParameter.SessionId -> {
-                    criteria.value.isNotEmpty() && message.standardHeader.sessionId == criteria.value.toInt()
+                    criteria.value.isNotEmpty() && message.sessionId == criteria.value.toInt()
                 }
 
                 FilterParameter.Payload -> {
-                    checkTextCriteria(criteria, message.payload)
+                    checkTextCriteria(criteria, message.payloadText)
                 }
             }
         }
@@ -327,10 +327,10 @@ class MainViewModel(
                 }
 
                 when (type) {
-                    LogRemoveContext.ContextId -> message.extendedHeader?.contextId != filter
-                    LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId != filter
-                    LogRemoveContext.EcuId -> message.standardHeader.ecuId != filter
-                    LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() != filter
+                    LogRemoveContext.ContextId -> message.contextId != filter
+                    LogRemoveContext.ApplicationId -> message.applicationId != filter
+                    LogRemoveContext.EcuId -> message.ecuId != filter
+                    LogRemoveContext.SessionId -> message.sessionId.toString() != filter
                     LogRemoveContext.BeforeTimestamp -> message.timeStampNano >= filter.toLong()
                     LogRemoveContext.AfterTimestamp -> message.timeStampNano <= filter.toLong()
                     LogRemoveContext.Payload -> {

@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.StringDLTMessage
 import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
 import com.alekso.dltstudio.model.LogMessage
@@ -51,7 +52,7 @@ fun DevicePreviewView(
 //            TableRow(0, "", headerText)
 //            TableRow(0, "", it.payload)
 //        }
-            deviceViews = DeviceView.parse(message.payload)
+            deviceViews = DeviceView.parse(message.payloadText?: "")
             if (deviceViews.isNullOrEmpty()) {
                 Text(
                     modifier = Modifier.padding(start = 2.dp, end = 2.dp),
@@ -113,12 +114,12 @@ fun PreviewDevicePreview() {
     )
     val payload =
         "TestView[2797]: onGlobalFocusChanged: oldFocus:com.ui.custom.ProgressBarFrameLayout{f5e8f76 VFE...CL. ......ID 2298,22-2835,709 #7f090453 app:id/theme_container aid=1073741849}, newFocus:com.android.car.ui.FocusParkingView{736743f VFED..... .F...... 0,0-1,1 #7f090194 app:id/focus_parking_view aid=1073741832} {bounds:Rect(0, 0 - 342, 240),hasBoundsTransaction,}"
-    val dltMessage = DLTMessage(
+    val dltMessage = StringDLTMessage(
         1L,
         "ECU",
         standardHeader = standardHeader,
         extendedHeader = null,
-        payload = payload,
+        payload = payload.toByteArray(),
         sizeBytes = 100,
     )
     DevicePreviewView(

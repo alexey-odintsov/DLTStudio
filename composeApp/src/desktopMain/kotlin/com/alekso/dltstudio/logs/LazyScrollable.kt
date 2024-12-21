@@ -84,15 +84,15 @@ fun LazyScrollable(
                     val index: Int = if (indexes != null) indexes[i] else i
                     val sTime: String = TimeFormatter.formatDateTime(dltMessage.timeStampNano)
                     val sTimeOffset: String =
-                        if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
-                    val sEcu: String = dltMessage.ecuId
-                    val sEcuId: String = "${dltMessage.standardHeader.ecuId}"
-                    val sSessionId: String = "${dltMessage.standardHeader.sessionId}"
-                    val sApplicationId: String = "${dltMessage.extendedHeader?.applicationId}"
-                    val sContextId: String = "${dltMessage.extendedHeader?.contextId}"
-                    val sContent: String = dltMessage.payload
+                        if (dltMessage.timeStamp != null) "%.4f".format(dltMessage.timeStamp!!.toLong() / 10000f) else "-"
+                    val sEcu: String = "${dltMessage.ecuId}"
+                    val sEcuId: String = "${dltMessage.ecuId}"
+                    val sSessionId: String = "${dltMessage.sessionId}"
+                    val sApplicationId: String = "${dltMessage.applicationId}"
+                    val sContextId: String = "${dltMessage.contextId}"
+                    val sContent: String = dltMessage.payloadText ?: ""
                     val logTypeIndicator: LogTypeIndicator? =
-                        LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)
+                        LogTypeIndicator.fromMessageType(dltMessage.messageTypeInfo)
 
                     RowContextMenu(
                         i = i,
