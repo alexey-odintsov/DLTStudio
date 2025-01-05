@@ -1,12 +1,22 @@
 package com.alekso.dltparser.dlt
 
-import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageType
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
-import com.alekso.dltparser.dlt.standardheader.StandardHeader
 
+/**
+ * DLT message simplified representations.
+ * https://github.com/esrlabs/dlt-core
+ */
 interface DLTMessage {
+    /**
+     * Internal metadata for parsers.
+     * todo: try to remove it
+     */
     val sizeBytes: Int
+
+    /**
+     * Message timestamp in nanoseconds
+     */
     val timeStampNano: Long
     val messageType: MessageType?
     val messageTypeInfo: MessageTypeInfo?
@@ -14,48 +24,19 @@ interface DLTMessage {
     val applicationId: String?
     val contextId: String?
     val sessionId: Int?
-    val payloadText: String?
-    val payload: ByteArray?
-    val timeStamp: UInt?
-}
 
-/**
- * https://github.com/esrlabs/dlt-core
- */
-class StringDLTMessage(
-    // DLT Signature is skipped for memory consumption reason and should always be the same
     /**
-     * Compounded of timeStampSec and timeStampUs
+     * Payload textual representation - is used by search and timeline parsing.
      */
-    override val timeStampNano: Long,
-    override val ecuId: String,
-    val standardHeader: StandardHeader,
-    val extendedHeader: ExtendedHeader?,
-    override val payload: ByteArray?,
-    // meta info
-    override val sizeBytes: Int,
-) : DLTMessage {
+    val payloadText: String?
 
-    override fun toString(): String {
-        return "{$timeStampNano, '$ecuId'\n" +
-                " $standardHeader\n" +
-                " $extendedHeader}\n" +
-                " '$payload'}\n" +
-                " meta size bytes: $sizeBytes"
-    }
+    /**
+     * Payload raw bytes - can be used to parse binary data
+     */
+    val payload: ByteArray?
 
-    override val messageType: MessageType?
-        get() = extendedHeader?.messageInfo?.messageType
-    override val messageTypeInfo: MessageTypeInfo?
-        get() = extendedHeader?.messageInfo?.messageTypeInfo
-    override val applicationId: String?
-        get() = standardHeader.ecuId
-    override val contextId: String?
-        get() = extendedHeader?.contextId
-    override val sessionId: Int?
-        get() = standardHeader.sessionId
-    override val payloadText: String?
-        get() = String(payload ?: byteArrayOf())
-    override val timeStamp: UInt?
-        get() = standardHeader.timeStamp
+    /**
+     * Time passed since ECU start
+     */
+    val timeStamp: UInt?
 }
