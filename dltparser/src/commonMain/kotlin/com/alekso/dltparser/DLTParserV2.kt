@@ -10,6 +10,7 @@ import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
 import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.DLTStorageType
 import com.alekso.dltparser.dlt.StructuredDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
@@ -27,7 +28,9 @@ import java.io.File
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
-class DLTParserV2 : DLTParser {
+class DLTParserV2(
+    override val dltStorageType: DLTStorageType,
+) : DLTParser {
 
     /**
      * https://www.autosar.org/fileadmin/standards/R20-11/FO/AUTOSAR_PRS_LogAndTraceProtocol.pdf
@@ -53,7 +56,7 @@ class DLTParserV2 : DLTParser {
                 var shouldLog: Boolean
                 var bufByte: Byte
 
-                var prevTs  = System.currentTimeMillis()
+                var prevTs = System.currentTimeMillis()
 
                 while (i < fileSize) { // while (stream.available() > 4) is twice slow and unreliable in some implementations
                     try {
@@ -152,7 +155,10 @@ class DLTParserV2 : DLTParser {
                             if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
                         )
                         val argumentString = verbosePayloadArgument.getPayloadAsText()
-                        if (payload.isNotEmpty() && !payload.endsWith(" ") && !argumentString.startsWith(" ")) {
+                        if (payload.isNotEmpty() && !payload.endsWith(" ") && !argumentString.startsWith(
+                                " "
+                            )
+                        ) {
                             payload.append(" ")
                         }
                         payload.append(argumentString)
@@ -177,11 +183,13 @@ class DLTParserV2 : DLTParser {
                     payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
                 }
                 if ((payloadSize - payloadOffset) > 0) {
-                    payload.append(ControlMessagePayload(
-                        messageId,
-                        response,
-                        stream.readNBytes(payloadSize - payloadOffset)
-                    ).asText())
+                    payload.append(
+                        ControlMessagePayload(
+                            messageId,
+                            response,
+                            stream.readNBytes(payloadSize - payloadOffset)
+                        ).asText()
+                    )
                 }
 
             } else {
@@ -191,7 +199,12 @@ class DLTParserV2 : DLTParser {
                 val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
 
                 if ((payloadSize - payloadOffset) > 0) {
-                    payload.append(NonVerbosePayload(messageId, stream.readNBytes(payloadSize - payloadOffset)).asText())
+                    payload.append(
+                        NonVerbosePayload(
+                            messageId,
+                            stream.readNBytes(payloadSize - payloadOffset)
+                        ).asText()
+                    )
                 }
             }
         }
@@ -202,9 +215,11 @@ class DLTParserV2 : DLTParser {
             payload.deleteCharAt(payload.length - 1)
         }
 
-        return StructuredDLTMessage(timeStampNano, ecuId, standardHeader, extendedHeader,
+        return StructuredDLTMessage(
+            timeStampNano, ecuId, standardHeader, extendedHeader,
             payload.toString().toByteArray(),
-            (i - offset).toInt())
+            (i - offset).toInt()
+        )
     }
 
     private fun parseStandardHeader(

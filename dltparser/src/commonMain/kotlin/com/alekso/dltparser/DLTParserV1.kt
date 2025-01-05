@@ -8,6 +8,7 @@ import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
 import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.DLTStorageType
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
 import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
@@ -23,7 +24,9 @@ import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 import java.io.File
 
 
-class DLTParserV1: DLTParser {
+class DLTParserV1(
+    override val dltStorageType: DLTStorageType,
+) : DLTParser {
 
     override suspend fun read(
         progressCallback: (Float) -> Unit, files: List<File>

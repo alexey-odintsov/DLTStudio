@@ -3,6 +3,11 @@ package com.alekso.dltparser.dlt
 import com.alekso.dltparser.dlt.extendedheader.MessageType
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 
+enum class DLTStorageType {
+    Structured,
+    Plain,
+}
+
 /**
  * DLT message simplified representations.
  * https://github.com/esrlabs/dlt-core

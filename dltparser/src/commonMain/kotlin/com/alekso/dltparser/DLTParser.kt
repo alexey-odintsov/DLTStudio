@@ -1,12 +1,15 @@
 package com.alekso.dltparser
 
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.DLTStorageType
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 
 interface DLTParser {
+    val dltStorageType: DLTStorageType
+
     companion object {
         const val SIGNATURE_D = 'D'.code.toByte()
         const val SIGNATURE_L = 'L'.code.toByte()
