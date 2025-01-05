@@ -82,7 +82,7 @@ fun RemoveLogsDialogPanel(
         FilterParameter.MessageTypeInfo to FilterCriteria(
             message?.dltMessage?.messageTypeInfo.toString()
         ),
-        FilterParameter.Payload to FilterCriteria(message?.dltMessage?.payload.toString()),
+        FilterParameter.Payload to FilterCriteria(message?.dltMessage?.payloadText?: ""),
     )
 
     var messageType by rememberSaveable { mutableStateOf(filters[FilterParameter.MessageType]?.value) }

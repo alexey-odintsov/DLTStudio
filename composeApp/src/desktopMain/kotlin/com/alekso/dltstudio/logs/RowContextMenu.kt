@@ -55,7 +55,7 @@ fun RowContextMenu(
         })
     }
 
-    message.dltMessage.payload.let {
+    message.dltMessage.payloadText.let {
         menuItems.add(
             ContextMenuItem("Remove by custom attributes") {
                 rowContextMenuCallbacks.onRemoveDialogClicked(message)

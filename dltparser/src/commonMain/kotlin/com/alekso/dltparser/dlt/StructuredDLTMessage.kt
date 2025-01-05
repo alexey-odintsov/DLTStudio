@@ -24,7 +24,7 @@ class StructuredDLTMessage(
         return "{$timeStampNano, '$ecuId'\n" +
                 " $standardHeader\n" +
                 " $extendedHeader}\n" +
-                " '$payload'}\n" +
+                " '$payloadText'}\n" +
                 " meta size bytes: $sizeBytes"
     }
 
@@ -78,7 +78,6 @@ class StructuredDLTMessage(
         result = 31 * result + (messageTypeInfo?.hashCode() ?: 0)
         result = 31 * result + (applicationId?.hashCode() ?: 0)
         result = 31 * result + (contextId?.hashCode() ?: 0)
-        result = 31 * result + (payloadText?.hashCode() ?: 0)
         result = 31 * result + (timeStamp?.hashCode() ?: 0)
         return result
     }

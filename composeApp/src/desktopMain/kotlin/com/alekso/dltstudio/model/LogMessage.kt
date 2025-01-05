@@ -16,7 +16,7 @@ data class LogMessage(
                 "${dltMessage.applicationId} " +
                 "${dltMessage.contextId} " +
                 "${LogTypeIndicator.fromMessageType(dltMessage.messageTypeInfo)?.logTypeSymbol ?: ""} " +
-                dltMessage.payload
+                dltMessage.payloadText
     }
 
     companion object {
