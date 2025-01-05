@@ -63,7 +63,6 @@ fun LazyScrollable(
                         "#",
                         "DateTime",
                         "Time",
-                        "ecu",
                         "ecuId",
                         "sessId",
                         "appId",
@@ -85,7 +84,6 @@ fun LazyScrollable(
                     val sTime: String = TimeFormatter.formatDateTime(dltMessage.timeStampNano)
                     val sTimeOffset: String =
                         if (dltMessage.timeStamp != null) "%.4f".format(dltMessage.timeStamp!!.toLong() / 10000f) else "-"
-                    val sEcu: String = "${dltMessage.ecuId}"
                     val sEcuId: String = "${dltMessage.ecuId}"
                     val sSessionId: String = "${dltMessage.sessionId}"
                     val sApplicationId: String = "${dltMessage.applicationId}"
@@ -97,7 +95,7 @@ fun LazyScrollable(
                     RowContextMenu(
                         i = i,
                         message = logMessage,
-                        rowContent = "$index $sTime $sTimeOffset $sEcu $sEcuId $sSessionId $sApplicationId $sContextId $sContent",
+                        rowContent = "$index $sTime $sTimeOffset $sEcuId $sSessionId $sApplicationId $sContextId $sContent",
                         rowContextMenuCallbacks = rowContextMenuCallbacks,
                     ) {
                         LogRow(
@@ -122,7 +120,6 @@ fun LazyScrollable(
                             index.toString(),
                             sTime,
                             sTimeOffset,
-                            sEcu,
                             sEcuId,
                             sSessionId,
                             sApplicationId,

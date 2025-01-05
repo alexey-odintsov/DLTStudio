@@ -22,7 +22,7 @@ interface DLTMessage {
 /**
  * https://github.com/esrlabs/dlt-core
  */
-data class StringDLTMessage(
+class StringDLTMessage(
     // DLT Signature is skipped for memory consumption reason and should always be the same
     /**
      * Compounded of timeStampSec and timeStampUs
