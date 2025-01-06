@@ -8,9 +8,11 @@ import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_L
 import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_T
 import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
 import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
+import com.alekso.dltparser.dlt.BinaryDLTMessage
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.DLTStorageType
+import com.alekso.dltparser.dlt.PlainDLTMessage
 import com.alekso.dltparser.dlt.StructuredDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
@@ -136,9 +138,14 @@ class DLTParserV2(
         }
 
         val payload = StringBuilder()
+        var rawPayload: ByteArray? = null
 
         if (extendedHeader != null) {
-            if (extendedHeader.messageInfo.verbose) {
+            if (dltStorageType == DLTStorageType.Binary) {
+                val payloadSize =
+                    (standardHeader.length.toLong() - standardHeader.getSize() - extendedHeader.getSize()).toInt()
+                rawPayload = stream.readNBytes(payloadSize)
+            } else if (extendedHeader.messageInfo.verbose) {
                 if (DEBUG_LOG && shouldLog) {
                     println(
                         "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
@@ -215,11 +222,40 @@ class DLTParserV2(
             payload.deleteCharAt(payload.length - 1)
         }
 
-        return StructuredDLTMessage(
-            timeStampNano, ecuId, standardHeader, extendedHeader,
-            payload.toString().toByteArray(),
-            (i - offset).toInt()
-        )
+        return when (dltStorageType) {
+            DLTStorageType.Structured -> StructuredDLTMessage(
+                timeStampNano, ecuId, standardHeader, extendedHeader,
+                payload.toString().toByteArray(),
+                (i - offset).toInt()
+            )
+
+            DLTStorageType.Plain -> PlainDLTMessage(
+                sizeBytes = (i - offset).toInt(),
+                timeStampNano = timeStampNano,
+                ecuId = ecuId,
+                messageType = extendedHeader?.messageInfo?.messageType,
+                messageTypeInfo = extendedHeader?.messageInfo?.messageTypeInfo,
+                payload = payload.toString().toByteArray(),
+                payloadText = payload.toString(),
+                applicationId = extendedHeader?.applicationId,
+                contextId = extendedHeader?.contextId,
+                sessionId = standardHeader.sessionId,
+                timeStamp = standardHeader.timeStamp,
+            )
+
+            DLTStorageType.Binary -> BinaryDLTMessage(
+                sizeBytes = (i - offset).toInt(),
+                timeStampNano = timeStampNano,
+                ecuId = ecuId,
+                messageType = extendedHeader?.messageInfo?.messageType,
+                messageTypeInfo = extendedHeader?.messageInfo?.messageTypeInfo,
+                payload = rawPayload,
+                applicationId = extendedHeader?.applicationId,
+                contextId = extendedHeader?.contextId,
+                sessionId = standardHeader.sessionId,
+                timeStamp = standardHeader.timeStamp,
+            )
+        }
     }
 
     private fun parseStandardHeader(

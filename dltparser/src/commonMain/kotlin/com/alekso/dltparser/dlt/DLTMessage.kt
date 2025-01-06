@@ -6,6 +6,7 @@ import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 enum class DLTStorageType {
     Structured,
     Plain,
+    Binary,
 }
 
 /**
