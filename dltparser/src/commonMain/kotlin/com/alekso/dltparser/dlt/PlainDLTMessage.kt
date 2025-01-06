@@ -7,7 +7,6 @@ import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
  * DLTMessage implementation that holds only basic headers information but raw payload.
  */
 class PlainDLTMessage(
-    override val sizeBytes: Int,
     override val timeStampNano: Long,
     override val messageType: MessageType?,
     override val messageTypeInfo: MessageTypeInfo?,

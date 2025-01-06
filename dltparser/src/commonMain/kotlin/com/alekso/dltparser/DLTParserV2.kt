@@ -86,9 +86,9 @@ class DLTParserV2(
                         shouldLog = false //logsReadCount == 3
 
                         // DLT signature was matched, now we can try to parse DLT message
-                        val dltMessage = parseDLTMessage(stream, i, shouldLog)
+                        val (dltMessage, len) = parseDLTMessage(stream, i, shouldLog)
                         messages.add(dltMessage)
-                        i += dltMessage.sizeBytes
+                        i += len
                     } catch (e: EOFException) {
                         i = fileSize
                     }
@@ -111,7 +111,7 @@ class DLTParserV2(
         stream: ParserInputStream,
         offset: Long,
         shouldLog: Boolean
-    ): DLTMessage {
+    ): Pair<DLTMessage, Int> {
         var i = offset
         val timeStampSec = stream.readIntLittle()
         val timeStampUs = stream.readIntLittle()
@@ -222,15 +222,13 @@ class DLTParserV2(
             payload.deleteCharAt(payload.length - 1)
         }
 
-        return when (dltStorageType) {
+        val dltMessage = when (dltStorageType) {
             DLTStorageType.Structured -> StructuredDLTMessage(
                 timeStampNano, ecuId, standardHeader, extendedHeader,
                 payload.toString().toByteArray(),
-                (i - offset).toInt()
             )
 
             DLTStorageType.Plain -> PlainDLTMessage(
-                sizeBytes = (i - offset).toInt(),
                 timeStampNano = timeStampNano,
                 ecuId = ecuId,
                 messageType = extendedHeader?.messageInfo?.messageType,
@@ -244,7 +242,6 @@ class DLTParserV2(
             )
 
             DLTStorageType.Binary -> BinaryDLTMessage(
-                sizeBytes = (i - offset).toInt(),
                 timeStampNano = timeStampNano,
                 ecuId = ecuId,
                 messageType = extendedHeader?.messageInfo?.messageType,
@@ -256,6 +253,7 @@ class DLTParserV2(
                 timeStamp = standardHeader.timeStamp,
             )
         }
+        return Pair(dltMessage, (i - offset).toInt())
     }
 
     private fun parseStandardHeader(

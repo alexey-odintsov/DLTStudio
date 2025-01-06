@@ -15,12 +15,6 @@ enum class DLTStorageType {
  */
 interface DLTMessage {
     /**
-     * Internal metadata for parsers.
-     * todo: try to remove it
-     */
-    val sizeBytes: Int
-
-    /**
      * Message timestamp in nanoseconds
      */
     val timeStampNano: Long

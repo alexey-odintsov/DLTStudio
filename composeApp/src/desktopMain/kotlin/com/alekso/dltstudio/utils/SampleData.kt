@@ -32,7 +32,6 @@ object SampleData {
         timeStamp: UInt? = 1U
     ): DLTMessage {
         return PlainDLTMessage(
-            sizeBytes = -1,
             timeStampNano = timeStampNano,
             messageType = messageType,
             messageTypeInfo = messageTypeInfo,

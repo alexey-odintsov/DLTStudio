@@ -16,16 +16,13 @@ class StructuredDLTMessage(
     val standardHeader: StandardHeader,
     val extendedHeader: ExtendedHeader?,
     override val payload: ByteArray?,
-    // meta info
-    override val sizeBytes: Int,
 ) : DLTMessage {
 
     override fun toString(): String {
         return "{$timeStampNano, '$ecuId'\n" +
                 " $standardHeader\n" +
                 " $extendedHeader}\n" +
-                " '$payloadText'}\n" +
-                " meta size bytes: $sizeBytes"
+                " '$payloadText'}"
     }
 
     override val messageType: MessageType?
@@ -50,7 +47,6 @@ class StructuredDLTMessage(
         other as StructuredDLTMessage
 
         if (timeStampNano != other.timeStampNano) return false
-        if (sizeBytes != other.sizeBytes) return false
         if (ecuId != other.ecuId) return false
         if (standardHeader != other.standardHeader) return false
         if (extendedHeader != other.extendedHeader) return false
@@ -68,7 +64,6 @@ class StructuredDLTMessage(
 
     override fun hashCode(): Int {
         var result = timeStampNano.hashCode()
-        result = 31 * result + sizeBytes
         result = 31 * result + ecuId.hashCode()
         result = 31 * result + standardHeader.hashCode()
         result = 31 * result + (extendedHeader?.hashCode() ?: 0)

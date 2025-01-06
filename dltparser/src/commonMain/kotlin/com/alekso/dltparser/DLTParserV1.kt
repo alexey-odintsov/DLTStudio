@@ -59,9 +59,9 @@ class DLTParserV1(
                     }
 
                     try {
-                        val dltMessage = parseDLTMessage(bytes, i, shouldLog)
+                        val (dltMessage, len) = parseDLTMessage(bytes, i, shouldLog)
                         messages.add(dltMessage)
-                        i += dltMessage.sizeBytes // skip read bytes
+                        i += len // skip read bytes
                     } catch (e: Exception) {
                         i++ // move counter to the next byte
                         skippedBytes++
@@ -76,7 +76,7 @@ class DLTParserV1(
         return messages.sortedBy { it.timeStampNano }
     }
 
-    fun parseDLTMessage(bytes: ByteArray, offset: Int, shouldLog: Boolean): DLTMessage {
+    fun parseDLTMessage(bytes: ByteArray, offset: Int, shouldLog: Boolean): Pair<DLTMessage, Int> {
         var i = offset
         val timeStampSec = bytes.readInt(i + 4, Endian.LITTLE)
         val timeStampUs = bytes.readInt(i + 8, Endian.LITTLE)
@@ -174,14 +174,15 @@ class DLTParserV1(
         if (payloadString.endsWith("\n")) {
             payloadString.removeRange(payloadString.length - 2..<payloadString.length)
         }
-        return StructuredDLTMessage(
-            timeStampNano,
-            ecuId,
-            standardHeader,
-            extendedHeader,
-            payloadString.toByteArray(),
-            i - offset
-        )
+        val dltMessage =
+            StructuredDLTMessage(
+                timeStampNano,
+                ecuId,
+                standardHeader,
+                extendedHeader,
+                payloadString.toByteArray(),
+            )
+        return Pair(dltMessage, i - offset)
     }
 
     private fun parseStandardHeader(shouldLog: Boolean, bytes: ByteArray, i: Int): StandardHeader {
