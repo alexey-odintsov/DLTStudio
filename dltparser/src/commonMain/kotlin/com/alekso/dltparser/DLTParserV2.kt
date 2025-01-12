@@ -140,21 +140,12 @@ class DLTParserV2(
         var rawPayload: ByteArray? = null
 
         if (extendedHeader != null) {
+            val payloadSize = standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
             if (dltStorageType == DLTStorageType.Binary) {
-                val payloadSize =
-                    (standardHeader.length.toLong() - standardHeader.getSize() - extendedHeader.getSize()).toInt()
                 rawPayload = stream.readNBytes(payloadSize)
             } else if (extendedHeader.messageInfo.verbose) {
-                if (DEBUG_LOG && shouldLog) {
-                    println(
-                        "Payload.parse: ${extendedHeader.argumentsCount} payload arguments found"
-                    )
-                }
-                val payloadSize =
-                    (standardHeader.length.toLong() - standardHeader.getSize() - extendedHeader.getSize()).toInt()
                 try {
-                    for (argumentIndex in 0..<extendedHeader.argumentsCount.toInt()) {
-
+                    (0..<extendedHeader.argumentsCount.toInt()).forEach { argumentIndex ->
                         val verbosePayloadArgument = parseVerbosePayload(
                             shouldLog,
                             stream,
@@ -175,8 +166,6 @@ class DLTParserV2(
                 i += payloadSize
 
             } else if (extendedHeader.messageInfo.messageType == MessageType.DLT_TYPE_CONTROL) {
-                val payloadSize =
-                    standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
                 val messageId: Int = if (standardHeader.headerType.payloadBigEndian) {
                     stream.readInt()
                 } else {
@@ -199,8 +188,6 @@ class DLTParserV2(
                 }
 
             } else {
-                val payloadSize =
-                    standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
                 val messageId: UInt = stream.readIntLittle().toUInt()
                 val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
 
