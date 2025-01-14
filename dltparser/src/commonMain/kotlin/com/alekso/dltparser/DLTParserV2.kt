@@ -20,8 +20,7 @@ import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
 import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
-import com.alekso.dltparser.dlt.verbosepayload.Argument
-import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
+import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 import com.alekso.logger.Log
 import java.io.EOFException
 import java.io.File
@@ -144,25 +143,9 @@ class DLTParserV2(
             if (dltStorageType == DLTStorageType.Binary) {
                 rawPayload = stream.readNBytes(payloadSize)
             } else if (extendedHeader.messageInfo.verbose) {
-                try {
-                    (0..<extendedHeader.argumentsCount.toInt()).forEach { argumentIndex ->
-                        val verbosePayloadArgument = parseVerbosePayload(
-                            shouldLog,
-                            stream,
-                            if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
-                        )
-                        val argumentString = verbosePayloadArgument.getPayloadAsText()
-                        if (payload.isNotEmpty() && !payload.endsWith(" ") && !argumentString.startsWith(
-                                " "
-                            )
-                        ) {
-                            payload.append(" ")
-                        }
-                        payload.append(argumentString)
-                    }
-                } catch (e: Exception) {
-                    Log.w("$e SH: $standardHeader; EH: $extendedHeader;")
-                }
+                rawPayload = stream.readNBytes(payloadSize)
+                val payloadStructure = VerbosePayload.parse(rawPayload, extendedHeader.argumentsCount.toInt(), if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE)
+                payload.append(payloadStructure.asText())
                 i += payloadSize
 
             } else if (extendedHeader.messageInfo.messageType == MessageType.DLT_TYPE_CONTROL) {
@@ -334,69 +317,6 @@ class DLTParserV2(
             messageType = messageType,
             messageTypeInfo = MessageInfo.messageTypeInfoFromByte(byte, messageType)
         )
-    }
-
-    private fun parseVerbosePayload(
-        shouldLog: Boolean, stream: ParserInputStream, payloadEndian: Endian
-    ): Argument {
-        val typeInfoInt = if (payloadEndian == Endian.LITTLE) {
-            stream.readIntLittle()
-        } else {
-            stream.readInt()
-        }
-
-        val typeInfo = TypeInfo.parseVerbosePayloadTypeInfo(shouldLog, typeInfoInt, payloadEndian)
-        if (DEBUG_LOG && shouldLog) {
-            println("       typeInfo: $typeInfo")
-        }
-
-        var payloadSize: Int
-        var additionalSize = 0
-        if (typeInfo.typeString) {
-            payloadSize = if (payloadEndian == Endian.BIG) {
-                stream.readUnsignedShort()
-            } else {
-                stream.readUnsignedShortLittle()
-            }
-            additionalSize =
-                2 // PRS_Dlt_00156 - 16-bit unsigned integer specifies the length of the string
-        } else if (typeInfo.typeRaw) {
-            payloadSize = if (payloadEndian == Endian.BIG) {
-                stream.readUnsignedShort()
-            } else {
-                stream.readUnsignedShortLittle()
-            }
-            additionalSize =
-                2 // PRS_Dlt_00160 - 16-bit unsigned integer shall specify the length of the raw data in byte
-        } else if (typeInfo.typeUnsigned || typeInfo.typeSigned) {
-            payloadSize = typeInfo.typeLengthBits / 8
-        } else if (typeInfo.typeBool) {
-            payloadSize = 1
-        } else if (typeInfo.typeFloat) {
-            payloadSize = typeInfo.typeLengthBits / 8
-        } else {
-            Log.e("Can't parse payload for typeInfo: ${typeInfo}")
-            payloadSize = typeInfo.typeLengthBits / 8
-        }
-
-        // Sanity check to fix infinite reading
-        if (payloadSize <= 0) {
-            payloadSize = 1
-        }
-
-        val payload = stream.readNBytes(payloadSize)
-
-        val argument = Argument(
-            typeInfoInt, typeInfo, additionalSize, payloadSize, payload
-        )
-
-        if (DEBUG_LOG && shouldLog) {
-            println(
-                "       payload size: $payloadSize, content: ${argument.getPayloadAsText()}"
-            )
-        }
-
-        return argument
     }
 
 }
