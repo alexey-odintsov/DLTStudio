@@ -25,35 +25,35 @@ data class ColorFilter(
                 FilterParameter.MessageType -> {
                     checkTextCriteria(
                         criteria,
-                        message.messageType?.name
+                        message.extendedHeader?.messageInfo?.messageType?.name
                     )
                 }
 
                 FilterParameter.MessageTypeInfo -> {
                     checkTextCriteria(
                         criteria,
-                        message.messageTypeInfo?.name
+                        message.extendedHeader?.messageInfo?.messageTypeInfo?.name
                     )
                 }
 
                 FilterParameter.EcuId -> {
-                    checkTextCriteria(criteria, message.ecuId)
+                    checkTextCriteria(criteria, message.standardHeader.ecuId)
                 }
 
                 FilterParameter.ContextId -> {
-                    checkTextCriteria(criteria, message.contextId)
+                    checkTextCriteria(criteria, message.extendedHeader?.contextId)
                 }
 
                 FilterParameter.AppId -> {
-                    checkTextCriteria(criteria, message.applicationId)
+                    checkTextCriteria(criteria, message.extendedHeader?.applicationId)
                 }
 
                 FilterParameter.SessionId -> {
-                    message.sessionId == criteria.value.toInt()
+                    message.standardHeader.sessionId == criteria.value.toInt()
                 }
 
                 FilterParameter.Payload -> {
-                    checkTextCriteria(criteria, message.payloadText)
+                    checkTextCriteria(criteria, message.payloadText())
                 }
             }
         }

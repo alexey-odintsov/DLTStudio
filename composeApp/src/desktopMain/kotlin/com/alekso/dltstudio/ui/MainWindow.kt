@@ -25,8 +25,8 @@ import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.DLTParserV1
-import com.alekso.dltparser.dlt.DLTStorageType
+import com.alekso.dltparser.DLTParserV2
+import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.RowContextMenuCallbacks
@@ -295,7 +295,7 @@ fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
         MainWindow(
             MainViewModel(
-                DLTParserV1(DLTStorageType.Plain),
+                DLTParserV2(PayloadStorageType.Plain),
                 {},
                 insightsRepository = InsightsRepository(),
                 virtualDeviceRepository = VirtualDeviceMock()

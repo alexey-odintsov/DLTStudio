@@ -66,23 +66,23 @@ fun RemoveLogsDialogPanel(
 ) {
 
     val filters = mapOf<FilterParameter, FilterCriteria>(
-        FilterParameter.EcuId to FilterCriteria(message?.dltMessage?.ecuId ?: ""),
+        FilterParameter.EcuId to FilterCriteria(message?.dltMessage?.standardHeader?.ecuId ?: ""),
         FilterParameter.SessionId to FilterCriteria(
-            message?.dltMessage?.sessionId.toString()
+            message?.dltMessage?.standardHeader?.sessionId.toString()
         ),
         FilterParameter.ContextId to FilterCriteria(
-            message?.dltMessage?.contextId.toString()
+            message?.dltMessage?.extendedHeader?.contextId.toString()
         ),
         FilterParameter.AppId to FilterCriteria(
-            message?.dltMessage?.applicationId.toString()
+            message?.dltMessage?.extendedHeader?.applicationId.toString()
         ),
         FilterParameter.MessageType to FilterCriteria(
-            message?.dltMessage?.messageType.toString()
+            message?.dltMessage?.extendedHeader?.messageInfo?.messageType.toString()
         ),
         FilterParameter.MessageTypeInfo to FilterCriteria(
-            message?.dltMessage?.messageTypeInfo.toString()
+            message?.dltMessage?.extendedHeader?.messageInfo?.messageTypeInfo.toString()
         ),
-        FilterParameter.Payload to FilterCriteria(message?.dltMessage?.payloadText?: ""),
+        FilterParameter.Payload to FilterCriteria(message?.dltMessage?.payloadText() ?: ""),
     )
 
     var messageType by rememberSaveable { mutableStateOf(filters[FilterParameter.MessageType]?.value) }

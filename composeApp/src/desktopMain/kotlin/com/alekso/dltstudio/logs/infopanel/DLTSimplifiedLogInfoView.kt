@@ -48,10 +48,10 @@ fun DLTSimplifiedInfoView(
                     text = "DLT Message #$messageIndex:"
                 )
                 val headerText = "${TimeFormatter.formatDateTime(it.timeStampNano)} " +
-                        "${it.applicationId} " +
-                        "${it.contextId} "
+                        "${it.extendedHeader?.applicationId} " +
+                        "${it.extendedHeader?.contextId} "
                 TableRow(0, "", headerText)
-                TableRow(0, "", it.payloadText)
+                TableRow(0, "", it.payloadText())
 
                 Header(
                     modifier = paddingModifier.padding(top = 8.dp),

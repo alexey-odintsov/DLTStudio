@@ -2,14 +2,14 @@ package com.alekso.dltparser.tests.parserv2
 
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.ParserInputStream
-import com.alekso.dltparser.dlt.DLTStorageType
+import com.alekso.dltparser.dlt.PayloadStorageType
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
 import com.alekso.dltparser.tests.testdata.TestData
 
 class DLTParserV2Tests {
-    val parser = DLTParserV2(DLTStorageType.Structured)
+    val parser = DLTParserV2(PayloadStorageType.Structured)
 
     @Test
     fun `DLTParserV2 parse DLT_MESSAGE_1`() {

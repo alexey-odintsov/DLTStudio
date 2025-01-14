@@ -11,12 +11,12 @@ data class LogMessage(
     val comment: String? = null,
 ) {
     fun getMessageText(): String {
-        return "${dltMessage.ecuId} " +
-                "${dltMessage.sessionId} " +
-                "${dltMessage.applicationId} " +
-                "${dltMessage.contextId} " +
-                "${LogTypeIndicator.fromMessageType(dltMessage.messageTypeInfo)?.logTypeSymbol ?: ""} " +
-                dltMessage.payloadText
+        return "${dltMessage.standardHeader.ecuId} " +
+                "${dltMessage.standardHeader.sessionId} " +
+                "${dltMessage.extendedHeader?.applicationId} " +
+                "${dltMessage.extendedHeader?.contextId} " +
+                "${LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)?.logTypeSymbol ?: ""} " +
+                dltMessage.payloadText()
     }
 
     companion object {

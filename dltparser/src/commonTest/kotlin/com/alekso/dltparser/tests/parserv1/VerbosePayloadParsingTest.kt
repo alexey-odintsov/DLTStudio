@@ -1,8 +1,8 @@
 package com.alekso.dltparser.tests.parserv1
 
-import com.alekso.dltparser.DLTParserV1
+import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.Endian
-import com.alekso.dltparser.dlt.DLTStorageType
+import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltparser.dlt.verbosepayload.Argument
 import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
 import com.alekso.dltparser.readInt
@@ -10,7 +10,7 @@ import org.junit.Assert
 import org.junit.Test
 
 class VerbosePayloadParsingTest {
-    val parser = DLTParserV1(DLTStorageType.Structured)
+    val parser = DLTParserV2(PayloadStorageType.Structured)
 
     @Test
     fun `test TypeInfo parsing`() {

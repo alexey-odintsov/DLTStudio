@@ -28,13 +28,13 @@ fun RowContextMenu(
         },
         )
 
-    message.dltMessage.contextId?.let {
+    message.dltMessage.extendedHeader?.contextId?.let {
         menuItems.add(ContextMenuItem("Remove context '${it}'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.ContextId, it)
         })
     }
 
-    message.dltMessage.applicationId?.let {
+    message.dltMessage.extendedHeader?.applicationId?.let {
         menuItems.add(ContextMenuItem("Remove application '${it}'") {
             rowContextMenuCallbacks.onRemoveClicked(
                 LogRemoveContext.ApplicationId,
@@ -43,19 +43,19 @@ fun RowContextMenu(
         })
     }
 
-    message.dltMessage.ecuId?.let {
+    message.dltMessage.standardHeader.ecuId?.let {
         menuItems.add(ContextMenuItem("Remove ecu '$it'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.EcuId, it)
         })
     }
 
-    message.dltMessage.sessionId?.let {
+    message.dltMessage.standardHeader.sessionId?.let {
         menuItems.add(ContextMenuItem("Remove session '$it'") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.SessionId, it.toString())
         })
     }
 
-    message.dltMessage.payloadText.let {
+    message.dltMessage.payloadText().let {
         menuItems.add(
             ContextMenuItem("Remove by custom attributes") {
                 rowContextMenuCallbacks.onRemoveDialogClicked(message)

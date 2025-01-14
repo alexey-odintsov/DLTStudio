@@ -10,7 +10,8 @@ import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.BinaryDLTMessage
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.DLTStorageType
+import com.alekso.dltparser.dlt.Payload
+import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltparser.dlt.PlainDLTMessage
 import com.alekso.dltparser.dlt.StructuredDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
@@ -29,7 +30,7 @@ import java.io.File
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
 class DLTParserV2(
-    override val dltStorageType: DLTStorageType,
+    override val payloadStorageType: PayloadStorageType,
 ) : DLTParser {
 
     /**
@@ -135,97 +136,117 @@ class DLTParserV2(
             i += extendedHeader.getSize()
         }
 
-        val payload = StringBuilder()
-        var rawPayload: ByteArray? = null
+        val payloadEndian =
+            if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
 
-        if (extendedHeader != null) {
-            val payloadSize = standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
-            if (dltStorageType == DLTStorageType.Binary) {
-                rawPayload = stream.readNBytes(payloadSize)
-            } else if (extendedHeader.messageInfo.verbose) {
-                rawPayload = stream.readNBytes(payloadSize)
-                val payloadStructure = VerbosePayload.parse(rawPayload, extendedHeader.argumentsCount.toInt(), if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE)
-                payload.append(payloadStructure.asText())
-                i += payloadSize
+        val dltMessage = when (payloadStorageType) {
+            PayloadStorageType.Structured -> {
+                var payload: Payload? = null
+                if (extendedHeader != null) {
+                    val payloadSize =
+                        standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
+                    i += payloadSize
+                    payload =
+                        parseStructuredPayload(stream, payloadSize, extendedHeader, payloadEndian)
+                }
+                StructuredDLTMessage(timeStampNano, standardHeader, extendedHeader, payload)
+            }
 
-            } else if (extendedHeader.messageInfo.messageType == MessageType.DLT_TYPE_CONTROL) {
-                val messageId: Int = if (standardHeader.headerType.payloadBigEndian) {
-                    stream.readInt()
-                } else {
-                    stream.readIntLittle()
+            PayloadStorageType.Plain -> {
+                var payload: String? = null
+                if (extendedHeader != null) {
+                    val payloadSize =
+                        standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
+                    i += payloadSize
+                    payload = parseStructuredPayload(
+                        stream,
+                        payloadSize,
+                        extendedHeader,
+                        payloadEndian
+                    )?.asText()
+//                    if (payload.endsWith("\n")) {
+                    payload?.removeSuffix("\n")
+//                    }
                 }
-                var response: Int? = null
-                var payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
-                if (extendedHeader.messageInfo.messageTypeInfo == MessageTypeInfo.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
-                    response = stream.readByte().toInt()
-                    payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
-                }
-                if ((payloadSize - payloadOffset) > 0) {
-                    payload.append(
-                        ControlMessagePayload(
-                            messageId,
-                            response,
-                            stream.readNBytes(payloadSize - payloadOffset)
-                        ).asText()
-                    )
-                }
+                PlainDLTMessage(
+                    timeStampNano = timeStampNano,
+                    standardHeader = standardHeader,
+                    extendedHeader = extendedHeader,
+                    payload = payload
+                )
+            }
 
-            } else {
-                val messageId: UInt = stream.readIntLittle().toUInt()
-                val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
-
-                if ((payloadSize - payloadOffset) > 0) {
-                    payload.append(
-                        NonVerbosePayload(
-                            messageId,
-                            stream.readNBytes(payloadSize - payloadOffset)
-                        ).asText()
-                    )
+            PayloadStorageType.Binary -> {
+                var payload: ByteArray? = null
+                if (extendedHeader != null) {
+                    val payloadSize =
+                        standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
+                    i += payloadSize
+                    payload = parseBinaryPayload(stream, payloadSize)
                 }
+                BinaryDLTMessage(
+                    timeStampNano = timeStampNano,
+                    standardHeader = standardHeader,
+                    extendedHeader = extendedHeader,
+                    payload = payload,
+                )
             }
         }
-//        if (DEBUG_LOG && shouldLog) {
-//            println("")
-//        }
-        if (payload.endsWith("\n")) {
-            payload.deleteCharAt(payload.length - 1)
-        }
-
-        val dltMessage = when (dltStorageType) {
-            DLTStorageType.Structured -> StructuredDLTMessage(
-                timeStampNano, ecuId, standardHeader, extendedHeader,
-                payload.toString().toByteArray(),
-            )
-
-            DLTStorageType.Plain -> PlainDLTMessage(
-                timeStampNano = timeStampNano,
-                ecuId = ecuId,
-                messageType = extendedHeader?.messageInfo?.messageType,
-                messageTypeInfo = extendedHeader?.messageInfo?.messageTypeInfo,
-                payload = payload.toString().toByteArray(),
-                payloadText = payload.toString(),
-                applicationId = extendedHeader?.applicationId,
-                contextId = extendedHeader?.contextId,
-                sessionId = standardHeader.sessionId,
-                timeStamp = standardHeader.timeStamp,
-            )
-
-            DLTStorageType.Binary -> BinaryDLTMessage(
-                messageInfo = extendedHeader?.messageInfo,
-                argumentsCount = extendedHeader?.argumentsCount,
-                payloadEndian = if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE,
-                timeStampNano = timeStampNano,
-                ecuId = ecuId,
-                messageType = extendedHeader?.messageInfo?.messageType,
-                messageTypeInfo = extendedHeader?.messageInfo?.messageTypeInfo,
-                payload = rawPayload,
-                applicationId = extendedHeader?.applicationId,
-                contextId = extendedHeader?.contextId,
-                sessionId = standardHeader.sessionId,
-                timeStamp = standardHeader.timeStamp,
-            )
-        }
         return Pair(dltMessage, (i - offset).toInt())
+    }
+
+    private fun parseBinaryPayload(stream: ParserInputStream, payloadSize: Int): ByteArray {
+        return stream.readNBytes(payloadSize)
+    }
+
+    private fun parseStructuredPayload(
+        stream: ParserInputStream,
+        payloadSize: Int,
+        extendedHeader: ExtendedHeader?,
+        payloadEndian: Endian,
+    ): Payload? {
+        var payload: Payload? = null
+        if (extendedHeader?.messageInfo?.verbose == true) {
+            val rawPayload = stream.readNBytes(payloadSize)
+            payload = VerbosePayload.parse(
+                rawPayload,
+                extendedHeader.argumentsCount.toInt(),
+                payloadEndian
+            )
+
+        } else if (extendedHeader?.messageInfo?.messageType == MessageType.DLT_TYPE_CONTROL) {
+            val messageId: Int = if (payloadEndian == Endian.BIG) {
+                stream.readInt()
+            } else {
+                stream.readIntLittle()
+            }
+            var response: Int? = null
+            var payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
+            if (extendedHeader.messageInfo.messageTypeInfo == MessageTypeInfo.DLT_CONTROL_RESPONSE && (payloadSize - payloadOffset) > 0) {
+                response = stream.readByte().toInt()
+                payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
+            }
+            if ((payloadSize - payloadOffset) > 0) {
+                payload = ControlMessagePayload(
+                    messageId,
+                    response,
+                    stream.readNBytes(payloadSize - payloadOffset)
+                )
+            }
+
+        } else {
+            val messageId: UInt = stream.readIntLittle().toUInt()
+            val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
+
+            if ((payloadSize - payloadOffset) > 0) {
+                payload = NonVerbosePayload(
+                    messageId,
+                    stream.readNBytes(payloadSize - payloadOffset)
+                )
+            }
+        }
+
+        return payload
     }
 
     private fun parseStandardHeader(
