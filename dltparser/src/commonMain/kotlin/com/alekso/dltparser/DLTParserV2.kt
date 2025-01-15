@@ -33,6 +33,10 @@ class DLTParserV2(
     override val payloadStorageType: PayloadStorageType,
 ) : DLTParser {
 
+    init {
+        Log.d("Init parser ${this.javaClass.simpleName} with payloadStorageType: $payloadStorageType")
+    }
+
     /**
      * https://www.autosar.org/fileadmin/standards/R20-11/FO/AUTOSAR_PRS_LogAndTraceProtocol.pdf
      * https://www.autosar.org/fileadmin/standards/R22-11/FO/AUTOSAR_PRS_LogAndTraceProtocol.pdf - Header Type for protocol version "2"

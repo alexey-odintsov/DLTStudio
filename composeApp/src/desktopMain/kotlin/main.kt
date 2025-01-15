@@ -58,7 +58,7 @@ fun main() = application {
 
             val mainViewModel = remember {
                 MainViewModel(
-                    dltParser = DLTParserV2(PayloadStorageType.Binary),
+                    dltParser = DLTParserV2(PayloadStorageType.Structured),
                     insightsRepository = InsightsRepository(),
                     onProgressChanged = onProgressUpdate,
                     virtualDeviceRepository = virtualDeviceRepository,
