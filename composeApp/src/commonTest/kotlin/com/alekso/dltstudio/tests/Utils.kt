@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.tests
 
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.StructuredDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
 import com.alekso.dltparser.dlt.extendedheader.MessageType
@@ -19,8 +20,8 @@ object Utils {
         contextId: String = "Context",
         payload: String = "Test payload",
     ): DLTMessage {
-        return DLTMessage(
-            timeStampNano, ecuId,
+        return StructuredDLTMessage(
+            timeStampNano,
             StandardHeader(
                 HeaderType(
                     61.toByte(),
@@ -54,8 +55,7 @@ object Utils {
                         payload.toByteArray()
                     )
                 )
-            ).asText(),
-            84
+            )
         )
     }
 }
