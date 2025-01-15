@@ -10,6 +10,7 @@ kotlin {
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.kotlin.coroutines.swing)
             }
         }
         commonMain.dependencies {
@@ -19,3 +20,7 @@ kotlin {
 }
 
 task("testClasses")
+
+tasks.withType<Test> {
+    maxHeapSize = "8g"
+}
