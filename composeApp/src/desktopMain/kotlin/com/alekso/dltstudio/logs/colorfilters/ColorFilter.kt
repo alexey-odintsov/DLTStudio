@@ -8,8 +8,10 @@ import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
+import kotlinx.serialization.Serializable
 
 
+@Serializable
 data class ColorFilter(
     val name: String,
     val filters: Map<FilterParameter, FilterCriteria>,
@@ -51,7 +53,7 @@ data class ColorFilter(
                 }
 
                 FilterParameter.Payload -> {
-                    checkTextCriteria(criteria, message.payload)
+                    checkTextCriteria(criteria, message.payloadText())
                 }
             }
         }

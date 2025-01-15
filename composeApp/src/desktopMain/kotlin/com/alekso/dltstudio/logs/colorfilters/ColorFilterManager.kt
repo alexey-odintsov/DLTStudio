@@ -11,7 +11,7 @@ class ColorFilterManager {
     fun saveToFile(colorFilters: List<ColorFilter>, file: File) {
         try {
             FileWriter(file).use {
-                it.write(Json.encodeToString(colorFilters))
+                it.write(saveFilters(colorFilters))
             }
         } catch (e: Exception) {
             Log.e("Failed to save filters: $e")
@@ -24,11 +24,19 @@ class ColorFilterManager {
             val json = FileReader(file).use {
                 it.readText()
             }
-            filters = Json.decodeFromString(json)
+            filters = parseFilters(json)
         } catch (e: Exception) {
             Log.e("Failed to load filters: $e")
         }
         return filters
+    }
+
+    fun saveFilters(timelineFilters: List<ColorFilter>): String {
+        return Json.encodeToString(timelineFilters)
+    }
+
+    fun parseFilters(jsonContent: String): List<ColorFilter>? {
+        return Json.decodeFromString<List<ColorFilter>?>(jsonContent)
     }
 
 }
