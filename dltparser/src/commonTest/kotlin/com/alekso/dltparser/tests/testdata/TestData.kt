@@ -1,6 +1,6 @@
 package com.alekso.dltparser.tests.testdata
 
-import com.alekso.dltparser.dlt.StructuredDLTMessage
+import com.alekso.dltparser.dlt.PlainDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
 import com.alekso.dltparser.dlt.extendedheader.MessageType
@@ -22,8 +22,8 @@ object TestData {
         0x35, 0x37, 0x34, 0x30, 0x0A, 0x00,
     )
     // @formatter:on
-    internal val DLT_MESSAGE_1_PARSED = StructuredDLTMessage(
-        1703251206316811, "MGUA",
+    internal val DLT_MESSAGE_1_PARSED = PlainDLTMessage(
+        1703251206316811,
         StandardHeader(
             HeaderType(
                 61.toByte(),
@@ -44,8 +44,7 @@ object TestData {
                 MessageTypeInfo.DLT_LOG_INFO
             ), 1U, "SGFX", "COMP"
         ),
-        "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray(),
-        111
+        "Page flip enqueued on connector 260 with handler 0x73d8005740"
     )
 
     // @formatter:off
@@ -66,8 +65,8 @@ object TestData {
         0x61, 0x67, 0x65, 0x3a, 0x20, 0x4e, 0x2f, 0x41, 0x0a, 0x00 )
     // @formatter:on
 
-    internal val DLT_MESSAGE_2_PARSED = StructuredDLTMessage(
-        1703251206318905, "MGUA",
+    internal val DLT_MESSAGE_2_PARSED = PlainDLTMessage(
+        1703251206318905,
         StandardHeader(
             HeaderType(
                 61.toByte(),
@@ -88,7 +87,7 @@ object TestData {
                 MessageTypeInfo.DLT_LOG_INFO
             ), 1U, "ARC", "ARC"
         ),
-        "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A".toByteArray(),
+        "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A"
     )
 
     // @formatter:off
@@ -120,8 +119,8 @@ object TestData {
     // @formatter:on
 
 
-    internal val DLT_MESSAGE_BROKEN_1_PARSED = StructuredDLTMessage(
-        1706459941654402, "UH\u0001\u0001",
+    internal val DLT_MESSAGE_BROKEN_1_PARSED = PlainDLTMessage(
+        1706459941654402,
         StandardHeader(
             HeaderType(
                 61.toByte(),
@@ -142,6 +141,6 @@ object TestData {
                 MessageTypeInfo.DLT_TRACE_STATE
             ), 85U, "SGFX", "COMP"
         ),
-        "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray(),
+        "Page flip enqueued on connector 260 with handler 0x73d8005740"
     )
 }

@@ -45,7 +45,7 @@ data class VerbosePayload(
             return VerbosePayload(arguments)
         }
 
-        private fun parseVerbosePayload(
+        fun parseVerbosePayload(
             offset: Int, payloadBytes: ByteArray, payloadEndian: Endian
         ): Argument {
             val typeInfoInt = payloadBytes.readInt(offset, payloadEndian)

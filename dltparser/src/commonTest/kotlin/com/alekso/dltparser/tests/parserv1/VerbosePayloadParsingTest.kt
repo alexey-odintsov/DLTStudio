@@ -1,22 +1,20 @@
 package com.alekso.dltparser.tests.parserv1
 
-import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.Endian
-import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltparser.dlt.verbosepayload.Argument
 import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
+import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 import com.alekso.dltparser.readInt
 import org.junit.Assert
 import org.junit.Test
 
 class VerbosePayloadParsingTest {
-    val parser = DLTParserV2(PayloadStorageType.Structured)
 
     @Test
     fun `test TypeInfo parsing`() {
         val data = byteArrayOf(0x00, 0x02, 0x00, 0x00)
         val expected = TypeInfo(typeString = true)
-        val actual = parser.parseVerbosePayloadTypeInfo(
+        val actual = TypeInfo.parseVerbosePayloadTypeInfo(
             true,
             data.readInt(0, Endian.LITTLE),
             Endian.LITTLE
@@ -28,7 +26,7 @@ class VerbosePayloadParsingTest {
     fun `test TypeInfo parsing 2`() {
         val data = byteArrayOf(0x43, 0x00, 0x00, 0x00)
         val expected = TypeInfo(typeLengthBits = 32, typeUnsigned = true)
-        val actual = parser.parseVerbosePayloadTypeInfo(
+        val actual = TypeInfo.parseVerbosePayloadTypeInfo(
             true,
             data.readInt(0, Endian.LITTLE),
             Endian.LITTLE
@@ -57,13 +55,13 @@ class VerbosePayloadParsingTest {
 
         // @formatter:on
         val data = raw.map { it.toByte() }.toByteArray()
-        val actual = parser.parseVerbosePayload(true, 0, data, 0, Endian.LITTLE)
+        val actual = VerbosePayload.parseVerbosePayload(0, data, Endian.LITTLE)
         val expected = Argument(
             0x00000200,
             TypeInfo(
                 typeString = true
             ),
-            2,
+            6,
             164,
             "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A${0x0a.toChar()}${0x00.toChar()}".toByteArray()
         )
