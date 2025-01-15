@@ -85,7 +85,7 @@ class FilesViewModel(
                     yield()
 
                     try {
-                        fileExtractor.searchForFiles(message.dltMessage.payload)
+                        fileExtractor.searchForFiles(message.dltMessage)
                     } catch (e: Exception) {
                         Log.e(e.toString())
                     }

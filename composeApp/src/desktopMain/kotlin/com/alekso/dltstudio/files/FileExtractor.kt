@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.files
 
 import androidx.compose.runtime.mutableStateMapOf
+import com.alekso.dltparser.dlt.DLTMessage
 
 
 data class FileEntry(
@@ -80,7 +81,8 @@ class FileExtractor {
         """FLDA\s(?<serial>\d+)\s(?<packagenum>\d+)\s(?<hexdata>.*)\sFLDA""".toRegex()
 
     @OptIn(ExperimentalStdlibApi::class)
-    fun searchForFiles(payload: String) {
+    fun searchForFiles(dltMessage: DLTMessage) {
+        val payload = dltMessage.payloadText()
         if (payload.startsWith("FLIF")) {
             val matches = flifRegexp.find(payload)
             if (matches != null) {
