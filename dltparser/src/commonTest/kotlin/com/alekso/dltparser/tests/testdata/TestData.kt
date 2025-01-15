@@ -1,15 +1,12 @@
 package com.alekso.dltparser.tests.testdata
 
-import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltparser.dlt.PlainDLTMessage
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo
 import com.alekso.dltparser.dlt.extendedheader.MessageType
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
-import com.alekso.dltparser.dlt.verbosepayload.Argument
-import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
-import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
 
 object TestData {
 
@@ -25,8 +22,8 @@ object TestData {
         0x35, 0x37, 0x34, 0x30, 0x0A, 0x00,
     )
     // @formatter:on
-    internal val DLT_MESSAGE_1_PARSED = DLTMessage(
-        1703251206316811, "MGUA",
+    internal val DLT_MESSAGE_1_PARSED = PlainDLTMessage(
+        1703251206316811,
         StandardHeader(
             HeaderType(
                 61.toByte(),
@@ -47,21 +44,7 @@ object TestData {
                 MessageTypeInfo.DLT_LOG_INFO
             ), 1U, "SGFX", "COMP"
         ),
-        VerbosePayload(
-            listOf(
-                Argument(
-                    512,
-                    TypeInfo(
-                        typeString = true,
-                        stringCoding = TypeInfo.StringCoding.ASCII
-                    ),
-                    2,
-                    63,
-                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
-                )
-            )
-        ).asText(),
-        111
+        "Page flip enqueued on connector 260 with handler 0x73d8005740"
     )
 
     // @formatter:off
@@ -82,8 +65,8 @@ object TestData {
         0x61, 0x67, 0x65, 0x3a, 0x20, 0x4e, 0x2f, 0x41, 0x0a, 0x00 )
     // @formatter:on
 
-    internal val DLT_MESSAGE_2_PARSED = DLTMessage(
-        1703251206318905, "MGUA",
+    internal val DLT_MESSAGE_2_PARSED = PlainDLTMessage(
+        1703251206318905,
         StandardHeader(
             HeaderType(
                 61.toByte(),
@@ -104,21 +87,7 @@ object TestData {
                 MessageTypeInfo.DLT_LOG_INFO
             ), 1U, "ARC", "ARC"
         ),
-        VerbosePayload(
-            listOf(
-                Argument(
-                    512,
-                    TypeInfo(
-                        typeString = true,
-                        stringCoding = TypeInfo.StringCoding.ASCII
-                    ),
-                    2,
-                    164,
-                    "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A".toByteArray()
-                )
-            )
-        ).asText(),
-        212
+        "OnlineCalibration.cpp onLog:114 [FRAME-INFO] Signals not in threshold, Timestamp: 3103184, PitchRate: 0, YawRate: 4.985, RollRate: 0, Speed: 22.7969, Mileage: N/A"
     )
 
     // @formatter:off
@@ -150,8 +119,8 @@ object TestData {
     // @formatter:on
 
 
-    internal val DLT_MESSAGE_BROKEN_1_PARSED = DLTMessage(
-        1706459941654402, "UH\u0001\u0001",
+    internal val DLT_MESSAGE_BROKEN_1_PARSED = PlainDLTMessage(
+        1706459941654402,
         StandardHeader(
             HeaderType(
                 61.toByte(),
@@ -172,20 +141,6 @@ object TestData {
                 MessageTypeInfo.DLT_TRACE_STATE
             ), 85U, "SGFX", "COMP"
         ),
-        VerbosePayload(
-            listOf(
-                Argument(
-                    512,
-                    TypeInfo(
-                        typeString = true,
-                        stringCoding = TypeInfo.StringCoding.ASCII
-                    ),
-                    2,
-                    63,
-                    "Page flip enqueued on connector 260 with handler 0x73d8005740".toByteArray()
-                )
-            )
-        ).asText(),
-        84
+        "Page flip enqueued on connector 260 with handler 0x73d8005740"
     )
 }
