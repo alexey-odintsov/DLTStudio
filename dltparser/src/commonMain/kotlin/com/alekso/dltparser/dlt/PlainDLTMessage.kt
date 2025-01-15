@@ -12,7 +12,7 @@ data class PlainDLTMessage(
     override val extendedHeader: ExtendedHeader?,
     val payload: String?,
 ) : DLTMessage(timeStampNano, standardHeader, extendedHeader) {
-    override fun payloadText(): String? = payload
+    override fun payloadText(): String = payload ?: ""
 
     override fun payloadBytes(): ByteArray? = null
 }

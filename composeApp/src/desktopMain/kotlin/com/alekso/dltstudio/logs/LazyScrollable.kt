@@ -84,11 +84,11 @@ fun LazyScrollable(
                     val sTime: String = TimeFormatter.formatDateTime(dltMessage.timeStampNano)
                     val sTimeOffset: String =
                         if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
-                    val sEcuId: String = "${dltMessage.standardHeader.ecuId}"
-                    val sSessionId: String = "${dltMessage.standardHeader.sessionId}"
-                    val sApplicationId: String = "${dltMessage.extendedHeader?.applicationId}"
-                    val sContextId: String = "${dltMessage.extendedHeader?.contextId}"
-                    val sContent: String = dltMessage.payloadText() ?: ""
+                    val sEcuId = "${dltMessage.standardHeader.ecuId}"
+                    val sSessionId = "${dltMessage.standardHeader.sessionId}"
+                    val sApplicationId = "${dltMessage.extendedHeader?.applicationId}"
+                    val sContextId = "${dltMessage.extendedHeader?.contextId}"
+                    val sContent: String = dltMessage.payloadText()
                     val logTypeIndicator: LogTypeIndicator? =
                         LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)
 

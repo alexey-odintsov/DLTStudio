@@ -21,7 +21,7 @@ abstract class DLTMessage (
     /**
      * Payload textual representation - is used by search and timeline parsing.
      */
-    abstract fun payloadText(): String?
+    abstract fun payloadText(): String
 
     /**
      * Payload raw bytes - can be used to parse binary data

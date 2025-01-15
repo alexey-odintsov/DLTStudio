@@ -18,7 +18,7 @@ data class StructuredDLTMessage(
                 " '${payload?.asText()}'}"
     }
 
-    override fun payloadText(): String? = payload?.asText()
+    override fun payloadText(): String = payload?.asText() ?: ""
 
     override fun payloadBytes(): ByteArray? = null
 

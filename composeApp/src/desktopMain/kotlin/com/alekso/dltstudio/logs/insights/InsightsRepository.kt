@@ -11,7 +11,7 @@ internal data class CompiledRule(
 class InsightsRepository {
     private val insightRules = MutableStateFlow<List<LogInsightRule>>(emptyList())
     private val compiledRules = mutableMapOf<String, CompiledRule>()
-    private val extractGroupRegex = "\\?\\<(.*?)\\>".toRegex()
+    private val extractGroupRegex = "\\?<(.*?)>".toRegex()
 
     init {
         loadInsights()
@@ -49,7 +49,7 @@ class InsightsRepository {
         insightRules.value.forEach { rule ->
             val compiledRule = compiledRules[rule.name]
             val text = logMessage.dltMessage.payloadText()
-            if (compiledRule != null && text != null && text.contains(compiledRule.regex)) {
+            if (compiledRule != null && text.contains(compiledRule.regex)) {
                 val matches = compiledRule.regex.find(text)!!
                 insights.add(LogInsight(name = rule.name, text = fillInsightText(rule, matches)))
             }

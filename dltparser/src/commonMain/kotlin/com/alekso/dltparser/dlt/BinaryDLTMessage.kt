@@ -15,7 +15,7 @@ data class BinaryDLTMessage(
     override val extendedHeader: ExtendedHeader?,
     val payload: ByteArray?,
 ) : DLTMessage(timeStampNano, standardHeader, extendedHeader) {
-    override fun payloadText(): String? = if (payload != null) parsePayload(payload) else null
+    override fun payloadText(): String = if (payload != null) parsePayload(payload) else ""
 
     override fun payloadBytes(): ByteArray? = payload
 
