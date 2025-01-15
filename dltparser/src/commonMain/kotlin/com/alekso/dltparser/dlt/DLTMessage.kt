@@ -14,9 +14,9 @@ enum class PayloadStorageType {
  * https://github.com/esrlabs/dlt-core
  */
 abstract class DLTMessage (
-    val timeStampNano: Long,
-    val standardHeader: StandardHeader,
-    val extendedHeader: ExtendedHeader?,
+    open val timeStampNano: Long,
+    open val standardHeader: StandardHeader,
+    open val extendedHeader: ExtendedHeader?,
 ) {
     /**
      * Payload textual representation - is used by search and timeline parsing.

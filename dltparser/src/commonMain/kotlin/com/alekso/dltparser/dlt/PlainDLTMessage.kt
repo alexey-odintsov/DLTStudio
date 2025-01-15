@@ -6,10 +6,10 @@ import com.alekso.dltparser.dlt.standardheader.StandardHeader
 /**
  * DLTMessage implementation that holds only basic headers information but raw payload.
  */
-class PlainDLTMessage(
-    timeStampNano: Long,
-    standardHeader: StandardHeader,
-    extendedHeader: ExtendedHeader?,
+data class PlainDLTMessage(
+    override val timeStampNano: Long,
+    override val standardHeader: StandardHeader,
+    override val extendedHeader: ExtendedHeader?,
     val payload: String?,
 ) : DLTMessage(timeStampNano, standardHeader, extendedHeader) {
     override fun payloadText(): String? = payload

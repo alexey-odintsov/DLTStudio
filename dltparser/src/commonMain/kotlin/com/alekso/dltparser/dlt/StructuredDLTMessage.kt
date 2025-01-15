@@ -4,10 +4,10 @@ import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
 
 
-class StructuredDLTMessage(
-    timeStampNano: Long,
-    standardHeader: StandardHeader,
-    extendedHeader: ExtendedHeader?,
+data class StructuredDLTMessage(
+    override val timeStampNano: Long,
+    override val standardHeader: StandardHeader,
+    override val extendedHeader: ExtendedHeader?,
     val payload: Payload?,
 ) : DLTMessage(timeStampNano, standardHeader, extendedHeader) {
 
