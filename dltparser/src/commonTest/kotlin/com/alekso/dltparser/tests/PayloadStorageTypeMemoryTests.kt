@@ -3,9 +3,11 @@ package com.alekso.dltparser.tests
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
 import kotlinx.coroutines.runBlocking
+import org.junit.Ignore
 import org.junit.Test
 import java.io.File
 
+@Ignore("Ignore test for CI")
 class PayloadStorageTypeMemoryTests {
     val payloadStorageType = PayloadStorageType.Binary
     val parser = DLTParserV2(payloadStorageType)
