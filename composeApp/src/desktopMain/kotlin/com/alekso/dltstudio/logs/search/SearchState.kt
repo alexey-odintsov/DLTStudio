@@ -15,4 +15,5 @@ data class SearchState(
 enum class SearchType {
     Text,
     MarkedRows,
+    TextAndMarkedRows,
 }
