@@ -101,7 +101,7 @@ fun DrawScope.renderStateLines(
             color,
             Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY + verticalPaddingPx),
             Offset(timeFrame.offsetSeconds * secSizePx + curX, curY + verticalPaddingPx),
-            strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke,
+            strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke / 2f else regularStroke / 2f,
             pathEffect = dashPath,
         )
     }
