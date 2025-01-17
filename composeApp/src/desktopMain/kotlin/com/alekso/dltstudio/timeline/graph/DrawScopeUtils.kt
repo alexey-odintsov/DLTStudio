@@ -2,6 +2,7 @@ package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -15,6 +16,7 @@ import com.alekso.dltstudio.timeline.TimeLineSingleStateEntry
 import com.alekso.dltstudio.timeline.TimeLineStateEntry
 import com.alekso.dltstudio.timeline.TimeLineViewStyle
 
+val dashPath = PathEffect.dashPathEffect(floatArrayOf(3f, 3f))
 
 fun DrawScope.renderLines(
     viewStyle: TimeLineViewStyle,
@@ -85,24 +87,26 @@ fun DrawScope.renderStateLines(
         val curY = calculateY(seriesCount, states.indexOf(entry.value.second), availableHeight)
 
         // horizontal line
-        if (prev != null) {
+        if (prev != null && prev.value.second == entry.value.first) {
             val prevY = calculateY(seriesCount, states.indexOf(prev.value.second), availableHeight)
             drawLine(
                 color,
                 Offset(timeFrame.offsetSeconds * secSizePx + prevX, prevY + verticalPaddingPx),
-                Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY+ verticalPaddingPx),
+                Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY + verticalPaddingPx),
                 strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
             )
         }
         // vertical line
         drawLine(
             color,
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY+ verticalPaddingPx),
-            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY+ verticalPaddingPx),
-            strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curOldY + verticalPaddingPx),
+            Offset(timeFrame.offsetSeconds * secSizePx + curX, curY + verticalPaddingPx),
+            strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke,
+            pathEffect = dashPath,
         )
     }
 }
+
 fun DrawScope.renderSingleStateLines(
     states: List<String>,
     items: MutableList<TimeLineSingleStateEntry>?,
@@ -144,7 +148,8 @@ fun DrawScope.renderSingleStateLines(
                 color,
                 Offset(timeFrame.offsetSeconds * secSizePx + curX, prevY + verticalPaddingPx),
                 Offset(timeFrame.offsetSeconds * secSizePx + curX, curY + verticalPaddingPx),
-                strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke
+                strokeWidth = if (highlightedKey != null && highlightedKey == key) highlightedStroke else regularStroke / 2f,
+                pathEffect = dashPath,
             )
         } else {
             drawCircle(
