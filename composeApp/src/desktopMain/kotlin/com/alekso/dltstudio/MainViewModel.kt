@@ -164,7 +164,7 @@ class MainViewModel(
             state = SearchState.State.SEARCHING
         )
         searchJob = CoroutineScope(IO).launch {
-            var prevTs  = System.currentTimeMillis()
+            var prevTs = System.currentTimeMillis()
             if (!searchAutocomplete.contains(searchText)) {
                 searchAutocomplete.add(searchText)
             }
@@ -173,24 +173,37 @@ class MainViewModel(
             val startMs = System.currentTimeMillis()
             Log.d("Start searching for $searchType '$searchText'")
 
+            val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
+
             _logMessages.forEachIndexed { i, logMessage ->
                 yield()
                 val payload = logMessage.getMessageText()
 
-                if (
-                    // regular text search
-                    (searchType == SearchType.Text && ((_searchState.value.searchUseRegex && searchText.toRegex()
-                        .containsMatchIn(payload))
-                            || (payload.contains(searchText))))
+                val matches = when (searchType) {
+                    SearchType.Text -> {
+                        ((searchRegex != null && searchRegex.containsMatchIn(payload)) || (payload.contains(
+                            searchText
+                        )))
+                    }
 
-                    // marked rows search
-                    || (searchType == SearchType.MarkedRows && logMessage.marked)
-                ) {
+                    SearchType.MarkedRows -> {
+                        logMessage.marked
+                    }
+
+                    SearchType.TextAndMarkedRows -> {
+                        logMessage.marked || ((searchRegex != null && searchRegex.containsMatchIn(
+                            payload
+                        )) || (payload.contains(searchText)))
+                    }
+                }
+
+                if (matches) {
                     withContext(Dispatchers.Swing) {
                         searchResult.add(logMessage)
                         searchIndexes.add(i)
                     }
                 }
+
                 val nowTs = System.currentTimeMillis()
                 if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
                     prevTs = nowTs

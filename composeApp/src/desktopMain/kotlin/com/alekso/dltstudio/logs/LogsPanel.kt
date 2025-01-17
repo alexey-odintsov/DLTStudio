@@ -206,6 +206,7 @@ fun PreviewLogsPanel() {
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
+            toolbarSearchWithMarkedChecked = false,
             toolbarWrapContentChecked = true,
             toolbarCommentsChecked = false,
         ),
@@ -227,6 +228,10 @@ fun PreviewLogsPanel() {
             }
 
             override fun updateToolbarCommentsCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
 
             }
 
