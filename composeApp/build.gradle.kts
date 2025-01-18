@@ -28,6 +28,7 @@ kotlin {
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
             implementation(libs.kotlin.serializaion)
+            implementation(libs.kotlin.datetime)
         }
 
         desktopMain.dependencies {
@@ -52,7 +53,7 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "com.alekso.dltstudio.MainKt"
         jvmArgs += listOf("-Xmx8G")
 
         nativeDistributions {

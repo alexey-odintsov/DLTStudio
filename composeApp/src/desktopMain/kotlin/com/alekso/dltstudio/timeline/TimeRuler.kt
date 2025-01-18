@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.logger.Log
-import java.time.Instant
+import kotlinx.datetime.Clock
 
 private const val TIME_MARK_SIZE_PX = 100
 private const val DEBUG = true
@@ -90,7 +90,7 @@ fun TimeRuler(
 @Preview
 @Composable
 fun PreviewTimeRuler() {
-    val ts = Instant.now().toEpochMilli() * 1000L
+    val ts = Clock.System.now().toEpochMilliseconds() * 1000L
     val te = ts + 7000000L
     val totalSeconds = (te - ts).toInt() / 1000000
 
