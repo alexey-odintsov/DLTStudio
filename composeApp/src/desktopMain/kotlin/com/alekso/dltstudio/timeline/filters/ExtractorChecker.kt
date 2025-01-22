@@ -1,7 +1,14 @@
 package com.alekso.dltstudio.timeline.filters
 
 import com.alekso.dltstudio.timeline.DiagramType
+import com.alekso.dltstudio.timeline.filters.extractors.DurationEntriesExtractor
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.EventEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.MinMaxEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.PercentageEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.SingleStateEntriesExtractor
+import com.alekso.dltstudio.timeline.filters.extractors.StateEntriesExtractor
+import com.alekso.dltstudio.utils.SampleData
 
 object ExtractorChecker {
     fun testRegex(
@@ -11,106 +18,60 @@ object ExtractorChecker {
         diagramType: DiagramType,
         global: Boolean = false
     ): String {
-        // todo: Use EntriesExtractor
+        val testMessage = SampleData.create(payloadText = testPayload)
         var groupsTestValue = ""
         if (extractPattern != null && testPayload != null) {
+            val extractPatternRegex = Regex(extractPattern)
             try {
-                when (extractorType) {
-                    EntriesExtractor.ExtractionType.NamedGroupsManyEntries -> {
-                        when (diagramType) {
-                            DiagramType.Percentage -> {
-                                val matches = Regex(extractPattern).find(testPayload)
-                                if (matches != null) {
-                                    val key: String = matches.groups["key"]?.value ?: "key"
-                                    val value: String? = matches.groups["value"]?.value
-                                    groupsTestValue = "$key -> $value"
-                                }
-                            }
-
-                            DiagramType.MinMaxValue -> {
-                                val matches = Regex(extractPattern).find(testPayload)
-                                if (matches != null) {
-                                    val key: String = matches.groups["key"]?.value ?: "key"
-                                    val value: String? = matches.groups["value"]?.value
-                                    groupsTestValue = "$key -> $value"
-                                }
-                            }
-
-                            DiagramType.State -> {
-                                val matches = Regex(extractPattern).find(testPayload)
-                                if (matches != null) {
-                                    val key: String = matches.groups["key"]?.value ?: "key"
-                                    val value: String? = matches.groups["value"]?.value
-                                    val oldValue: String? = matches.groups["oldvalue"]?.value
-                                    groupsTestValue = "$key -> $value / $oldValue"
-                                }
-                            }
-
-
-                            DiagramType.SingleState -> {
-                                val matches = Regex(extractPattern).find(testPayload)
-                                if (matches != null) {
-                                    val key: String = matches.groups["key"]?.value ?: "key"
-                                    val value: String? = matches.groups["value"]?.value
-                                    groupsTestValue = "$key -> $value"
-                                }
-                            }
-
-                            DiagramType.Duration -> {
-                                val matches = Regex(extractPattern).find(testPayload)
-                                if (matches != null) {
-                                    val key: String = matches.groups["key"]?.value ?: "key"
-                                    val begin: String? = matches.groups["begin"]?.value
-                                    val end: String? = matches.groups["end"]?.value
-                                    groupsTestValue = "$key -> $begin / $end"
-                                }
-                            }
-
-                            DiagramType.Events -> {
-                                val matches = Regex(extractPattern).find(testPayload)
-                                if (matches != null) {
-                                    val key: String = matches.groups["key"]?.value ?: "key"
-                                    val value: String? = matches.groups["value"]?.value
-                                    val info: String? = matches.groups["info"]?.value
-                                    groupsTestValue = "$key -> $value / $info"
-                                }
-                            }
+                when (diagramType) {
+                    DiagramType.Percentage -> {
+                        PercentageEntriesExtractor().extractEntry(
+                            testMessage, extractPatternRegex, extractorType
+                        ).map { e ->
+                            groupsTestValue = "${e.key} -> ${e.value}"
                         }
                     }
 
-                    EntriesExtractor.ExtractionType.GroupsManyEntries -> {
-                        if (global) {
-                            val matches = Regex(extractPattern).findAll(testPayload)
-                            groupsTestValue =
-                                matches.map { "${it.groups[1]?.value} -> ${it.groups[2]?.value}" }
-                                    .joinToString("\n")
-                            println("Groups: '$groupsTestValue'")
-                        } else {
-                            val matches = Regex(extractPattern).find(testPayload)
-                            if (matches?.groups == null) {
-                                groupsTestValue = "Empty groups"
-                            } else {
-
-                                val matchesText = StringBuilder()
-                                matches.groups.forEachIndexed { index, group ->
-                                    if (index > 0 && group != null) {
-                                        matchesText.append(group.value)
-                                        if (index < matches.groups.size - 1) {
-                                            if (index % 2 == 1) {
-                                                matchesText.append(" -> ")
-                                            } else {
-                                                matchesText.append("\n")
-                                            }
-                                        }
-                                    }
-                                }
-                                groupsTestValue = matchesText.toString()
-                                println("Groups: '$groupsTestValue'")
-                            }
+                    DiagramType.MinMaxValue -> {
+                        MinMaxEntriesExtractor().extractEntry(
+                            testMessage, extractPatternRegex, extractorType
+                        ).map { e ->
+                            groupsTestValue = "${e.key} -> ${e.value}"
                         }
                     }
 
-                    EntriesExtractor.ExtractionType.NamedGroupsOneEntry -> TODO()
+                    DiagramType.State -> {
+                        StateEntriesExtractor().extractEntry(
+                            testMessage, extractPatternRegex, extractorType
+                        ).map { e ->
+                            groupsTestValue = "${e.key} -> ${e.value.first} / ${e.value.second}"
+                        }
+                    }
+
+
+                    DiagramType.SingleState -> {
+                        SingleStateEntriesExtractor().extractEntry(
+                            testMessage, extractPatternRegex, extractorType
+                        ).map { e ->
+                            groupsTestValue = "${e.key} -> ${e.value}"
+                        }
+                    }
+
+                    DiagramType.Duration -> {
+                        DurationEntriesExtractor().extractEntry(
+                            testMessage, extractPatternRegex, extractorType
+                        ).map { e ->
+                            groupsTestValue = "${e.key} -> ${e.value.first} / ${e.value.second}"
+                        }
+                    }
+
+                    DiagramType.Events -> {
+                        EventEntriesExtractor().extractEntry(
+                            testMessage, extractPatternRegex, extractorType
+                        ).map { e ->
+                            groupsTestValue = "${e.key} -> ${e.value} / ${e.value.info}"
+                        }
+                    }
                 }
             } catch (e: Exception) {
                 groupsTestValue = "Invalid regex ${e.printStackTrace()}"
