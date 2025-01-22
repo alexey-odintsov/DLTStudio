@@ -1,17 +1,24 @@
 package com.alekso.dltstudio.files
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -65,35 +72,48 @@ fun FilesPanel(
         if (files.isEmpty()) {
             Text("Files will be shown here..")
         } else {
-            LazyColumn(Modifier.weight(1f)) {
-                stickyHeader {
-                    FileItem(
-                        isHeader = true,
-                        i = "#",
-                        name = "Name",
-                        size = "Size",
-                        date = "Date created"
-                    )
-                }
-                itemsIndexed(items = files.keys.toList().sorted(),
-                    key = { _, key -> key },
-                    contentType = { _, _ -> FileEntry::class }) { i, key ->
-                    val fileEntry = files[key]
-                    if (fileEntry != null) {
-                        Row(Modifier.combinedClickable(onClick = {},
-                            onDoubleClick = { viewModel.onFileClicked(fileEntry) })
-                        ) {
-                            FileItem(
-                                i = i.toString(),
-                                name = fileEntry.name,
-                                size = fileEntry.size.toString(),
-                                date = fileEntry.creationDate
-                            )
+            val listState = rememberLazyListState()
+            Box(Modifier.weight(1f)) {
+                LazyColumn(
+                    Modifier.fillMaxSize(),
+                    state = listState
+                ) {
+                    stickyHeader {
+                        FileItem(
+                            isHeader = true,
+                            i = "#",
+                            name = "Name",
+                            size = "Size",
+                            date = "Date created"
+                        )
+                    }
+                    itemsIndexed(items = files.keys.toList().sorted(),
+                        key = { _, key -> key },
+                        contentType = { _, _ -> FileEntry::class }) { i, key ->
+                        val fileEntry = files[key]
+                        if (fileEntry != null) {
+                            Row(
+                                Modifier.combinedClickable(onClick = {},
+                                    onDoubleClick = { viewModel.onFileClicked(fileEntry) })
+                            ) {
+                                FileItem(
+                                    i = i.toString(),
+                                    name = fileEntry.name,
+                                    size = fileEntry.size.toString(),
+                                    date = fileEntry.creationDate
+                                )
+                            }
+                        } else {
+                            Text("$i Empty file!")
                         }
-                    } else {
-                        Text("$i Empty file!")
                     }
                 }
+                VerticalScrollbar(
+                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                    adapter = rememberScrollbarAdapter(
+                        scrollState = listState
+                    )
+                )
             }
         }
     }
