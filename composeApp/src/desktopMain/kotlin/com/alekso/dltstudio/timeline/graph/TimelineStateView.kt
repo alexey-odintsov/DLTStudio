@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -117,15 +118,60 @@ fun TimelineStateView(
 }
 
 
-
 @Preview
 @Composable
 fun PreviewTimelineStateView() {
     val ts = Instant.now().toEpochMilli() * 1000L
     val te = ts + 7_000_000L
 
+    val entriesUserState = TimeLineStateEntries()
+    entriesUserState.map["10"] = mutableListOf()
+    entriesUserState.addEntry(
+        TimeLineStateEntry(
+            timestamp = ts + 1_500_000,
+            key = "10",
+            value = Pair("BOOTING", "RUNNING_LOCKED")
+        )
+    )
+    entriesUserState.addEntry(
+        TimeLineStateEntry(
+            timestamp = ts + 2_000_000,
+            key = "10",
+            value = Pair("RUNNING_LOCKED", "RUNNING_UNLOCKING")
+        )
+    )
+    entriesUserState.addEntry(
+        TimeLineStateEntry(
+            timestamp = ts + 2_500_000,
+            key = "10",
+            value = Pair("RUNNING_UNLOCKING", "RUNNING_UNLOCKED")
+        )
+    )
+    entriesUserState.addEntry(
+        TimeLineStateEntry(
+            timestamp = ts + 3_000_000,
+            key = "10",
+            value = Pair("BOOTING", "RUNNING_LOCKED")
+        )
+    )
+    entriesUserState.addEntry(
+        TimeLineStateEntry(
+            timestamp = ts + 3_500_000,
+            key = "10",
+            value = Pair("RUNNING_LOCKED", "RUNNING_UNLOCKING")
+        )
+    )
+    entriesUserState.addEntry(
+        TimeLineStateEntry(
+            timestamp = ts + 4_000_000,
+            key = "10",
+            value = Pair("RUNNING_UNLOCKING", "RUNNING_UNLOCKE")
+        )
+    )
+
     val entries = TimeLineStateEntries()
     entries.map["10"] = mutableListOf()
+
     entries.addEntry(TimeLineStateEntry(ts + 1_450_000, "10", Pair("STATE_A", "STATE_B")))
     entries.addEntry(TimeLineStateEntry(ts + 2_000_000, "10", Pair("STATE_B", "STATE_C")))
     entries.addEntry(TimeLineStateEntry(ts + 4_000_000, "10", Pair("STATE_C", "STATE_A")))
@@ -137,23 +183,29 @@ fun PreviewTimelineStateView() {
     entries.addEntry(TimeLineStateEntry(ts + 6_200_000, "0", Pair("STATE_D", "STATE_C")))
 
     Column {
-        for (i in 1..3) {
-            val timeFrame = TimeFrame(
-                timestampStart = ts,
-                timestampEnd = te,
-                scale = i.toFloat(),
-                offsetSeconds = 0f
-            )
-            Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
-            Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
-            Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
-            TimelineStateView(
-                modifier = Modifier.fillMaxWidth().height(100.dp),
-                entries = entries,
-                timeFrame = timeFrame,
-                showVerticalSeries = true,
-                highlightedKey = "435"
-            )
-        }
+        val timeFrame = TimeFrame(
+            timestampStart = ts,
+            timestampEnd = te,
+            scale = 1f,
+            offsetSeconds = 0f
+        )
+        Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
+        Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
+        Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
+        TimelineStateView(
+            modifier = Modifier.fillMaxWidth().height(100.dp),
+            entries = entries,
+            timeFrame = timeFrame,
+            showVerticalSeries = true,
+            highlightedKey = "435"
+        )
+        Divider()
+        TimelineStateView(
+            modifier = Modifier.fillMaxWidth().height(100.dp),
+            entries = entriesUserState,
+            timeFrame = timeFrame,
+            showVerticalSeries = true,
+            highlightedKey = "435"
+        )
     }
 }

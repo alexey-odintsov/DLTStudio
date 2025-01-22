@@ -30,6 +30,7 @@ import dltstudio.composeapp.generated.resources.icon_f
 import dltstudio.composeapp.generated.resources.icon_marked_logs
 import dltstudio.composeapp.generated.resources.icon_regex
 import dltstudio.composeapp.generated.resources.icon_search
+import dltstudio.composeapp.generated.resources.icon_search_marks
 import dltstudio.composeapp.generated.resources.icon_stop
 import dltstudio.composeapp.generated.resources.icon_w
 import dltstudio.composeapp.generated.resources.icon_wordwrap
@@ -39,6 +40,7 @@ data class LogsToolbarState(
     val toolbarErrorChecked: Boolean,
     val toolbarWarningChecked: Boolean,
     val toolbarCommentsChecked: Boolean,
+    val toolbarSearchWithMarkedChecked: Boolean,
     val toolbarWrapContentChecked: Boolean,
 ) {
     companion object {
@@ -53,10 +55,25 @@ data class LogsToolbarState(
         fun updateToolbarWarnCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
             return state.copy(toolbarWarningChecked = newValue)
         }
-        fun updateToolbarWrapContentCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
+
+        fun updateToolbarSearchWithMarkedCheck(
+            state: LogsToolbarState,
+            newValue: Boolean
+        ): LogsToolbarState {
+            return state.copy(toolbarSearchWithMarkedChecked = newValue)
+        }
+
+        fun updateToolbarWrapContentCheck(
+            state: LogsToolbarState,
+            newValue: Boolean
+        ): LogsToolbarState {
             return state.copy(toolbarWrapContentChecked = newValue)
         }
-        fun updateToolbarCommentsCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
+
+        fun updateToolbarCommentsCheck(
+            state: LogsToolbarState,
+            newValue: Boolean
+        ): LogsToolbarState {
             return state.copy(toolbarCommentsChecked = newValue)
         }
     }
@@ -68,6 +85,7 @@ interface LogsToolbarCallbacks {
     fun updateToolbarErrorCheck(checked: Boolean)
     fun updateToolbarWarningCheck(checked: Boolean)
     fun updateToolbarCommentsCheck(checked: Boolean)
+    fun updateToolbarSearchWithMarkedCheck(checked: Boolean)
     fun updateToolbarWrapContentCheck(checked: Boolean)
     fun onSearchUseRegexChanged(checked: Boolean)
     fun onColorFiltersClicked()
@@ -121,7 +139,8 @@ fun LogsToolbar(
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
-        ImageButton(modifier = Modifier.size(32.dp),
+        ImageButton(
+            modifier = Modifier.size(32.dp),
             icon = if (searchState.state == SearchState.State.IDLE) {
                 Res.drawable.icon_marked_logs
             } else {
@@ -132,6 +151,13 @@ fun LogsToolbar(
                 callbacks.onSearchButtonClicked(SearchType.MarkedRows, "")
             })
 
+        ToggleImageButton(
+            checkedState = state.toolbarSearchWithMarkedChecked,
+            icon = Res.drawable.icon_search_marks,
+            title = "Search results with marked logs",
+            checkedTintColor = Color.Blue,
+            updateCheckedState = callbacks::updateToolbarSearchWithMarkedCheck,
+        )
 
         var text by rememberSaveable { mutableStateOf(searchState.searchText) }
         ToggleImageButton(
@@ -144,14 +170,14 @@ fun LogsToolbar(
 
         AutoCompleteEditText(
             modifier = Modifier.height(20.dp).weight(1f)
-            .onKeyEvent { e ->
-                if (e.key == Key.Enter) {
-                    callbacks.onSearchButtonClicked(SearchType.Text, text)
-                    true
-                } else {
-                    false
-                }
-            },
+                .onKeyEvent { e ->
+                    if (e.key == Key.Enter) {
+                        callbacks.onSearchButtonClicked(SearchType.Text, text)
+                        true
+                    } else {
+                        false
+                    }
+                },
             value = text,
             onValueChange = {
                 text = it
@@ -159,7 +185,8 @@ fun LogsToolbar(
             items = searchAutoComplete
         )
 
-        ImageButton(modifier = Modifier.size(32.dp),
+        ImageButton(
+            modifier = Modifier.size(32.dp),
             icon = if (searchState.state == SearchState.State.IDLE) {
                 Res.drawable.icon_search
             } else {
@@ -192,6 +219,7 @@ fun PreviewLogsToolbar() {
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
             toolbarWarningChecked = true,
+            toolbarSearchWithMarkedChecked = false,
             toolbarWrapContentChecked = true,
             toolbarCommentsChecked = false,
         ),
@@ -215,6 +243,10 @@ fun PreviewLogsToolbar() {
             }
 
             override fun updateToolbarCommentsCheck(checked: Boolean) {
+
+            }
+
+            override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
 
             }
 

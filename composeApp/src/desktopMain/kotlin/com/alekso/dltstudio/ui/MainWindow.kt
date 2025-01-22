@@ -85,6 +85,7 @@ fun MainWindow(
                 toolbarFatalChecked = true,
                 toolbarErrorChecked = true,
                 toolbarWarningChecked = true,
+                toolbarSearchWithMarkedChecked = false,
                 toolbarWrapContentChecked = false,
                 toolbarCommentsChecked = false,
             )
@@ -143,7 +144,11 @@ fun MainWindow(
 
     val logsToolbarCallbacks = object : LogsToolbarCallbacks {
         override fun onSearchButtonClicked(searchType: SearchType, text: String) {
-            mainViewModel.onSearchClicked(searchType, text)
+            if (logsToolbarState.toolbarSearchWithMarkedChecked && searchType == SearchType.Text) {
+                mainViewModel.onSearchClicked(SearchType.TextAndMarkedRows, text)
+            } else {
+                mainViewModel.onSearchClicked(searchType, text)
+            }
         }
 
         override fun updateToolbarFatalCheck(checked: Boolean) {
@@ -161,6 +166,11 @@ fun MainWindow(
         override fun updateToolbarCommentsCheck(checked: Boolean) {
             logsToolbarState =
                 LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarSearchWithMarkedCheck(logsToolbarState, checked)
         }
 
         override fun updateToolbarWrapContentCheck(checked: Boolean) {

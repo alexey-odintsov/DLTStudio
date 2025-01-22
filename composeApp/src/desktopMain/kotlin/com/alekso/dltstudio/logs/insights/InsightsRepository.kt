@@ -33,6 +33,16 @@ class InsightsRepository {
                 "Process {pid} was doing heavy work on the main thread. This led to skipped {frames} frames.\rRecommendation is to check whether the app is doing some heavy operations on the main thread and offload them",
                 "Choreographer\\[(?<pid>\\d+)\\].*kipped (?<frames>\\d+) frames.*main thread"
             ),
+            LogInsightRule(
+                "Garbage Collector",
+                "GC was triggered by {gccause} for application {app} resulting freeing {freed} (large objects {losobj}). Heap is {freepercent}% free - current {currheap}/total {total}. Paused {paused}. Total GC duration {gcduration}.",
+                "(?<app>.*\\[\\d+\\]):(?<gccause>.*) GC freed (?<freed>.*) AllocSpace objects, (?<losobj>.*) LOS objects, (?<freepercent>.*)% free, (?<currheap>.*)/(?<total>.*), paused (?<paused>.*) total (?<gcduration>.*)"
+            ),
+            LogInsightRule(
+                "System: Resource leak",
+                "Process {pid} was working with a resource and didn't call '{info}' afterward. It's recommended to enable StrictMode in the application and check all the errors.",
+                "System\\[(?<pid>\\d+)\\]:\\s?A resource failed to call (?<info>.*)\\. "
+            ),
         )
 
         // Compile rules
