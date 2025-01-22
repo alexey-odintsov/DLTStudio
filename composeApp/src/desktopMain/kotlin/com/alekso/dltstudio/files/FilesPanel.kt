@@ -62,11 +62,19 @@ fun FilesPanel(
     }
 
     Column(Modifier.padding(4.dp)) {
-        CustomButton(
-            modifier = Modifier.padding(0.dp),
-            onClick = { viewModel.startFilesSearch(logMessages) },
-        ) {
-            Text(text = if (analyzeState == FilesState.IDLE) "Search for files" else "Stop search")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            CustomButton(
+                modifier = Modifier.padding(0.dp),
+                onClick = { viewModel.startFilesSearch(logMessages) },
+            ) {
+                Text(text = if (analyzeState == FilesState.IDLE) "Search for files" else "Stop search")
+            }
+            if (files.isNotEmpty()) {
+                Text(
+                    modifier = Modifier.padding(4.dp),
+                    text = "${files.size} files found ${files.entries.sumOf { e -> e.value.size }} bytes"
+                )
+            }
         }
 
         if (files.isEmpty()) {
