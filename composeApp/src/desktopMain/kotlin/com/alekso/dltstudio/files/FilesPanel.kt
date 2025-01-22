@@ -17,7 +17,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -36,7 +36,7 @@ fun FilesPanel(
     viewModel: FilesViewModel,
     logMessages: List<LogMessage>,
     analyzeState: FilesState,
-    files: SnapshotStateMap<Long, FileEntry>,
+    files: SnapshotStateList<FileEntry>,
 ) {
 
     when (val dialogState = viewModel.previewState.value) {
@@ -72,7 +72,7 @@ fun FilesPanel(
             if (files.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(4.dp),
-                    text = "${files.size} files found ${files.entries.sumOf { e -> e.value.size }} bytes"
+                    text = "${files.size} files found ${files.sumOf { e -> e.size }} bytes"
                 )
             }
         }
@@ -95,24 +95,19 @@ fun FilesPanel(
                             date = "Date created"
                         )
                     }
-                    itemsIndexed(items = files.keys.toList().sorted(),
+                    itemsIndexed(items = files,
                         key = { _, key -> key },
-                        contentType = { _, _ -> FileEntry::class }) { i, key ->
-                        val fileEntry = files[key]
-                        if (fileEntry != null) {
-                            Row(
-                                Modifier.combinedClickable(onClick = {},
-                                    onDoubleClick = { viewModel.onFileClicked(fileEntry) })
-                            ) {
-                                FileItem(
-                                    i = i.toString(),
-                                    name = fileEntry.name,
-                                    size = fileEntry.size.toString(),
-                                    date = fileEntry.creationDate
-                                )
-                            }
-                        } else {
-                            Text("$i Empty file!")
+                        contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
+                        Row(
+                            Modifier.combinedClickable(onClick = {},
+                                onDoubleClick = { viewModel.onFileClicked(fileEntry) })
+                        ) {
+                            FileItem(
+                                i = i.toString(),
+                                name = fileEntry.name,
+                                size = fileEntry.size.toString(),
+                                date = fileEntry.creationDate
+                            )
                         }
                     }
                 }

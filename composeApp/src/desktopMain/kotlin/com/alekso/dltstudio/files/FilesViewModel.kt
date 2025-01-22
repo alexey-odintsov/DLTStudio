@@ -2,7 +2,7 @@ package com.alekso.dltstudio.files
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.ImageBitmap
 import com.alekso.dltstudio.model.LogMessage
@@ -48,13 +48,13 @@ class FilesViewModel(
 
     private var analyzeJob: Job? = null
 
-    var filesEntriesMap = mutableStateMapOf<Long, FileEntry>()
+    var filesEntries = mutableStateListOf<FileEntry>()
 
     private var _analyzeState: MutableState<FilesState> = mutableStateOf(FilesState.IDLE)
     val analyzeState: State<FilesState> = _analyzeState
 
     private fun cleanup() {
-        filesEntriesMap.clear()
+        filesEntries.clear()
     }
 
     fun startFilesSearch(logMessages: List<LogMessage>) {
@@ -97,9 +97,8 @@ class FilesViewModel(
                 }
 
                 withContext(Dispatchers.Default) {
-                    // we need copies of ParseSession's collections to prevent ConcurrentModificationException
-                    filesEntriesMap.clear()
-                    filesEntriesMap.putAll(fileExtractor.filesMap)
+                    filesEntries.clear()
+                    filesEntries.addAll(fileExtractor.filesMap.values.toList().sortedBy { it.name })
                     _analyzeState.value = FilesState.IDLE
                 }
                 onProgressChanged(1f)

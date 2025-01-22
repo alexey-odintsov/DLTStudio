@@ -299,7 +299,7 @@ fun MainWindow(
                     viewModel = filesViewModel,
                     logMessages = mainViewModel.logMessages,
                     analyzeState = filesViewModel.analyzeState.value,
-                    files = filesViewModel.filesEntriesMap,
+                    files = filesViewModel.filesEntries,
                 )
 
             }
