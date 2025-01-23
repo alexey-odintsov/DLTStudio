@@ -15,6 +15,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.decodeToImageBitmap
+import java.io.File
 
 enum class FilesState {
     IDLE,
@@ -33,6 +34,7 @@ abstract class PreviewState(
 }
 
 data class TextPreviewState(override val entry: FileEntry) : PreviewState(Type.Text, entry)
+data class FilePreviewState(override val entry: FileEntry) : PreviewState(Type.None, entry)
 data class ImagePreviewState(override val entry: FileEntry, val imageBitmap: ImageBitmap) :
     PreviewState(Type.Image, entry)
 
@@ -128,7 +130,7 @@ class FilesViewModel(
                 }
 
                 else -> {
-                    _previewState.value = null
+                    _previewState.value = FilePreviewState(entry = entry)
                 }
             }
         }
@@ -136,5 +138,23 @@ class FilesViewModel(
 
     fun closePreviewDialog() {
         _previewState.value = null
+    }
+
+    fun saveFile(file: File) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val fileEntry = _previewState.value
+                if (fileEntry is FilePreviewState) {
+                    fileEntry.entry.getContent()?.let {
+                        file.outputStream().write(it)
+                    }
+                    println("Saving entry to ${file.absolutePath}")
+                }
+            } catch (e: Exception) {
+                Log.e("Failed to save file: $e")
+            } finally {
+                closePreviewDialog()
+            }
+        }
     }
 }

@@ -28,7 +28,8 @@ import com.alekso.dltstudio.logs.CellDivider
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.CustomButton
-
+import com.alekso.dltstudio.ui.FileChooserDialog
+import com.alekso.dltstudio.ui.FileChooserDialogState
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -57,8 +58,20 @@ fun FilesPanel(
             )
         }
 
-        else -> {
+        is FilePreviewState -> {
+            FileChooserDialog(
+                dialogContext = FileChooserDialogState.DialogContext.SAVE_FILE,
+                fileName = dialogState.entry.name,
+                title = "Save file",
+                onFileSelected = { file ->
+                    if (file != null) {
+                        viewModel.saveFile(file)
+                    }
+                },
+            )
         }
+
+        else -> {}
     }
 
     Column(Modifier.padding(4.dp)) {

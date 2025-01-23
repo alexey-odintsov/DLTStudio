@@ -16,6 +16,7 @@ data class FileChooserDialogState(
         OPEN_DLT_FILE,
         OPEN_FILTER_FILE,
         SAVE_FILTER_FILE,
+        SAVE_FILE,
         OPEN_TIMELINE_FILTER_FILE,
         SAVE_TIMELINE_FILTER_FILE,
         UNKNOWN
@@ -26,19 +27,22 @@ data class FileChooserDialogState(
 fun FileChooserDialog(
     title: String,
     onFileSelected: (File?) -> Unit,
-    dialogContext: Any
+    fileName: String? = null,
+    dialogContext: FileChooserDialogState.DialogContext,
 ) {
     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
     val fileChooser = JFileChooser(FileSystemView.getFileSystemView())
     fileChooser.currentDirectory = File(System.getProperty("user.dir"))
     fileChooser.dialogTitle = title
-    fileChooser.fileSelectionMode = JFileChooser.FILES_AND_DIRECTORIES
+    fileChooser.fileSelectionMode = JFileChooser.FILES_ONLY
     fileChooser.isAcceptAllFileFilterUsed = true
-    fileChooser.selectedFile = null
+    fileChooser.selectedFile = File(fileName ?: "")
     fileChooser.currentDirectory = null
 
     if (dialogContext == FileChooserDialogState.DialogContext.SAVE_FILTER_FILE ||
-        dialogContext == FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE ) {
+        dialogContext == FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE ||
+        dialogContext == FileChooserDialogState.DialogContext.SAVE_FILE
+    ) {
         if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             val file = fileChooser.selectedFile
             Log.d("choose file or folder is: $file")
