@@ -133,14 +133,12 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
             }
         )
     }
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(modifier = colNameStyle, text = "Groups:")
-        Text(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top)
-                .padding(horizontal = 4.dp),
-            text = viewModel.groupsTestValue
-        )
-    }
+    Text(modifier = colNameStyle, text = "Groups:")
+    Text(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top)
+            .padding(horizontal = 4.dp),
+        text = viewModel.groupsTestValue
+    )
 }
 
 @Preview
