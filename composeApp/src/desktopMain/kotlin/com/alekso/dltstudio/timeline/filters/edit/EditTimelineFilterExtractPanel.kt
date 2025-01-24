@@ -23,6 +23,7 @@ import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.graph.TimelinePreviewFactory
 import com.alekso.dltstudio.ui.CustomDropDown
 import com.alekso.dltstudio.ui.CustomEditText
+import com.alekso.logger.Log
 
 private val COL_VALUE = 250.dp
 private val COL_PATTERN = 400.dp
@@ -66,7 +67,10 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
                 )
             }
 
-            Text(modifier = colNameStyle.then(paragraph), text = viewModel.extractorType.description)
+            Text(
+                modifier = colNameStyle.then(paragraph),
+                text = viewModel.extractorType.description
+            )
 
             when (viewModel.extractorType) {
                 EntriesExtractor.ExtractionType.NamedGroupsOneEntry -> {
@@ -76,16 +80,19 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
                     Column {
                         DiagramType.entries.first { it.name == viewModel.diagramType }.params.forEach { (p, param) ->
                             Text(
-                                modifier = Modifier.fillMaxWidth().padding(start = 14.dp, end = 4.dp),
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(start = 14.dp, end = 4.dp),
                                 text = "(?<${param.key}>.*) – Required: ${param.required}. ${param.description}"
                             )
                         }
                     }
 
                 }
+
                 EntriesExtractor.ExtractionType.NamedGroupsManyEntries -> {
 
                 }
+
                 EntriesExtractor.ExtractionType.GroupsManyEntries -> {
 
                 }
@@ -106,12 +113,16 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
             singleLine = false,
             value = viewModel.extractPattern ?: "", onValueChange = {
                 viewModel.extractPattern = it
-                viewModel.groupsTestValue = ExtractorChecker.testRegex(
-                    extractPattern = viewModel.extractPattern,
-                    testPayload = viewModel.testPayload,
-                    diagramType = DiagramType.valueOf(viewModel.diagramType),
-                    extractorType = viewModel.extractorType,
-                )
+                try {
+                    viewModel.groupsTestValue = ExtractorChecker.testRegex(
+                        extractPattern = viewModel.extractPattern,
+                        testPayload = viewModel.testPayload,
+                        diagramType = DiagramType.valueOf(viewModel.diagramType),
+                        extractorType = viewModel.extractorType,
+                    )
+                } catch (e: Exception) {
+                    Log.e(e.toString())
+                }
             }
         )
     }
@@ -133,14 +144,12 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
             }
         )
     }
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(modifier = colNameStyle, text = "Groups:")
-        Text(
-            modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top)
-                .padding(horizontal = 4.dp),
-            text = viewModel.groupsTestValue
-        )
-    }
+    Text(modifier = colNameStyle, text = "Groups:")
+    Text(
+        modifier = Modifier.fillMaxWidth().wrapContentHeight(Alignment.Top)
+            .padding(horizontal = 4.dp),
+        text = viewModel.groupsTestValue
+    )
 }
 
 @Preview

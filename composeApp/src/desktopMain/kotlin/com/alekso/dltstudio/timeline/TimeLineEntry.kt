@@ -53,6 +53,9 @@ data class TimeLineEventEntry(
 abstract class TimeLineEntries<T> {
     val map: MutableMap<String, MutableList<T>> = mutableMapOf()
     abstract fun addEntry(entry: T)
+    override fun toString(): String {
+        return map.toString()
+    }
 }
 
 class TimeLineStateEntries : TimeLineEntries<TimeLineStateEntry>() {
@@ -70,6 +73,10 @@ class TimeLineStateEntries : TimeLineEntries<TimeLineStateEntry>() {
             states.add(entry.value.second)
         }
     }
+
+    override fun toString(): String {
+        return map.toString()
+    }
 }
 
 class TimeLineSingleStateEntries : TimeLineEntries<TimeLineSingleStateEntry>() {
@@ -83,6 +90,10 @@ class TimeLineSingleStateEntries : TimeLineEntries<TimeLineSingleStateEntry>() {
         if (!states.contains(entry.value)) {
             states.add(entry.value)
         }
+    }
+
+    override fun toString(): String {
+        return map.toString()
     }
 }
 
@@ -98,6 +109,10 @@ class TimeLineDurationEntries : TimeLineEntries<TimeLineDurationEntry>() {
             states.add(entry.key)
         }
     }
+
+    override fun toString(): String {
+        return map.toString()
+    }
 }
 
 class TimeLinePercentageEntries : TimeLineEntries<TimeLineFloatEntry>() {
@@ -106,6 +121,10 @@ class TimeLinePercentageEntries : TimeLineEntries<TimeLineFloatEntry>() {
             map[entry.key] = mutableListOf()
         }
         map[entry.key]?.add(entry)
+    }
+
+    override fun toString(): String {
+        return map.toString()
     }
 }
 
@@ -119,6 +138,10 @@ class TimeLineEventEntries : TimeLineEntries<TimeLineEventEntry>() {
         if (!states.contains(entry.value.event)) {
             states.add(entry.value.event)
         }
+    }
+
+    override fun toString(): String {
+        return map.toString()
     }
 }
 
@@ -138,5 +161,9 @@ class TimeLineMinMaxEntries : TimeLineEntries<TimeLineFloatEntry>() {
         if (entryValue > maxValue) {
             maxValue = entryValue
         }
+    }
+
+    override fun toString(): String {
+        return map.toString()
     }
 }
