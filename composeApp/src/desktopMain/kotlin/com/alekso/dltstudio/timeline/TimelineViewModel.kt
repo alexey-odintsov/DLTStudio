@@ -3,7 +3,6 @@ package com.alekso.dltstudio.timeline
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
@@ -12,13 +11,7 @@ import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
-import com.alekso.dltstudio.timeline.filters.extractors.DurationEntriesExtractor
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
-import com.alekso.dltstudio.timeline.filters.extractors.EventEntriesExtractor
-import com.alekso.dltstudio.timeline.filters.extractors.MinMaxEntriesExtractor
-import com.alekso.dltstudio.timeline.filters.extractors.PercentageEntriesExtractor
-import com.alekso.dltstudio.timeline.filters.extractors.SingleStateEntriesExtractor
-import com.alekso.dltstudio.timeline.filters.extractors.StateEntriesExtractor
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -54,7 +47,8 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("SYST", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.State,
-            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries
+            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries,
+            testClause = "User 10 state changed from LOCKED to UNLOCKED"
         ),
         TimelineFilter(
             name = "Crashes",
@@ -65,7 +59,8 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CRSH", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Events,
-            extractorType = EntriesExtractor.ExtractionType.NamedGroupsManyEntries
+            extractorType = EntriesExtractor.ExtractionType.NamedGroupsOneEntry,
+            testClause = "Crash (ANR) detected Process: myapp. Exception: NPE Crash ID:123"
         ),
         TimelineFilter(
             name = "CPUC",
@@ -76,7 +71,8 @@ class TimelineViewModel(
                 FilterParameter.ContextId to FilterCriteria("CPUC", TextCriteria.PlainText),
             ),
             diagramType = DiagramType.Percentage,
-            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries
+            extractorType = EntriesExtractor.ExtractionType.GroupsManyEntries,
+            testClause = "cpu0: 10% cpu1: 45% cpu2: 23% cpu3: 2% cpu4: 23% cpu5: 78% cpu6: 1% cpu7: 12%"
         ),
         TimelineFilter(
             name = "CPUS",
@@ -184,10 +180,15 @@ class TimelineViewModel(
                     }
 
                     timelineFilters.forEachIndexed { i, timelineFilter ->
-                        if (timelineFilter.enabled && regexps[i] != null) {
-                            analyzeEntriesRegex(
-                                message.dltMessage,
+                        if (timelineFilter.enabled && regexps[i] != null && TimelineFilter.assessFilter(
                                 timelineFilter,
+                                message.dltMessage
+                            )
+                        ) {
+                            EntriesExtractor.analyzeEntriesRegex(
+                                message.dltMessage,
+                                timelineFilter.diagramType,
+                                timelineFilter.extractorType,
                                 regexps[i]!!,
                                 _userEntries[timelineFilter.key]!!
                             )
@@ -211,65 +212,6 @@ class TimelineViewModel(
                 onProgressChanged(1f)
             }
             Log.d("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
-        }
-    }
-
-
-    private fun analyzeEntriesRegex(
-        message: DLTMessage,
-        filter: TimelineFilter,
-        regex: Regex,
-        entries: TimeLineEntries<*>
-    ) {
-        if (filter.extractPattern == null) return
-
-        try {
-            if (TimelineFilter.assessFilter(filter, message)) {
-                when (filter.diagramType) {
-                    DiagramType.Percentage -> {
-                        PercentageEntriesExtractor().extractEntry(
-                            message,
-                            regex,
-                            filter.extractorType
-                        ).forEach { e -> (entries as TimeLinePercentageEntries).addEntry(e) }
-                    }
-
-                    DiagramType.MinMaxValue -> {
-                        MinMaxEntriesExtractor().extractEntry(message, regex, filter.extractorType)
-                            .forEach { e -> (entries as TimeLineMinMaxEntries).addEntry(e) }
-                    }
-
-                    DiagramType.State -> {
-                        StateEntriesExtractor().extractEntry(message, regex, filter.extractorType)
-                            .forEach { e -> (entries as TimeLineStateEntries).addEntry(e) }
-                    }
-
-                    DiagramType.SingleState -> {
-                        SingleStateEntriesExtractor().extractEntry(
-                            message,
-                            regex,
-                            filter.extractorType
-                        )
-                            .forEach { e -> (entries as TimeLineSingleStateEntries).addEntry(e) }
-                    }
-
-                    DiagramType.Duration -> {
-                        DurationEntriesExtractor().extractEntry(
-                            message,
-                            regex,
-                            filter.extractorType
-                        )
-                            .forEach { e -> (entries as TimeLineDurationEntries).addEntry(e) }
-                    }
-
-                    DiagramType.Events -> {
-                        EventEntriesExtractor().extractEntry(message, regex, filter.extractorType)
-                            .forEach { e -> (entries as TimeLineEventEntries).addEntry(e) }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            // ignore
         }
     }
 
