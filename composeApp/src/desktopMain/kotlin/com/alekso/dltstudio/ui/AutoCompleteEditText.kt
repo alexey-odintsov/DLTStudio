@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
@@ -45,7 +46,7 @@ fun AutoCompleteEditText(
         val filteringOptions = items.filter { it.contains(value, ignoreCase = true) }
         if (filteringOptions.isNotEmpty()) {
             DropdownMenu(
-                modifier = Modifier.focusable(false).fillMaxWidth(),
+                modifier = Modifier.focusable(false).fillMaxWidth().heightIn(0.dp, 200.dp),
                 expanded = expanded,
                 onDismissRequest = {
                     expanded = false
