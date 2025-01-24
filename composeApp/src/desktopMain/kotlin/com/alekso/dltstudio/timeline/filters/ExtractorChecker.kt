@@ -26,7 +26,7 @@ object ExtractorChecker {
                 entries
             )
 
-            return entries.map.toString()
+            return entries.toString()
         } catch (e: Exception) {
             return "Can't extract entry"
         }
