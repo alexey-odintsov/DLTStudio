@@ -9,26 +9,22 @@ private var dateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS").withZone(ZoneId.systemDefault())
 
 object Log {
-    private const val MAX_FILE_SIZE = 10_000_000L
-    private const val DEFAULT_LOG_FILE_NAME = "dltstudio.log"
+    private const val MAX_FILE_SIZE = 5_000_000L
 
     enum class Level {
         DEBUG, INFO, WARN, ERROR
     }
 
-    private var path: String = "${System.getProperty("user.home")}/$DEFAULT_LOG_FILE_NAME"
+    private lateinit var file: File
 
     fun init(logFileName: String? = null) {
         if (logFileName != null) {
-            path = logFileName
+            file = File(logFileName)
         }
     }
 
-
-    private val file = File(path)
-
-
     fun d(message: String) = log(message, Level.DEBUG)
+    fun i(message: String) = log(message, Level.INFO)
     fun w(message: String) = log(message, Level.WARN)
     fun e(message: String) = log(message, Level.ERROR)
 
@@ -46,7 +42,11 @@ object Log {
         message: String,
         level: Level = Level.DEBUG
     ) {
-        writeLog("${dateTimeFormatter.format(Instant.ofEpochMilli(System.currentTimeMillis()))} ${level.name} $message")
+        writeLog("${getDateTime()} ${level.name} $message")
+    }
+
+    private fun getDateTime(): String {
+        return dateTimeFormatter.format(Instant.ofEpochMilli(System.currentTimeMillis()))
     }
 
     private fun writeLog(text: String) {
