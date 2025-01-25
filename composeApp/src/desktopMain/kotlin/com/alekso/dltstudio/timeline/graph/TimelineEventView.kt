@@ -26,7 +26,7 @@ import com.alekso.dltstudio.timeline.TimeLineEvent
 import com.alekso.dltstudio.timeline.TimeLineEventEntries
 import com.alekso.dltstudio.timeline.TimeLineEventEntry
 import com.alekso.dltstudio.timeline.TimeLineViewStyle
-import java.time.Instant
+import kotlinx.datetime.Clock
 
 @Composable
 fun TimelineEventView(
@@ -120,7 +120,7 @@ fun TimelineEventView(
 @Preview
 @Composable
 fun PreviewTimelineEventView() {
-    val ts = Instant.now().toEpochMilli() * 1_000L
+    val ts = Clock.System.now().toEpochMilliseconds() * 1000L
     val te = ts + 7_000_000L
     val key1 = "app1"
     val key2 = "app2"

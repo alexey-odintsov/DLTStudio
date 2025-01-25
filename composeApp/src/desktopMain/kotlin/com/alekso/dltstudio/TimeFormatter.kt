@@ -1,29 +1,38 @@
 package com.alekso.dltstudio
 
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeFormat
+import kotlinx.datetime.format.byUnicodePattern
+import kotlinx.datetime.toLocalDateTime
+
 
 object TimeFormatter {
-    fun formatDateTime(instant: Instant): String = dateTimeFormatter.format(instant)
-
-    fun formatDateTime(timeStampNano: Long): String = format(dateTimeFormatter, timeStampNano)
-
-    fun formatTime(timeStampNano: Long): String = format(timeFormatter, timeStampNano)
-
-    private inline fun format(formatter: DateTimeFormatter, timeStampNano: Long): String {
-        val instant =
-            Instant.ofEpochSecond(timeStampNano / 1000000L, (timeStampNano % 1000000) * 1000L)
-
-        return formatter.format(instant)
+    private val dateTimeFormat = LocalDateTime.Format {
+        byUnicodePattern(DATE_TIME_FORMAT)
     }
 
-    private const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSS"
-    private const val TIME_FORMAT = "HH:mm:ss.SSS"
-    private var dateTimeFormatter =
-        DateTimeFormatter.ofPattern(DATE_TIME_FORMAT).withZone(ZoneId.systemDefault())
-    private var timeFormatter =
-        DateTimeFormatter.ofPattern(TIME_FORMAT).withZone(ZoneId.systemDefault())
+    private val timeFormat = LocalDateTime.Format {
+        byUnicodePattern(TIME_FORMAT)
+    }
+    var timeZone by mutableStateOf(TimeZone.currentSystemDefault())
 
+    fun formatDateTime(timeStampNano: Long): String = format(dateTimeFormat, timeStampNano)
+
+    fun formatTime(timeStampNano: Long): String = format(timeFormat, timeStampNano)
+
+    private fun format(formatter: DateTimeFormat<LocalDateTime>, timeStampNano: Long): String {
+        val instant =
+            Instant.fromEpochSeconds(timeStampNano / 1000000L, (timeStampNano % 1000000) * 1000L)
+        return instant.toLocalDateTime(timeZone).format(formatter)
+    }
+
+    internal const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSS"
+    private const val TIME_FORMAT = "HH:mm:ss.SSS"
 
 }

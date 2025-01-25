@@ -24,7 +24,7 @@ import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineStateEntries
 import com.alekso.dltstudio.timeline.TimeLineStateEntry
 import com.alekso.dltstudio.timeline.TimeLineViewStyle
-import java.time.Instant
+import kotlinx.datetime.Clock
 
 @Composable
 fun TimelineStateView(
@@ -121,7 +121,7 @@ fun TimelineStateView(
 @Preview
 @Composable
 fun PreviewTimelineStateView() {
-    val ts = Instant.now().toEpochMilli() * 1000L
+    val ts = Clock.System.now().toEpochMilliseconds() * 1000L
     val te = ts + 7_000_000L
 
     val entriesUserState = TimeLineStateEntries()

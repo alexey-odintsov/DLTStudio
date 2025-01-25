@@ -3,7 +3,10 @@ package com.alekso.dltstudio.logs
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -16,6 +19,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.ui.AutoCompleteEditText
@@ -34,6 +38,7 @@ import dltstudio.composeapp.generated.resources.icon_search_marks
 import dltstudio.composeapp.generated.resources.icon_stop
 import dltstudio.composeapp.generated.resources.icon_w
 import dltstudio.composeapp.generated.resources.icon_wordwrap
+import kotlinx.datetime.TimeZone
 
 data class LogsToolbarState(
     val toolbarFatalChecked: Boolean,
@@ -130,6 +135,14 @@ fun LogsToolbar(
             updateCheckedState = callbacks::updateToolbarCommentsCheck,
         )
 
+        ToggleImageButton(
+            checkedState = state.toolbarWrapContentChecked,
+            icon = Res.drawable.icon_wordwrap,
+            title = "Wrap content",
+            checkedTintColor = Color.Blue,
+            updateCheckedState = callbacks::updateToolbarWrapContentCheck,
+        )
+
         ImageButton(
             modifier = Modifier.size(32.dp),
             icon = Res.drawable.icon_color_filters,
@@ -199,14 +212,19 @@ fun LogsToolbar(
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
-        ToggleImageButton(
-            checkedState = state.toolbarWrapContentChecked,
-            icon = Res.drawable.icon_wordwrap,
-            title = "Wrap content",
-            checkedTintColor = Color.Blue,
-            updateCheckedState = callbacks::updateToolbarWrapContentCheck,
+        var timeZoneText by rememberSaveable { mutableStateOf(TimeFormatter.timeZone.toString()) }
+        AutoCompleteEditText(
+            modifier = Modifier.width(150.dp).padding(end = 4.dp),
+            value = timeZoneText,
+            onValueChange = {
+                timeZoneText = it
+                try {
+                    TimeFormatter.timeZone = TimeZone.of(it)
+                } catch (ignored: Exception) {
+                }
+            },
+            items = TimeZone.availableZoneIds.map { it }
         )
-
 
     }
 }

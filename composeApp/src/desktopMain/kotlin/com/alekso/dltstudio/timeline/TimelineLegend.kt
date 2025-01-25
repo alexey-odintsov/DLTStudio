@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.colors.ColorPalette
-import java.time.Instant
+import kotlinx.datetime.Clock
 
 @Composable
 fun TimelineLegend(
@@ -90,7 +90,7 @@ fun TimelineLegend(
 @Preview
 @Composable
 fun PreviewTimeLineLegend() {
-    val ts = Instant.now().toEpochMilli() * 1000L
+    val ts = Clock.System.now().toEpochMilliseconds() * 1000L
 
     val entries = TimeLineEventEntries()
     entries.addEntry(

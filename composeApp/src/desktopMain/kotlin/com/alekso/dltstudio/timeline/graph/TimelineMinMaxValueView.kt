@@ -23,7 +23,7 @@ import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineFloatEntry
 import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries
 import com.alekso.dltstudio.timeline.TimeLineViewStyle
-import java.time.Instant
+import kotlinx.datetime.Clock
 
 
 private const val DEFAULT_SERIES_COUNT = 11
@@ -134,7 +134,7 @@ fun TimelineMinMaxValueView(
 @Preview
 @Composable
 fun PreviewTimelineMinMaxValueView() {
-    val ts = Instant.now().toEpochMilli() * 1000L
+    val ts = Clock.System.now().toEpochMilliseconds() * 1000L
     val te = ts + 7_000_000L
     val key1 = "key1"
     val key2 = "key2"
