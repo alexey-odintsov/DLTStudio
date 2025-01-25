@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.preferences
 
+import com.alekso.dltstudio.Env
 import com.alekso.logger.Log
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -9,7 +10,6 @@ import java.io.FileReader
 import java.io.FileWriter
 
 
-private const val PREFERENCES_FILES_NAME = "dlt_studio_preferences.txt"
 private const val MAX_RECENT_SEARCH = 10
 private const val MAX_RECENT_COLOR_FILTER = 5
 private const val MAX_RECENT_TIMELINE_FILTER = 5
@@ -29,21 +29,7 @@ object Preferences {
     )
 
     private var state = State()
-    private val file by lazy {
-        val platform = System.getProperty("os.name")
-        Log.d("Platform $platform")
-
-        if (platform.startsWith("Mac OS")) {
-            val path =
-                "${System.getProperty("user.home")}/$PREFERENCES_FILES_NAME"
-            Log.d("Preferences path $path")
-            File(path)
-        } else { // todo: Linux/Win implementation
-            Log.w("Preferences default path directory for other platforms")
-            File(PREFERENCES_FILES_NAME)
-        }
-    }
-
+    private val file = File(Env.getPreferencesPath())
 
     fun addRecentSearch(searchText: String) {
         if (state.recentSearchQueries.any { it == searchText }) {

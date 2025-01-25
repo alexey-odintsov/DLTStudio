@@ -10,6 +10,7 @@ import androidx.compose.ui.window.application
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.AppTheme
+import com.alekso.dltstudio.Env
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
@@ -29,6 +30,7 @@ import kotlinx.coroutines.SupervisorJob
 import java.io.File
 
 fun main() = application {
+    Log.init(Env.getLogsPath())
     Log.r("===================")
     Log.d("Application started")
 
