@@ -39,13 +39,6 @@ fun main() = application {
     Log.r("===================")
     Log.d("Application started")
 
-    TimeZone.availableZoneIds.forEach { it ->
-        if (it.contains("GMT")) {
-            val zone = TimeZone.of(it)
-            println(zone)
-        }
-    }
-
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
         Log.e("Uncaught exception occurred in $thread: $throwable\n${throwable.stackTraceToString()}")
     }
