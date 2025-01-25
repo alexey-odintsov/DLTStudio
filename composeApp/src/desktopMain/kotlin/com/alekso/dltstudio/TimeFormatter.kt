@@ -1,5 +1,8 @@
 package com.alekso.dltstudio
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -17,7 +20,7 @@ object TimeFormatter {
     private val timeFormat = LocalDateTime.Format {
         byUnicodePattern(TIME_FORMAT)
     }
-    var timeZone = TimeZone.currentSystemDefault()
+    var timeZone by mutableStateOf(TimeZone.currentSystemDefault())
 
     fun formatDateTime(timeStampNano: Long): String = format(dateTimeFormat, timeStampNano)
 
