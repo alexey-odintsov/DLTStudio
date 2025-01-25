@@ -9,6 +9,7 @@ import java.io.FileWriter
 
 class ColorFilterManager {
     fun saveToFile(colorFilters: List<ColorFilter>, file: File) {
+        Log.e("Saving color filters to: ${file.absolutePath}")
         try {
             FileWriter(file).use {
                 it.write(saveFilters(colorFilters))
@@ -19,6 +20,7 @@ class ColorFilterManager {
     }
 
     fun loadFromFile(file: File): List<ColorFilter>? {
+        Log.e("Loading color filters: ${file.absolutePath}")
         var filters: List<ColorFilter>? = null
         try {
             val json = FileReader(file).use {

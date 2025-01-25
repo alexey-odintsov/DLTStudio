@@ -9,20 +9,22 @@ private var dateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS").withZone(ZoneId.systemDefault())
 
 object Log {
-    const val MAX_FILE_SIZE = 10_000_000L
-    const val LOG_FILE_NAME = "dltstudio.log"
+    private const val MAX_FILE_SIZE = 5_000_000L
 
     enum class Level {
         DEBUG, INFO, WARN, ERROR
     }
 
+    private var file: File? = null
 
-    private val path: String = "${System.getProperty("user.home")}/$LOG_FILE_NAME"
-
-    private val file = File(path)
-
+    fun init(logFileName: String? = null) {
+        if (logFileName != null) {
+            file = File(logFileName)
+        }
+    }
 
     fun d(message: String) = log(message, Level.DEBUG)
+    fun i(message: String) = log(message, Level.INFO)
     fun w(message: String) = log(message, Level.WARN)
     fun e(message: String) = log(message, Level.ERROR)
 
@@ -40,16 +42,21 @@ object Log {
         message: String,
         level: Level = Level.DEBUG
     ) {
-        writeLog("${dateTimeFormatter.format(Instant.ofEpochMilli(System.currentTimeMillis()))} ${level.name} $message")
+        writeLog("${getDateTime()} ${level.name} $message")
+    }
+
+    private fun getDateTime(): String {
+        return dateTimeFormatter.format(Instant.ofEpochMilli(System.currentTimeMillis()))
     }
 
     private fun writeLog(text: String) {
-        // todo Rotate log file
-        if (file.length() > MAX_FILE_SIZE) {
-            file.writeText("\r\n$text")
+        if (file == null) {
+            println(text)
+            // todo Rotate log file
+        } else if ((file?.length() ?: 0) > MAX_FILE_SIZE) {
+            file?.writeText("\r\n$text")
         } else {
-            file.appendText("\r\n$text")
+            file?.appendText("\r\n$text")
         }
-
     }
 }

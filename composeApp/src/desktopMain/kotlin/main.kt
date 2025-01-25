@@ -13,10 +13,14 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
+import com.alekso.dltstudio.AppTheme
+import com.alekso.dltstudio.Env
+import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
+import com.alekso.dltstudio.files.FilesViewModel
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.TimelineViewModel
@@ -34,6 +38,7 @@ import java.io.File
 val CurrentTimeZone = compositionLocalOf { TimeFormatter.timeZone }
 
 fun main() = application {
+    Log.init(Env.getLogsPath())
     Log.r("===================")
     Log.d("Application started")
 
@@ -61,58 +66,92 @@ fun main() = application {
 
         AppTheme {
             CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
-                var progress by remember { mutableStateOf(0f) }
-                val onProgressUpdate: (Float) -> Unit = { i -> progress = i  }
 
-                val virtualDeviceRepository: VirtualDeviceRepository by lazy {
-                    VirtualDeviceRepositoryImpl(
-                        database = DBFactory().createDatabase(),
-                        scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
-                    )
+            var progress by remember { mutableStateOf(0f) }
+            val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
+
+            val virtualDeviceRepository: VirtualDeviceRepository by lazy {
+                VirtualDeviceRepositoryImpl(
+                    database = DBFactory().createDatabase(),
+                    scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+                )
+            }
+
+            val mainViewModel = remember {
+                MainViewModel(
+                    dltParser = DLTParserV2(PayloadStorageType.Binary),
+                    insightsRepository = InsightsRepository(),
+                    onProgressChanged = onProgressUpdate,
+                    virtualDeviceRepository = virtualDeviceRepository,
+                )
+            }
+            val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
+            val deviceAnalyzeViewModel = remember { DeviceAnalyzeViewModel(onProgressUpdate) }
+            val filesViewModel = remember { FilesViewModel(onProgressUpdate) }
+
+            var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
+
+            MenuBar {
+                Menu("File") {
+                    Item(
+                        "Open",
+                        onClick = {
+                            stateIOpenFileDialog = FileChooserDialogState(
+                                true,
+                                FileChooserDialogState.DialogContext.OPEN_DLT_FILE
+                            )
+                        })
                 }
-
-                val mainViewModel = remember {
-                    MainViewModel(
-                        dltParser = DLTParserV2(PayloadStorageType.Binary),
-                        insightsRepository = InsightsRepository(),
-                        onProgressChanged = onProgressUpdate,
-                        virtualDeviceRepository = virtualDeviceRepository,
-                    )
-                }
-                val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
-                val deviceAnalyzeViewModel = remember { DeviceAnalyzeViewModel(onProgressUpdate) }
-
-                var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
-
-                MenuBar {
-                    Menu("File") {
+                Menu("Color filters") {
+                    Preferences.recentColorFilters().forEach {
                         Item(
-                            "Open",
+                            it.fileName,
                             onClick = {
-                                stateIOpenFileDialog = FileChooserDialogState(
-                                    true,
-                                    FileChooserDialogState.DialogContext.OPEN_DLT_FILE
-                                )
+                                mainViewModel.loadColorFilters(File(it.absolutePath))
                             })
                     }
-                    Menu("Color filters") {
-                        Preferences.recentColorFilters().forEach {
+                    if (Preferences.recentColorFilters().isNotEmpty()) {
+                        Separator()
+                    }
+
+                    Item(
+                        "Open",
+                        onClick = {
+                            stateIOpenFileDialog = FileChooserDialogState(
+                                true,
+                                FileChooserDialogState.DialogContext.OPEN_FILTER_FILE
+                            )
+                        })
+                    Item(
+                        "Save",
+                        onClick = {
+                            stateIOpenFileDialog = FileChooserDialogState(
+                                true,
+                                FileChooserDialogState.DialogContext.SAVE_FILTER_FILE
+                            )
+                        })
+                    Item(
+                        "Clear",
+                        onClick = { mainViewModel.clearColorFilters() })
+                }
+                Menu("Timeline") {
+                    Menu("Filters") {
+                        Preferences.recentTimelineFilters().forEach {
                             Item(
                                 it.fileName,
                                 onClick = {
-                                    mainViewModel.loadColorFilters(File(it.absolutePath))
+                                    timelineViewModel.loadTimeLineFilters(File(it.absolutePath))
                                 })
                         }
-                        if (Preferences.recentColorFilters().isNotEmpty()) {
+                        if (Preferences.recentTimelineFilters().isNotEmpty()) {
                             Separator()
                         }
-
                         Item(
                             "Open",
                             onClick = {
                                 stateIOpenFileDialog = FileChooserDialogState(
                                     true,
-                                    FileChooserDialogState.DialogContext.OPEN_FILTER_FILE
+                                    FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE
                                 )
                             })
                         Item(
@@ -120,106 +159,77 @@ fun main() = application {
                             onClick = {
                                 stateIOpenFileDialog = FileChooserDialogState(
                                     true,
-                                    FileChooserDialogState.DialogContext.SAVE_FILTER_FILE
+                                    FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE
                                 )
                             })
-                        Item(
-                            "Clear",
-                            onClick = { mainViewModel.clearColorFilters() })
+                        Item("Clear", onClick = { timelineViewModel.clearTimeLineFilters() })
                     }
-                    Menu("Timeline") {
-                        Menu("Filters") {
-                            Preferences.recentTimelineFilters().forEach {
-                                Item(
-                                    it.fileName,
-                                    onClick = {
-                                        timelineViewModel.loadTimeLineFilters(File(it.absolutePath))
-                                    })
+                }
+            }
+
+            if (stateIOpenFileDialog.visibility) {
+                FileChooserDialog(
+                    dialogContext = stateIOpenFileDialog.dialogContext,
+                    title = when (stateIOpenFileDialog.dialogContext) {
+                        FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> "Open DLT file"
+                        FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
+                        FileChooserDialogState.DialogContext.UNKNOWN -> "Open file"
+                        FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
+                        FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> "Open TimeLine filters"
+                        FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> "Save TimeLine filters"
+                        FileChooserDialogState.DialogContext.SAVE_FILE -> "Save file"
+                    },
+                    onFileSelected = { file ->
+                        when (stateIOpenFileDialog.dialogContext) {
+                            FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> {
+                                file?.let {
+                                    mainViewModel.parseFile(listOf(it))
+                                }
                             }
-                            if (Preferences.recentTimelineFilters().isNotEmpty()) {
-                                Separator()
+
+                            FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> {
+                                file?.let {
+                                    mainViewModel.loadColorFilters(it)
+                                }
                             }
-                            Item(
-                                "Open",
-                                onClick = {
-                                    stateIOpenFileDialog = FileChooserDialogState(
-                                        true,
-                                        FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE
-                                    )
-                                })
-                            Item(
-                                "Save",
-                                onClick = {
-                                    stateIOpenFileDialog = FileChooserDialogState(
-                                        true,
-                                        FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE
-                                    )
-                                })
-                            Item("Clear", onClick = { timelineViewModel.clearTimeLineFilters() })
+
+                            FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> {
+                                file?.let {
+                                    mainViewModel.saveColorFilters(it)
+                                }
+                            }
+
+                            FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> {
+                                file?.let {
+                                    timelineViewModel.loadTimeLineFilters(it)
+                                }
+                            }
+
+                            FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> {
+                                file?.let {
+                                    timelineViewModel.saveTimeLineFilters(it)
+                                }
+                            }
+
+                            FileChooserDialogState.DialogContext.UNKNOWN -> {
+
+                            }
+                            else -> {}
                         }
-                    }
-                }
-
-                if (stateIOpenFileDialog.visibility) {
-                    FileChooserDialog(
-                        dialogContext = stateIOpenFileDialog.dialogContext,
-                        title = when (stateIOpenFileDialog.dialogContext) {
-                            FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> "Open DLT file"
-                            FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
-                            FileChooserDialogState.DialogContext.UNKNOWN -> "Open file"
-                            FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
-                            FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> "Open TimeLine filters"
-                            FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> "Save TimeLine filters"
-                        },
-                        onFileSelected = { file ->
-                            when (stateIOpenFileDialog.dialogContext) {
-                                FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> {
-                                    file?.let {
-                                        mainViewModel.parseFile(listOf(it))
-                                    }
-                                }
-
-                                FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> {
-                                    file?.let {
-                                        mainViewModel.loadColorFilters(it)
-                                    }
-                                }
-
-                                FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> {
-                                    file?.let {
-                                        mainViewModel.saveColorFilters(it)
-                                    }
-                                }
-
-                                FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> {
-                                    file?.let {
-                                        timelineViewModel.loadTimeLineFilters(it)
-                                    }
-                                }
-
-                                FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> {
-                                    file?.let {
-                                        timelineViewModel.saveTimeLineFilters(it)
-                                    }
-                                }
-
-                                FileChooserDialogState.DialogContext.UNKNOWN -> {
-
-                                }
-                            }
-                            stateIOpenFileDialog = stateIOpenFileDialog.copy(visibility = false)
-                        },
-                    )
-                }
-
-                MainWindow(
-                    mainViewModel,
-                    timelineViewModel,
-                    deviceAnalyzeViewModel,
-                    progress,
-                    onProgressUpdate
+                        stateIOpenFileDialog = stateIOpenFileDialog.copy(visibility = false)
+                    },
                 )
             }
+
+            MainWindow(
+                mainViewModel,
+                timelineViewModel,
+                deviceAnalyzeViewModel,
+                filesViewModel,
+                progress,
+                onProgressUpdate
+            )
+        }
         }
     }
 }
