@@ -4,6 +4,7 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
@@ -213,7 +214,7 @@ fun LogsToolbar(
 
         var timeZoneText by rememberSaveable { mutableStateOf(TimeFormatter.timeZone.toString()) }
         AutoCompleteEditText(
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier.width(150.dp).padding(end = 4.dp),
             value = timeZoneText,
             onValueChange = {
                 timeZoneText = it
