@@ -135,6 +135,14 @@ fun LogsToolbar(
             updateCheckedState = callbacks::updateToolbarCommentsCheck,
         )
 
+        ToggleImageButton(
+            checkedState = state.toolbarWrapContentChecked,
+            icon = Res.drawable.icon_wordwrap,
+            title = "Wrap content",
+            checkedTintColor = Color.Blue,
+            updateCheckedState = callbacks::updateToolbarWrapContentCheck,
+        )
+
         ImageButton(
             modifier = Modifier.size(32.dp),
             icon = Res.drawable.icon_color_filters,
@@ -203,14 +211,6 @@ fun LogsToolbar(
             })
 
         HorizontalDivider(modifier = Modifier.height(32.dp))
-
-        ToggleImageButton(
-            checkedState = state.toolbarWrapContentChecked,
-            icon = Res.drawable.icon_wordwrap,
-            title = "Wrap content",
-            checkedTintColor = Color.Blue,
-            updateCheckedState = callbacks::updateToolbarWrapContentCheck,
-        )
 
         var timeZoneText by rememberSaveable { mutableStateOf(TimeFormatter.timeZone.toString()) }
         AutoCompleteEditText(
