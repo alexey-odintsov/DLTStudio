@@ -15,7 +15,7 @@ object Log {
         DEBUG, INFO, WARN, ERROR
     }
 
-    private lateinit var file: File
+    private var file: File? = null
 
     fun init(logFileName: String? = null) {
         if (logFileName != null) {
@@ -50,12 +50,13 @@ object Log {
     }
 
     private fun writeLog(text: String) {
-        // todo Rotate log file
-        if (file.length() > MAX_FILE_SIZE) {
-            file.writeText("\r\n$text")
+        if (file == null) {
+            println(text)
+            // todo Rotate log file
+        } else if ((file?.length() ?: 0) > MAX_FILE_SIZE) {
+            file?.writeText("\r\n$text")
         } else {
-            file.appendText("\r\n$text")
+            file?.appendText("\r\n$text")
         }
-
     }
 }
