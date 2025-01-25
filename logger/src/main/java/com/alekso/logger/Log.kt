@@ -9,15 +9,21 @@ private var dateTimeFormatter =
     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSSS").withZone(ZoneId.systemDefault())
 
 object Log {
-    const val MAX_FILE_SIZE = 10_000_000L
-    const val LOG_FILE_NAME = "dltstudio.log"
+    private const val MAX_FILE_SIZE = 10_000_000L
+    private const val DEFAULT_LOG_FILE_NAME = "dltstudio.log"
 
     enum class Level {
         DEBUG, INFO, WARN, ERROR
     }
 
+    private var path: String = "${System.getProperty("user.home")}/$DEFAULT_LOG_FILE_NAME"
 
-    private val path: String = "${System.getProperty("user.home")}/$LOG_FILE_NAME"
+    fun init(logFileName: String? = null) {
+        if (logFileName != null) {
+            path = logFileName
+        }
+    }
+
 
     private val file = File(path)
 
