@@ -15,6 +15,7 @@ import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
+import com.alekso.dltstudio.files.FilesViewModel
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.TimelineViewModel
@@ -66,6 +67,7 @@ fun main() = application {
             }
             val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
             val deviceAnalyzeViewModel = remember { DeviceAnalyzeViewModel(onProgressUpdate) }
+            val filesViewModel = remember { FilesViewModel(onProgressUpdate) }
 
             var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
@@ -155,6 +157,7 @@ fun main() = application {
                         FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
                         FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> "Open TimeLine filters"
                         FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> "Save TimeLine filters"
+                        FileChooserDialogState.DialogContext.SAVE_FILE -> "Save file"
                     },
                     onFileSelected = { file ->
                         when (stateIOpenFileDialog.dialogContext) {
@@ -191,6 +194,7 @@ fun main() = application {
                             FileChooserDialogState.DialogContext.UNKNOWN -> {
 
                             }
+                            else -> {}
                         }
                         stateIOpenFileDialog = stateIOpenFileDialog.copy(visibility = false)
                     },
@@ -201,6 +205,7 @@ fun main() = application {
                 mainViewModel,
                 timelineViewModel,
                 deviceAnalyzeViewModel,
+                filesViewModel,
                 progress,
                 onProgressUpdate
             )
