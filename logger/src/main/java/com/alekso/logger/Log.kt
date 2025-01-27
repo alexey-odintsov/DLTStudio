@@ -21,6 +21,13 @@ object Log {
         if (logFileName != null) {
             file = File(logFileName)
         }
+        val f = file?: return
+        if (!f.parentFile.exists()) {
+            f.parentFile.mkdirs()
+        }
+        if (!f.exists()) {
+            f.createNewFile()
+        }
     }
 
     fun d(message: String) = log(message, Level.DEBUG)
