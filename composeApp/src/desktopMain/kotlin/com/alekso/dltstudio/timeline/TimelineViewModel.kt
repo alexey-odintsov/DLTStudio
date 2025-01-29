@@ -2,6 +2,7 @@ package com.alekso.dltstudio.timeline
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
@@ -29,6 +30,13 @@ class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit
 ) {
     private var analyzeJob: Job? = null
+
+    var offset = mutableStateOf(0f)
+    var scale = mutableStateOf(1f)
+    val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset.value = newOffset }
+    val scaleUpdateCallback: (Float) -> Unit =
+        { newScale -> scale.value = if (newScale > 0f) newScale else 1f }
+
 
     var entriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
     var highlightedKeysMap = mutableStateMapOf<String, String?>()

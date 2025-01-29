@@ -1,28 +1,41 @@
 package com.alekso.dltstudio
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.com.alekso.dltstudio.device.analyse.DeviceAnalyzePlugin
+import com.alekso.dltstudio.com.alekso.dltstudio.files.FilesPlugin
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.LogsPlugin
+import com.alekso.dltstudio.com.alekso.dltstudio.plugins.PluginPanel
+import com.alekso.dltstudio.com.alekso.dltstudio.timeline.TimelinePlugin
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.db.virtualdevice.toVirtualDevice
 import com.alekso.dltstudio.db.virtualdevice.toVirtualDeviceEntity
+import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
+import com.alekso.dltstudio.files.FilesViewModel
+import com.alekso.dltstudio.logs.LogsToolbarCallbacks
+import com.alekso.dltstudio.logs.LogsToolbarState
+import com.alekso.dltstudio.logs.RemoveLogsDialogState
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
-import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.preferences.Preferences
+import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,6 +48,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
@@ -62,6 +77,77 @@ class MainViewModel(
     private val insightsRepository: InsightsRepository,
     private val virtualDeviceRepository: VirtualDeviceRepository,
 ) {
+
+    val panels = mutableListOf<PluginPanel>()
+    var logsToolbarState by mutableStateOf(
+        LogsToolbarState(
+            toolbarFatalChecked = true,
+            toolbarErrorChecked = true,
+            toolbarWarningChecked = true,
+            toolbarSearchWithMarkedChecked = false,
+            toolbarWrapContentChecked = false,
+            toolbarCommentsChecked = false,
+        )
+    )
+
+    @OptIn(ExperimentalSplitPaneApi::class)
+    val vSplitterState = SplitPaneState(0.8f, true)
+
+    @OptIn(ExperimentalSplitPaneApi::class)
+    val hSplitterState = SplitPaneState(0.78f, true)
+    val colorFiltersDialogState = mutableStateOf(false)
+
+    val logsToolbarCallbacks = object : LogsToolbarCallbacks {
+        override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+            if (logsToolbarState.toolbarSearchWithMarkedChecked && searchType == SearchType.Text) {
+                onSearchClicked(SearchType.TextAndMarkedRows, text)
+            } else {
+                onSearchClicked(searchType, text)
+            }
+        }
+
+        override fun updateToolbarFatalCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarErrorCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWarningCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarCommentsCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarSearchWithMarkedCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWrapContentCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
+        }
+
+        override fun onSearchUseRegexChanged(checked: Boolean) {
+            onSearchUseRegexChanged(checked)
+        }
+
+        override fun onColorFiltersClicked() {
+            colorFiltersDialogState.value = true
+        }
+    }
+    val devicePreviewsDialogState = mutableStateOf(false)
+    val removeLogsDialogState = mutableStateOf(
+        RemoveLogsDialogState(
+            visible = false,
+            message = null
+        )
+    )
 
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
@@ -91,10 +177,25 @@ class MainViewModel(
                 }
             }
         }
+
+        panels.add(LogsPlugin(viewModel = this))
+        panels.add(
+            TimelinePlugin(
+                viewModel = TimelineViewModel(onProgressChanged),
+                logMessages = logMessages
+            )
+        )
+        panels.add(
+            FilesPlugin(
+                viewModel = FilesViewModel(onProgressChanged),
+                logMessages = logMessages
+            )
+        )
+        panels.add(DeviceAnalyzePlugin(DeviceAnalyzeViewModel(onProgressChanged)))
     }
 
-    fun onLogsRowSelected(coroutineScope: CoroutineScope, index: Int, rowId: Int) {
-        coroutineScope.launch {
+    fun onLogsRowSelected(index: Int, rowId: Int) {
+        CoroutineScope(IO).launch {
             logsListSelectedRow.value = rowId
             onLogSelected(_logMessages[rowId])
         }
@@ -109,8 +210,8 @@ class MainViewModel(
         }
     }
 
-    fun onSearchRowSelected(coroutineScope: CoroutineScope, index: Int, rowId: Int) {
-        coroutineScope.launch {
+    fun onSearchRowSelected(index: Int, rowId: Int) {
+        CoroutineScope(Main).launch {
             if (searchListSelectedRow.value == index) { // simulate second click
                 try {
                     logsListSelectedRow.value = rowId
