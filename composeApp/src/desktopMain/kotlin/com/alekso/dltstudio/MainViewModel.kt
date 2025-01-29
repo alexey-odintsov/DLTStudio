@@ -112,9 +112,13 @@ class MainViewModel(
     fun onSearchRowSelected(coroutineScope: CoroutineScope, index: Int, rowId: Int) {
         coroutineScope.launch {
             if (searchListSelectedRow.value == index) { // simulate second click
-                logsListSelectedRow.value = rowId
-                onLogSelected(_logMessages[rowId])
-                logsListState.scrollToItem(rowId)
+                try {
+                    logsListSelectedRow.value = rowId
+                    onLogSelected(_logMessages[rowId])
+                    logsListState.scrollToItem(rowId)
+                } catch (e: Exception) {
+                    Log.e("Failed to select row $rowId: $e")
+                }
             } else {
                 searchListSelectedRow.value = index
             }
