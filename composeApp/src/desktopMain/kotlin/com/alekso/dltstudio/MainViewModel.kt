@@ -134,7 +134,7 @@ class MainViewModel(
         }
 
         override fun onSearchUseRegexChanged(checked: Boolean) {
-            onSearchUseRegexChanged(checked)
+            _searchState.value = _searchState.value.copy(searchUseRegex = checked)
         }
 
         override fun onColorFiltersClicked() {
@@ -242,10 +242,6 @@ class MainViewModel(
 
     private var _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState())
     val searchState: StateFlow<SearchState> = _searchState
-
-    fun onSearchUseRegexChanged(checked: Boolean) {
-        _searchState.value = _searchState.value.copy(searchUseRegex = checked)
-    }
 
     fun onSearchClicked(searchType: SearchType, searchText: String) {
         when (_searchState.value.state) {
