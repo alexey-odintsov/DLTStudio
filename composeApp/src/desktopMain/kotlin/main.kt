@@ -8,13 +8,11 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.alekso.dltstudio.com.alekso.dltstudio.MainMenu
-import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.ui.MainWindow
 import com.alekso.logger.Log
 import kotlinx.datetime.TimeZone
-import java.io.File
 
 
 val CurrentTimeZone = compositionLocalOf { TimeFormatter.timeZone }
@@ -41,37 +39,7 @@ fun main() = application {
             CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
                 val mainViewModel = remember { DependencyManager.getMainViewModel() }
 
-                val mainMenuCallbacks = remember { object : MainMenuCallbacks {
-                    override fun onOpenDLTFiles(files: List<File>) {
-                        mainViewModel.parseFile(files)
-                    }
-
-                    override fun onLoadColorFiltersFile(file: File) {
-                        mainViewModel.loadColorFilters(file)
-                    }
-
-                    override fun onSaveColorFiltersFile(file: File) {
-                        mainViewModel.saveColorFilters(file)
-                    }
-
-                    override fun onLoadTimelineFiltersFile(file: File) {
-                        mainViewModel.loadTimeLineFilters(file)
-                    }
-
-                    override fun onSaveTimelineFiltersFile(file: File) {
-                        mainViewModel.saveTimeLineFilters(file)
-                    }
-
-                    override fun onClearColorFilters() {
-                        mainViewModel.clearColorFilters()
-                    }
-
-                    override fun onClearTimelineFilters() {
-                        mainViewModel.clearColorFilters()
-                    }
-
-                } }
-                MainMenu(mainMenuCallbacks)
+                MainMenu(mainViewModel.mainMenuCallbacks)
                 MainWindow(mainViewModel)
             }
         }

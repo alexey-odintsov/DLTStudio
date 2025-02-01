@@ -1,6 +1,7 @@
 package com.alekso.dltstudio
 
 import com.alekso.dltparser.DLTParser
+import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
 import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.device.analyse.DeviceAnalyzePlugin
 import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
@@ -29,6 +30,36 @@ class MainViewModel(
     val panels = mutableListOf<PluginPanel>()
 
     private var parseJob: Job? = null
+
+    val mainMenuCallbacks = object : MainMenuCallbacks {
+        override fun onOpenDLTFiles(files: List<File>) {
+            parseFile(files)
+        }
+
+        override fun onLoadColorFiltersFile(file: File) {
+            loadColorFilters(file)
+        }
+
+        override fun onSaveColorFiltersFile(file: File) {
+            saveColorFilters(file)
+        }
+
+        override fun onLoadTimelineFiltersFile(file: File) {
+            loadTimeLineFilters(file)
+        }
+
+        override fun onSaveTimelineFiltersFile(file: File) {
+            saveTimeLineFilters(file)
+        }
+
+        override fun onClearColorFilters() {
+            clearColorFilters()
+        }
+
+        override fun onClearTimelineFilters() {
+            clearTimeLineFilters()
+        }
+    }
 
     init {
         panels.add(
