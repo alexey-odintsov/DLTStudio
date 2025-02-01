@@ -56,10 +56,10 @@ fun LogsPanel(
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
-    searchIndexes: List<Int>,
+    searchIndexes: SnapshotStateList<Int>,
     searchAutoComplete: SnapshotStateList<String>,
     // color filters
-    colorFilters: List<ColorFilter>,
+    colorFilters: SnapshotStateList<ColorFilter>,
     // toolbar
     logsToolbarState: LogsToolbarState,
     logsToolbarCallbacks: LogsToolbarCallbacks,
@@ -86,7 +86,8 @@ fun LogsPanel(
         )
 
         Divider()
-        val mergedFilters = mutableListOf<ColorFilter>()
+        // TODO: Move to viewModel
+        val mergedFilters = mutableStateListOf<ColorFilter>()
         mergedFilters.addAll(colorFilters)
         if (logsToolbarState.toolbarWarningChecked) {
             mergedFilters.add(ColorFilterWarn)
@@ -199,8 +200,8 @@ fun PreviewLogsPanel() {
         logMessages = list,
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
-        searchIndexes = emptyList(),
-        colorFilters = emptyList(),
+        searchIndexes = SnapshotStateList(),
+        colorFilters = SnapshotStateList(),
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,

@@ -35,8 +35,8 @@ import com.alekso.dltstudio.model.LogMessage
 fun LazyScrollable(
     modifier: Modifier,
     logMessages: SnapshotStateList<LogMessage>,
-    indexes: List<Int>? = null,
-    colorFilters: List<ColorFilter>,
+    indexes: SnapshotStateList<Int>? = null,
+    colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
     onRowSelected: (Int, Int) -> Unit,
     listState: LazyListState,

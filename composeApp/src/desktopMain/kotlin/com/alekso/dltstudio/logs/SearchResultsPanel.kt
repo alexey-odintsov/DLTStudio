@@ -15,8 +15,8 @@ import com.alekso.dltstudio.ui.Panel
 fun SearchResultsPanel(
     modifier: Modifier = Modifier,
     searchResult: SnapshotStateList<LogMessage>,
-    searchIndexes: List<Int>,
-    colorFilters: List<ColorFilter>,
+    searchIndexes: SnapshotStateList<Int>,
+    colorFilters: SnapshotStateList<ColorFilter>,
     searchResultSelectedRow: Int,
     searchListState: LazyListState,
     onSearchRowSelected: (Int, Int) -> Unit,

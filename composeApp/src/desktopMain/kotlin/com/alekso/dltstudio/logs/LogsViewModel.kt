@@ -83,7 +83,9 @@ class LogsViewModel(
     val searchResults: SnapshotStateList<LogMessage>
         get() = _searchResults
 
-    val searchIndexes = mutableStateListOf<Int>()
+    private val _searchIndexes = mutableStateListOf<Int>()
+    val searchIndexes: SnapshotStateList<Int>
+        get() = _searchIndexes
 
     private val _searchAutocomplete = mutableStateListOf<String>()
     val searchAutocomplete: SnapshotStateList<String>
@@ -254,7 +256,7 @@ class LogsViewModel(
                 _searchAutocomplete.add(searchText)
             }
             _searchResults.clear()
-            searchIndexes.clear()
+            _searchIndexes.clear()
             val startMs = System.currentTimeMillis()
             Log.d("Start searching for $searchType '$searchText'")
 
@@ -285,7 +287,7 @@ class LogsViewModel(
                 if (matches) {
                     withContext(Dispatchers.Swing) {
                         _searchResults.add(logMessage)
-                        searchIndexes.add(i)
+                        _searchIndexes.add(i)
                     }
                 }
 
