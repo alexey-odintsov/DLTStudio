@@ -14,6 +14,8 @@ class FilesPlugin(
 
     @Composable
     override fun renderPanel(modifier: Modifier) {
+        println("Recompose FilesPlugin.renderPanel")
+
         FilesPanel(
             analyzeState = viewModel.analyzeState.value,
             files = viewModel.filesEntries,

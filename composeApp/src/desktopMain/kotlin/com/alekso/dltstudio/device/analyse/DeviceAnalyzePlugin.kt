@@ -11,6 +11,8 @@ class DeviceAnalyzePlugin(
 
     @Composable
     override fun renderPanel(modifier: Modifier) {
+        println("Recompose DeviceAnalyzePlugin.renderPanel")
+
         DeviceAnalysePanel(
             modifier = modifier,
             responseState = viewModel.analyzeState,

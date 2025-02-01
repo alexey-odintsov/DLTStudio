@@ -14,6 +14,8 @@ class TimelinePlugin(
 
     @Composable
     override fun renderPanel(modifier: Modifier) {
+        println("Recompose TimelinePlugin.renderPanel")
+
         TimeLinePanel(
             modifier = modifier,
             timelineViewModel = viewModel,
