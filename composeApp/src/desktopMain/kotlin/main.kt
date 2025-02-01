@@ -2,19 +2,15 @@ package com.alekso.dltstudio
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import com.alekso.dltstudio.com.alekso.dltstudio.MainMenu
+import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
-import com.alekso.dltstudio.ui.FileChooserDialog
-import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
 import com.alekso.logger.Log
 import kotlinx.datetime.TimeZone
@@ -44,120 +40,38 @@ fun main() = application {
         AppTheme {
             CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
                 val mainViewModel = remember { DependencyManager.getMainViewModel() }
-                var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
-                MenuBar {
-                    Menu("File") {
-                        Item("Open", onClick = {
-                            stateIOpenFileDialog = FileChooserDialogState(
-                                true, FileChooserDialogState.DialogContext.OPEN_DLT_FILE
-                            )
-                        })
+                val mainMenuCallbacks = remember { object : MainMenuCallbacks {
+                    override fun onOpenDLTFiles(files: List<File>) {
+                        mainViewModel.parseFile(files)
                     }
-                    Menu("Color filters") {
-                        Preferences.recentColorFilters().forEach {
-                            Item(it.fileName, onClick = {
-                                mainViewModel.loadColorFilters(File(it.absolutePath))
-                            })
-                        }
-                        if (Preferences.recentColorFilters().isNotEmpty()) {
-                            Separator()
-                        }
 
-                        Item("Open", onClick = {
-                            stateIOpenFileDialog = FileChooserDialogState(
-                                true, FileChooserDialogState.DialogContext.OPEN_FILTER_FILE
-                            )
-                        })
-                        Item("Save", onClick = {
-                            stateIOpenFileDialog = FileChooserDialogState(
-                                true, FileChooserDialogState.DialogContext.SAVE_FILTER_FILE
-                            )
-                        })
-                        Item("Clear", onClick = { mainViewModel.clearColorFilters() })
+                    override fun onLoadColorFiltersFile(file: File) {
+                        mainViewModel.loadColorFilters(file)
                     }
-                    Menu("Timeline") {
-                        Menu("Filters") {
-                            Preferences.recentTimelineFilters().forEach {
-                                Item(it.fileName, onClick = {
-                                    mainViewModel.loadTimeLineFilters(File(it.absolutePath))
-                                })
-                            }
-                            if (Preferences.recentTimelineFilters().isNotEmpty()) {
-                                Separator()
-                            }
-                            Item("Open", onClick = {
-                                stateIOpenFileDialog = FileChooserDialogState(
-                                    true,
-                                    FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE
-                                )
-                            })
-                            Item("Save", onClick = {
-                                stateIOpenFileDialog = FileChooserDialogState(
-                                    true,
-                                    FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE
-                                )
-                            })
-                            Item("Clear", onClick = { mainViewModel.clearTimeLineFilters() })
-                        }
+
+                    override fun onSaveColorFiltersFile(file: File) {
+                        mainViewModel.saveColorFilters(file)
                     }
-                }
 
-                if (stateIOpenFileDialog.visibility) {
-                    FileChooserDialog(
-                        dialogContext = stateIOpenFileDialog.dialogContext,
-                        title = when (stateIOpenFileDialog.dialogContext) {
-                            FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> "Open DLT file"
-                            FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
-                            FileChooserDialogState.DialogContext.UNKNOWN -> "Open file"
-                            FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
-                            FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> "Open TimeLine filters"
-                            FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> "Save TimeLine filters"
-                            FileChooserDialogState.DialogContext.SAVE_FILE -> "Save file"
-                        },
-                        onFileSelected = { file ->
-                            when (stateIOpenFileDialog.dialogContext) {
-                                FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> {
-                                    file?.let {
-                                        mainViewModel.parseFile(listOf(it))
-                                    }
-                                }
+                    override fun onLoadTimelineFiltersFile(file: File) {
+                        mainViewModel.loadTimeLineFilters(file)
+                    }
 
-                                FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> {
-                                    file?.let {
-                                        mainViewModel.loadColorFilters(it)
-                                    }
-                                }
+                    override fun onSaveTimelineFiltersFile(file: File) {
+                        mainViewModel.saveTimeLineFilters(file)
+                    }
 
-                                FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> {
-                                    file?.let {
-                                        mainViewModel.saveColorFilters(it)
-                                    }
-                                }
+                    override fun onClearColorFilters() {
+                        mainViewModel.clearColorFilters()
+                    }
 
-                                FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> {
-                                    file?.let {
-                                        mainViewModel.loadTimeLineFilters(it)
-                                    }
-                                }
+                    override fun onClearTimelineFilters() {
+                        mainViewModel.clearColorFilters()
+                    }
 
-                                FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> {
-                                    file?.let {
-                                        mainViewModel.saveTimeLineFilters(it)
-                                    }
-                                }
-
-                                FileChooserDialogState.DialogContext.UNKNOWN -> {
-
-                                }
-
-                                else -> {}
-                            }
-                            stateIOpenFileDialog = stateIOpenFileDialog.copy(visibility = false)
-                        },
-                    )
-                }
-
+                } }
+                MainMenu(mainMenuCallbacks)
                 MainWindow(mainViewModel)
             }
         }
