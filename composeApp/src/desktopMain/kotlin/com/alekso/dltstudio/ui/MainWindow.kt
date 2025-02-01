@@ -69,12 +69,12 @@ fun MainWindow(
             (mainViewModel.panels[tabIndex]).renderPanel(modifier = Modifier.weight(1f))
         }
         Divider()
-//        val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
-//            "Messages: ${"%,d".format(mainViewModel.logMessages.size)}"
-//        } else {
-//            "No file loaded"
-//        }
-        val statusText = "Status text"
+        val messagesSize = DependencyManager.getMessageHolder().getMessages().size
+        val statusText = if (messagesSize > 0) {
+            "Messages: ${"%,d".format(messagesSize)}"
+        } else {
+            "No file loaded"
+        }
         StatusBar(modifier = Modifier.fillMaxWidth(), DependencyManager.progress.value, statusText)
     }
 }
