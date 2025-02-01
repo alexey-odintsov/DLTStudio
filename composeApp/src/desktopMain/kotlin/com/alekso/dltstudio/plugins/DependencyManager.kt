@@ -1,5 +1,7 @@
 package com.alekso.dltstudio.plugins
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.MainViewModel
@@ -13,7 +15,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 object DependencyManager {
-    private val onProgressUpdate = { progress: Float -> }
+    private var _progress = mutableStateOf(0f)
+    val progress: State<Float>
+        get() = _progress
+
+    val onProgressUpdate = { p: Float ->
+        _progress.value = p
+    }
 
     private val virtualDeviceRepository by lazy {
         VirtualDeviceRepositoryImpl(
@@ -26,7 +34,7 @@ object DependencyManager {
     private val logsViewModel = LogsViewModel(
         insightsRepository = insightsRepository,
         virtualDeviceRepository = virtualDeviceRepository,
-        onProgressChanged = { progress -> } // TODO: Pass on progress callback
+        onProgressChanged = onProgressUpdate
     )
 
     private val _timelineViewModel by lazy {
@@ -35,7 +43,6 @@ object DependencyManager {
 
     private val mainViewModel = MainViewModel(
         dltParser = DLTParserV2(PayloadStorageType.Binary),
-        onProgressChanged = onProgressUpdate,
         messagesHolder = logsViewModel,
         timelineHolder = _timelineViewModel,
     )

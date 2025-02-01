@@ -25,11 +25,9 @@ import java.io.File
 
 class MainViewModel(
     private val dltParser: DLTParser,
-    private val onProgressChanged: (Float) -> Unit,
     private val messagesHolder: MessagesHolder,
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
 ) {
-
     val panels = mutableStateListOf<PluginPanel>()
     val panelsNames: SnapshotStateList<String>
         get() = panels.map { it.getPanelName() }.toMutableStateList()
@@ -80,13 +78,13 @@ class MainViewModel(
         )
         panels.add(
             FilesPlugin(
-                viewModel = FilesViewModel(onProgressChanged),
+                viewModel = FilesViewModel(DependencyManager.onProgressUpdate),
                 logMessages = messagesHolder.getMessages(),
             )
         )
         panels.add(
             DeviceAnalyzePlugin(
-                DeviceAnalyzeViewModel(onProgressChanged)
+                DeviceAnalyzeViewModel(DependencyManager.onProgressUpdate)
             )
         )
     }
@@ -96,7 +94,7 @@ class MainViewModel(
         messagesHolder.clearMessages()
         parseJob = CoroutineScope(IO).launch {
             messagesHolder.storeImages(
-                dltParser.read(onProgressChanged, dltFiles).map { LogMessage(it) })
+                dltParser.read(DependencyManager.onProgressUpdate, dltFiles).map { LogMessage(it) })
         }
     }
 

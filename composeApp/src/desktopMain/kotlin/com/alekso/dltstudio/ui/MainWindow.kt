@@ -39,8 +39,6 @@ fun MainWindow(
 ) {
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
-    var progress by remember { mutableStateOf(0f) }
-    val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
     Column(
         modifier = Modifier.dragAndDropTarget(
@@ -67,7 +65,7 @@ fun MainWindow(
         TabsPanel(tabIndex, mainViewModel.panelsNames, tabClickListener)
 
         Row(Modifier.weight(1f)) {
-            // Plugin as this parameter to renderPanel is unstable
+            // PluginPanel as this parameter to renderPanel is unstable, so we marked PluginPanel as Stable
             (mainViewModel.panels[tabIndex]).renderPanel(modifier = Modifier.weight(1f))
         }
         Divider()
@@ -77,7 +75,7 @@ fun MainWindow(
 //            "No file loaded"
 //        }
         val statusText = "Status text"
-        StatusBar(modifier = Modifier.fillMaxWidth(), progress, statusText)
+        StatusBar(modifier = Modifier.fillMaxWidth(), DependencyManager.progress.value, statusText)
     }
 }
 
