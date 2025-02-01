@@ -84,7 +84,10 @@ class LogsViewModel(
         get() = _searchResults
 
     val searchIndexes = mutableStateListOf<Int>()
-    val searchAutocomplete = mutableStateListOf<String>()
+
+    private val _searchAutocomplete = mutableStateListOf<String>()
+    val searchAutocomplete: SnapshotStateList<String>
+        get() = _searchAutocomplete
 
 
     fun onSearchClicked(searchType: SearchType, searchText: String) {
@@ -247,8 +250,8 @@ class LogsViewModel(
         )
         searchJob = CoroutineScope(IO).launch {
             var prevTs = System.currentTimeMillis()
-            if (!searchAutocomplete.contains(searchText)) {
-                searchAutocomplete.add(searchText)
+            if (!_searchAutocomplete.contains(searchText)) {
+                _searchAutocomplete.add(searchText)
             }
             _searchResults.clear()
             searchIndexes.clear()

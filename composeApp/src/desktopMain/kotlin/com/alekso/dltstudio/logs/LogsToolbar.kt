@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -100,7 +103,7 @@ interface LogsToolbarCallbacks {
 fun LogsToolbar(
     state: LogsToolbarState,
     searchState: SearchState,
-    searchAutoComplete: List<String>,
+    searchAutoComplete: SnapshotStateList<String>,
     callbacks: LogsToolbarCallbacks,
 ) {
     // Toolbar
@@ -223,7 +226,7 @@ fun LogsToolbar(
                 } catch (ignored: Exception) {
                 }
             },
-            items = TimeZone.availableZoneIds.map { it }
+            items = TimeZone.availableZoneIds.map { it }.toMutableStateList()
         )
 
     }
@@ -242,7 +245,7 @@ fun PreviewLogsToolbar() {
             toolbarCommentsChecked = false,
         ),
         searchState = SearchState(),
-        searchAutoComplete = emptyList(),
+        searchAutoComplete = mutableStateListOf(),
         callbacks = object : LogsToolbarCallbacks {
             override fun onSearchButtonClicked(searchType: SearchType, text: String) {
 

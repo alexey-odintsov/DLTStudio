@@ -57,7 +57,7 @@ fun LogsPanel(
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
     searchIndexes: List<Int>,
-    searchAutoComplete: List<String>,
+    searchAutoComplete: SnapshotStateList<String>,
     // color filters
     colorFilters: List<ColorFilter>,
     // toolbar
@@ -254,7 +254,7 @@ fun PreviewLogsPanel() {
         onSearchRowSelected = { i, r -> },
         logsListSelectedRow =0,
         searchListSelectedRow = 0,
-        searchAutoComplete = emptyList(),
+        searchAutoComplete = mutableStateListOf(),
         virtualDevices = mutableStateListOf(),
         rowContextMenuCallbacks = object : RowContextMenuCallbacks {
             override fun onCopyClicked(text: AnnotatedString) = Unit
