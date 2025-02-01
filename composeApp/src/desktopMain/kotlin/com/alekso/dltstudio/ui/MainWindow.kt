@@ -36,11 +36,11 @@ import java.net.URI
 @Preview
 fun MainWindow(
     mainViewModel: MainViewModel,
-    progress: Float,
-    onProgressUpdate: (Float) -> Unit
 ) {
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
+    var progress by remember { mutableStateOf(0f) }
+    val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
     Column(
         modifier = Modifier.dragAndDropTarget(
@@ -68,9 +68,8 @@ fun MainWindow(
         TabsPanel(tabIndex, mainViewModel.panels.map { it.getPanelName() }, tabClickListener)
 
         Row(Modifier.weight(1f)) {
-            (mainViewModel.panels[tabIndex]).let { panel ->
-                panel.renderPanel(modifier = Modifier.weight(1f))
-            }
+            // Plugin as this parameter to renderPanel is unstable
+            (mainViewModel.panels[tabIndex]).renderPanel(modifier = Modifier.weight(1f))
         }
         Divider()
 //        val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
@@ -87,9 +86,6 @@ fun MainWindow(
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(
-            DependencyManager.getMainViewModel(),
-            1f,
-            {})
+        MainWindow(DependencyManager.getMainViewModel())
     }
 }

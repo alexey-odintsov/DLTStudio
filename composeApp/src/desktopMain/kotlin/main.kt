@@ -43,10 +43,6 @@ fun main() = application {
 
         AppTheme {
             CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
-
-                var progress by remember { mutableStateOf(0f) }
-                val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
-
                 val mainViewModel = remember { DependencyManager.getMainViewModel() }
                 var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
@@ -162,11 +158,7 @@ fun main() = application {
                     )
                 }
 
-                MainWindow(
-                    mainViewModel,
-                    progress,
-                    onProgressUpdate
-                )
+                MainWindow(mainViewModel)
             }
         }
     }
