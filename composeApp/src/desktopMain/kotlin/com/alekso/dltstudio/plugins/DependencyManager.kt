@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.MainViewModel
+import com.alekso.dltstudio.com.alekso.dltstudio.plugins.PluginManager
 import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.logs.LogsViewModel
@@ -22,6 +23,8 @@ object DependencyManager {
     val onProgressUpdate = { p: Float ->
         _progress.value = p
     }
+
+    private val _pluginsManager by lazy { PluginManager() }
 
     private val virtualDeviceRepository by lazy {
         VirtualDeviceRepositoryImpl(
@@ -61,5 +64,9 @@ object DependencyManager {
 
     fun getTimelineViewModel(): TimelineViewModel {
         return _timelineViewModel
+    }
+
+    fun getPluginsManager(): PluginManager {
+        return _pluginsManager
     }
 }

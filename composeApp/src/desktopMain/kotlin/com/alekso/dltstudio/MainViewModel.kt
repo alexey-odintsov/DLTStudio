@@ -1,15 +1,9 @@
 package com.alekso.dltstudio
 
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
 import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
-import com.alekso.dltstudio.device.analyse.DeviceAnalyzePlugin
-import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
-import com.alekso.dltstudio.files.FilesPlugin
-import com.alekso.dltstudio.files.FilesViewModel
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.plugins.DependencyManager
@@ -18,8 +12,10 @@ import com.alekso.dltstudio.plugins.PluginPanel
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.File
 
 
@@ -29,8 +25,7 @@ class MainViewModel(
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
 ) {
     val panels = mutableStateListOf<PluginPanel>()
-    val panelsNames: SnapshotStateList<String>
-        get() = panels.map { it.getPanelName() }.toMutableStateList()
+    val panelsNames = mutableStateListOf<String>() // todo: Find way to synchronize panels and names
 
     private var parseJob: Job? = null
 
@@ -76,17 +71,17 @@ class MainViewModel(
                 logMessages = messagesHolder.getMessages(),
             )
         )
-        panels.add(
-            FilesPlugin(
-                viewModel = FilesViewModel(DependencyManager.onProgressUpdate),
-                logMessages = messagesHolder.getMessages(),
-            )
-        )
-        panels.add(
-            DeviceAnalyzePlugin(
-                DeviceAnalyzeViewModel(DependencyManager.onProgressUpdate)
-            )
-        )
+
+        panelsNames.addAll(panels.map { it.getPanelName() })
+        CoroutineScope(IO).launch {
+            val pluginManager = DependencyManager.getPluginsManager()
+            pluginManager.loadPlugins()
+            val loadedPanel = pluginManager.getPluginPanels()
+            withContext(Main) {
+                panels.addAll(loadedPanel)
+                panelsNames.addAll(loadedPanel.map { it.getPanelName() })
+            }
+        }
     }
 
     fun parseFile(dltFiles: List<File>) {
