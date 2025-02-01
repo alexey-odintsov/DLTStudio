@@ -1,5 +1,8 @@
 package com.alekso.dltstudio
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
 import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
@@ -27,7 +30,9 @@ class MainViewModel(
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
 ) {
 
-    val panels = mutableListOf<PluginPanel>()
+    val panels = mutableStateListOf<PluginPanel>()
+    val panelsNames: SnapshotStateList<String>
+        get() = panels.map { it.getPanelName() }.toMutableStateList()
 
     private var parseJob: Job? = null
 

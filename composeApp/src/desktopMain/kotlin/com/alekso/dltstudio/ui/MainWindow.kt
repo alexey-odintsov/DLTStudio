@@ -63,9 +63,8 @@ fun MainWindow(
                     return false
                 }
             })
-    )
-    {
-        TabsPanel(tabIndex, mainViewModel.panels.map { it.getPanelName() }, tabClickListener)
+    ) {
+        TabsPanel(tabIndex, mainViewModel.panelsNames, tabClickListener)
 
         Row(Modifier.weight(1f)) {
             // Plugin as this parameter to renderPanel is unstable

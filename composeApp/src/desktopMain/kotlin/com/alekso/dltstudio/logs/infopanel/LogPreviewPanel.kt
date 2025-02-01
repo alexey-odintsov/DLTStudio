@@ -46,7 +46,8 @@ fun LogPreviewPanel(
 
     Column(modifier = modifier.background(MaterialTheme.colors.background)) {
         Panel(Modifier.fillMaxSize(), title = "Message Info") {
-            TabsPanel(tabIndex, listOf("Simple", "Detailed", "Preview"), tabClickListener)
+            val tabs = remember { mutableStateListOf("Simple", "Detailed", "Preview") }
+            TabsPanel(tabIndex, tabs, tabClickListener)
 
             when (tabIndex) {
                 0 -> {
@@ -56,6 +57,7 @@ fun LogPreviewPanel(
                         onCommentUpdated = onCommentUpdated
                     )
                 }
+
                 1 -> {
                     DLTDetailedInfoView(logMessage = logMessage, messageIndex = messageIndex)
                 }

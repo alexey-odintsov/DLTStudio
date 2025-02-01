@@ -9,12 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TabsPanel(tabIndex: Int, tabs: List<String>, callback: (Int) -> Unit) {
+fun TabsPanel(tabIndex: Int, tabs: SnapshotStateList<String>, callback: (Int) -> Unit) {
     Row {
         tabs.onEachIndexed { index, title ->
             Box(
@@ -34,5 +36,5 @@ fun TabsPanel(tabIndex: Int, tabs: List<String>, callback: (Int) -> Unit) {
 @Preview
 @Composable
 fun PreviewTabsPanel() {
-    TabsPanel(1, listOf("Logs", "CPU", "Memory"), { i -> })
+    TabsPanel(1, mutableStateListOf("Logs", "CPU", "Memory"), { i -> })
 }
