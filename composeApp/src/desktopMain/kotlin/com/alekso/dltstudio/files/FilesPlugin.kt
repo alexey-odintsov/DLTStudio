@@ -15,10 +15,15 @@ class FilesPlugin(
     @Composable
     override fun renderPanel(modifier: Modifier) {
         FilesPanel(
-            viewModel = viewModel,
-            logMessages = logMessages,
             analyzeState = viewModel.analyzeState.value,
-            files = viewModel.filesEntries
+            files = viewModel.filesEntries,
+            previewState = viewModel.previewState,
+            onPreviewDialogClosed = viewModel::closePreviewDialog,
+            onSearchButtonClicked = {
+                viewModel.startFilesSearch(logMessages)
+            },
+            onSaveFileClicked = viewModel::saveFile,
+            onFileEntryClicked = viewModel::onFileClicked
         )
     }
 

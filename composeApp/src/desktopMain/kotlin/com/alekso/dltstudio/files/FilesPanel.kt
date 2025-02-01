@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,46 +27,49 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.Cell
 import com.alekso.dltstudio.logs.CellDivider
 import com.alekso.dltstudio.logs.CellStyle
-import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.CustomButton
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
+import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FilesPanel(
-    viewModel: FilesViewModel,
-    logMessages: SnapshotStateList<LogMessage>,
     analyzeState: FilesState,
     files: SnapshotStateList<FileEntry>,
+    previewState: State<PreviewState?>,
+    onPreviewDialogClosed: () -> Unit,
+    onSearchButtonClicked: () -> Unit,
+    onSaveFileClicked: (File) -> Unit,
+    onFileEntryClicked: (FileEntry) -> Unit,
 ) {
 
-    when (val dialogState = viewModel.previewState.value) {
+    when (val state = previewState.value) {
         is TextPreviewState -> {
             TextPreviewDialog(
                 visible = true,
-                onDialogClosed = viewModel::closePreviewDialog,
-                fileEntry = dialogState.entry,
+                onDialogClosed = onPreviewDialogClosed,
+                fileEntry = state.entry,
             )
         }
 
         is ImagePreviewState -> {
             ImagePreviewDialog(
                 visible = true,
-                onDialogClosed = viewModel::closePreviewDialog,
-                fileEntry = dialogState.entry,
-                imageBitmap = dialogState.imageBitmap,
+                onDialogClosed = onPreviewDialogClosed,
+                fileEntry = state.entry,
+                imageBitmap = state.imageBitmap,
             )
         }
 
         is FilePreviewState -> {
             FileChooserDialog(
                 dialogContext = FileChooserDialogState.DialogContext.SAVE_FILE,
-                fileName = dialogState.entry.name,
+                fileName = state.entry.name,
                 title = "Save file",
                 onFileSelected = { file ->
                     if (file != null) {
-                        viewModel.saveFile(file)
+                        onSaveFileClicked(file)
                     }
                 },
             )
@@ -78,7 +82,7 @@ fun FilesPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             CustomButton(
                 modifier = Modifier.padding(0.dp),
-                onClick = { viewModel.startFilesSearch(logMessages) },
+                onClick = onSearchButtonClicked,
             ) {
                 Text(text = if (analyzeState == FilesState.IDLE) "Search for files" else "Stop search")
             }
@@ -108,12 +112,14 @@ fun FilesPanel(
                             date = "Date created"
                         )
                     }
-                    itemsIndexed(items = files,
+                    itemsIndexed(
+                        items = files,
                         key = { _, key -> key },
                         contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
                         Row(
-                            Modifier.combinedClickable(onClick = {},
-                                onDoubleClick = { viewModel.onFileClicked(fileEntry) })
+                            Modifier.combinedClickable(
+                                onClick = {},
+                                onDoubleClick = { onFileEntryClicked(fileEntry) })
                         ) {
                             FileItem(
                                 i = i.toString(),
