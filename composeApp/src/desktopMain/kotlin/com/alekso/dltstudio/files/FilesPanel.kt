@@ -35,7 +35,7 @@ import com.alekso.dltstudio.ui.FileChooserDialogState
 @Composable
 fun FilesPanel(
     viewModel: FilesViewModel,
-    logMessages: List<LogMessage>,
+    logMessages: SnapshotStateList<LogMessage>,
     analyzeState: FilesState,
     files: SnapshotStateList<FileEntry>,
 ) {

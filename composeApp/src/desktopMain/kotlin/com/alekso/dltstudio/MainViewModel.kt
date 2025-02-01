@@ -25,7 +25,7 @@ class MainViewModel(
     private val dltParser: DLTParser,
     private val onProgressChanged: (Float) -> Unit,
     private val messagesHolder: MessagesHolder,
-    private val timelineHolder: TimelineHolder,
+    private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
 ) {
 
     val panels = mutableListOf<PluginPanel>()

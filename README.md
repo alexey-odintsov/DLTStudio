@@ -63,3 +63,8 @@ Depending on the platform run one of the following tasks:
 ```
 
 Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+
+# Inspect Composable stability
+```
+./gradlew assemble -Pcom.alekso.dltstudio.android.enableComposeCompilerReports=true -Pcom.alekso.dltstudio.android.enableComposeCompilerMetrics=true --rerun-tasks
+```

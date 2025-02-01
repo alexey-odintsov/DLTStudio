@@ -63,8 +63,9 @@ class LogsViewModel(
     val logMessages: SnapshotStateList<LogMessage>
         get() = _logMessages
 
-    private var _searchState: MutableStateFlow<SearchState> = MutableStateFlow(SearchState())
+    private var _searchState = MutableStateFlow<SearchState>(SearchState())
     val searchState: StateFlow<SearchState> = _searchState
+
     private var searchJob: Job? = null
 
     val logsListState = LazyListState()
@@ -74,7 +75,10 @@ class LogsViewModel(
     var searchListSelectedRow = mutableStateOf(0)
     val logInsights = mutableStateListOf<LogInsight>()
 
-    val searchResult = mutableStateListOf<LogMessage>()
+    private var _searchResults = mutableStateListOf<LogMessage>()
+    val searchResults: SnapshotStateList<LogMessage>
+        get() = _searchResults
+
     val searchIndexes = mutableStateListOf<Int>()
     val searchAutocomplete = mutableStateListOf<String>()
 
@@ -243,7 +247,7 @@ class LogsViewModel(
             if (!searchAutocomplete.contains(searchText)) {
                 searchAutocomplete.add(searchText)
             }
-            searchResult.clear()
+            _searchResults.clear()
             searchIndexes.clear()
             val startMs = System.currentTimeMillis()
             Log.d("Start searching for $searchType '$searchText'")
@@ -274,7 +278,7 @@ class LogsViewModel(
 
                 if (matches) {
                     withContext(Dispatchers.Swing) {
-                        searchResult.add(logMessage)
+                        _searchResults.add(logMessage)
                         searchIndexes.add(i)
                     }
                 }
@@ -412,26 +416,26 @@ class LogsViewModel(
     fun markMessage(i: Int, message: LogMessage) {
         val updatedMessage = message.copy(marked = message.marked.not())
         val logMessageIndex = logMessages.indexOf(message)
-        val searchMessageIndex = searchResult.indexOf(message)
+        val searchMessageIndex = _searchResults.indexOf(message)
 
         if (logMessageIndex != -1) {
             _logMessages[logMessageIndex] = updatedMessage
         }
         if (searchMessageIndex != -1) {
-            searchResult[searchMessageIndex] = updatedMessage
+            _searchResults[searchMessageIndex] = updatedMessage
         }
     }
 
     fun updateComment(message: LogMessage, comment: String?) {
         val updatedMessage = message.copy(comment = comment)
         val logMessageIndex = logMessages.indexOf(message)
-        val searchMessageIndex = searchResult.indexOf(message)
+        val searchMessageIndex = _searchResults.indexOf(message)
 
         if (logMessageIndex != -1) {
             _logMessages[logMessageIndex] = updatedMessage
         }
         if (searchMessageIndex != -1) {
-            searchResult[searchMessageIndex] = updatedMessage
+            _searchResults[searchMessageIndex] = updatedMessage
         }
     }
 

@@ -58,7 +58,6 @@ class LogsPlugin(
             )
         }
 
-
         LogsPanel(
             modifier = modifier,
             logMessages = viewModel.logMessages,
@@ -66,7 +65,7 @@ class LogsPlugin(
             searchAutoComplete = viewModel.searchAutocomplete,
             logInsights = viewModel.logInsights,
             virtualDevices = viewModel.virtualDevices,
-            searchResult = viewModel.searchResult,
+            searchResult = viewModel.searchResults,
             searchIndexes = viewModel.searchIndexes,
             colorFilters = viewModel.colorFilters,
             logsToolbarState = viewModel.logsToolbarState,
