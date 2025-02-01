@@ -63,6 +63,10 @@ class LogsViewModel(
     val logMessages: SnapshotStateList<LogMessage>
         get() = _logMessages
 
+    private val _virtualDevices = mutableStateListOf<VirtualDevice>()
+    val virtualDevices: SnapshotStateList<VirtualDevice>
+        get() = _virtualDevices
+
     private var _searchState = MutableStateFlow<SearchState>(SearchState())
     val searchState: StateFlow<SearchState> = _searchState
 
@@ -97,7 +101,6 @@ class LogsViewModel(
         )
     }
 
-    val virtualDevices = mutableStateListOf<VirtualDevice>()
     val devicePreviewsDialogState = mutableStateOf(false)
     val removeLogsDialogState = mutableStateOf(
         RemoveLogsDialogState(
@@ -172,8 +175,8 @@ class LogsViewModel(
         CoroutineScope(IO).launch {
             virtualDeviceRepository.getAllAsFlow().collect {
                 withContext(Main) {
-                    virtualDevices.clear()
-                    virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
+                    _virtualDevices.clear()
+                    _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
                 }
             }
         }

@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +52,7 @@ fun LogsPanel(
     modifier: Modifier = Modifier,
     logMessages: SnapshotStateList<LogMessage>,
     logInsights: SnapshotStateList<LogInsight>? = null,
-    virtualDevices: List<VirtualDevice>,
+    virtualDevices: SnapshotStateList<VirtualDevice>,
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
@@ -254,7 +255,7 @@ fun PreviewLogsPanel() {
         logsListSelectedRow =0,
         searchListSelectedRow = 0,
         searchAutoComplete = emptyList(),
-        virtualDevices = emptyList(),
+        virtualDevices = mutableStateListOf(),
         rowContextMenuCallbacks = object : RowContextMenuCallbacks {
             override fun onCopyClicked(text: AnnotatedString) = Unit
             override fun onMarkClicked(i: Int, message: LogMessage) = Unit
