@@ -22,8 +22,6 @@ import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draganddrop.DragData
 import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.unit.dp
-import com.alekso.dltparser.DLTParserV2
-import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.plugins.DependencyManager
 import java.io.File
@@ -90,11 +88,7 @@ fun MainWindow(
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
         MainWindow(
-            MainViewModel(
-                DLTParserV2(PayloadStorageType.Plain),
-                {},
-                DependencyManager.getMessageHolder()
-            ),
+            DependencyManager.getMainViewModel(),
             1f,
             {})
     }

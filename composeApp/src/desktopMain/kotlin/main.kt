@@ -11,11 +11,8 @@ import androidx.compose.ui.window.MenuBar
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.alekso.dltparser.DLTParserV2
-import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
-import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
@@ -43,7 +40,6 @@ fun main() = application {
         }, title = "DLT Studio", state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
         val currentTimeZone: TimeZone = TimeZone.currentSystemDefault()
-        val messagesHolder = remember { DependencyManager.getMessageHolder() }
 
         AppTheme {
             CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
@@ -51,15 +47,7 @@ fun main() = application {
                 var progress by remember { mutableStateOf(0f) }
                 val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
-
-                val mainViewModel = remember {
-                    MainViewModel(
-                        dltParser = DLTParserV2(PayloadStorageType.Binary),
-                        onProgressChanged = onProgressUpdate,
-                        messagesHolder = messagesHolder
-                    )
-                }
-                val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
+                val mainViewModel = remember { DependencyManager.getMainViewModel() }
                 var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
                 MenuBar {
@@ -96,7 +84,7 @@ fun main() = application {
                         Menu("Filters") {
                             Preferences.recentTimelineFilters().forEach {
                                 Item(it.fileName, onClick = {
-                                    timelineViewModel.loadTimeLineFilters(File(it.absolutePath))
+                                    mainViewModel.loadTimeLineFilters(File(it.absolutePath))
                                 })
                             }
                             if (Preferences.recentTimelineFilters().isNotEmpty()) {
@@ -114,7 +102,7 @@ fun main() = application {
                                     FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE
                                 )
                             })
-                            Item("Clear", onClick = { timelineViewModel.clearTimeLineFilters() })
+                            Item("Clear", onClick = { mainViewModel.clearTimeLineFilters() })
                         }
                     }
                 }
@@ -153,13 +141,13 @@ fun main() = application {
 
                                 FileChooserDialogState.DialogContext.OPEN_TIMELINE_FILTER_FILE -> {
                                     file?.let {
-                                        timelineViewModel.loadTimeLineFilters(it)
+                                        mainViewModel.loadTimeLineFilters(it)
                                     }
                                 }
 
                                 FileChooserDialogState.DialogContext.SAVE_TIMELINE_FILTER_FILE -> {
                                     file?.let {
-                                        timelineViewModel.saveTimeLineFilters(it)
+                                        mainViewModel.saveTimeLineFilters(it)
                                     }
                                 }
 
