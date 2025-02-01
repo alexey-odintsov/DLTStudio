@@ -25,9 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.MainViewModel
-import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceMock
-import com.alekso.dltstudio.logs.insights.InsightsRepository
-import com.alekso.dltstudio.timeline.TimelineViewModel
+import com.alekso.dltstudio.plugins.DependencyManager
 import java.io.File
 import java.net.URI
 
@@ -40,13 +38,10 @@ import java.net.URI
 @Preview
 fun MainWindow(
     mainViewModel: MainViewModel,
-    timelineViewModel: TimelineViewModel,
     progress: Float,
     onProgressUpdate: (Float) -> Unit
 ) {
     var tabIndex by remember { mutableStateOf(0) }
-
-
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
 
     Column(
@@ -75,14 +70,17 @@ fun MainWindow(
         TabsPanel(tabIndex, mainViewModel.panels.map { it.getPanelName() }, tabClickListener)
 
         Row(Modifier.weight(1f)) {
-            mainViewModel.panels[tabIndex].renderPanel(modifier = Modifier.weight(1f))
+            (mainViewModel.panels[tabIndex]).let { panel ->
+                panel.renderPanel(modifier = Modifier.weight(1f), panel.getPanelState())
+            }
         }
         Divider()
-        val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
-            "Messages: ${"%,d".format(mainViewModel.logMessages.size)}"
-        } else {
-            "No file loaded"
-        }
+//        val statusText = if (mainViewModel.logMessages.isNotEmpty()) {
+//            "Messages: ${"%,d".format(mainViewModel.logMessages.size)}"
+//        } else {
+//            "No file loaded"
+//        }
+        val statusText = "Status text"
         StatusBar(modifier = Modifier.fillMaxWidth(), progress, statusText)
     }
 }
@@ -95,10 +93,8 @@ fun PreviewMainWindow() {
             MainViewModel(
                 DLTParserV2(PayloadStorageType.Plain),
                 {},
-                insightsRepository = InsightsRepository(),
-                virtualDeviceRepository = VirtualDeviceMock()
+                DependencyManager.getMessageHolder()
             ),
-            TimelineViewModel({}),
             1f,
             {})
     }

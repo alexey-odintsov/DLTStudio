@@ -1,29 +1,31 @@
-package com.alekso.dltstudio.com.alekso.dltstudio.logs
+package com.alekso.dltstudio.logs
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
-import com.alekso.dltstudio.LogRemoveContext
-import com.alekso.dltstudio.MainViewModel
-import com.alekso.dltstudio.RowContextMenuCallbacks
-import com.alekso.dltstudio.com.alekso.dltstudio.plugins.PluginPanel
-import com.alekso.dltstudio.logs.LogsPanel
-import com.alekso.dltstudio.logs.RemoveLogsDialog
-import com.alekso.dltstudio.logs.RemoveLogsDialogState
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
 import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.plugins.PanelState
+import com.alekso.dltstudio.plugins.PluginPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 
+
+data class LogsPanelState(
+    val colorFiltersDialogState: Boolean,
+) : PanelState()
+
 class LogsPlugin(
-    private val viewModel: MainViewModel,
+    private val viewModel: LogsViewModel,
+    private val state: LogsPanelState,
 ) : PluginPanel {
     override fun getPanelName(): String = "Logs"
+    override fun getPanelState(): PanelState = state
 
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
-    override fun renderPanel(modifier: Modifier) {
+    override fun renderPanel(modifier: Modifier, state: PanelState) {
         val clipboardManager = LocalClipboardManager.current
 
         if (viewModel.colorFiltersDialogState.value) {
@@ -57,7 +59,8 @@ class LogsPlugin(
         }
 
 
-        LogsPanel(modifier = modifier,
+        LogsPanel(
+            modifier = modifier,
             logMessages = viewModel.logMessages,
             searchState = viewModel.searchState.value,
             searchAutoComplete = viewModel.searchAutocomplete,

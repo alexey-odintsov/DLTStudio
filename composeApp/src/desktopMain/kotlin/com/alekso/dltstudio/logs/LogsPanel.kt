@@ -21,8 +21,8 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.LogRemoveContext
-import com.alekso.dltstudio.RowContextMenuCallbacks
+import com.alekso.dltstudio.logs.LogRemoveContext
+import com.alekso.dltstudio.logs.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal

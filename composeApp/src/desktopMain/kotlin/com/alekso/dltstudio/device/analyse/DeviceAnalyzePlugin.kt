@@ -1,16 +1,19 @@
-package com.alekso.dltstudio.com.alekso.dltstudio.device.analyse
+package com.alekso.dltstudio.device.analyse
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.alekso.dltstudio.com.alekso.dltstudio.plugins.PluginPanel
-import com.alekso.dltstudio.device.analyse.DeviceAnalysePanel
-import com.alekso.dltstudio.device.analyse.DeviceAnalyzeViewModel
+import com.alekso.dltstudio.plugins.PanelState
+import com.alekso.dltstudio.plugins.PluginPanel
 
-class DeviceAnalyzePlugin(private val viewModel: DeviceAnalyzeViewModel) : PluginPanel {
+class DeviceAnalyzePlugin(
+    private val viewModel: DeviceAnalyzeViewModel,
+    private val state: PanelState,
+) : PluginPanel {
     override fun getPanelName(): String = "Device Analyse"
+    override fun getPanelState(): PanelState = state
 
     @Composable
-    override fun renderPanel(modifier: Modifier) {
+    override fun renderPanel(modifier: Modifier, state: PanelState) {
         DeviceAnalysePanel(modifier = modifier, deviceAnalyzeViewModel = viewModel)
     }
 }

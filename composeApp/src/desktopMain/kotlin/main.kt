@@ -13,19 +13,13 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
-import com.alekso.dltstudio.db.DBFactory
-import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
-import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
-import com.alekso.dltstudio.logs.insights.InsightsRepository
+import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import com.alekso.dltstudio.ui.FileChooserDialog
 import com.alekso.dltstudio.ui.FileChooserDialogState
 import com.alekso.dltstudio.ui.MainWindow
 import com.alekso.logger.Log
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.datetime.TimeZone
 import java.io.File
 
@@ -49,6 +43,7 @@ fun main() = application {
         }, title = "DLT Studio", state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
         val currentTimeZone: TimeZone = TimeZone.currentSystemDefault()
+        val messagesHolder = remember { DependencyManager.getMessageHolder() }
 
         AppTheme {
             CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
@@ -56,19 +51,12 @@ fun main() = application {
                 var progress by remember { mutableStateOf(0f) }
                 val onProgressUpdate: (Float) -> Unit = { i -> progress = i }
 
-                val virtualDeviceRepository: VirtualDeviceRepository by lazy {
-                    VirtualDeviceRepositoryImpl(
-                        database = DBFactory().createDatabase(),
-                        scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
-                    )
-                }
 
                 val mainViewModel = remember {
                     MainViewModel(
                         dltParser = DLTParserV2(PayloadStorageType.Binary),
-                        insightsRepository = InsightsRepository(),
                         onProgressChanged = onProgressUpdate,
-                        virtualDeviceRepository = virtualDeviceRepository,
+                        messagesHolder = messagesHolder
                     )
                 }
                 val timelineViewModel = remember { TimelineViewModel(onProgressUpdate) }
@@ -188,7 +176,6 @@ fun main() = application {
 
                 MainWindow(
                     mainViewModel,
-                    timelineViewModel,
                     progress,
                     onProgressUpdate
                 )
