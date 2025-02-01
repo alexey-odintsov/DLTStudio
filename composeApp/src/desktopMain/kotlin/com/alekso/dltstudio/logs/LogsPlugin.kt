@@ -7,25 +7,18 @@ import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
 import com.alekso.dltstudio.model.LogMessage
-import com.alekso.dltstudio.plugins.PanelState
 import com.alekso.dltstudio.plugins.PluginPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 
 
-data class LogsPanelState(
-    val colorFiltersDialogState: Boolean,
-) : PanelState()
-
 class LogsPlugin(
     private val viewModel: LogsViewModel,
-    private val state: LogsPanelState,
 ) : PluginPanel {
     override fun getPanelName(): String = "Logs"
-    override fun getPanelState(): PanelState = state
 
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
-    override fun renderPanel(modifier: Modifier, state: PanelState) {
+    override fun renderPanel(modifier: Modifier) {
         val clipboardManager = LocalClipboardManager.current
 
         if (viewModel.colorFiltersDialogState.value) {

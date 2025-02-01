@@ -69,7 +69,7 @@ fun MainWindow(
 
         Row(Modifier.weight(1f)) {
             (mainViewModel.panels[tabIndex]).let { panel ->
-                panel.renderPanel(modifier = Modifier.weight(1f), panel.getPanelState())
+                panel.renderPanel(modifier = Modifier.weight(1f))
             }
         }
         Divider()
