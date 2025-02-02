@@ -1,6 +1,8 @@
 package com.alekso.dltstudio.logs
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
@@ -52,11 +54,12 @@ class LogsPlugin(
                 onFilterClicked = { f -> viewModel.removeMessagesByFilters(f) },
             )
         }
+        val searchState by viewModel.searchState.collectAsState()
 
         LogsPanel(
             modifier = modifier,
             logMessages = viewModel.logMessages,
-            searchState = viewModel.searchState.value,
+            searchState = searchState,
             searchAutoComplete = viewModel.searchAutocomplete,
             logInsights = viewModel.logInsights,
             virtualDevices = viewModel.virtualDevices,

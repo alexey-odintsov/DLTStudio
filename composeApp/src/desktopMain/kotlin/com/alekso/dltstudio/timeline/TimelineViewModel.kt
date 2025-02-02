@@ -42,9 +42,8 @@ class TimelineViewModel(
     var entriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
     var highlightedKeysMap = mutableStateMapOf<String, String?>()
 
-    private var _analyzeState: MutableStateFlow<AnalyzeState> = MutableStateFlow(AnalyzeState.IDLE)
+    private var _analyzeState = MutableStateFlow<AnalyzeState>(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
-
 
     val timelineFilters = mutableStateListOf<TimelineFilter>(
         TimelineFilter(

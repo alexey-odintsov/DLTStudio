@@ -18,6 +18,7 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -114,6 +115,9 @@ fun TimeLinePanel(
             }
         } else false
     }) {
+
+        val analyzeState by timelineViewModel.analyzeState.collectAsState()
+
         TimelineToolbar(
             leftClick = { offsetUpdate(offsetSec + MOVE_TIMELINE_STEP_PX / secSizePx) },
             rightClick = { offsetUpdate(offsetSec - MOVE_TIMELINE_STEP_PX / secSizePx) },
@@ -123,7 +127,7 @@ fun TimeLinePanel(
                 scaleUpdate(1f)
                 offsetUpdate(0f)
             },
-            analyzeState = timelineViewModel.analyzeState.value,
+            analyzeState = analyzeState,
             onAnalyzeClick = { timelineViewModel.onAnalyzeClicked(logMessages) },
             onTimelineFiltersClicked = { dialogState.value = true },
         )
@@ -191,7 +195,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLinePercentageEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(
+                                            timelineFilter
+                                        ) as TimeLinePercentageEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
@@ -203,7 +209,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineMinMaxEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(
+                                            timelineFilter
+                                        ) as TimeLineMinMaxEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
@@ -215,7 +223,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineStateEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(
+                                            timelineFilter
+                                        ) as TimeLineStateEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
@@ -227,7 +237,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineSingleStateEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(
+                                            timelineFilter
+                                        ) as TimeLineSingleStateEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
@@ -239,7 +251,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineDurationEntries?,
+                                        entries = timelineViewModel.retrieveEntriesForFilter(
+                                            timelineFilter
+                                        ) as TimeLineDurationEntries?,
                                         timeFrame = timeFrame,
                                         highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                     )
@@ -250,7 +264,9 @@ fun TimeLinePanel(
                                         .onPointerEvent(
                                             PointerEventType.Move,
                                             onEvent = { dragCallback(it, size.width) }),
-                                    entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineEventEntries?,
+                                    entries = timelineViewModel.retrieveEntriesForFilter(
+                                        timelineFilter
+                                    ) as TimeLineEventEntries?,
                                     timeFrame = timeFrame,
                                     highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
                                 )
