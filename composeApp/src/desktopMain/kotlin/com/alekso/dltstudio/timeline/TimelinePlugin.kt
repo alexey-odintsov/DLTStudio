@@ -21,7 +21,6 @@ class TimelinePlugin(
 
         TimeLinePanel(
             modifier = modifier,
-            timelineViewModel = viewModel,
             logMessages = logMessages,
             offsetSec = viewModel.offset.value,
             scale = viewModel.scale.value,
@@ -38,6 +37,7 @@ class TimelinePlugin(
             onTimelineFilterUpdate = viewModel::onTimelineFilterUpdate,
             onTimelineFilterDelete = viewModel::onTimelineFilterDelete,
             onTimelineFilterMove = viewModel::onTimelineFilterMove,
+            retrieveEntriesForFilter = viewModel::retrieveEntriesForFilter,
         )
     }
 }
