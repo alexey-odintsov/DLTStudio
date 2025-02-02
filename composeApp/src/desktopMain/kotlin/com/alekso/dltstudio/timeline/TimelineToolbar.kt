@@ -9,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
+import com.alekso.dltstudio.ui.Tooltip
 import dltstudio.composeapp.generated.resources.Res
 import dltstudio.composeapp.generated.resources.icon_color_filters
 import dltstudio.composeapp.generated.resources.icon_fit
@@ -32,60 +33,68 @@ fun TimelineToolbar(
 ) {
 
     Row {
-
-        ImageButton(
-            modifier = Modifier.size(32.dp),
-            icon = Res.drawable.icon_color_filters,
-            title = "Timeline filters",
-            onClick = onTimelineFiltersClicked
-        )
-
-        ImageButton(
-            modifier = Modifier.size(32.dp),
-            icon = if (analyzeState == AnalyzeState.IDLE) {
-                Res.drawable.icon_run
-            } else {
-                Res.drawable.icon_stop
-            },
-            title = "Analyze timeline",
-            onClick = onAnalyzeClick
-        )
+        Tooltip(text = "Manage timeline filters") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_color_filters,
+                title = "Timeline filters",
+                onClick = onTimelineFiltersClicked
+            )
+        }
+        Tooltip(text = "Start/Stop timeline analyzing") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = if (analyzeState == AnalyzeState.IDLE) {
+                    Res.drawable.icon_run
+                } else {
+                    Res.drawable.icon_stop
+                },
+                title = "Analyze timeline",
+                onClick = onAnalyzeClick
+            )
+        }
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
-        ImageButton(
-            modifier = Modifier.size(32.dp),
-            icon = Res.drawable.icon_left,
-            title = "Move left",
-            onClick = leftClick
-        )
+        Tooltip(text = "Move offset to the left") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_left,
+                title = "Move left",
+                onClick = leftClick
+            )
+        }
+        Tooltip(text = "Move offset to the right") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_right,
+                title = "Move right",
+                onClick = rightClick
+            )
+        }
 
-        ImageButton(
-            modifier = Modifier.size(32.dp),
-            icon = Res.drawable.icon_right,
-            title = "Move right",
-            onClick = rightClick
-        )
-
-        ImageButton(
-            modifier = Modifier.size(32.dp),
-            icon = Res.drawable.icon_zoom_in,
-            title = "Zoom in",
-            onClick = zoomInClick
-        )
-
-        ImageButton(
-            modifier = Modifier.size(32.dp),
-            icon = Res.drawable.icon_zoom_out,
-            title = "Zoom out",
-            onClick = zoomOutClick
-        )
-
-        ImageButton(
-            modifier = Modifier.size(32.dp),
-            icon = Res.drawable.icon_fit,
-            title = "Fit timeline",
-            onClick = zoomFitClick
-        )
-
+        Tooltip(text = "Zoom in") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_zoom_in,
+                title = "Zoom in",
+                onClick = zoomInClick
+            )
+        }
+        Tooltip(text = "Zoom out") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_zoom_out,
+                title = "Zoom out",
+                onClick = zoomOutClick
+            )
+        }
+        Tooltip(text = "Fit timeline") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_fit,
+                title = "Fit timeline",
+                onClick = zoomFitClick
+            )
+        }
     }
 }
