@@ -493,7 +493,7 @@ class LogsViewModel(
         _logMessages.clear()
     }
 
-    override fun storeImages(logMessages: List<LogMessage>) {
+    override fun storeMessages(logMessages: List<LogMessage>) {
         _logMessages.clear()
         _logMessages.addAll(logMessages)
     }

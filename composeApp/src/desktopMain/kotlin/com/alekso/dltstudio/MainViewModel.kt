@@ -88,7 +88,7 @@ class MainViewModel(
         parseJob?.cancel()
         messagesHolder.clearMessages()
         parseJob = CoroutineScope(IO).launch {
-            messagesHolder.storeImages(
+            messagesHolder.storeMessages(
                 dltParser.read(DependencyManager.onProgressUpdate, dltFiles).map { LogMessage(it) })
         }
     }
