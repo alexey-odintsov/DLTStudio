@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,8 +22,6 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.LogRemoveContext
-import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
@@ -53,14 +52,14 @@ fun LogsPanel(
     modifier: Modifier = Modifier,
     logMessages: SnapshotStateList<LogMessage>,
     logInsights: SnapshotStateList<LogInsight>? = null,
-    virtualDevices: List<VirtualDevice>,
+    virtualDevices: SnapshotStateList<VirtualDevice>,
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
-    searchIndexes: List<Int>,
-    searchAutoComplete: List<String>,
+    searchIndexes: SnapshotStateList<Int>,
+    searchAutoComplete: SnapshotStateList<String>,
     // color filters
-    colorFilters: List<ColorFilter>,
+    colorFilters: SnapshotStateList<ColorFilter>,
     // toolbar
     logsToolbarState: LogsToolbarState,
     logsToolbarCallbacks: LogsToolbarCallbacks,
@@ -87,7 +86,8 @@ fun LogsPanel(
         )
 
         Divider()
-        val mergedFilters = mutableListOf<ColorFilter>()
+        // TODO: Move to viewModel
+        val mergedFilters = mutableStateListOf<ColorFilter>()
         mergedFilters.addAll(colorFilters)
         if (logsToolbarState.toolbarWarningChecked) {
             mergedFilters.add(ColorFilterWarn)
@@ -200,8 +200,8 @@ fun PreviewLogsPanel() {
         logMessages = list,
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
-        searchIndexes = emptyList(),
-        colorFilters = emptyList(),
+        searchIndexes = SnapshotStateList(),
+        colorFilters = SnapshotStateList(),
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
@@ -255,8 +255,8 @@ fun PreviewLogsPanel() {
         onSearchRowSelected = { i, r -> },
         logsListSelectedRow =0,
         searchListSelectedRow = 0,
-        searchAutoComplete = emptyList(),
-        virtualDevices = emptyList(),
+        searchAutoComplete = mutableStateListOf(),
+        virtualDevices = mutableStateListOf(),
         rowContextMenuCallbacks = object : RowContextMenuCallbacks {
             override fun onCopyClicked(text: AnnotatedString) = Unit
             override fun onMarkClicked(i: Int, message: LogMessage) = Unit

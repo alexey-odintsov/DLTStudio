@@ -5,12 +5,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
-import com.alekso.dltstudio.LogRemoveContext
-import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.LogMessage
 import com.alekso.dltstudio.ui.Panel
@@ -20,7 +19,7 @@ import com.alekso.dltstudio.utils.SampleData
 fun LogsListPanel(
     modifier: Modifier = Modifier,
     messages: SnapshotStateList<LogMessage>,
-    colorFilters: List<ColorFilter>,
+    colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
     logsListState: LazyListState,
     onLogsRowSelected: (Int, Int) -> Unit,
@@ -58,12 +57,12 @@ fun PreviewLogsListPanel() {
     LogsListPanel(
         modifier = Modifier.fillMaxSize(),
         messages = list,
-        colorFilters = emptyList(),
+        colorFilters = mutableStateListOf(),
         selectedRow = 1,
         logsListState = LazyListState(),
         onLogsRowSelected = { _, _ -> },
         wrapContent = true,
-        rowContextMenuCallbacks = object: RowContextMenuCallbacks {
+        rowContextMenuCallbacks = object : RowContextMenuCallbacks {
             override fun onCopyClicked(text: AnnotatedString) = Unit
             override fun onMarkClicked(i: Int, message: LogMessage) = Unit
             override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit

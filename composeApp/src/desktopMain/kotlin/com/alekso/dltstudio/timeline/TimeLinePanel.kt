@@ -20,10 +20,12 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -48,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.timeline.filters.AnalyzeState
+import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
 import com.alekso.dltstudio.timeline.graph.TimelineDurationView
 import com.alekso.dltstudio.timeline.graph.TimelineEventView
@@ -66,19 +70,30 @@ private const val MOVE_TIMELINE_STEP_PX = 10
 @Composable
 fun TimeLinePanel(
     modifier: Modifier,
-    timelineViewModel: TimelineViewModel,
     logMessages: SnapshotStateList<LogMessage>,
     offsetSec: Float,
     offsetUpdate: (Float) -> Unit,
     scale: Float,
     scaleUpdate: (Float) -> Unit,
+    analyzeState: AnalyzeState,
+    totalSeconds: Float,
+    timelineFilters: SnapshotStateList<TimelineFilter>,
+    timeStart: Long,
+    timeEnd: Long,
+    entriesMap: SnapshotStateMap<String, TimeLineEntries<*>>,
+    onAnalyzeClicked: (SnapshotStateList<LogMessage>) -> Unit,
+    highlightedKeysMap: SnapshotStateMap<String, String?>,
+    onTimelineFilterUpdate: (Int, TimelineFilter) -> Unit,
+    onTimelineFilterDelete: (Int) -> Unit,
+    onTimelineFilterMove: (Int, Int) -> Unit,
+    retrieveEntriesForFilter: (filter: TimelineFilter) -> TimeLineEntries<*>?,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
 
     val dragCallback = { pe: PointerEvent, width: Int ->
         if (logMessages.isNotEmpty()) {
-            val secSize: Float = width / (timelineViewModel.totalSeconds.toFloat())
+            val secSize: Float = width / (totalSeconds)
             val dragAmount = pe.changes.first().position.x - pe.changes.first().previousPosition.x
             offsetUpdate(offsetSec + (dragAmount / secSize / scale))
         }
@@ -114,6 +129,7 @@ fun TimeLinePanel(
             }
         } else false
     }) {
+
         TimelineToolbar(
             leftClick = { offsetUpdate(offsetSec + MOVE_TIMELINE_STEP_PX / secSizePx) },
             rightClick = { offsetUpdate(offsetSec - MOVE_TIMELINE_STEP_PX / secSizePx) },
@@ -123,8 +139,8 @@ fun TimeLinePanel(
                 scaleUpdate(1f)
                 offsetUpdate(0f)
             },
-            analyzeState = timelineViewModel.analyzeState.value,
-            onAnalyzeClick = { timelineViewModel.onAnalyzeClicked(logMessages) },
+            analyzeState = analyzeState,
+            onAnalyzeClick = { onAnalyzeClicked(logMessages) },
             onTimelineFiltersClicked = { dialogState.value = true },
         )
 
@@ -132,10 +148,10 @@ fun TimeLinePanel(
             TimelineFiltersDialog(
                 visible = dialogState.value,
                 onDialogClosed = { dialogState.value = false },
-                timelineFilters = timelineViewModel.timelineFilters,
-                onTimelineFilterUpdate = { i, f -> timelineViewModel.onTimelineFilterUpdate(i, f) },
-                onTimelineFilterDelete = { timelineViewModel.onTimelineFilterDelete(it) },
-                onTimelineFilterMove = { i, o -> timelineViewModel.onTimelineFilterMove(i, o) },
+                timelineFilters = timelineFilters,
+                onTimelineFilterUpdate = { i, f -> onTimelineFilterUpdate(i, f) },
+                onTimelineFilterDelete = { onTimelineFilterDelete(it) },
+                onTimelineFilterMove = { i, o -> onTimelineFilterMove(i, o) },
             )
         }
 
@@ -143,15 +159,15 @@ fun TimeLinePanel(
 
         if (logMessages.isNotEmpty()) {
             val timeFrame = TimeFrame(
-                timestampStart = timelineViewModel.timeStart,
-                timestampEnd = timelineViewModel.timeEnd,
+                timestampStart = timeStart,
+                timestampEnd = timeEnd,
                 scale = scale,
                 offsetSeconds = offsetSec
             )
 
             Text(
-                "Time range: ${TimeFormatter.formatDateTime(timelineViewModel.timeStart)} .. ${
-                    TimeFormatter.formatDateTime(timelineViewModel.timeEnd)
+                "Time range: ${TimeFormatter.formatDateTime(timeStart)} .. ${
+                    TimeFormatter.formatDateTime(timeEnd)
                 }"
             )
             Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
@@ -162,27 +178,27 @@ fun TimeLinePanel(
                     Modifier.fillMaxWidth(1f),
                     offsetSec,
                     scale,
-                    timeStart = timelineViewModel.timeStart,
-                    timeEnd = timelineViewModel.timeEnd,
-                    totalSeconds = timelineViewModel.totalSeconds
+                    timeStart = timeStart,
+                    timeEnd = timeEnd,
+                    totalSeconds = totalSeconds.toInt()
                 )
             }
 
             val state = rememberLazyListState()
             val panels = mutableStateListOf<@Composable () -> Unit>()
 
-            timelineViewModel.timelineFilters.forEachIndexed { index, timelineFilter ->
+            timelineFilters.forEachIndexed { index, timelineFilter ->
                 if (timelineFilter.enabled) {
                     panels.add {
                         Row {
                             TimelineLegend(
                                 modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
                                 title = timelineFilter.name,
-                                entries = timelineViewModel.entriesMap[timelineFilter.key],
+                                entries = entriesMap[timelineFilter.key],
                                 { key ->
-                                    timelineViewModel.highlightedKeysMap[timelineFilter.key] = key
+                                    highlightedKeysMap[timelineFilter.key] = key
                                 },
-                                highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                highlightedKey = highlightedKeysMap[timelineFilter.key]
                             )
                             when (timelineFilter.diagramType) {
                                 DiagramType.Percentage -> {
@@ -191,9 +207,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLinePercentageEntries?,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLinePercentageEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -203,9 +219,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineMinMaxEntries?,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineMinMaxEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -215,9 +231,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineStateEntries?,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineStateEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -227,9 +243,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineSingleStateEntries?,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineSingleStateEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -239,9 +255,9 @@ fun TimeLinePanel(
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
-                                        entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineDurationEntries?,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineDurationEntries?,
                                         timeFrame = timeFrame,
-                                        highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
                                     )
                                 }
 
@@ -250,9 +266,9 @@ fun TimeLinePanel(
                                         .onPointerEvent(
                                             PointerEventType.Move,
                                             onEvent = { dragCallback(it, size.width) }),
-                                    entries = timelineViewModel.retrieveEntriesForFilter(timelineFilter) as TimeLineEventEntries?,
+                                    entries = retrieveEntriesForFilter(timelineFilter) as TimeLineEventEntries?,
                                     timeFrame = timeFrame,
-                                    highlightedKey = timelineViewModel.highlightedKeysMap[timelineFilter.key]
+                                    highlightedKey = highlightedKeysMap[timelineFilter.key]
                                 )
                             }
                         }
@@ -285,7 +301,7 @@ fun TimeLinePanel(
                 Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
                     if (cursorPosition.x < LEGEND_WIDTH_DP.toPx()) return@Canvas
                     secSizePx =
-                        ((size.width - LEGEND_WIDTH_DP.toPx()) * scale) / timelineViewModel.totalSeconds.toFloat()
+                        ((size.width - LEGEND_WIDTH_DP.toPx()) * scale) / totalSeconds
 
                     val doesMarkerFit =
                         (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
@@ -298,7 +314,7 @@ fun TimeLinePanel(
                     val cursorOffsetSec: Float =
                         ((cursorPosition.x - LEGEND_WIDTH_DP.toPx()) / secSizePx) - offsetSec
                     val cursorTimestamp: Long =
-                        (1000000L * cursorOffsetSec).toLong() + timelineViewModel.timeStart
+                        (1000000L * cursorOffsetSec).toLong() + timeStart
 
                     drawText(
                         size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
@@ -333,10 +349,21 @@ fun PreviewTimeline() {
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
         logMessages = list,
-        timelineViewModel = TimelineViewModel({}),
         offsetSec = 0f,
         offsetUpdate = {},
         scale = 1f,
         scaleUpdate = { f -> },
+        analyzeState = AnalyzeState.IDLE,
+        totalSeconds = 2000f,
+        timelineFilters = mutableStateListOf(),
+        timeStart = 20000L,
+        timeEnd = 300000L,
+        entriesMap = mutableStateMapOf(),
+        onAnalyzeClicked = {},
+        highlightedKeysMap = mutableStateMapOf(),
+        onTimelineFilterUpdate = { i, k -> },
+        onTimelineFilterDelete = {},
+        onTimelineFilterMove = { i, k -> },
+        retrieveEntriesForFilter = { i -> TimeLineStateEntries() }
     )
 }

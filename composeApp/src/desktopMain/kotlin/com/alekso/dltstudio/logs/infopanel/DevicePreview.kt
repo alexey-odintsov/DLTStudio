@@ -13,9 +13,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -31,7 +33,7 @@ import com.alekso.dltstudio.utils.SampleData
 @Composable
 fun DevicePreviewView(
     modifier: Modifier = Modifier,
-    virtualDevices: List<VirtualDevice>,
+    virtualDevices: SnapshotStateList<VirtualDevice>,
     logMessage: LogMessage?,
     messageIndex: Int,
     onShowVirtualDeviceClicked: () -> Unit = {},
@@ -106,6 +108,6 @@ fun PreviewDevicePreview() {
         modifier = Modifier.fillMaxSize(),
         logMessage = LogMessage(dltMessage),
         messageIndex = 0,
-        virtualDevices = emptyList()
+        virtualDevices = mutableStateListOf()
     )
 }

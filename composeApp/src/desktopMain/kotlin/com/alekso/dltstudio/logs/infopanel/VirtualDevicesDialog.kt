@@ -14,8 +14,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,7 +35,7 @@ import dltstudio.composeapp.generated.resources.icon_edit
 fun VirtualDevicesDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
-    virtualDevices: List<VirtualDevice>,
+    virtualDevices: SnapshotStateList<VirtualDevice>,
     onVirtualDeviceUpdate: (VirtualDevice) -> Unit,
     onVirtualDeviceDelete: (VirtualDevice) -> Unit,
 ) {
@@ -72,7 +74,7 @@ fun VirtualDevicesDialog(
 @Composable
 fun VirtualDevicesPanel(
     modifier: Modifier,
-    items: List<VirtualDevice>,
+    items: SnapshotStateList<VirtualDevice>,
     onEditItemClick: (VirtualDevice) -> Unit,
     onItemDelete: (VirtualDevice) -> Unit,
 ) {
@@ -131,7 +133,7 @@ fun VirtualDevicesPanel(
 @Preview
 @Composable
 fun PreviewVirtualDevicesDialog() {
-    val virtualDevices = mutableListOf(
+    val virtualDevices = mutableStateListOf(
         VirtualDevice(1, "Square", width = 1500, height = 1500),
         VirtualDevice(2, "Wide", width = 2000, height = 900),
     )

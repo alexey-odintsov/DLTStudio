@@ -2,7 +2,9 @@ package com.alekso.dltstudio.timeline
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
@@ -27,15 +29,21 @@ private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit
-) {
+): TimelineHolder {
     private var analyzeJob: Job? = null
+
+    var offset = mutableStateOf(0f)
+    var scale = mutableStateOf(1f)
+    val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset.value = newOffset }
+    val scaleUpdateCallback: (Float) -> Unit =
+        { newScale -> scale.value = if (newScale > 0f) newScale else 1f }
+
 
     var entriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
     var highlightedKeysMap = mutableStateMapOf<String, String?>()
 
-    private var _analyzeState: MutableStateFlow<AnalyzeState> = MutableStateFlow(AnalyzeState.IDLE)
+    private var _analyzeState = MutableStateFlow<AnalyzeState>(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
-
 
     val timelineFilters = mutableStateListOf<TimelineFilter>(
         TimelineFilter(
@@ -233,13 +241,12 @@ class TimelineViewModel(
         }
     }
 
-
-    fun saveTimeLineFilters(file: File) {
+    override fun saveTimeLineFilters(file: File) {
         TimeLineFilterManager().saveToFile(timelineFilters, file)
         Preferences.addRecentTimelineFilter(file.name, file.absolutePath)
     }
 
-    fun loadTimeLineFilters(file: File) {
+    override fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
         TimeLineFilterManager().loadFromFile(file)?.let {
             timelineFilters.addAll(it)
@@ -247,7 +254,7 @@ class TimelineViewModel(
         Preferences.addRecentTimelineFilter(file.name, file.absolutePath)
     }
 
-    fun clearTimeLineFilters() {
+    override fun clearTimeLineFilters() {
         timelineFilters.clear()
     }
 

@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,27 +31,29 @@ import com.alekso.dltstudio.ui.CustomEditText
 @Composable
 fun DeviceAnalysePanel(
     modifier: Modifier,
-    deviceAnalyzeViewModel: DeviceAnalyzeViewModel,
+    responseState: SnapshotStateList<String>,
+    onExecuteButtonClicked: (String) -> Unit,
 ) {
     val textStyle = Modifier.padding(horizontal = 4.dp).wrapContentHeight(Alignment.Top)
-    val responseState = deviceAnalyzeViewModel.analyzeState
     var cmd by rememberSaveable { mutableStateOf("adb devices") }
     val scroll = rememberScrollState(0)
-    val predefinedCommands = remember { listOf(
-        "adb devices",
-        "adb shell dumpsys -l",
-        "adb shell dumpsys cpuinfo",
-        "adb shell dumpsys meminfo",
-        "adb shell dumpsys gpu",
-        "adb shell dumpsys hardware_properties",
-        "adb shell dumpsys runtime",
-        "adb shell dumpsys user",
-        "adb shell dumpsys window",
-        "adb shell dumpsys meminfo package_name|pid [-d]",
-        "adb shell dumpsys procstats --hours 1",
-        "adb shell dumpsys gfxinfo package-name",
-        "adb shell dumpsys gfxinfo package-name framestats",
-    ) }
+    val predefinedCommands = remember {
+        listOf(
+            "adb devices",
+            "adb shell dumpsys -l",
+            "adb shell dumpsys cpuinfo",
+            "adb shell dumpsys meminfo",
+            "adb shell dumpsys gpu",
+            "adb shell dumpsys hardware_properties",
+            "adb shell dumpsys runtime",
+            "adb shell dumpsys user",
+            "adb shell dumpsys window",
+            "adb shell dumpsys meminfo package_name|pid [-d]",
+            "adb shell dumpsys procstats --hours 1",
+            "adb shell dumpsys gfxinfo package-name",
+            "adb shell dumpsys gfxinfo package-name framestats",
+        )
+    }
 
     Column(modifier = modifier) {
         Column {
@@ -74,7 +77,7 @@ fun DeviceAnalysePanel(
                 CustomButton(
                     modifier = Modifier.padding(4.dp),
                     onClick = {
-                        deviceAnalyzeViewModel.executeCommand(cmd)
+                        onExecuteButtonClicked(cmd)
                     }) {
                     Text(text = "Execute")
                 }

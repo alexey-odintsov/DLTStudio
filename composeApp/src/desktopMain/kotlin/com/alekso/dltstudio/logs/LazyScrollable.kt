@@ -25,7 +25,6 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.RowContextMenuCallbacks
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.LogMessage
@@ -36,8 +35,8 @@ import com.alekso.dltstudio.model.LogMessage
 fun LazyScrollable(
     modifier: Modifier,
     logMessages: SnapshotStateList<LogMessage>,
-    indexes: List<Int>? = null,
-    colorFilters: List<ColorFilter>,
+    indexes: SnapshotStateList<Int>? = null,
+    colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
     onRowSelected: (Int, Int) -> Unit,
     listState: LazyListState,

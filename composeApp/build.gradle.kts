@@ -62,6 +62,11 @@ compose.desktop {
             packageVersion = "1.0.0"
         }
     }
+    composeCompiler {
+        // https://developer.android.com/develop/ui/compose/performance/stability/diagnose
+        reportsDestination = layout.buildDirectory.dir("compose_compiler")
+        metricsDestination = layout.buildDirectory.dir("compose_compiler")
+    }
 }
 
 task("testClasses")

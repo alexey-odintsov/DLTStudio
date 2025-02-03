@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,7 +35,7 @@ import com.alekso.dltstudio.utils.SampleData
 fun LogPreviewPanel(
     modifier: Modifier,
     logMessage: LogMessage?,
-    virtualDevices: List<VirtualDevice>,
+    virtualDevices: SnapshotStateList<VirtualDevice>,
     messageIndex: Int,
     logInsights: SnapshotStateList<LogInsight>? = null,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
@@ -45,7 +46,8 @@ fun LogPreviewPanel(
 
     Column(modifier = modifier.background(MaterialTheme.colors.background)) {
         Panel(Modifier.fillMaxSize(), title = "Message Info") {
-            TabsPanel(tabIndex, listOf("Simple", "Detailed", "Preview"), tabClickListener)
+            val tabs = remember { mutableStateListOf("Simple", "Detailed", "Preview") }
+            TabsPanel(tabIndex, tabs, tabClickListener)
 
             when (tabIndex) {
                 0 -> {
@@ -55,6 +57,7 @@ fun LogPreviewPanel(
                         onCommentUpdated = onCommentUpdated
                     )
                 }
+
                 1 -> {
                     DLTDetailedInfoView(logMessage = logMessage, messageIndex = messageIndex)
                 }
@@ -133,7 +136,7 @@ fun PreviewLogPreview() {
     LogPreviewPanel(
         Modifier.width(200.dp),
         logMessage = dltMessage,
-        virtualDevices = emptyList(),
+        virtualDevices = mutableStateListOf(),
         0
     )
 }

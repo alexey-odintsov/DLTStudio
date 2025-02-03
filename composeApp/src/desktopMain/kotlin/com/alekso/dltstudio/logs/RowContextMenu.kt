@@ -5,8 +5,6 @@ import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltstudio.model.LogMessage
-import com.alekso.dltstudio.LogRemoveContext
-import com.alekso.dltstudio.RowContextMenuCallbacks
 
 @Composable
 fun RowContextMenu(
@@ -26,7 +24,7 @@ fun RowContextMenu(
                 message
             )
         },
-        )
+    )
 
     message.dltMessage.extendedHeader?.contextId?.let {
         menuItems.add(ContextMenuItem("Remove context '${it}'") {

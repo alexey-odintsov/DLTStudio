@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.tests
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import com.alekso.dltstudio.ui.TabsPanel
@@ -13,7 +14,7 @@ class UIJVMTest {
     @Test
     fun `test tabs presence`() {
         rule.setContent {
-            TabsPanel(0, listOf("Logs", "Timeline"), { })
+            TabsPanel(0, mutableStateListOf("Logs", "Timeline"), { })
         }
 
         rule.onNodeWithText("Logs").assertExists("Logs tab doesn't exist")
