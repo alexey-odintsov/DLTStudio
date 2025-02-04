@@ -21,7 +21,7 @@ import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.preferences.Preferences

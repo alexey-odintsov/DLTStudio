@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.insights.LogInsight
-import com.alekso.dltstudio.model.LogMessage
-import com.alekso.dltstudio.ui.CustomButton
-import com.alekso.dltstudio.ui.CustomEditText
+import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.uicomponents.CustomButton
+import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.dltstudio.utils.SampleData
 
 @Composable

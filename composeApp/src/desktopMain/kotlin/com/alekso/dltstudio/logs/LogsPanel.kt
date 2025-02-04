@@ -30,7 +30,7 @@ import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.utils.SampleData
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi

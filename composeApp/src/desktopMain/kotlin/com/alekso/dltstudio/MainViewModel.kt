@@ -5,7 +5,7 @@ import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
 import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.logs.LogsPlugin
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.PluginPanel
