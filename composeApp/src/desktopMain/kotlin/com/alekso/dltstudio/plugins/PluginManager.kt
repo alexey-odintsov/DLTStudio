@@ -27,4 +27,10 @@ class PluginManager {
         return plugins.filter { it is PluginPanel }.map { it as PluginPanel }
     }
 
+    fun notifyLogsChanged() {
+        plugins.forEach { plugin ->
+            plugin.onLogsChanged()
+        }
+    }
+
 }

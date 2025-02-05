@@ -10,10 +10,16 @@ import com.alekso.dltstudio.plugins.PluginPanel
 class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
     private lateinit var viewModel: DeviceAnalyzeViewModel
 
-    override fun identify(): String = "Device Analyze Plugin"
+    override fun pluginName(): String = "Device Analyze Plugin"
+    override fun pluginVersion(): String = "1.0.0"
+    override fun pluginClassName(): String = "com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin"
 
     override fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit) {
         viewModel = DeviceAnalyzeViewModel(onProgressUpdate)
+    }
+
+    override fun onLogsChanged() {
+        // ignore
     }
 
     override fun getPanelName(): String = "Device Analyse"
