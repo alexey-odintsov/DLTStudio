@@ -2,8 +2,10 @@ package com.alekso.dltstudio.uicomponents.table
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
@@ -25,12 +27,11 @@ fun TableTextCell(
     text: String,
     textAlign: TextAlign = TextAlign.Left,
     isHeader: Boolean = false,
-    backgroundColor: Color? = null,
     textColor: Color? = null,
     wrapContent: Boolean = false,
     isComment: Boolean = false,
 ) {
-    val textColor = textColor ?: Color.Unspecified
+    val evaluatedTextColor = textColor ?: Color.Unspecified
     if (isComment) {
         Box(modifier = Modifier.fillMaxWidth()) {
             Text(
@@ -62,28 +63,38 @@ fun TableTextCell(
             Text(
                 modifier = Modifier.padding(end = 1.dp).then(modifier),
                 textAlign = textAlign,
-//                fontSize = LocalLogsTextStyle.current.fontSize,
-//                lineHeight = LocalLogsTextStyle.current.lineHeight,
-//                fontFamily = LocalLogsTextStyle.current.fontFamily,
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
+                fontFamily = FontFamily.Monospace,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight(if (isHeader) 600 else 400),
                 softWrap = true,
                 text = text,
-                color = textColor,
+                color = evaluatedTextColor,
             )
         } else {
             Text(
                 modifier = Modifier.padding(end = 1.dp).then(modifier),
                 maxLines = 1,
                 textAlign = textAlign,
-//                fontSize = LocalLogsTextStyle.current.fontSize,
-//                lineHeight = LocalLogsTextStyle.current.lineHeight,
-//                fontFamily = LocalLogsTextStyle.current.fontFamily,
+                fontSize = 10.sp,
+                lineHeight = 12.sp,
+                fontFamily = FontFamily.Monospace,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight(if (isHeader) 600 else 400),
                 text = text,
-                color = textColor,
+                color = evaluatedTextColor,
             )
         }
     }
+}
+
+@Composable
+fun TableDivider() {
+    Box(
+        Modifier
+            .width(1.dp)
+            .fillMaxHeight()
+            .background(color = Color(0xFFEEEEEE))
+    )
 }

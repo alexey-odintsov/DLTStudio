@@ -1,14 +1,17 @@
 package com.alekso.dltstudio.plugins.filesextraction
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,6 +21,8 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
+import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 import java.io.File
 
@@ -87,7 +93,7 @@ fun FilesPanel(
             if (files.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(4.dp),
-                    text = "${files.size} files found ${files.sumOf { e -> e.size }} bytes"
+                    text = "${files.size} files found, total ${getFileSizeString(files.sumOf { e -> e.size })}"
                 )
             }
         }
@@ -114,18 +120,15 @@ fun FilesPanel(
                         items = files,
                         key = { _, key -> key },
                         contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
-                        Row(
+                        FileItem(
                             Modifier.combinedClickable(
                                 onClick = {},
-                                onDoubleClick = { onFileEntryClicked(fileEntry) })
-                        ) {
-                            FileItem(
-                                i = i.toString(),
-                                name = fileEntry.name,
-                                size = fileEntry.size.toString(),
-                                date = fileEntry.creationDate
-                            )
-                        }
+                                onDoubleClick = { onFileEntryClicked(fileEntry) }),
+                            i = i.toString(),
+                            name = fileEntry.name,
+                            size = getFileSizeString(fileEntry.size),
+                            date = fileEntry.creationDate
+                        )
                     }
                 }
                 VerticalScrollbar(
@@ -140,32 +143,73 @@ fun FilesPanel(
 }
 
 @Composable
-fun FileItem(i: String, name: String, size: String, date: String, isHeader: Boolean = false) {
-    Row(Modifier.background(Color.White)) {
+fun FileItem(
+    modifier: Modifier = Modifier,
+    i: String, name: String, size: String, date: String, isHeader: Boolean = false
+) {
+    Row(
+        modifier.background(Color(0xFFEEEEEE))
+            .padding(bottom = 1.dp)
+            .background(Color.White)
+            .height(IntrinsicSize.Max)
+    ) {
         TableTextCell(
             text = i,
             modifier = Modifier.width(30.dp).padding(2.dp),
             isHeader = isHeader,
         )
-//        TableCellDivider()
+        TableDivider()
         TableTextCell(
             text = name,
             modifier = Modifier.weight(1f).padding(2.dp),
             isHeader = isHeader,
         )
-//        TableCellDivider()
+        TableDivider()
         TableTextCell(
             text = size,
-            modifier = Modifier.width(60.dp).padding(2.dp),
+            modifier = Modifier.width(80.dp).padding(2.dp),
             isHeader = isHeader,
             textAlign = TextAlign.Right,
         )
-//        TableCellDivider()
+        TableDivider()
         TableTextCell(
             text = date,
             modifier = Modifier.width(200.dp).padding(2.dp),
             isHeader = isHeader,
             textAlign = TextAlign.Right,
+        )
+    }
+}
+
+private fun getFileSizeString(size: Long): String {
+    return when {
+        size < 1024 -> "$size b\u00A0"
+        size < 1024 * 1024 -> "%.0f Kb".format(size / 1024f)
+        else -> "%.0f Mb".format(size / (1024 * 1024f))
+    }
+}
+
+@Preview
+@Composable
+fun PreviewFilesPanel() {
+    Box(Modifier.background(Color.Gray)) {
+        FilesPanel(
+            FilesState.IDLE,
+            mutableStateListOf(
+                FileEntry(
+                    name = "test_file.txt",
+                    size = 143,
+                    creationDate = "24 Jul 2039 14:46:18"
+                ),
+                FileEntry(name = "App crash.txt", size = 512),
+                FileEntry(name = "anr.gz", size = 123456789L),
+                FileEntry(name = "some screenshot.png", size = 456643),
+            ),
+            mutableStateOf<PreviewState?>(null),
+            {},
+            {},
+            {},
+            {},
         )
     }
 }
