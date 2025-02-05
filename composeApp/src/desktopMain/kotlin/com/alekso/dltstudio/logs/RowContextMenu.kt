@@ -4,7 +4,7 @@ import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 
 @Composable
 fun RowContextMenu(

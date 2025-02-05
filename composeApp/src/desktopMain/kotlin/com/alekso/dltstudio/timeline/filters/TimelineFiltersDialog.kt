@@ -24,7 +24,7 @@ import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.edit.EditTimelineFilterDialog
 import com.alekso.dltstudio.timeline.filters.edit.EditTimelineFilterDialogState
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
-import com.alekso.dltstudio.ui.CustomButton
+import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.ImageButton
 import dltstudio.composeapp.generated.resources.Res

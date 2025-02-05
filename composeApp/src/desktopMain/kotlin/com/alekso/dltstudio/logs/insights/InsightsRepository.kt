@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.logs.insights
 
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 
 internal data class CompiledRule(

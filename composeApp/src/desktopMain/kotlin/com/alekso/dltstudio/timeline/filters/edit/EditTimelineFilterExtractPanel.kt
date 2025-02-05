@@ -21,8 +21,8 @@ import com.alekso.dltstudio.timeline.filters.ExtractorChecker
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.graph.TimelinePreviewFactory
-import com.alekso.dltstudio.ui.CustomDropDown
-import com.alekso.dltstudio.ui.CustomEditText
+import com.alekso.dltstudio.uicomponents.CustomDropDown
+import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.logger.Log
 
 private val COL_VALUE = 250.dp

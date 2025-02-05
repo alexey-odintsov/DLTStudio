@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.toBinary
 import com.alekso.dltparser.toHex
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 
 @Composable
 fun DLTDetailedInfoView(

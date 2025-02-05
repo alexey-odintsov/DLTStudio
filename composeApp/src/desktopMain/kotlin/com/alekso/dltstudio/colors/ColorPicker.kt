@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.ui.CustomButton
+import com.alekso.dltstudio.uicomponents.CustomButton
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

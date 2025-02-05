@@ -18,6 +18,10 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":logger"))
             implementation(project(":dltparser"))
+            implementation(project(":uicomponents"))
+            implementation(project(":plugins"))
+            implementation(project(":pluginDeviceAnalyze")) // temporary
+            implementation(project(":pluginFilesViewer")) // temporary
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)

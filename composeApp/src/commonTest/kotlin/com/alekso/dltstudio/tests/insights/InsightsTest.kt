@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.tests.insights
 
 import com.alekso.dltstudio.logs.insights.InsightsRepository
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.utils.SampleData
 import org.junit.Test
 import kotlin.test.assertEquals

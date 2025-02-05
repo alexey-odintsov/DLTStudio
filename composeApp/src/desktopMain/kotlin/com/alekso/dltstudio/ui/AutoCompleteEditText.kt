@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
+import com.alekso.dltstudio.uicomponents.CustomEditText
 
 @Composable
 fun AutoCompleteEditText(

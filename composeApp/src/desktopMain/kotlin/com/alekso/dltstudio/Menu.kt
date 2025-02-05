@@ -8,8 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.alekso.dltstudio.preferences.Preferences
-import com.alekso.dltstudio.ui.FileChooserDialog
-import com.alekso.dltstudio.ui.FileChooserDialogState
+import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
+import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import java.io.File
 
 interface MainMenuCallbacks {

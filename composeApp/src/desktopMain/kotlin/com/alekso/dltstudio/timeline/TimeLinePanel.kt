@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.TimeFormatter
-import com.alekso.dltstudio.model.LogMessage
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog

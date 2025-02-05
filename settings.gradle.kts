@@ -20,4 +20,9 @@ dependencyResolutionManagement {
 
 include(":composeApp")
 include(":dltparser")
+include(":modelContract")
 include(":logger")
+include(":uicomponents")
+include(":plugins")
+include(":pluginDeviceAnalyze")
+include(":pluginFilesViewer")

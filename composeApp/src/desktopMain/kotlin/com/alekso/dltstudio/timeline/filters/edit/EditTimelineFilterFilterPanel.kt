@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
-import com.alekso.dltstudio.ui.CustomDropDown
-import com.alekso.dltstudio.ui.CustomEditText
+import com.alekso.dltstudio.uicomponents.CustomDropDown
+import com.alekso.dltstudio.uicomponents.CustomEditText
 
 private val COL_NAME_SIZE_DP = 150.dp
 private val COL_VALUE = 250.dp

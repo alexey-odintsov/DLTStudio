@@ -26,10 +26,10 @@ import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
-import com.alekso.dltstudio.model.LogMessage
-import com.alekso.dltstudio.ui.CustomButton
-import com.alekso.dltstudio.ui.CustomDropDown
-import com.alekso.dltstudio.ui.CustomEditText
+import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.uicomponents.CustomButton
+import com.alekso.dltstudio.uicomponents.CustomDropDown
+import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.dltstudio.utils.SampleData
 
 

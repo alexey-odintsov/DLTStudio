@@ -25,7 +25,7 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
-import com.alekso.dltstudio.ui.CustomButton
+import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.ui.CustomCheckbox
 import com.alekso.dltstudio.ui.ImageButton
 import dltstudio.composeapp.generated.resources.Res
