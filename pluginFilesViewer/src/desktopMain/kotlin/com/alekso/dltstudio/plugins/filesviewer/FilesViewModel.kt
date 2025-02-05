@@ -157,4 +157,8 @@ class FilesViewModel(
             }
         }
     }
+
+    fun clearState() {
+        cleanup()
+    }
 }

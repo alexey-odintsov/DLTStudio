@@ -1,15 +1,26 @@
 package com.alekso.dltstudio.plugins.deviceplugin
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.PluginPanel
 
-class DeviceAnalyzePlugin(
-    private val viewModel: DeviceAnalyzeViewModel,
-) : DLTStudioPlugin, PluginPanel {
+class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
+    private lateinit var viewModel: DeviceAnalyzeViewModel
 
-    override fun identify(): String = "Device Analyze Plugin"
+    override fun pluginName(): String = "Device Analyze Plugin"
+    override fun pluginVersion(): String = "1.0.0"
+    override fun pluginClassName(): String = "com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin"
+
+    override fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit) {
+        viewModel = DeviceAnalyzeViewModel(onProgressUpdate)
+    }
+
+    override fun onLogsChanged() {
+        // ignore
+    }
 
     override fun getPanelName(): String = "Device Analyse"
 

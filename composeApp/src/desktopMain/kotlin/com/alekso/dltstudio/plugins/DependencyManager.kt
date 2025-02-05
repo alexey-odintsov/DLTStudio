@@ -48,6 +48,7 @@ object DependencyManager {
         dltParser = DLTParserV2(PayloadStorageType.Binary),
         messagesHolder = logsViewModel,
         timelineHolder = _timelineViewModel,
+        pluginManager = _pluginsManager,
     )
 
     fun getMessageHolder(): MessagesHolder {

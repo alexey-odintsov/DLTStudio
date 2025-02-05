@@ -3,6 +3,7 @@ package com.alekso.dltstudio
 import androidx.compose.runtime.mutableStateListOf
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
+import com.alekso.dltstudio.com.alekso.dltstudio.plugins.PluginManager
 import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -23,6 +24,7 @@ class MainViewModel(
     private val dltParser: DLTParser,
     private val messagesHolder: MessagesHolder,
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
+    private val pluginManager: PluginManager,
 ) {
     val panels = mutableStateListOf<PluginPanel>()
     val panelsNames = mutableStateListOf<String>() // todo: Find way to synchronize panels and names
@@ -85,6 +87,7 @@ class MainViewModel(
     }
 
     fun parseFile(dltFiles: List<File>) {
+        pluginManager.notifyLogsChanged()
         parseJob?.cancel()
         messagesHolder.clearMessages()
         parseJob = CoroutineScope(IO).launch {

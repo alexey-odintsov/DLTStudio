@@ -1,31 +1,36 @@
 package com.alekso.dltstudio.com.alekso.dltstudio.plugins
 
-import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin
-import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzeViewModel
-import com.alekso.dltstudio.plugins.filesviewer.FilesPlugin
-import com.alekso.dltstudio.plugins.filesviewer.FilesViewModel
 import com.alekso.dltstudio.plugins.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.PluginPanel
+import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin
+import com.alekso.dltstudio.plugins.filesviewer.FilesPlugin
 
 class PluginManager {
+    private val predefinedPlugins = listOf<DLTStudioPlugin>(
+        DeviceAnalyzePlugin(),
+        FilesPlugin(),
+    )
     private val plugins = mutableListOf<DLTStudioPlugin>()
 
     suspend fun loadPlugins() {
-        val deviceAnalyzePlugin = DeviceAnalyzePlugin(
-            DeviceAnalyzeViewModel(DependencyManager.onProgressUpdate)
-        )
-        plugins.add(deviceAnalyzePlugin)
-
-        val filesPlugin = FilesPlugin(
-            viewModel = FilesViewModel(DependencyManager.onProgressUpdate),
-            logMessages = DependencyManager.getMessageHolder().getMessages(),
-        )
-        plugins.add(filesPlugin)
+        predefinedPlugins.forEach { plugin ->
+            plugin.init(
+                logs = DependencyManager.getMessageHolder().getMessages(),
+                onProgressUpdate = DependencyManager.onProgressUpdate,
+            )
+            plugins.add(plugin)
+        }
     }
 
     fun getPluginPanels(): List<PluginPanel> {
         return plugins.filter { it is PluginPanel }.map { it as PluginPanel }
+    }
+
+    fun notifyLogsChanged() {
+        plugins.forEach { plugin ->
+            plugin.onLogsChanged()
+        }
     }
 
 }
