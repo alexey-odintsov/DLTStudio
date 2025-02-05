@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.plugins.filesextraction
+package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State

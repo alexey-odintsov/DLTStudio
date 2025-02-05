@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.plugins.filesextraction
+package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar

@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.plugins.filesextraction
+package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column

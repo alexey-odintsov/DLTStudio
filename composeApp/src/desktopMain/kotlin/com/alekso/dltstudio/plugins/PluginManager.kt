@@ -2,8 +2,8 @@ package com.alekso.dltstudio.com.alekso.dltstudio.plugins
 
 import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin
 import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzeViewModel
-import com.alekso.dltstudio.plugins.filesextraction.FilesPlugin
-import com.alekso.dltstudio.plugins.filesextraction.FilesViewModel
+import com.alekso.dltstudio.plugins.filesviewer.FilesPlugin
+import com.alekso.dltstudio.plugins.filesviewer.FilesViewModel
 import com.alekso.dltstudio.plugins.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.PluginPanel

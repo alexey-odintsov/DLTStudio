@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.plugins.filesextraction
+package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.runtime.mutableStateMapOf
 import com.alekso.dltparser.dlt.DLTMessage

@@ -21,7 +21,7 @@ kotlin {
             implementation(project(":uicomponents"))
             implementation(project(":plugins"))
             implementation(project(":pluginDeviceAnalyze")) // temporary
-            implementation(project(":pluginFilesExtraction")) // temporary
+            implementation(project(":pluginFilesViewer")) // temporary
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
