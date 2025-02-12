@@ -30,9 +30,7 @@ class LogsPlugin(
                 visible = viewModel.colorFiltersDialogState.value,
                 onDialogClosed = { viewModel.colorFiltersDialogState.value = false },
                 colorFilters = viewModel.colorFilters,
-                onColorFilterUpdate = { i, f -> viewModel.onColorFilterUpdate(i, f) },
-                onColorFilterDelete = { viewModel.onColorFilterDelete(it) },
-                onColorFilterMove = { i, o -> viewModel.onColorFilterMove(i, o) },
+                callbacks = viewModel.colorFiltersDialogCallbacks,
             )
         }
         if (viewModel.devicePreviewsDialogState.value) {

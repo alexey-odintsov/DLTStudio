@@ -14,6 +14,7 @@ import com.alekso.dltstudio.db.virtualdevice.toVirtualDevice
 import com.alekso.dltstudio.db.virtualdevice.toVirtualDeviceEntity
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
+import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
@@ -21,8 +22,8 @@ import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
-import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.VirtualDevice
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.MessagesProvider
 import com.alekso.dltstudio.preferences.Preferences
@@ -309,23 +310,26 @@ class LogsViewModel(
 
     val colorFilters = mutableStateListOf<ColorFilter>()
 
-    fun onColorFilterUpdate(index: Int, updatedFilter: ColorFilter) {
-        Log.d("onFilterUpdate $index $updatedFilter")
-        if (index < 0 || index > colorFilters.size) {
-            colorFilters.add(updatedFilter)
-        } else colorFilters[index] = updatedFilter
-    }
-
-    fun onColorFilterMove(index: Int, offset: Int) {
-        if (index + offset in 0..<colorFilters.size) {
-            val temp = colorFilters[index]
-            colorFilters[index] = colorFilters[index + offset]
-            colorFilters[index + offset] = temp
+    val colorFiltersDialogCallbacks = object : ColorFiltersDialogCallbacks {
+        override fun onColorFilterUpdate(position: Int, filter: ColorFilter) {
+            Log.d("onFilterUpdate $position $filter")
+            if (position < 0 || position > colorFilters.size) {
+                colorFilters.add(filter)
+            } else colorFilters[position] = filter
         }
-    }
 
-    fun onColorFilterDelete(index: Int) {
-        colorFilters.removeAt(index)
+        override fun onColorFilterDelete(position: Int) {
+            colorFilters.removeAt(position)
+        }
+
+        override fun onColorFilterMove(index: Int, offset: Int) {
+            if (index + offset in 0..<colorFilters.size) {
+                val temp = colorFilters[index]
+                colorFilters[index] = colorFilters[index + offset]
+                colorFilters[index + offset] = temp
+            }
+
+        }
     }
 
     override fun saveColorFilters(file: File) {
