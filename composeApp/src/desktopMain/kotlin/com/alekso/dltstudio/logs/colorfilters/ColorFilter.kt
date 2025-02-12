@@ -19,9 +19,10 @@ data class ColorFilter(
     val enabled: Boolean = true,
 ) {
     fun assess(message: DLTMessage): Boolean {
+        if (!enabled) return false
         return filters.all {
             val criteria = it.value
-            return@all enabled && when (it.key) {
+            return@all when (it.key) {
                 FilterParameter.MessageType -> {
                     checkTextCriteria(
                         criteria,
