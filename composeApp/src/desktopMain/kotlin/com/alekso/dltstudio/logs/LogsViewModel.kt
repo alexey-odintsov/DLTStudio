@@ -24,6 +24,7 @@ import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.plugins.MessagesHolder
+import com.alekso.dltstudio.plugins.MessagesProvider
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
@@ -58,7 +59,7 @@ class LogsViewModel(
     private val insightsRepository: InsightsRepository,
     private val virtualDeviceRepository: VirtualDeviceRepository,
     private val onProgressChanged: (Float) -> Unit,
-) : MessagesHolder {
+) : MessagesHolder, MessagesProvider {
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
         get() = _logMessages

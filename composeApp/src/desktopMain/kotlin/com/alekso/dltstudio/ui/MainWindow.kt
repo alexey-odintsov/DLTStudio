@@ -69,7 +69,7 @@ fun MainWindow(
             (mainViewModel.panels[tabIndex]).renderPanel(modifier = Modifier.weight(1f))
         }
         Divider()
-        val messagesSize = DependencyManager.getMessageHolder().getMessages().size
+        val messagesSize = DependencyManager.provideMessagesProvider().getMessages().size
         val statusText = if (messagesSize > 0) {
             "Messages: ${"%,d".format(messagesSize)}"
         } else {
@@ -83,6 +83,6 @@ fun MainWindow(
 @Composable
 fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
-        MainWindow(DependencyManager.getMainViewModel())
+        MainWindow(DependencyManager.provideMainViewModel())
     }
 }

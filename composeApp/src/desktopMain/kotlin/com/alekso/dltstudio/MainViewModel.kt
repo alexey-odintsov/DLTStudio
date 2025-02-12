@@ -3,13 +3,15 @@ package com.alekso.dltstudio
 import androidx.compose.runtime.mutableStateListOf
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
-import com.alekso.dltstudio.com.alekso.dltstudio.plugins.PluginManager
 import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.MessagesHolder
+import com.alekso.dltstudio.plugins.MessagesProvider
+import com.alekso.dltstudio.plugins.PluginManager
 import com.alekso.dltstudio.plugins.PluginPanel
+import com.alekso.dltstudio.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -22,6 +24,7 @@ import java.io.File
 
 class MainViewModel(
     private val dltParser: DLTParser,
+    private val messagesProvider: MessagesProvider,
     private val messagesHolder: MessagesHolder,
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
     private val pluginManager: PluginManager,
@@ -64,19 +67,24 @@ class MainViewModel(
     init {
         panels.add(
             LogsPlugin(
-                viewModel = DependencyManager.getLogsViewModel(),
+                viewModel = DependencyManager.provideLogsViewModel(),
             )
         )
         panels.add(
             TimelinePlugin(
-                viewModel = DependencyManager.getTimelineViewModel(),
-                logMessages = messagesHolder.getMessages(),
+                viewModel = DependencyManager.provideTimelineViewModel(),
+                logMessages = messagesProvider.getMessages(),
             )
         )
 
         panelsNames.addAll(panels.map { it.getPanelName() })
         CoroutineScope(IO).launch {
-            val pluginManager = DependencyManager.getPluginsManager()
+            val pluginManager = DependencyManager.providePluginsManager()
+
+            predefinedPlugins.forEach { plugin ->
+                pluginManager.registerPredefinedPlugin(plugin)
+            }
+
             pluginManager.loadPlugins()
             val loadedPanel = pluginManager.getPluginPanels()
             withContext(Main) {

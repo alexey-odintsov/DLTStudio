@@ -37,7 +37,7 @@ fun main() = application {
 
         AppTheme {
             CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
-                val mainViewModel = remember { DependencyManager.getMainViewModel() }
+                val mainViewModel = remember { DependencyManager.provideMainViewModel() }
 
                 MainMenu(mainViewModel.mainMenuCallbacks)
                 MainWindow(mainViewModel)

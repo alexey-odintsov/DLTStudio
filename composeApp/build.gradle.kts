@@ -20,8 +20,7 @@ kotlin {
             implementation(project(":dltparser"))
             implementation(project(":uicomponents"))
             implementation(project(":plugins"))
-            implementation(project(":pluginDeviceAnalyze")) // temporary
-            implementation(project(":pluginFilesViewer")) // temporary
+            implementation(project(":predefinedPlugins"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
