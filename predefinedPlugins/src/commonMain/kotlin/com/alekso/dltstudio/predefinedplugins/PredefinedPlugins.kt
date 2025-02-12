@@ -1,10 +1,10 @@
-package com.alekso.dltStudio.predefinedplugins
+package com.alekso.dltstudio.predefinedplugins
 
 import com.alekso.dltstudio.plugins.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin
 import com.alekso.dltstudio.plugins.filesviewer.FilesPlugin
 
-var predefinedPlugins = listOf<DLTStudioPlugin>(
+public var predefinedPlugins = listOf<DLTStudioPlugin>(
     FilesPlugin(),
     DeviceAnalyzePlugin()
 )
