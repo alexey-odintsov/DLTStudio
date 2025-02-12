@@ -24,11 +24,11 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
-import com.alekso.dltstudio.ui.AutoCompleteEditText
-import com.alekso.dltstudio.ui.HorizontalDivider
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.ui.ToggleImageButton
-import com.alekso.dltstudio.ui.Tooltip
+import com.alekso.dltstudio.uicomponents.AutoCompleteEditText
+import com.alekso.dltstudio.uicomponents.HorizontalDivider
+import com.alekso.dltstudio.uicomponents.Tooltip
 import dltstudio.composeapp.generated.resources.Res
 import dltstudio.composeapp.generated.resources.icon_color_filters
 import dltstudio.composeapp.generated.resources.icon_comments

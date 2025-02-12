@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.ui
+package com.alekso.dltstudio.uicomponents
 
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
-import com.alekso.dltstudio.uicomponents.CustomEditText
 
 @Composable
 fun AutoCompleteEditText(
