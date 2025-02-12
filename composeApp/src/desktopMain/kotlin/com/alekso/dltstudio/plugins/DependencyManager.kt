@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.MainViewModel
-import com.alekso.dltstudio.com.alekso.dltstudio.plugins.PluginManager
 import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.logs.LogsViewModel
@@ -24,7 +23,12 @@ object DependencyManager {
         _progress.value = p
     }
 
-    private val _pluginsManager by lazy { PluginManager() }
+    private val pluginsManager by lazy {
+        PluginManager(
+            messagesProvider = provideMessagesProvider(),
+            onProgressUpdate = onProgressUpdate,
+        )
+    }
 
     private val virtualDeviceRepository by lazy {
         VirtualDeviceRepositoryImpl(
@@ -40,34 +44,39 @@ object DependencyManager {
         onProgressChanged = onProgressUpdate
     )
 
-    private val _timelineViewModel by lazy {
+    private val timelineViewModel by lazy {
         TimelineViewModel(onProgressChanged = onProgressUpdate)
     }
 
     private val mainViewModel = MainViewModel(
         dltParser = DLTParserV2(PayloadStorageType.Binary),
-        messagesHolder = logsViewModel,
-        timelineHolder = _timelineViewModel,
-        pluginManager = _pluginsManager,
+        messagesHolder = provideMessageHolder(),
+        messagesProvider = provideMessagesProvider(),
+        timelineHolder = provideTimelineViewModel(),
+        pluginManager = providePluginsManager(),
     )
 
-    fun getMessageHolder(): MessagesHolder {
+    fun provideMessageHolder(): MessagesHolder {
         return logsViewModel
     }
 
-    fun getLogsViewModel(): LogsViewModel {
+    fun provideMessagesProvider(): MessagesProvider {
         return logsViewModel
     }
 
-    fun getMainViewModel(): MainViewModel {
+    fun provideLogsViewModel(): LogsViewModel {
+        return logsViewModel
+    }
+
+    fun provideMainViewModel(): MainViewModel {
         return mainViewModel
     }
 
-    fun getTimelineViewModel(): TimelineViewModel {
-        return _timelineViewModel
+    fun provideTimelineViewModel(): TimelineViewModel {
+        return timelineViewModel
     }
 
-    fun getPluginsManager(): PluginManager {
-        return _pluginsManager
+    fun providePluginsManager(): PluginManager {
+        return pluginsManager
     }
 }
