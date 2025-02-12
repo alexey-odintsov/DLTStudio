@@ -10,22 +10,22 @@ enum class DiagramType(val description: String) {
         override fun createEntries(): TimeLineEntries<*> = TimeLinePercentageEntries()
         override val params: Map<Param, ExtractorParam> = mapOf(
             Param.KEY to ExtractorParam("key", "Key value of the entry."),
-            Param.VALUE to ExtractorParam("value", "Float value of the entry.", required = true),
+            Param.VALUE to ExtractorParam("value", "Float value of the entry."),
         )
     },
     MinMaxValue(description = "Shows how values change over time within 0 and Max values. Memory usage is one example.") {
         override fun createEntries(): TimeLineEntries<*> = TimeLineMinMaxEntries()
         override val params: Map<Param, ExtractorParam> = mapOf(
             Param.KEY to ExtractorParam("key", "Key value of the entry."),
-            Param.VALUE to ExtractorParam("value", "Numerical value of the entry", required = true),
+            Param.VALUE to ExtractorParam("value", "Numerical value of the entry"),
         )
     },
     State(description = "A diagram that displays different states over time. Requires both new and old states.") {
         override fun createEntries(): TimeLineEntries<*> = TimeLineStateEntries()
         override val params: Map<Param, ExtractorParam> = mapOf(
             Param.KEY to ExtractorParam("key", "Key value of the entry"),
-            Param.VALUE to ExtractorParam("value", "New state value", required = true),
-            Param.OLD_VALUE to ExtractorParam("oldvalue", "Previous state value", required = true),
+            Param.VALUE to ExtractorParam("value", "New state value"),
+            Param.OLD_VALUE to ExtractorParam("oldvalue", "Previous state value"),
         )
     },
 
@@ -33,7 +33,7 @@ enum class DiagramType(val description: String) {
         override fun createEntries(): TimeLineEntries<*> = TimeLineSingleStateEntries()
         override val params: Map<Param, ExtractorParam> = mapOf(
             Param.KEY to ExtractorParam("key", "Key value of the entry"),
-            Param.VALUE to ExtractorParam("value", "New state value", required = true),
+            Param.VALUE to ExtractorParam("value", "New state value"),
         )
     },
 
@@ -50,7 +50,8 @@ enum class DiagramType(val description: String) {
         override fun createEntries(): TimeLineEntries<*> = TimeLineEventEntries()
         override val params: Map<Param, ExtractorParam> = mapOf(
             Param.KEY to ExtractorParam("key", "Key value of the entry"),
-            Param.VALUE to ExtractorParam("value", "Event name", required = true),
+            Param.VALUE to ExtractorParam("value", "Event name"),
+            Param.INFO to ExtractorParam("info", "Additional info (currently is not used)"),
         )
     },
     ;
