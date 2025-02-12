@@ -18,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
@@ -25,9 +26,9 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
-import com.alekso.dltstudio.ui.ImageButton
 import dltstudio.composeapp.generated.resources.Res
 import dltstudio.composeapp.generated.resources.icon_delete
 import dltstudio.composeapp.generated.resources.icon_down
@@ -122,6 +123,8 @@ fun ColorFiltersPanel(
                         Text(
                             text = filter.name,
                             modifier = Modifier.fillMaxWidth(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             color = filter.cellStyle.textColor ?: Color.Black
                         )
                     }
@@ -159,7 +162,7 @@ fun PreviewColorFiltersDialog() {
         ColorFilter("Filter1", mapOf(), CellStyle(backgroundColor = Color.Yellow)),
         ColorFilter("Memory", mapOf(), CellStyle(backgroundColor = Color.Green)),
         ColorFilter(
-            "SIP",
+            "Long long long long long long long long long long long filter name",
             mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
             CellStyle(backgroundColor = Color.Gray, textColor = Color.White)
         ),
