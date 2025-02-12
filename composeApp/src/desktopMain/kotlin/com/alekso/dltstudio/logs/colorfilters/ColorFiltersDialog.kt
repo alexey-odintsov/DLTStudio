@@ -11,13 +11,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
@@ -25,24 +24,27 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
-import com.alekso.dltstudio.ui.ImageButton
 import dltstudio.composeapp.generated.resources.Res
 import dltstudio.composeapp.generated.resources.icon_delete
 import dltstudio.composeapp.generated.resources.icon_down
 import dltstudio.composeapp.generated.resources.icon_edit
 import dltstudio.composeapp.generated.resources.icon_up
 
+interface ColorFiltersDialogCallbacks {
+    fun onColorFilterUpdate(position: Int, filter: ColorFilter)
+    fun onColorFilterDelete(position: Int)
+    fun onColorFilterMove(index: Int, offset: Int)
+}
 
 @Composable
 fun ColorFiltersDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
     colorFilters: List<ColorFilter>,
-    onColorFilterUpdate: (Int, ColorFilter) -> Unit,
-    onColorFilterDelete: (Int) -> Unit,
-    onColorFilterMove: (Int, Int) -> Unit,
+    callbacks: ColorFiltersDialogCallbacks,
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
@@ -59,17 +61,15 @@ fun ColorFiltersDialog(
                 colorFilterIndex = editDialogState.value.filterIndex,
                 onFilterUpdate = { i, filter ->
                     editDialogState.value.filter = filter
-                    onColorFilterUpdate(i, filter)
+                    callbacks.onColorFilterUpdate(i, filter)
                 }
             )
         }
 
         ColorFiltersPanel(
             colorFilters,
+            callbacks,
             { i, filter -> editDialogState.value = EditDialogState(true, filter, i) },
-            { i, f -> onColorFilterUpdate(i, f) },
-            { i -> onColorFilterDelete(i) },
-            { i, o -> onColorFilterMove(i, o) },
         )
     }
 }
@@ -77,10 +77,8 @@ fun ColorFiltersDialog(
 @Composable
 fun ColorFiltersPanel(
     colorFilters: List<ColorFilter>,
+    callbacks: ColorFiltersDialogCallbacks,
     onEditFilterClick: (Int, ColorFilter) -> Unit,
-    onFilterUpdate: (Int, ColorFilter) -> Unit,
-    onFilterDelete: (Int) -> Unit,
-    onColorFilterMove: (Int, Int) -> Unit,
 ) {
 
     Column(modifier = Modifier.padding(4.dp)) {
@@ -95,20 +93,18 @@ fun ColorFiltersPanel(
                     ImageButton(modifier = Modifier.size(28.dp),
                         icon = Res.drawable.icon_up,
                         title = "Move Up",
-                        onClick = { onColorFilterMove(i, -1) })
+                        onClick = { callbacks.onColorFilterMove(i, -1) })
 
                     ImageButton(modifier = Modifier.size(28.dp),
                         icon = Res.drawable.icon_down,
                         title = "Move Down",
-                        onClick = { onColorFilterMove(i, 1) })
+                        onClick = { callbacks.onColorFilterMove(i, 1) })
 
-                    var checked by remember { mutableStateOf(filter.enabled) }
                     CustomCheckbox(
-                        checked = checked,
+                        checked = filter.enabled,
                         modifier = Modifier.padding(horizontal = 8.dp),
                         onCheckedChange = {
-                            checked = !checked
-                            onFilterUpdate(i, filter.copy(enabled = checked))
+                            callbacks.onColorFilterUpdate(i, filter.copy(enabled = !filter.enabled))
                         }
                     )
 
@@ -122,6 +118,8 @@ fun ColorFiltersPanel(
                         Text(
                             text = filter.name,
                             modifier = Modifier.fillMaxWidth(),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                             color = filter.cellStyle.textColor ?: Color.Black
                         )
                     }
@@ -134,7 +132,7 @@ fun ColorFiltersPanel(
                     ImageButton(modifier = Modifier.size(28.dp),
                         icon = Res.drawable.icon_delete,
                         title = "Delete",
-                        onClick = { onFilterDelete(i) })
+                        onClick = { callbacks.onColorFilterDelete(i) })
                 }
             }
         }
@@ -159,11 +157,15 @@ fun PreviewColorFiltersDialog() {
         ColorFilter("Filter1", mapOf(), CellStyle(backgroundColor = Color.Yellow)),
         ColorFilter("Memory", mapOf(), CellStyle(backgroundColor = Color.Green)),
         ColorFilter(
-            "SIP",
+            "Long long long long long long long long long long long filter name",
             mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),
             CellStyle(backgroundColor = Color.Gray, textColor = Color.White)
         ),
     )
-
-    ColorFiltersPanel(colorFilters, { i, f -> }, { i, f -> }, { i -> }, { i, o -> })
+    val callbacks = object : ColorFiltersDialogCallbacks {
+        override fun onColorFilterUpdate(position: Int, filter: ColorFilter) = Unit
+        override fun onColorFilterDelete(position: Int) = Unit
+        override fun onColorFilterMove(index: Int, offset: Int) = Unit
+    }
+    ColorFiltersPanel(colorFilters, callbacks, { _, _ -> })
 }
