@@ -30,7 +30,7 @@ interface EntriesExtractor {
     data class ExtractorParam(
         val key: String,
         val description: String,
-        val required: Boolean = false,
+        val required: Boolean = true,
     )
 
     fun extractEntry(
