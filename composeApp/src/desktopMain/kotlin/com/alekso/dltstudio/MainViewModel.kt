@@ -1,6 +1,7 @@
 package com.alekso.dltstudio
 
 import androidx.compose.runtime.mutableStateListOf
+import com.alekso.dltStudio.predefinedplugins.predefinedPlugins
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.com.alekso.dltstudio.MainMenuCallbacks
 import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
@@ -11,8 +12,6 @@ import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.MessagesProvider
 import com.alekso.dltstudio.plugins.PluginManager
 import com.alekso.dltstudio.plugins.PluginPanel
-import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin
-import com.alekso.dltstudio.plugins.filesviewer.FilesPlugin
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -81,8 +80,11 @@ class MainViewModel(
         panelsNames.addAll(panels.map { it.getPanelName() })
         CoroutineScope(IO).launch {
             val pluginManager = DependencyManager.providePluginsManager()
-            pluginManager.registerPredefinedPlugin(FilesPlugin())
-            pluginManager.registerPredefinedPlugin(DeviceAnalyzePlugin())
+
+            predefinedPlugins.forEach { plugin ->
+                pluginManager.registerPredefinedPlugin(plugin)
+            }
+
             pluginManager.loadPlugins()
             val loadedPanel = pluginManager.getPluginPanels()
             withContext(Main) {
