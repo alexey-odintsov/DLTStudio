@@ -4,15 +4,15 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.alekso.dltstudio.com.alekso.dltstudio.plugins.TimelineHolder
-import com.alekso.dltstudio.com.alekso.dltstudio.timeline.filters.predefinedTimelineFilters
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialogCallbacks
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
+import com.alekso.dltstudio.timeline.filters.predefinedTimelineFilters
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

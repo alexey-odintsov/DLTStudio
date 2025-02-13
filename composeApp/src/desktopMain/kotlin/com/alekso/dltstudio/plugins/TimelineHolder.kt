@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.com.alekso.dltstudio.plugins
+package com.alekso.dltstudio.plugins
 
 import java.io.File
 

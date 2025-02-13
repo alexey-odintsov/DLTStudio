@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.com.alekso.dltstudio
+package com.alekso.dltstudio
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
