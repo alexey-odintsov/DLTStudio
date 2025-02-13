@@ -23,7 +23,7 @@ val predefinedTimelineFilters = listOf(
     TimelineFilter(
         name = "Crashes",
         enabled = true,
-        extractPattern = "Crash \\((?<value>.*)\\) detected.*Process:\\s(?<key>.*). Exception: (?<info>.*) Crash ID:",
+        extractPattern = """Crash \((?<value>.*)\) detected.*Process:\s(?<key>.*). Exception: (?<info>.*) Crash ID:""",
         filters = mapOf(
             FilterParameter.AppId to FilterCriteria("RMAN", TextCriteria.PlainText),
             FilterParameter.ContextId to FilterCriteria("CRSH", TextCriteria.PlainText),
@@ -47,7 +47,7 @@ val predefinedTimelineFilters = listOf(
     TimelineFilter(
         name = "CPUS",
         enabled = false,
-        extractPattern = "(cpu):(\\d+[.\\d+]*)%.*(us):\\s(\\d+[.\\d+]*)%.*(sy):\\s(\\d+[.\\d+]*)%.*(io):\\s*(\\d+[.\\d+]*).*(irq):\\s(\\d+[.\\d+]*)%.*(softirq):\\s(\\d+[.\\d+]*)%.*(ni):\\s(\\d+[.\\d+]*)%.*(st):\\s(\\d+[.\\d+]*)%.*(g):\\s(\\d+[.\\d+]*)%.*(gn):\\s(\\d+[.\\d+]*)%.*(avgcpu):\\s*(\\d+[.\\d+]*)%.*(thread):\\s*(\\d+[.\\d+]*)%.*(kernelthread):\\s*(\\d+[.\\d+]*)%",
+        extractPattern = """(cpu):(\d+[.\d+]*)%.*(us):\s(\d+[.\d+]*)%.*(sy):\s(\d+[.\d+]*)%.*(io):\s*(\d+[.\d+]*).*(irq):\s(\d+[.\d+]*)%.*(softirq):\s(\d+[.\d+]*)%.*(ni):\s(\d+[.\d+]*)%.*(st):\s(\d+[.\d+]*)%.*(g):\s(\d+[.\d+]*)%.*(gn):\s(\d+[.\d+]*)%.*(avgcpu):\s*(\d+[.\d+]*)%.*(thread):\s*(\d+[.\d+]*)%.*(kernelthread):\s*(\d+[.\d+]*)%""",
         filters = mapOf(
             FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
             FilterParameter.ContextId to FilterCriteria("CPUS", TextCriteria.PlainText),
@@ -58,7 +58,7 @@ val predefinedTimelineFilters = listOf(
     TimelineFilter(
         name = "CPUP",
         enabled = false,
-        extractPattern = "(?<value>\\d+.\\d+)\\s+%(?<key>(.*)pid\\s*:\\d+)\\(",
+        extractPattern = """(?<value>\d+.\d+)\s+%(?<key>(.*)pid\s*:\d+)\(""",
         filters = mapOf(
             FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
             FilterParameter.ContextId to FilterCriteria("CPUP", TextCriteria.PlainText),
@@ -69,7 +69,7 @@ val predefinedTimelineFilters = listOf(
     TimelineFilter(
         name = "MEMT",
         enabled = false,
-        extractPattern = "(.*)\\(cpid.*MaxRSS\\(MB\\):\\s(\\d+).*increase",
+        extractPattern = """(.*)\(cpid.*MaxRSS\(MB\):\s(\d+).*increase""",
         filters = mapOf(
             FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
             FilterParameter.ContextId to FilterCriteria("MEMT", TextCriteria.PlainText),
@@ -80,7 +80,7 @@ val predefinedTimelineFilters = listOf(
     TimelineFilter(
         name = "GPU Load",
         enabled = false,
-        extractPattern = "(GPU Load:)\\s+(?<value>\\d+.\\d+)%(?<key>)", // we use empty 'key' group to ignore key
+        extractPattern = """(GPU Load:)\s+(?<value>\d+.\d+)%(?<key>)""", // we use empty 'key' group to ignore key
         filters = mapOf(
             FilterParameter.AppId to FilterCriteria("MON", TextCriteria.PlainText),
             FilterParameter.ContextId to FilterCriteria("GPU", TextCriteria.PlainText),
