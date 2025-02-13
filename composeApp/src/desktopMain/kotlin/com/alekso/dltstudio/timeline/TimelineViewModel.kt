@@ -11,6 +11,7 @@ import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
+import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialogCallbacks
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
@@ -140,21 +141,23 @@ class TimelineViewModel(
         }
     }
 
-    fun onTimelineFilterUpdate(index: Int, filter: TimelineFilter) {
-        if (index < 0 || index > timelineFilters.size) {
-            timelineFilters.add(filter)
-        } else timelineFilters[index] = filter
-    }
+    val timelineFiltersDialogCallbacks = object : TimelineFiltersDialogCallbacks {
+        override fun onTimelineFilterUpdate(index: Int, filter: TimelineFilter) {
+            if (index < 0 || index > timelineFilters.size) {
+                timelineFilters.add(filter)
+            } else timelineFilters[index] = filter
+        }
 
-    fun onTimelineFilterDelete(index: Int) {
-        timelineFilters.removeAt(index)
-    }
+        override fun onTimelineFilterDelete(index: Int) {
+            timelineFilters.removeAt(index)
+        }
 
-    fun onTimelineFilterMove(index: Int, offset: Int) {
-        if (index + offset in 0..<timelineFilters.size) {
-            val temp = timelineFilters[index]
-            timelineFilters[index] = timelineFilters[index + offset]
-            timelineFilters[index + offset] = temp
+        override fun onTimelineFilterMove(index: Int, offset: Int) {
+            if (index + offset in 0..<timelineFilters.size) {
+                val temp = timelineFilters[index]
+                timelineFilters[index] = timelineFilters[index + offset]
+                timelineFilters[index + offset] = temp
+            }
         }
     }
 
