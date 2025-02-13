@@ -34,9 +34,7 @@ class TimelinePlugin(
             entriesMap = viewModel.entriesMap,
             highlightedKeysMap = viewModel.highlightedKeysMap,
             onAnalyzeClicked = viewModel::onAnalyzeClicked,
-            onTimelineFilterUpdate = viewModel::onTimelineFilterUpdate,
-            onTimelineFilterDelete = viewModel::onTimelineFilterDelete,
-            onTimelineFilterMove = viewModel::onTimelineFilterMove,
+            filtersDialogCallbacks = viewModel.timelineFiltersDialogCallbacks,
             retrieveEntriesForFilter = viewModel::retrieveEntriesForFilter,
         )
     }

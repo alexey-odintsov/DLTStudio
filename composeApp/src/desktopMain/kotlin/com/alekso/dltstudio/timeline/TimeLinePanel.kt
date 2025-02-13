@@ -53,6 +53,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialog
+import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialogCallbacks
 import com.alekso.dltstudio.timeline.graph.TimelineDurationView
 import com.alekso.dltstudio.timeline.graph.TimelineEventView
 import com.alekso.dltstudio.timeline.graph.TimelineMinMaxValueView
@@ -83,9 +84,7 @@ fun TimeLinePanel(
     entriesMap: SnapshotStateMap<String, TimeLineEntries<*>>,
     onAnalyzeClicked: (SnapshotStateList<LogMessage>) -> Unit,
     highlightedKeysMap: SnapshotStateMap<String, String?>,
-    onTimelineFilterUpdate: (Int, TimelineFilter) -> Unit,
-    onTimelineFilterDelete: (Int) -> Unit,
-    onTimelineFilterMove: (Int, Int) -> Unit,
+    filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> TimeLineEntries<*>?,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
@@ -149,9 +148,7 @@ fun TimeLinePanel(
                 visible = dialogState.value,
                 onDialogClosed = { dialogState.value = false },
                 timelineFilters = timelineFilters,
-                onTimelineFilterUpdate = { i, f -> onTimelineFilterUpdate(i, f) },
-                onTimelineFilterDelete = { onTimelineFilterDelete(it) },
-                onTimelineFilterMove = { i, o -> onTimelineFilterMove(i, o) },
+                callbacks = filtersDialogCallbacks,
             )
         }
 
@@ -346,6 +343,11 @@ fun TimeLinePanel(
 fun PreviewTimeline() {
     val list = SnapshotStateList<LogMessage>()
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
+    val callbacks = object : TimelineFiltersDialogCallbacks {
+        override fun onTimelineFilterUpdate(index: Int, filter: TimelineFilter) = Unit
+        override fun onTimelineFilterDelete(index: Int) = Unit
+        override fun onTimelineFilterMove(index: Int, offset: Int) = Unit
+    }
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
         logMessages = list,
@@ -361,9 +363,7 @@ fun PreviewTimeline() {
         entriesMap = mutableStateMapOf(),
         onAnalyzeClicked = {},
         highlightedKeysMap = mutableStateMapOf(),
-        onTimelineFilterUpdate = { i, k -> },
-        onTimelineFilterDelete = {},
-        onTimelineFilterMove = { i, k -> },
+        filtersDialogCallbacks = callbacks,
         retrieveEntriesForFilter = { i -> TimeLineStateEntries() }
     )
 }
