@@ -1,10 +1,9 @@
-package com.alekso.dltstudio.com.alekso.dltstudio.timeline.filters
+package com.alekso.dltstudio.timeline.filters
 
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.timeline.DiagramType
-import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 
 val predefinedTimelineFilters = listOf(
