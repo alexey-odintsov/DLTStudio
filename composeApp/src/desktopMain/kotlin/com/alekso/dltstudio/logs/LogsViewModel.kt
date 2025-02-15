@@ -8,7 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.db.virtualdevice.toVirtualDevice
@@ -26,6 +25,7 @@ import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
 import com.alekso.dltstudio.model.VirtualDevice
+import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.MessagesProvider
@@ -61,6 +61,7 @@ interface RowContextMenuCallbacks {
 }
 
 class LogsViewModel(
+    private val formatter: Formatter,
     private val insightsRepository: InsightsRepository,
     private val virtualDeviceRepository: VirtualDeviceRepository,
     private val onProgressChanged: (Float) -> Unit,
@@ -182,7 +183,7 @@ class LogsViewModel(
 
         override fun onTimeZoneChanged(timeZoneName: String) {
             try {
-                TimeFormatter.timeZone = TimeZone.of(timeZoneName)
+                formatter.setTimeZone(TimeZone.of(timeZoneName))
             } catch (ignored: Exception) {
                 // parsing will fail while typing timeZoneName
             }

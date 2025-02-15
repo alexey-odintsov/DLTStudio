@@ -48,7 +48,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
@@ -163,8 +163,8 @@ fun TimeLinePanel(
             )
 
             Text(
-                "Time range: ${TimeFormatter.formatDateTime(timeStart)} .. ${
-                    TimeFormatter.formatDateTime(timeEnd)
+                "Time range: ${LocalFormatter.current.formatDateTime(timeStart)} .. ${
+                    LocalFormatter.current.formatDateTime(timeEnd)
                 }"
             )
             Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
@@ -295,6 +295,7 @@ fun TimeLinePanel(
                     )
                 )
                 val textMeasurer = rememberTextMeasurer()
+                val formatter = LocalFormatter.current
                 Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
                     if (cursorPosition.x < LEGEND_WIDTH_DP.toPx()) return@Canvas
                     secSizePx =
@@ -316,11 +317,7 @@ fun TimeLinePanel(
                     drawText(
                         size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
                         textMeasurer = textMeasurer,
-                        text = "${TimeFormatter.formatTime(cursorTimestamp)} (${
-                            "%+.2f".format(
-                                cursorOffsetSec
-                            )
-                        })",
+                        text = "${formatter.formatTime(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
                         topLeft = Offset(
                             if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
                             4.dp.toPx()

@@ -20,7 +20,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.CustomButton
@@ -47,7 +47,7 @@ fun DLTSimplifiedInfoView(
                     modifier = paddingModifier,
                     text = "DLT Message #$messageIndex:"
                 )
-                val headerText = "${TimeFormatter.formatDateTime(it.timeStampNano)} " +
+                val headerText = "${LocalFormatter.current.formatDateTime(it.timeStampNano)} " +
                         "${it.extendedHeader?.applicationId} " +
                         "${it.extendedHeader?.contextId} "
                 TableRow(0, "", headerText)

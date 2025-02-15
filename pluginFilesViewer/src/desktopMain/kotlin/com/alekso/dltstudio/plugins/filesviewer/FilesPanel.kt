@@ -93,7 +93,7 @@ fun FilesPanel(
             if (files.isNotEmpty()) {
                 Text(
                     modifier = Modifier.padding(4.dp),
-                    text = "${files.size} files found, total ${getFileSizeString(files.sumOf { e -> e.size })}"
+                    text = "${files.size} files found, total ${LocalFormatter.current.formatSizeHuman(files.sumOf { e -> e.size })}"
                 )
             }
         }
@@ -126,7 +126,7 @@ fun FilesPanel(
                                 onDoubleClick = { onFileEntryClicked(fileEntry) }),
                             i = i.toString(),
                             name = fileEntry.name,
-                            size = getFileSizeString(fileEntry.size),
+                            size = LocalFormatter.current.formatSizeHuman(fileEntry.size),
                             date = fileEntry.creationDate
                         )
                     }
@@ -178,14 +178,6 @@ fun FileItem(
             isHeader = isHeader,
             textAlign = TextAlign.Right,
         )
-    }
-}
-
-private fun getFileSizeString(size: Long): String {
-    return when {
-        size < 1024 -> "$size b\u00A0"
-        size < 1024 * 1024 -> "%.0f Kb".format(size / 1024f)
-        else -> "%.0f Mb".format(size / (1024 * 1024f))
     }
 }
 
