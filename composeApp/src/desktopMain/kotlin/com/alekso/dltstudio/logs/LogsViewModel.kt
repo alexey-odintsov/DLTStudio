@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltstudio.TimeFormatter
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.db.virtualdevice.toVirtualDevice
@@ -22,6 +23,8 @@ import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.MessagesHolder
@@ -39,6 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import kotlinx.datetime.TimeZone
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
@@ -174,6 +178,14 @@ class LogsViewModel(
 
         override fun onColorFiltersClicked() {
             colorFiltersDialogState.value = true
+        }
+
+        override fun onTimeZoneChanged(timeZoneName: String) {
+            try {
+                TimeFormatter.timeZone = TimeZone.of(timeZoneName)
+            } catch (ignored: Exception) {
+                // parsing will fail while typing timeZoneName
+            }
         }
     }
 
