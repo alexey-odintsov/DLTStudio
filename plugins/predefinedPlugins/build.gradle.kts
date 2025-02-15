@@ -12,12 +12,12 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":plugins:contract"))
-            implementation(project(":plugins:filesViewer"))
-            implementation(project(":plugins:deviceAnalyze"))
         }
 
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
+            implementation(project(":plugins:filesViewer"))
+            implementation(project(":plugins:deviceAnalyze"))
         }
     }
 }
