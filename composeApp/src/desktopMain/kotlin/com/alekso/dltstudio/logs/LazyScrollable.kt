@@ -25,7 +25,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.contract.LogMessage
 
@@ -80,7 +80,7 @@ fun LazyScrollable(
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
                     val index: Int = if (indexes != null) indexes[i] else i
-                    val sTime: String = TimeFormatter.formatDateTime(dltMessage.timeStampNano)
+                    val sTime: String = LocalFormatter.current.formatDateTime(dltMessage.timeStampNano)
                     val sTimeOffset: String =
                         if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
                     val sEcuId = "${dltMessage.standardHeader.ecuId}"

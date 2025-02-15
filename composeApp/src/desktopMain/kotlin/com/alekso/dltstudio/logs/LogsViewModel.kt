@@ -22,7 +22,10 @@ import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
 import com.alekso.dltstudio.model.VirtualDevice
+import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.MessagesProvider
@@ -39,6 +42,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.yield
+import kotlinx.datetime.TimeZone
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
@@ -57,6 +61,7 @@ interface RowContextMenuCallbacks {
 }
 
 class LogsViewModel(
+    private val formatter: Formatter,
     private val insightsRepository: InsightsRepository,
     private val virtualDeviceRepository: VirtualDeviceRepository,
     private val onProgressChanged: (Float) -> Unit,
@@ -174,6 +179,14 @@ class LogsViewModel(
 
         override fun onColorFiltersClicked() {
             colorFiltersDialogState.value = true
+        }
+
+        override fun onTimeZoneChanged(timeZoneName: String) {
+            try {
+                formatter.setTimeZone(TimeZone.of(timeZoneName))
+            } catch (ignored: Exception) {
+                // parsing will fail while typing timeZoneName
+            }
         }
     }
 

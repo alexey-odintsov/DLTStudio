@@ -4,11 +4,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.dlt.PayloadStorageType
+import com.alekso.dltstudio.AppFormatter
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.logs.LogsViewModel
 import com.alekso.dltstudio.logs.insights.InsightsRepository
+import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,8 +25,13 @@ object DependencyManager {
         _progress.value = p
     }
 
+    private val formatter by lazy {
+        AppFormatter()
+    }
+
     private val pluginsManager by lazy {
         PluginManager(
+            formatter = formatter,
             messagesProvider = provideMessagesProvider(),
             onProgressUpdate = onProgressUpdate,
         )
@@ -41,7 +48,8 @@ object DependencyManager {
     private val logsViewModel = LogsViewModel(
         insightsRepository = insightsRepository,
         virtualDeviceRepository = virtualDeviceRepository,
-        onProgressChanged = onProgressUpdate
+        onProgressChanged = onProgressUpdate,
+        formatter = formatter
     )
 
     private val timelineViewModel by lazy {
@@ -78,5 +86,9 @@ object DependencyManager {
 
     fun providePluginsManager(): PluginManager {
         return pluginsManager
+    }
+
+    fun provideFormatter(): Formatter {
+        return formatter
     }
 }

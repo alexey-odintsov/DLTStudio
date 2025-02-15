@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.plugins
 
+import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.logger.Log
 import java.io.File
 import java.net.URI
@@ -12,6 +13,7 @@ import java.util.jar.JarFile
 private const val DEFAULT_PLUGINS_FOLDER = "/plugins/"
 
 class PluginManager(
+    private val formatter: Formatter,
     private val messagesProvider: MessagesProvider,
     private val onProgressUpdate: (Float) -> Unit
 ) {
@@ -31,6 +33,9 @@ class PluginManager(
                 logs = messagesProvider.getMessages(),
                 onProgressUpdate = onProgressUpdate,
             )
+            if (plugin is FormatterConsumer) {
+                plugin.initFormatter(formatter)
+            }
             plugins.add(plugin)
         }
         loadJarPlugins("plugins")

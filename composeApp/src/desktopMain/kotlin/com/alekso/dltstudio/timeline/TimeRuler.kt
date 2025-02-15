@@ -17,7 +17,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.LocalFormatter
 import com.alekso.logger.Log
 import kotlinx.datetime.Clock
 
@@ -36,7 +36,7 @@ fun TimeRuler(
 
 
     val textMeasurer = rememberTextMeasurer()
-
+    val formatter = LocalFormatter.current
     Canvas(modifier = modifier.height(40.dp).clipToBounds()) {
         val secSizePx: Float = (size.width / totalSeconds) * scale
         val timeMarksCount = (size.width / TIME_MARK_SIZE_PX).toInt()
@@ -55,7 +55,7 @@ fun TimeRuler(
                 try {
                     drawText(
                         textMeasurer,
-                        text = TimeFormatter.formatTime(timeStart + i * 1000000),
+                        text = formatter.formatTime(timeStart + i * 1000000),
                         topLeft = Offset(
                             offsetSec * secSizePx + i * secSizePx,
                             30f
@@ -95,8 +95,8 @@ fun PreviewTimeRuler() {
     val totalSeconds = (te - ts).toInt() / 1000000
 
     Column {
-        Text(text = "start: ${TimeFormatter.formatDateTime(ts)} (${ts})")
-        Text(text = "end: ${TimeFormatter.formatDateTime(te)} (${te})")
+        Text(text = "start: ${LocalFormatter.current.formatDateTime(ts)} (${ts})")
+        Text(text = "end: ${LocalFormatter.current.formatDateTime(te)} (${te})")
         Text(text = "seconds: $totalSeconds")
         Divider()
 
