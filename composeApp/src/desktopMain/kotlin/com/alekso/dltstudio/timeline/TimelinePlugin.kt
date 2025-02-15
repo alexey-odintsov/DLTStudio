@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.PluginPanel
+import com.alekso.dltstudio.plugins.contract.PluginPanel
 
 class TimelinePlugin(
     private val viewModel: TimelineViewModel,
