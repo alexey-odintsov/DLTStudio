@@ -21,7 +21,7 @@ import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.ui.ImageButton
@@ -227,15 +227,15 @@ fun LogsToolbar(
                 })
         }
         HorizontalDivider(modifier = Modifier.height(32.dp))
-
-        var timeZoneText by rememberSaveable { mutableStateOf(TimeFormatter.timeZone.toString()) }
+        val formatter = LocalFormatter.current
+        var timeZoneText by rememberSaveable { mutableStateOf(formatter.getTimeZone().toString()) }
         AutoCompleteEditText(
             modifier = Modifier.width(150.dp).padding(end = 4.dp),
             value = timeZoneText,
             onValueChange = {
                 timeZoneText = it
                 try {
-                    TimeFormatter.timeZone = TimeZone.of(it)
+                    formatter.setTimeZone(TimeZone.of(it))
                 } catch (ignored: Exception) {
                 }
             },

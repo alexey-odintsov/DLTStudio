@@ -1,20 +1,20 @@
 package com.alekso.dltstudio
 
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.ui.MainWindow
 import com.alekso.logger.Log
-import kotlinx.datetime.TimeZone
 
 
-val CurrentTimeZone = compositionLocalOf { TimeFormatter.timeZone }
+val LocalFormatter = staticCompositionLocalOf { Formatter.STUB }
 
 fun main() = application {
     Log.init(Env.getLogsPath())
@@ -32,10 +32,10 @@ fun main() = application {
             exitApplication()
         }, title = "DLT Studio", state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
-        val currentTimeZone: TimeZone = TimeZone.currentSystemDefault()
-
         AppTheme {
-            CompositionLocalProvider(CurrentTimeZone provides currentTimeZone) {
+            CompositionLocalProvider(
+                LocalFormatter provides DependencyManager.provideFormatter(),
+            ) {
                 val mainViewModel = remember { DependencyManager.provideMainViewModel() }
 
                 MainMenu(mainViewModel.mainMenuCallbacks)
