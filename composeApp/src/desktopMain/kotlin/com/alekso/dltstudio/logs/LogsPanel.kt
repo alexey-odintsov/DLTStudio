@@ -29,9 +29,11 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
 import com.alekso.dltstudio.logs.infopanel.LogPreviewPanel
 import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
-import com.alekso.dltstudio.logs.search.SearchType
-import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.logs.toolbar.LogsToolbar
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
 import com.alekso.dltstudio.model.VirtualDevice
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.utils.SampleData
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
@@ -210,43 +212,7 @@ fun PreviewLogsPanel() {
             toolbarWrapContentChecked = true,
             toolbarCommentsChecked = false,
         ),
-        logsToolbarCallbacks = object : LogsToolbarCallbacks {
-            override fun onSearchButtonClicked(searchType: SearchType, text: String) {
-
-            }
-
-            override fun updateToolbarFatalCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarErrorCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarWarningCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarCommentsCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarWrapContentCheck(checked: Boolean) {
-
-            }
-
-            override fun onSearchUseRegexChanged(checked: Boolean) {
-
-            }
-
-            override fun onColorFiltersClicked() {
-
-            }
-        },
+        logsToolbarCallbacks = LogsToolbarCallbacks.Stub,
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
         logsListState = LazyListState(),

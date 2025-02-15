@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.logs
+package com.alekso.dltstudio.logs.toolbar
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Row
@@ -43,61 +43,6 @@ import dltstudio.composeapp.generated.resources.icon_w
 import dltstudio.composeapp.generated.resources.icon_wordwrap
 import kotlinx.datetime.TimeZone
 
-data class LogsToolbarState(
-    val toolbarFatalChecked: Boolean,
-    val toolbarErrorChecked: Boolean,
-    val toolbarWarningChecked: Boolean,
-    val toolbarCommentsChecked: Boolean,
-    val toolbarSearchWithMarkedChecked: Boolean,
-    val toolbarWrapContentChecked: Boolean,
-) {
-    companion object {
-        fun updateToolbarFatalCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
-            return state.copy(toolbarFatalChecked = newValue)
-        }
-
-        fun updateToolbarErrorCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
-            return state.copy(toolbarErrorChecked = newValue)
-        }
-
-        fun updateToolbarWarnCheck(state: LogsToolbarState, newValue: Boolean): LogsToolbarState {
-            return state.copy(toolbarWarningChecked = newValue)
-        }
-
-        fun updateToolbarSearchWithMarkedCheck(
-            state: LogsToolbarState,
-            newValue: Boolean
-        ): LogsToolbarState {
-            return state.copy(toolbarSearchWithMarkedChecked = newValue)
-        }
-
-        fun updateToolbarWrapContentCheck(
-            state: LogsToolbarState,
-            newValue: Boolean
-        ): LogsToolbarState {
-            return state.copy(toolbarWrapContentChecked = newValue)
-        }
-
-        fun updateToolbarCommentsCheck(
-            state: LogsToolbarState,
-            newValue: Boolean
-        ): LogsToolbarState {
-            return state.copy(toolbarCommentsChecked = newValue)
-        }
-    }
-}
-
-interface LogsToolbarCallbacks {
-    fun onSearchButtonClicked(searchType: SearchType, text: String)
-    fun updateToolbarFatalCheck(checked: Boolean)
-    fun updateToolbarErrorCheck(checked: Boolean)
-    fun updateToolbarWarningCheck(checked: Boolean)
-    fun updateToolbarCommentsCheck(checked: Boolean)
-    fun updateToolbarSearchWithMarkedCheck(checked: Boolean)
-    fun updateToolbarWrapContentCheck(checked: Boolean)
-    fun onSearchUseRegexChanged(checked: Boolean)
-    fun onColorFiltersClicked()
-}
 
 @Composable
 fun LogsToolbar(
@@ -106,7 +51,6 @@ fun LogsToolbar(
     searchAutoComplete: SnapshotStateList<String>,
     callbacks: LogsToolbarCallbacks,
 ) {
-    // Toolbar
     Row(verticalAlignment = Alignment.CenterVertically) {
         Tooltip(text = "Toggle fatal logs highlight") {
             ToggleImageButton(
@@ -227,21 +171,17 @@ fun LogsToolbar(
                 })
         }
         HorizontalDivider(modifier = Modifier.height(32.dp))
-        val formatter = LocalFormatter.current
-        var timeZoneText by rememberSaveable { mutableStateOf(formatter.getTimeZone().toString()) }
+
+        var timeZoneText by rememberSaveable { mutableStateOf(TimeFormatter.timeZone.toString()) }
         AutoCompleteEditText(
             modifier = Modifier.width(150.dp).padding(end = 4.dp),
             value = timeZoneText,
             onValueChange = {
                 timeZoneText = it
-                try {
-                    formatter.setTimeZone(TimeZone.of(it))
-                } catch (ignored: Exception) {
-                }
+                callbacks.onTimeZoneChanged(it)
             },
             items = TimeZone.availableZoneIds.map { it }.toMutableStateList()
         )
-
     }
 }
 
@@ -259,42 +199,6 @@ fun PreviewLogsToolbar() {
         ),
         searchState = SearchState(),
         searchAutoComplete = mutableStateListOf(),
-        callbacks = object : LogsToolbarCallbacks {
-            override fun onSearchButtonClicked(searchType: SearchType, text: String) {
-
-            }
-
-            override fun updateToolbarFatalCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarErrorCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarWarningCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarCommentsCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
-
-            }
-
-            override fun updateToolbarWrapContentCheck(checked: Boolean) {
-
-            }
-
-            override fun onSearchUseRegexChanged(checked: Boolean) {
-
-            }
-
-            override fun onColorFiltersClicked() {
-
-            }
-        },
+        callbacks = LogsToolbarCallbacks.Stub,
     )
 }
