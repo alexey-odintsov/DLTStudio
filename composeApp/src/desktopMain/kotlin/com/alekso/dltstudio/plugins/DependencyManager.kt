@@ -31,6 +31,7 @@ object DependencyManager {
 
     private val pluginsManager by lazy {
         PluginManager(
+            formatter = formatter,
             messagesProvider = provideMessagesProvider(),
             onProgressUpdate = onProgressUpdate,
         )
@@ -47,7 +48,8 @@ object DependencyManager {
     private val logsViewModel = LogsViewModel(
         insightsRepository = insightsRepository,
         virtualDeviceRepository = virtualDeviceRepository,
-        onProgressChanged = onProgressUpdate
+        onProgressChanged = onProgressUpdate,
+        formatter = formatter
     )
 
     private val timelineViewModel by lazy {

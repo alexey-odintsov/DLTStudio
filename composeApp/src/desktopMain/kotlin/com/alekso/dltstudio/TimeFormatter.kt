@@ -23,7 +23,7 @@ class AppFormatter : Formatter {
     private val timeFormat = LocalDateTime.Format {
         byUnicodePattern(TIME_FORMAT)
     }
-    var timeZone by mutableStateOf(TimeZone.currentSystemDefault())
+    private var _timeZone by mutableStateOf(TimeZone.currentSystemDefault())
 
     override fun formatDateTime(timeStampNano: Long): String = format(dateTimeFormat, timeStampNano)
 
@@ -37,10 +37,16 @@ class AppFormatter : Formatter {
         }
     }
 
+    override fun setTimeZone(timeZone: TimeZone) {
+        _timeZone = timeZone
+    }
+
+    override fun getTimeZone(): TimeZone = _timeZone
+
     private fun format(formatter: DateTimeFormat<LocalDateTime>, timeStampNano: Long): String {
         val instant =
             Instant.fromEpochSeconds(timeStampNano / 1000000L, (timeStampNano % 1000000) * 1000L)
-        return instant.toLocalDateTime(timeZone).format(formatter)
+        return instant.toLocalDateTime(_timeZone).format(formatter)
     }
 
 }

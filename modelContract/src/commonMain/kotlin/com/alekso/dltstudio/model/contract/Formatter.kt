@@ -1,7 +1,6 @@
 package com.alekso.dltstudio.model.contract
 
-import java.util.TimeZone
-
+import kotlinx.datetime.TimeZone
 
 interface Formatter {
     fun formatDateTime(timeStampNano: Long): String
@@ -16,7 +15,7 @@ interface Formatter {
             override fun formatTime(timeStampNano: Long): String = ""
             override fun formatSizeHuman(size: Long): String = ""
             override fun setTimeZone(timeZone: TimeZone) = Unit
-            override fun getTimeZone(): TimeZone = TimeZone.getDefault()
+            override fun getTimeZone(): TimeZone = TimeZone.currentSystemDefault()
         }
     }
 }

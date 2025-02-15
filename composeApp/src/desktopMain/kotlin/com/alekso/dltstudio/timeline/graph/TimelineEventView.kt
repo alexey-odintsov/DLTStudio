@@ -19,7 +19,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.TimeFormatter
+import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.colors.ColorPalette
 import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineEvent
@@ -180,8 +180,8 @@ fun PreviewTimelineEventView() {
     }
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Text(text = "start: ${TimeFormatter.formatDateTime(ts)}")
-        Text(text = "end: ${TimeFormatter.formatDateTime(te)}")
+        Text(text = "start: ${LocalFormatter.current.formatDateTime(ts)}")
+        Text(text = "end: ${LocalFormatter.current.formatDateTime(te)}")
         Text(text = "seconds: ${timeFrame.getTotalSeconds()}")
 
         Text(modifier = Modifier.padding(top = 10.dp), text = "Empty")

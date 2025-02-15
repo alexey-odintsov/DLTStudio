@@ -172,7 +172,8 @@ fun LogsToolbar(
         }
         HorizontalDivider(modifier = Modifier.height(32.dp))
 
-        var timeZoneText by rememberSaveable { mutableStateOf(TimeFormatter.timeZone.toString()) }
+        val formatter = LocalFormatter.current
+        var timeZoneText by rememberSaveable { mutableStateOf(formatter.getTimeZone().toString()) }
         AutoCompleteEditText(
             modifier = Modifier.width(150.dp).padding(end = 4.dp),
             value = timeZoneText,
