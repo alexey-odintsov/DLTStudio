@@ -18,7 +18,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":logger"))
             implementation(project(":dltMessage"))
-            implementation(project(":dltparser"))
+            implementation(project(":dltParser"))
             implementation(project(":modelContract"))
             implementation(project(":uicomponents"))
             implementation(project(":plugins:contract"))

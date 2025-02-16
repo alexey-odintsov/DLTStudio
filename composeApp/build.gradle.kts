@@ -19,7 +19,7 @@ kotlin {
             implementation(project(":logger"))
             implementation(project(":dataUtils"))
             implementation(project(":dltMessage"))
-            implementation(project(":dltparser"))
+            implementation(project(":dltParser"))
             implementation(project(":uicomponents"))
             implementation(project(":plugins:contract"))
             implementation(project(":plugins:manager"))
