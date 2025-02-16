@@ -6,11 +6,11 @@ import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.MessagesHolder
-import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.plugins.contract.MessagesProvider
 import com.alekso.dltstudio.plugins.contract.PluginPanel
-import com.alekso.dltstudio.predefinedplugins.predefinedPlugins
+import com.alekso.dltstudio.plugins.manager.PluginManager
+import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO

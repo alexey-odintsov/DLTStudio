@@ -21,7 +21,7 @@ kotlin {
             implementation(project(":uicomponents"))
             implementation(project(":plugins:contract"))
             implementation(project(":plugins:manager"))
-            implementation(project(":predefinedPlugins"))
+            implementation(project(":plugins:predefinedPlugins"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)

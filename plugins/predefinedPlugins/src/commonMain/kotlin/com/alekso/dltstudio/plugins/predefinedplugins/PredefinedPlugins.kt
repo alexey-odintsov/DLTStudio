@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.predefinedplugins
+package com.alekso.dltstudio.plugins.predefinedplugins
 
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin
