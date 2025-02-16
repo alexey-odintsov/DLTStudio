@@ -12,7 +12,7 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":plugins:contract"))
-            implementation(project(":pluginFilesViewer"))
+            implementation(project(":plugins:filesViewer"))
             implementation(project(":plugins:deviceAnalyze"))
         }
 
