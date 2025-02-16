@@ -1,9 +1,10 @@
 package com.alekso.dltparser.dlt.standardheader
 
-import com.alekso.dltparser.Endian
-import com.alekso.dltparser.isBitSet
-import com.alekso.dltparser.readString
-import com.alekso.dltparser.readUShort
+
+import com.alekso.datautils.Endian
+import com.alekso.datautils.isBitSet
+import com.alekso.datautils.readString
+import com.alekso.datautils.readUShort
 import java.io.RandomAccessFile
 
 

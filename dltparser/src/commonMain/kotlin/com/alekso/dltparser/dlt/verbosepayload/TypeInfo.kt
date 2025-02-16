@@ -1,11 +1,12 @@
 package com.alekso.dltparser.dlt.verbosepayload
 
+import com.alekso.datautils.Endian
+import com.alekso.datautils.isBitSet
+import com.alekso.datautils.toBinary
+import com.alekso.datautils.toHex
 import com.alekso.dltparser.DLTParser.Companion.DEBUG_LOG
 import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
-import com.alekso.dltparser.Endian
-import com.alekso.dltparser.isBitSet
-import com.alekso.dltparser.toBinary
-import com.alekso.dltparser.toHex
+
 
 data class TypeInfo(
     val typeLengthBits: Int = 0,

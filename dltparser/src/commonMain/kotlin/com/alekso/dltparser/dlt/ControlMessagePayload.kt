@@ -1,6 +1,7 @@
 package com.alekso.dltparser.dlt
 
-import com.alekso.dltparser.toHex
+import com.alekso.datautils.toHex
+
 
 data class ControlMessagePayload(
     val messageId: Int,

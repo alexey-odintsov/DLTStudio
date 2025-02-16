@@ -19,6 +19,7 @@ dependencyResolutionManagement {
 }
 
 include(":composeApp")
+include(":dataUtils")
 include(":dltparser")
 include(":modelContract")
 include(":logger")
