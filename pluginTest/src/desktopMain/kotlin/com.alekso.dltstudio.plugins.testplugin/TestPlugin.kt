@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.PluginPanel
+import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.plugins.contract.PluginPanel
 
 class TestPlugin : DLTStudioPlugin, PluginPanel {
     override fun pluginName(): String = "TestPlugin"
