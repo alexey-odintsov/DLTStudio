@@ -13,7 +13,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":plugins:contract"))
             implementation(project(":pluginFilesViewer"))
-            implementation(project(":pluginDeviceAnalyze"))
+            implementation(project(":plugins:deviceAnalyze"))
         }
 
         desktopMain.dependencies {
