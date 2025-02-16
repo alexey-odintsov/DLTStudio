@@ -1,4 +1,4 @@
-package com.alekso.dltparser.dlt.verbosepayload
+package com.alekso.dltmessage.verbosepayload
 
 import com.alekso.datautils.Endian
 import com.alekso.datautils.readInt

@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.timeline.filters.extractors
 
-import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.TimeLineDurationEntries
 import com.alekso.dltstudio.timeline.TimeLineEntries

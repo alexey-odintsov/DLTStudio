@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.timeline.filters
 
-import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria

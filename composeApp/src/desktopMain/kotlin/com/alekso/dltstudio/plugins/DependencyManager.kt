@@ -2,8 +2,8 @@ package com.alekso.dltstudio.plugins
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import com.alekso.dltmessage.PayloadStorageType
 import com.alekso.dltparser.DLTParserV2
-import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltstudio.AppFormatter
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory

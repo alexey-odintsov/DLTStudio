@@ -1,4 +1,4 @@
-package com.alekso.dltparser.dlt.standardheader
+package com.alekso.dltmessage.standardheader
 
 
 import com.alekso.datautils.Endian

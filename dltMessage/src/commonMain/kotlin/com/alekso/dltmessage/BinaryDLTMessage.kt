@@ -1,13 +1,13 @@
-package com.alekso.dltparser.dlt
+package com.alekso.dltmessage
 
 import com.alekso.datautils.Endian
 import com.alekso.datautils.readInt
-import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
-import com.alekso.dltparser.dlt.extendedheader.MessageType
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
-import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
-import com.alekso.dltparser.dlt.standardheader.StandardHeader
-import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
+import com.alekso.dltmessage.extendedheader.ExtendedHeader
+import com.alekso.dltmessage.extendedheader.MessageType
+import com.alekso.dltmessage.extendedheader.MessageTypeInfo
+import com.alekso.dltmessage.nonverbosepayload.NonVerbosePayload
+import com.alekso.dltmessage.standardheader.StandardHeader
+import com.alekso.dltmessage.verbosepayload.VerbosePayload
 
 data class BinaryDLTMessage(
     override val timeStampNano: Long,

@@ -15,7 +15,6 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":logger"))
             implementation(project(":dataUtils"))
-            implementation(project(":dltMessage"))
         }
     }
 }

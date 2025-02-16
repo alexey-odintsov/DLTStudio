@@ -1,13 +1,14 @@
 package com.alekso.dltstudio.utils
 
-import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.PlainDLTMessage
-import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
-import com.alekso.dltparser.dlt.extendedheader.MessageInfo
-import com.alekso.dltparser.dlt.extendedheader.MessageType
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
-import com.alekso.dltparser.dlt.standardheader.HeaderType
-import com.alekso.dltparser.dlt.standardheader.StandardHeader
+import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltmessage.PlainDLTMessage
+import com.alekso.dltmessage.extendedheader.ExtendedHeader
+import com.alekso.dltmessage.extendedheader.MessageInfo
+import com.alekso.dltmessage.extendedheader.MessageType
+import com.alekso.dltmessage.extendedheader.MessageTypeInfo
+import com.alekso.dltmessage.standardheader.HeaderType
+import com.alekso.dltmessage.standardheader.StandardHeader
+
 
 object SampleData {
     fun getSampleDltMessages(size: Int): List<DLTMessage> {
