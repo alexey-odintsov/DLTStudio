@@ -20,7 +20,7 @@ kotlin {
             implementation(project(":dltMessage"))
             implementation(project(":dltParser"))
             implementation(project(":modelContract"))
-            implementation(project(":uicomponents"))
+            implementation(project(":uiComponents"))
             implementation(project(":plugins:contract"))
             implementation(compose.components.resources)
             implementation(compose.runtime)

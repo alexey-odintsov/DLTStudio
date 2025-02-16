@@ -17,7 +17,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":logger"))
-            implementation(project(":uicomponents"))
+            implementation(project(":uiComponents"))
             implementation(project(":plugins:contract"))
             implementation(compose.runtime)
             implementation(compose.foundation)
