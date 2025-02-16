@@ -10,7 +10,7 @@ import com.alekso.dltstudio.plugins.contract.MessagesProvider
 import com.alekso.dltstudio.plugins.PluginManager
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.TimelineHolder
-import com.alekso.dltstudio.predefinedplugins.predefinedPlugins
+import com.alekso.dltstudio.plugins.predefinedPlugins
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
