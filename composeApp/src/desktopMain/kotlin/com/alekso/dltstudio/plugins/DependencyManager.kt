@@ -11,6 +11,8 @@ import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.logs.LogsViewModel
 import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.model.contract.Formatter
+import com.alekso.dltstudio.plugins.contract.MessagesProvider
+import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.timeline.TimelineViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
