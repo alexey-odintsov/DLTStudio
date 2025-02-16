@@ -8,9 +8,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.alekso.datautils.toBinary
+import com.alekso.datautils.toHex
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
-import com.alekso.dltparser.toBinary
-import com.alekso.dltparser.toHex
 import com.alekso.dltstudio.model.contract.LogMessage
 
 @Composable

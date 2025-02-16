@@ -1,7 +1,7 @@
 package com.alekso.dltparser.dlt.nonverbosepayload
 
+import com.alekso.datautils.toHex
 import com.alekso.dltparser.dlt.Payload
-import com.alekso.dltparser.toHex
 
 data class NonVerbosePayload(
     val messageId: UInt,

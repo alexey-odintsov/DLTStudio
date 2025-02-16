@@ -1,5 +1,6 @@
 package com.alekso.dltparser
 
+import com.alekso.datautils.Endian
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.PayloadStorageType
 import java.io.File

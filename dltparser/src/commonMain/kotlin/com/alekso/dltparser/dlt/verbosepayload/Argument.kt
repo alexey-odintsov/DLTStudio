@@ -1,9 +1,10 @@
 package com.alekso.dltparser.dlt.verbosepayload
 
-import com.alekso.dltparser.Endian
-import com.alekso.dltparser.readInt
-import com.alekso.dltparser.readShort
-import com.alekso.dltparser.toHex
+import com.alekso.datautils.Endian
+import com.alekso.datautils.readInt
+import com.alekso.datautils.readShort
+import com.alekso.datautils.toHex
+
 
 data class Argument(
     val typeInfoInt: Int,

@@ -1,8 +1,8 @@
-package com.alekso.dltparser.tests
+package com.alekso.datautils.tests
 
-import com.alekso.dltparser.Endian
-import com.alekso.dltparser.readInt
-import com.alekso.dltparser.readUShort
+import com.alekso.datautils.Endian
+import com.alekso.datautils.readInt
+import com.alekso.datautils.readUShort
 import org.junit.Assert
 import org.junit.Test
 

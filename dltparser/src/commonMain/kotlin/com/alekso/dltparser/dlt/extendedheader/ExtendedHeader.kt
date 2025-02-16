@@ -1,7 +1,8 @@
 package com.alekso.dltparser.dlt.extendedheader
 
+import com.alekso.datautils.isBitSet
 import com.alekso.dltparser.dlt.extendedheader.MessageInfo.Companion.messageTypeInfoFromByte
-import com.alekso.dltparser.isBitSet
+
 
 private const val EXTENDED_HEADER_SIZE = 10
 

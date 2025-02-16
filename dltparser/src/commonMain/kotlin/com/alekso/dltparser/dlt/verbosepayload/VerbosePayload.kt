@@ -1,9 +1,9 @@
 package com.alekso.dltparser.dlt.verbosepayload
 
-import com.alekso.dltparser.Endian
+import com.alekso.datautils.Endian
+import com.alekso.datautils.readInt
+import com.alekso.datautils.readUShort
 import com.alekso.dltparser.dlt.Payload
-import com.alekso.dltparser.readInt
-import com.alekso.dltparser.readUShort
 import com.alekso.logger.Log
 
 

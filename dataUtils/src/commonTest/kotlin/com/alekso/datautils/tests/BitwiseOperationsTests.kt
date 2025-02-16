@@ -1,6 +1,6 @@
-package com.alekso.dltparser.tests
+package com.alekso.datautils.tests
 
-import com.alekso.dltparser.isBitSet
+import com.alekso.datautils.isBitSet
 import org.junit.Assert
 import org.junit.Test
 
