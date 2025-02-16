@@ -4,6 +4,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.contract.MessagesProvider
+import com.alekso.dltstudio.plugins.manager.PluginManager
 import org.junit.Test
 
 class PluginTest {

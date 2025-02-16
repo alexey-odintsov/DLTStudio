@@ -9,7 +9,7 @@ import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
 import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
 import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.PluginPanel
+import com.alekso.dltstudio.plugins.contract.PluginPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 
 

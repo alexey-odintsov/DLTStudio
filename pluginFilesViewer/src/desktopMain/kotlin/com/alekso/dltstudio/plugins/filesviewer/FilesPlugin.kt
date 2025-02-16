@@ -7,9 +7,9 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.FormatterConsumer
-import com.alekso.dltstudio.plugins.PluginPanel
+import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.plugins.contract.FormatterConsumer
+import com.alekso.dltstudio.plugins.contract.PluginPanel
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 

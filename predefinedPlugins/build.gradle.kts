@@ -11,7 +11,7 @@ kotlin {
         val desktopMain by getting
 
         commonMain.dependencies {
-            implementation(project(":plugins"))
+            implementation(project(":plugins:contract"))
             implementation(project(":pluginFilesViewer"))
             implementation(project(":pluginDeviceAnalyze"))
         }

@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.plugins
+package com.alekso.dltstudio.plugins.contract
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

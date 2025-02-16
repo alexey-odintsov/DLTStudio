@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.plugins
+package com.alekso.dltstudio.plugins.contract
 
 import com.alekso.dltstudio.model.contract.Formatter
 

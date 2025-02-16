@@ -1,6 +1,10 @@
-package com.alekso.dltstudio.plugins
+package com.alekso.dltstudio.plugins.manager
 
 import com.alekso.dltstudio.model.contract.Formatter
+import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.plugins.contract.FormatterConsumer
+import com.alekso.dltstudio.plugins.contract.MessagesProvider
+import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.logger.Log
 import java.io.File
 import java.net.URI
