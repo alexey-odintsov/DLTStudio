@@ -8,9 +8,9 @@ import com.alekso.dltparser.dlt.extendedheader.MessageType
 import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
-import com.alekso.dltparser.dlt.verbosepayload.Argument
-import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
-import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
+import com.alekso.dltmessage.verbosepayload.Argument
+import com.alekso.dltmessage.verbosepayload.TypeInfo
+import com.alekso.dltmessage.verbosepayload.VerbosePayload
 
 object Utils {
     fun dltMessage(

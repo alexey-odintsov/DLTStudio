@@ -2,9 +2,9 @@ package com.alekso.dltparser.tests.parserv1
 
 import com.alekso.datautils.Endian
 import com.alekso.datautils.readInt
-import com.alekso.dltparser.dlt.verbosepayload.Argument
-import com.alekso.dltparser.dlt.verbosepayload.TypeInfo
-import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
+import com.alekso.dltmessage.verbosepayload.Argument
+import com.alekso.dltmessage.verbosepayload.TypeInfo
+import com.alekso.dltmessage.verbosepayload.VerbosePayload
 import org.junit.Assert
 import org.junit.Test
 

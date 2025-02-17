@@ -24,7 +24,7 @@ import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import com.alekso.dltparser.dlt.nonverbosepayload.NonVerbosePayload
 import com.alekso.dltparser.dlt.standardheader.HeaderType
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
-import com.alekso.dltparser.dlt.verbosepayload.VerbosePayload
+import com.alekso.dltmessage.verbosepayload.VerbosePayload
 import com.alekso.logger.Log
 import java.io.EOFException
 import java.io.File
