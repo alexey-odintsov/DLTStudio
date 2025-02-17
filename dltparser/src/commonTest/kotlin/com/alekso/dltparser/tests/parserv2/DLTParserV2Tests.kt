@@ -2,7 +2,7 @@ package com.alekso.dltparser.tests.parserv2
 
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltparser.ParserInputStream
-import com.alekso.dltparser.dlt.PayloadStorageType
+import com.alekso.dltmessage.PayloadStorageType
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test

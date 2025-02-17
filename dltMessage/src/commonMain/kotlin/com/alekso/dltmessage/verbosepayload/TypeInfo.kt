@@ -1,12 +1,7 @@
-package com.alekso.dltparser.dlt.verbosepayload
+package com.alekso.dltmessage.verbosepayload
 
 import com.alekso.datautils.Endian
 import com.alekso.datautils.isBitSet
-import com.alekso.datautils.toBinary
-import com.alekso.datautils.toHex
-import com.alekso.dltparser.DLTParser.Companion.DEBUG_LOG
-import com.alekso.dltparser.DLTParser.Companion.STRING_CODING_MASK
-
 
 data class TypeInfo(
     val typeLengthBits: Int = 0,
@@ -73,6 +68,8 @@ data class TypeInfo(
     }
 
     companion object {
+        const val STRING_CODING_MASK = 0b00000000000000000000000000000111
+
         fun parseVerbosePayloadTypeInfo(
             shouldLog: Boolean, typeInfoInt: Int, payloadEndian: Endian
         ): TypeInfo {
@@ -89,16 +86,6 @@ data class TypeInfo(
                 0 -> StringCoding.ASCII
                 1 -> StringCoding.UTF8
                 else -> StringCoding.RESERVED
-            }
-
-            if (DEBUG_LOG && shouldLog) {
-                println("   typeInfoInt: 0x${typeInfoInt.toHex(4)} (${typeInfoInt.toBinary(32)}b)")
-                println("   typeLengthBits: $typeLengthBits (${(typeInfoInt and 0b1111).toBinary(32)}b)")
-                println(
-                    "   stringCoding: $stringCoding (${
-                        (typeInfoInt.shr(15) and STRING_CODING_MASK).toBinary(32)
-                    }b)"
-                )
             }
 
             return TypeInfo(

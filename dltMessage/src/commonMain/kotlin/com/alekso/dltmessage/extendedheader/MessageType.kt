@@ -1,4 +1,4 @@
-package com.alekso.dltparser.dlt.extendedheader
+package com.alekso.dltmessage.extendedheader
 
 enum class MessageType(val i: Int) {
     DLT_TYPE_LOG(0),
