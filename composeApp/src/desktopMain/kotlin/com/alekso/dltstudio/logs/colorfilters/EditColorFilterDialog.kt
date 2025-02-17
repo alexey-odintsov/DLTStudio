@@ -23,8 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltparser.dlt.extendedheader.MessageType
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
+import com.alekso.dltmessage.extendedheader.MessageType
+import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.colors.ColorPickerDialog
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.filtering.FilterCriteria

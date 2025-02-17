@@ -2,12 +2,12 @@ package com.alekso.dltstudio.tests
 
 import com.alekso.dltparser.dlt.DLTMessage
 import com.alekso.dltparser.dlt.StructuredDLTMessage
-import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
-import com.alekso.dltparser.dlt.extendedheader.MessageInfo
-import com.alekso.dltparser.dlt.extendedheader.MessageType
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
-import com.alekso.dltparser.dlt.standardheader.HeaderType
-import com.alekso.dltparser.dlt.standardheader.StandardHeader
+import com.alekso.dltmessage.extendedheader.ExtendedHeader
+import com.alekso.dltmessage.extendedheader.MessageInfo
+import com.alekso.dltmessage.extendedheader.MessageType
+import com.alekso.dltmessage.extendedheader.MessageTypeInfo
+import com.alekso.dltmessage.standardheader.HeaderType
+import com.alekso.dltmessage.standardheader.StandardHeader
 import com.alekso.dltmessage.verbosepayload.Argument
 import com.alekso.dltmessage.verbosepayload.TypeInfo
 import com.alekso.dltmessage.verbosepayload.VerbosePayload

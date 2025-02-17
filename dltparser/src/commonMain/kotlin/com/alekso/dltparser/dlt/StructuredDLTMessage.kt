@@ -1,8 +1,8 @@
 package com.alekso.dltparser.dlt
 
 import com.alekso.dltmessage.Payload
-import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
-import com.alekso.dltparser.dlt.standardheader.StandardHeader
+import com.alekso.dltmessage.extendedheader.ExtendedHeader
+import com.alekso.dltmessage.standardheader.StandardHeader
 
 
 data class StructuredDLTMessage(

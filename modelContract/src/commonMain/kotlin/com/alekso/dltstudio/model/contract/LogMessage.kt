@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.model.contract
 
+import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
 import java.util.concurrent.atomic.AtomicInteger
 
 data class LogMessage(

@@ -1,4 +1,4 @@
-package com.alekso.dltparser.dlt.nonverbosepayload
+package com.alekso.dltmessage.nonverbosepayload
 
 import com.alekso.datautils.toHex
 import com.alekso.dltmessage.Payload

@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.logs
 
-import com.alekso.dltparser.dlt.extendedheader.MessageTypeInfo
+import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterWarn
