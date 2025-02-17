@@ -3,7 +3,7 @@ package com.alekso.dltparser.dlt.verbosepayload
 import com.alekso.datautils.Endian
 import com.alekso.datautils.readInt
 import com.alekso.datautils.readUShort
-import com.alekso.dltparser.dlt.Payload
+import com.alekso.dltmessage.Payload
 import com.alekso.logger.Log
 
 

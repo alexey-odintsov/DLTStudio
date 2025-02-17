@@ -1,5 +1,6 @@
 package com.alekso.dltparser.dlt
 
+import com.alekso.dltmessage.Payload
 import com.alekso.dltparser.dlt.extendedheader.ExtendedHeader
 import com.alekso.dltparser.dlt.standardheader.StandardHeader
 

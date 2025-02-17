@@ -1,6 +1,7 @@
 package com.alekso.dltparser.dlt
 
 import com.alekso.datautils.toHex
+import com.alekso.dltmessage.Payload
 
 
 data class ControlMessagePayload(

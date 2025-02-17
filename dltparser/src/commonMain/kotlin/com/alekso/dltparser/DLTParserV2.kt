@@ -3,6 +3,7 @@ package com.alekso.dltparser
 import com.alekso.datautils.Endian
 import com.alekso.datautils.isBitSet
 import com.alekso.datautils.toHex
+import com.alekso.dltmessage.Payload
 import com.alekso.dltparser.DLTParser.Companion.DEBUG_LOG
 import com.alekso.dltparser.DLTParser.Companion.DLT_HEADER_SIZE_BYTES
 import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_01
@@ -13,7 +14,6 @@ import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltparser.dlt.BinaryDLTMessage
 import com.alekso.dltparser.dlt.ControlMessagePayload
 import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.Payload
 import com.alekso.dltparser.dlt.PayloadStorageType
 import com.alekso.dltparser.dlt.PlainDLTMessage
 import com.alekso.dltparser.dlt.StructuredDLTMessage

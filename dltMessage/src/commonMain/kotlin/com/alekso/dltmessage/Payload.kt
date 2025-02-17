@@ -1,4 +1,4 @@
-package com.alekso.dltparser.dlt
+package com.alekso.dltmessage
 
 interface Payload {
     fun getSize(): Int
