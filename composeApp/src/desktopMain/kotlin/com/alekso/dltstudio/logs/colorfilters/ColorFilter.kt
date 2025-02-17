@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.logs.colorfilters
 
 import androidx.compose.ui.graphics.Color
-import com.alekso.dltparser.dlt.DLTMessage
+import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.filtering.FilterCriteria

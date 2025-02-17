@@ -1,4 +1,4 @@
-package com.alekso.dltparser.dlt
+package com.alekso.dltmessage
 
 import com.alekso.dltmessage.extendedheader.ExtendedHeader
 import com.alekso.dltmessage.standardheader.StandardHeader

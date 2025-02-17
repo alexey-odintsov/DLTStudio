@@ -1,4 +1,4 @@
-package com.alekso.dltparser.dlt
+package com.alekso.dltmessage
 
 import com.alekso.datautils.Endian
 import com.alekso.datautils.readInt

@@ -1,8 +1,8 @@
 package com.alekso.dltparser
 
 import com.alekso.datautils.Endian
-import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.PayloadStorageType
+import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltmessage.PayloadStorageType
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Locale

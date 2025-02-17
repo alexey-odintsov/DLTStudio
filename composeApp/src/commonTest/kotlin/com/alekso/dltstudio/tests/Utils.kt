@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.tests
 
-import com.alekso.dltparser.dlt.DLTMessage
-import com.alekso.dltparser.dlt.StructuredDLTMessage
+import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltmessage.StructuredDLTMessage
 import com.alekso.dltmessage.extendedheader.ExtendedHeader
 import com.alekso.dltmessage.extendedheader.MessageInfo
 import com.alekso.dltmessage.extendedheader.MessageType

@@ -1,6 +1,6 @@
 package com.alekso.dltparser.tests.testdata
 
-import com.alekso.dltparser.dlt.PlainDLTMessage
+import com.alekso.dltmessage.PlainDLTMessage
 import com.alekso.dltmessage.extendedheader.ExtendedHeader
 import com.alekso.dltmessage.extendedheader.MessageInfo
 import com.alekso.dltmessage.extendedheader.MessageType
