@@ -138,6 +138,7 @@ fun PreviewTimelineMinMaxValueView() {
     val te = ts + 7_000_000L
     val key1 = "key1"
     val key2 = "key2"
+    val key3 = "key3"
 
     val entries = TimeLineMinMaxEntries()
     entries.maxValue = 150f
@@ -163,6 +164,9 @@ fun PreviewTimelineMinMaxValueView() {
         TimeLineFloatEntry(ts + 3_560_000, key2, 63f),
         TimeLineFloatEntry(ts + 4_000_000, key2, 72f),
         TimeLineFloatEntry(ts + 6_800_000, key2, 111f),
+    )
+    entries.map[key3] = mutableListOf(
+        TimeLineFloatEntry(ts + 2_300_000, key3, 100f),
     )
 
     Column {
