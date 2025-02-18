@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.colors
+package com.alekso.dltstudio.uicomponents.dialogs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
@@ -25,7 +25,25 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogState
+import androidx.compose.ui.window.DialogWindow
 import com.alekso.dltstudio.uicomponents.CustomButton
+
+@Composable
+fun ColorPickerDialog(
+    visible: Boolean,
+    onDialogClosed: () -> Unit,
+    initialColor: Color,
+    onColorUpdate: (Color) -> Unit,
+) {
+    DialogWindow(
+        visible = visible, onCloseRequest = onDialogClosed,
+        title = "Color Picker",
+        state = DialogState(width = 300.dp, height = 320.dp)
+    ) {
+        ColorPicker(initialColor, onColorUpdate)
+    }
+}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
