@@ -7,6 +7,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialog
+import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
@@ -24,7 +26,18 @@ interface MainMenuCallbacks {
 
 @Composable
 fun FrameWindowScope.MainMenu(callbacks: MainMenuCallbacks) {
+    var settingsDialogState by remember { mutableStateOf(false) }
     var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
+
+    if (settingsDialogState) {
+        SettingsDialog(
+            visible = settingsDialogState,
+            onDialogClosed = { settingsDialogState = false },
+            callbacks = object : SettingsDialogCallbacks {
+
+            }
+        )
+    }
 
     if (stateIOpenFileDialog.visibility) {
         FileChooserDialog(
@@ -87,6 +100,10 @@ fun FrameWindowScope.MainMenu(callbacks: MainMenuCallbacks) {
                 stateIOpenFileDialog = FileChooserDialogState(
                     true, FileChooserDialogState.DialogContext.OPEN_DLT_FILE
                 )
+            })
+            Separator()
+            Item("Settings", onClick = {
+                settingsDialogState = true
             })
         }
         Menu("Color filters") {
