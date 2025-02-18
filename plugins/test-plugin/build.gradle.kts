@@ -4,10 +4,17 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
+
+group = "com.alekso.dltstudio.plugins.testplugin"
+version = "1.0.0"
+
 kotlin {
-    jvm()
+    jvm("desktop") {
+        withSourcesJar(publish = true)
+    }
 
     sourceSets {
+        val desktopMain by getting
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -15,17 +22,18 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            api(project(":model-contract"))
-            api(project(":plugins:contract"))
             implementation(project(":logger"))
+            implementation(project(":ui-components"))
+            implementation(project(":plugins:contract"))
             implementation(compose.runtime)
             implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.ui)
         }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
+
     }
-}
-
-task("testClasses")
-
-tasks.withType<Test> {
-    maxHeapSize = "8g"
 }

@@ -1,7 +1,5 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
-    alias(libs.plugins.jetbrainsCompose)
-    alias(libs.plugins.compose.compiler)
 }
 
 kotlin {
@@ -15,17 +13,8 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            api(project(":model-contract"))
-            api(project(":plugins:contract"))
             implementation(project(":logger"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
+            implementation(project(":data-utils"))
         }
     }
-}
-
-task("testClasses")
-
-tasks.withType<Test> {
-    maxHeapSize = "8g"
 }

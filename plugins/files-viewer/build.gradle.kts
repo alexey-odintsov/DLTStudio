@@ -5,9 +5,10 @@ plugins {
 }
 
 kotlin {
-    jvm()
+    jvm("desktop")
 
     sourceSets {
+        val desktopMain by getting
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test"))
@@ -15,17 +16,23 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            api(project(":model-contract"))
-            api(project(":plugins:contract"))
             implementation(project(":logger"))
+            implementation(project(":dlt-message"))
+            implementation(project(":model-contract"))
+            implementation(project(":ui-components"))
+            implementation(project(":plugins:contract"))
+            implementation(compose.components.resources)
             implementation(compose.runtime)
             implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.ui)
         }
+
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+        }
+
     }
 }
 
 task("testClasses")
-
-tasks.withType<Test> {
-    maxHeapSize = "8g"
-}
