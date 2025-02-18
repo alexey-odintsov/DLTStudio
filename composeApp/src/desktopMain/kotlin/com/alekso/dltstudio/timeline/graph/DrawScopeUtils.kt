@@ -32,6 +32,21 @@ fun DrawScope.renderLines(
     key: String
 ) {
     items?.forEachIndexed entriesIteration@{ i, entry ->
+        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
+        val curY = verticalPaddingPx + height - height * entry.value / maxValue
+
+        if (i == 0 && items.size == 1) {
+            drawCircle(
+                color = color,
+                radius = if (highlightedKey != null && highlightedKey == key) 4.dp.toPx() else 2.dp.toPx(),
+                center = Offset(
+                    timeFrame.offsetSeconds * secSizePx + curX,
+                    curY + verticalPaddingPx
+                ),
+            )
+            return@entriesIteration
+        }
+
         if (i == 0) return@entriesIteration
 
         val prev = items[i - 1]
@@ -43,8 +58,6 @@ fun DrawScope.renderLines(
         val prevX = (prev.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx
         val prevY = verticalPaddingPx + height - height * prev.value / maxValue
 
-        val curX = ((entry.timestamp - timeFrame.timestampStart) / 1000000f * secSizePx)
-        val curY = verticalPaddingPx + height - height * entry.value / maxValue
 
         drawLine(
             color,
