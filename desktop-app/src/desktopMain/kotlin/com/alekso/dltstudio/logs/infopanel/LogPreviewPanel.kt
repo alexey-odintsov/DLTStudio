@@ -28,7 +28,7 @@ import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.ui.Panel
-import com.alekso.dltstudio.ui.TabsPanel
+import com.alekso.dltstudio.uicomponents.TabsPanel
 import com.alekso.dltstudio.utils.SampleData
 
 @Composable

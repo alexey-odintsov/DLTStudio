@@ -3,7 +3,7 @@ package com.alekso.dltstudio.tests
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import com.alekso.dltstudio.ui.TabsPanel
+import com.alekso.dltstudio.uicomponents.TabsPanel
 import org.junit.Rule
 import org.junit.Test
 
