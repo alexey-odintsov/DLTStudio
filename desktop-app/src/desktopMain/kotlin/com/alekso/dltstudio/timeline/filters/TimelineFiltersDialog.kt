@@ -25,11 +25,11 @@ import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
-import dltstudio.composeapp.generated.resources.Res
-import dltstudio.composeapp.generated.resources.icon_delete
-import dltstudio.composeapp.generated.resources.icon_down
-import dltstudio.composeapp.generated.resources.icon_edit
-import dltstudio.composeapp.generated.resources.icon_up
+import dltstudio.desktop_app.generated.resources.Res
+import dltstudio.desktop_app.generated.resources.icon_delete
+import dltstudio.desktop_app.generated.resources.icon_down
+import dltstudio.desktop_app.generated.resources.icon_edit
+import dltstudio.desktop_app.generated.resources.icon_up
 
 
 interface TimelineFiltersDialogCallbacks {
