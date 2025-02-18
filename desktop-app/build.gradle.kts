@@ -16,6 +16,7 @@ kotlin {
         val desktopMain by getting
 
         commonMain.dependencies {
+            implementation(project(":resources"))
             implementation(project(":logger"))
             implementation(project(":data-utils"))
             implementation(project(":dlt-message"))

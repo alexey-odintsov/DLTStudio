@@ -29,18 +29,18 @@ import com.alekso.dltstudio.ui.ToggleImageButton
 import com.alekso.dltstudio.uicomponents.AutoCompleteEditText
 import com.alekso.dltstudio.uicomponents.HorizontalDivider
 import com.alekso.dltstudio.uicomponents.Tooltip
-import dltstudio.desktop_app.generated.resources.Res
-import dltstudio.desktop_app.generated.resources.icon_color_filters
-import dltstudio.desktop_app.generated.resources.icon_comments
-import dltstudio.desktop_app.generated.resources.icon_e
-import dltstudio.desktop_app.generated.resources.icon_f
-import dltstudio.desktop_app.generated.resources.icon_marked_logs
-import dltstudio.desktop_app.generated.resources.icon_regex
-import dltstudio.desktop_app.generated.resources.icon_search
-import dltstudio.desktop_app.generated.resources.icon_search_marks
-import dltstudio.desktop_app.generated.resources.icon_stop
-import dltstudio.desktop_app.generated.resources.icon_w
-import dltstudio.desktop_app.generated.resources.icon_wordwrap
+import dltstudio.resources.Res
+import dltstudio.resources.icon_color_filters
+import dltstudio.resources.icon_comments
+import dltstudio.resources.icon_e
+import dltstudio.resources.icon_f
+import dltstudio.resources.icon_marked_logs
+import dltstudio.resources.icon_regex
+import dltstudio.resources.icon_search
+import dltstudio.resources.icon_search_marks
+import dltstudio.resources.icon_stop
+import dltstudio.resources.icon_w
+import dltstudio.resources.icon_wordwrap
 import kotlinx.datetime.TimeZone
 
 

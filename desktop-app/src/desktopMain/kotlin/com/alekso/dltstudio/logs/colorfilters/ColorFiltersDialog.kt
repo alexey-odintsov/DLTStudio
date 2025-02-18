@@ -27,11 +27,11 @@ import com.alekso.dltstudio.logs.filtering.TextCriteria
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
-import dltstudio.desktop_app.generated.resources.Res
-import dltstudio.desktop_app.generated.resources.icon_delete
-import dltstudio.desktop_app.generated.resources.icon_down
-import dltstudio.desktop_app.generated.resources.icon_edit
-import dltstudio.desktop_app.generated.resources.icon_up
+import dltstudio.resources.Res
+import dltstudio.resources.icon_delete
+import dltstudio.resources.icon_down
+import dltstudio.resources.icon_edit
+import dltstudio.resources.icon_up
 
 interface ColorFiltersDialogCallbacks {
     fun onColorFilterUpdate(position: Int, filter: ColorFilter)

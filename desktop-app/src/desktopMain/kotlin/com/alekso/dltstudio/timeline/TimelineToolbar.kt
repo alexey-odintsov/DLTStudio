@@ -10,15 +10,15 @@ import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.uicomponents.HorizontalDivider
 import com.alekso.dltstudio.uicomponents.Tooltip
-import dltstudio.desktop_app.generated.resources.Res
-import dltstudio.desktop_app.generated.resources.icon_color_filters
-import dltstudio.desktop_app.generated.resources.icon_fit
-import dltstudio.desktop_app.generated.resources.icon_left
-import dltstudio.desktop_app.generated.resources.icon_right
-import dltstudio.desktop_app.generated.resources.icon_run
-import dltstudio.desktop_app.generated.resources.icon_stop
-import dltstudio.desktop_app.generated.resources.icon_zoom_in
-import dltstudio.desktop_app.generated.resources.icon_zoom_out
+import dltstudio.resources.Res
+import dltstudio.resources.icon_color_filters
+import dltstudio.resources.icon_fit
+import dltstudio.resources.icon_left
+import dltstudio.resources.icon_right
+import dltstudio.resources.icon_run
+import dltstudio.resources.icon_stop
+import dltstudio.resources.icon_zoom_in
+import dltstudio.resources.icon_zoom_out
 
 @Composable
 fun TimelineToolbar(
