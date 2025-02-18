@@ -44,7 +44,11 @@ fun SettingsPanel(callbacks: SettingsDialogCallbacks) {
             TabsPanel(tabIndex, tabs, { i -> tabIndex = i }, vertical = true)
         }
         Column {
-
+            when (tabIndex) {
+                0 -> AppearancePanel(callbacks)
+                1 -> LogsPanel(callbacks)
+                else -> Unit
+            }
         }
     }
 }
