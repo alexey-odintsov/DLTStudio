@@ -17,13 +17,13 @@ kotlin {
 
         commonMain.dependencies {
             implementation(project(":logger"))
-            implementation(project(":dataUtils"))
-            implementation(project(":dltMessage"))
-            implementation(project(":dltparser"))
-            implementation(project(":uicomponents"))
+            implementation(project(":data-utils"))
+            implementation(project(":dlt-message"))
+            implementation(project(":dlt-parser"))
+            implementation(project(":ui-components"))
             implementation(project(":plugins:contract"))
             implementation(project(":plugins:manager"))
-            implementation(project(":plugins:predefinedPlugins"))
+            implementation(project(":plugins:predefined-plugins"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)

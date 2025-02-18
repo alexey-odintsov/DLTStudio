@@ -14,14 +14,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":logger"))
-            implementation(project(":dataUtils"))
-            implementation(project(":dltMessage"))
+            implementation(project(":data-utils"))
         }
     }
-}
-
-task("testClasses")
-
-tasks.withType<Test> {
-    maxHeapSize = "8g"
 }

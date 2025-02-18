@@ -4,14 +4,8 @@ plugins {
     alias(libs.plugins.compose.compiler)
 }
 
-
-group = "com.alekso.dltstudio.plugins.testplugin"
-version = "1.0.0"
-
 kotlin {
-    jvm("desktop") {
-        withSourcesJar(publish = true)
-    }
+    jvm("desktop")
 
     sourceSets {
         val desktopMain by getting
@@ -23,7 +17,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":logger"))
-            implementation(project(":uicomponents"))
+            implementation(project(":ui-components"))
             implementation(project(":plugins:contract"))
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -37,3 +31,5 @@ kotlin {
 
     }
 }
+
+task("testClasses")

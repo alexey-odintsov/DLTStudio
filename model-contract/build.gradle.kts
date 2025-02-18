@@ -7,7 +7,7 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            implementation(project(":dltMessage"))
+            implementation(project(":dlt-message"))
             implementation(libs.kotlin.datetime)
         }
     }
