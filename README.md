@@ -48,7 +48,7 @@ IntelliJ IDEA / Android Studio
 
 or in terminal run command:
 ```
-./gradlew :composeApp:run
+./gradlew :desktop-app:run
 ```
 
 

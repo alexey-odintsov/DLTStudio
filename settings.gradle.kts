@@ -18,6 +18,7 @@ dependencyResolutionManagement {
     }
 }
 
+include(":resources")
 include(":desktop-app")
 include(":data-utils")
 include(":dlt-message")
