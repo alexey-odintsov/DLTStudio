@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
-import com.alekso.dltstudio.ui.ImageButton
-import com.alekso.dltstudio.ui.ToggleImageButton
 import com.alekso.dltstudio.uicomponents.AutoCompleteEditText
 import com.alekso.dltstudio.uicomponents.HorizontalDivider
+import com.alekso.dltstudio.uicomponents.ImageButton
+import com.alekso.dltstudio.uicomponents.ToggleImageButton
 import com.alekso.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters

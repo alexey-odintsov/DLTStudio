@@ -7,8 +7,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
-import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.uicomponents.HorizontalDivider
+import com.alekso.dltstudio.uicomponents.ImageButton
 import com.alekso.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters
