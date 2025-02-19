@@ -37,7 +37,7 @@ fun SettingsDialog(
 
 @Composable
 fun SettingsPanel(callbacks: SettingsDialogCallbacks) {
-    val tabs = mutableStateListOf("Appearance", "Logs")
+    val tabs = mutableStateListOf("Appearance", "Logs", "Plugins")
     var tabIndex by remember { mutableStateOf(0) }
     Row(modifier = Modifier.padding(4.dp)) {
         Column(Modifier.width(200.dp)) {
@@ -47,6 +47,7 @@ fun SettingsPanel(callbacks: SettingsDialogCallbacks) {
             when (tabIndex) {
                 0 -> AppearancePanel(callbacks)
                 1 -> LogsPanel(callbacks)
+                2 -> PluginsPanel(callbacks)
                 else -> Unit
             }
         }
