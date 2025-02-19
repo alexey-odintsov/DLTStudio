@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.ui
+package com.alekso.dltstudio.uicomponents
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding

@@ -22,9 +22,9 @@ import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.edit.EditTimelineFilterDialog
 import com.alekso.dltstudio.timeline.filters.edit.EditTimelineFilterDialogState
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
-import com.alekso.dltstudio.ui.ImageButton
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
+import com.alekso.dltstudio.uicomponents.ImageButton
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_down

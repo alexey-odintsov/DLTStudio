@@ -1,6 +1,5 @@
-package com.alekso.dltstudio.ui
+package com.alekso.dltstudio.uicomponents
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -10,8 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import dltstudio.resources.Res
-import dltstudio.resources.icon_w
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -39,15 +36,4 @@ fun ToggleImageButton(
             }
         )
     }
-}
-
-@Preview
-@Composable
-fun PreviewToggleImageButton() {
-    ToggleImageButton(checkedState = true,
-        icon = Res.drawable.icon_w,
-        title = "Title",
-        checkedTintColor = Color.Red,
-        updateCheckedState = {}
-    )
 }
