@@ -19,6 +19,7 @@ fun AppearancePanel(
     callbacks: SettingsDialogCallbacks,
     settingsUI: SettingsUI
 ) {
+    println("Recompose AppearancePanel $settingsUI")
     var fontSize by remember { mutableStateOf(settingsUI.fontSize.toString()) }
     var fontType by remember { mutableStateOf(settingsUI.fontType.toString()) }
     Row {

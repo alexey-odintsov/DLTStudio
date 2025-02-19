@@ -42,12 +42,14 @@ fun main() = application {
                 LocalSettingsUI provides mainViewModel.settingsUI.value,
             ) {
 
-                SettingsDialog(
-                    visible = mainViewModel.settingsDialogState,
-                    onDialogClosed = { mainViewModel.closeSettingsDialog() },
-                    settingsUI = mainViewModel.settingsUI.value,
-                    callbacks = mainViewModel.settingsCallbacks,
-                )
+                if (mainViewModel.settingsDialogState) {
+                    SettingsDialog(
+                        visible = mainViewModel.settingsDialogState,
+                        onDialogClosed = { mainViewModel.closeSettingsDialog() },
+                        settingsUI = mainViewModel.settingsUI.value,
+                        callbacks = mainViewModel.settingsCallbacks,
+                    )
+                }
 
                 MainMenu(mainViewModel.mainMenuCallbacks)
                 MainWindow(mainViewModel)
