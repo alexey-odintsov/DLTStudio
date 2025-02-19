@@ -25,7 +25,7 @@ import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomEditText
-import com.alekso.dltstudio.ui.TabsPanel
+import com.alekso.dltstudio.uicomponents.TabsPanel
 
 
 class EditTimelineFilterDialogState(
