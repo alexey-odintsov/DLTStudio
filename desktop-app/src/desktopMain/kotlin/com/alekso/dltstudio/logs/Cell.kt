@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.LocalLogsTextStyle
+import com.alekso.dltstudio.LocalSettingsUI
 import com.alekso.dltstudio.utils.ColorSerializer
 import kotlinx.serialization.Serializable
 
@@ -87,7 +88,7 @@ fun Cell(
                 Text(
                     modifier = Modifier.padding(end = 1.dp).then(modifier),
                     textAlign = textAlign,
-                    fontSize = LocalLogsTextStyle.current.fontSize,
+                    fontSize = LocalSettingsUI.current.fontSize.sp,
                     lineHeight = LocalLogsTextStyle.current.lineHeight,
                     fontFamily = LocalLogsTextStyle.current.fontFamily,
                     fontStyle = FontStyle.Normal,
@@ -101,7 +102,7 @@ fun Cell(
                     modifier = Modifier.padding(end = 1.dp).then(modifier),
                     maxLines = 1,
                     textAlign = textAlign,
-                    fontSize = LocalLogsTextStyle.current.fontSize,
+                    fontSize = LocalSettingsUI.current.fontSize.sp,
                     lineHeight = LocalLogsTextStyle.current.lineHeight,
                     fontFamily = LocalLogsTextStyle.current.fontFamily,
                     fontStyle = FontStyle.Normal,

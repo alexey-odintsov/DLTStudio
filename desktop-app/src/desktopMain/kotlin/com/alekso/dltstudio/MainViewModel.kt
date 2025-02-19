@@ -1,9 +1,18 @@
 package com.alekso.dltstudio
 
+import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.alekso.dltparser.DLTParser
+import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialogCallbacks
+import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.LogsPlugin
+import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.model.toSettingsUI
+import com.alekso.dltstudio.model.toSettingsUIEntity
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.TimelineHolder
@@ -27,9 +36,40 @@ class MainViewModel(
     private val messagesHolder: MessagesHolder,
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
     private val pluginManager: PluginManager,
+    private val settingsRepository: SettingsRepositoryImpl,
 ) {
+    val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
+        override fun onSettingsUIUpdate(settings: SettingsUI) {
+            CoroutineScope(IO).launch {
+                settingsRepository.updateUISettings(settings.toSettingsUIEntity())
+            }
+        }
+    }
     val panels = mutableStateListOf<PluginPanel>()
     val panelsNames = mutableStateListOf<String>() // todo: Find way to synchronize panels and names
+
+
+    var settingsDialogState by mutableStateOf(false)
+    private var _settingsUI = mutableStateOf(SettingsUI.Default)
+    val settingsUI: State<SettingsUI> = _settingsUI
+
+    private fun observeSettingsUI() {
+        println("observeSettingsUI")
+        CoroutineScope(IO).launch {
+            settingsRepository.getUISettingsFlow().collect {
+                println("onUpdateUISettings($it)")
+
+                withContext(Main) {
+                    _settingsUI.value = it.toSettingsUI()
+                }
+            }
+        }
+    }
+
+
+    init {
+        observeSettingsUI()
+    }
 
     private var parseJob: Job? = null
 
@@ -60,6 +100,10 @@ class MainViewModel(
 
         override fun onClearTimelineFilters() {
             clearTimeLineFilters()
+        }
+
+        override fun onSettingsClicked() {
+            settingsDialogState = true
         }
     }
 
@@ -125,6 +169,10 @@ class MainViewModel(
 
     fun saveTimeLineFilters(file: File) {
         timelineHolder.saveTimeLineFilters(file)
+    }
+
+    fun closeSettingsDialog() {
+        settingsDialogState = false
     }
 
 }

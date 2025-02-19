@@ -7,6 +7,7 @@ import com.alekso.dltmessage.PayloadStorageType
 import com.alekso.dltstudio.AppFormatter
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory
+import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.logs.LogsViewModel
 import com.alekso.dltstudio.logs.insights.InsightsRepository
@@ -27,6 +28,10 @@ object DependencyManager {
         _progress.value = p
     }
 
+    private val database by lazy {
+        DBFactory().createDatabase()
+    }
+
     private val formatter by lazy {
         AppFormatter()
     }
@@ -41,7 +46,14 @@ object DependencyManager {
 
     private val virtualDeviceRepository by lazy {
         VirtualDeviceRepositoryImpl(
-            database = DBFactory().createDatabase(),
+            database = database,
+            scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+        )
+    }
+
+    private val settingsRepository by lazy {
+        SettingsRepositoryImpl(
+            database = database,
             scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
         )
     }
@@ -64,6 +76,7 @@ object DependencyManager {
         messagesProvider = provideMessagesProvider(),
         timelineHolder = provideTimelineViewModel(),
         pluginManager = providePluginsManager(),
+        settingsRepository = settingsRepository,
     )
 
     fun provideMessageHolder(): MessagesHolder {

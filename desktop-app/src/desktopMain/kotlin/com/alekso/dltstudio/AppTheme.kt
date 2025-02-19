@@ -20,6 +20,7 @@ const val BODY1_LINE_HEIGHT = BODY1_FONT_SIZE + 2
 const val LOGS_FONT_SIZE = 10f
 const val LOGS_LINE_HEIGHT = LOGS_FONT_SIZE + 2
 
+@Deprecated("Use LocalSettingsUI")
 val LocalLogsTextStyle = staticCompositionLocalOf { TextStyle() }
 
 @Composable
@@ -48,7 +49,7 @@ fun AppTheme(
         )
 
         val logsTextStyle = MaterialTheme.typography.body1.copy(
-            fontSize = LOGS_FONT_SIZE.sp,
+            fontSize = LocalSettingsUI.current.fontSize.sp,
             lineHeight = LOGS_LINE_HEIGHT.sp,
             fontFamily = FontFamily.Monospace,
         )

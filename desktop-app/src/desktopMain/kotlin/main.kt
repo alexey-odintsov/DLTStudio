@@ -7,6 +7,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialog
+import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
@@ -15,6 +17,7 @@ import com.alekso.logger.Log
 
 
 val LocalFormatter = staticCompositionLocalOf { Formatter.STUB }
+val LocalSettingsUI = staticCompositionLocalOf { SettingsUI.Default }
 
 fun main() = application {
     Log.init(Env.getLogsPath())
@@ -33,10 +36,18 @@ fun main() = application {
         }, title = "DLT Studio", state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
         AppTheme {
+            val mainViewModel = remember { DependencyManager.provideMainViewModel() }
             CompositionLocalProvider(
                 LocalFormatter provides DependencyManager.provideFormatter(),
+                LocalSettingsUI provides mainViewModel.settingsUI.value,
             ) {
-                val mainViewModel = remember { DependencyManager.provideMainViewModel() }
+
+                SettingsDialog(
+                    visible = mainViewModel.settingsDialogState,
+                    onDialogClosed = { mainViewModel.closeSettingsDialog() },
+                    settingsUI = mainViewModel.settingsUI.value,
+                    callbacks = mainViewModel.settingsCallbacks,
+                )
 
                 MainMenu(mainViewModel.mainMenuCallbacks)
                 MainWindow(mainViewModel)

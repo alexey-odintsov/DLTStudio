@@ -15,15 +15,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.uicomponents.TabsPanel
 
 interface SettingsDialogCallbacks {
+    fun onSettingsUIUpdate(settings: SettingsUI)
 }
 
 @Composable
 fun SettingsDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
+    settingsUI: SettingsUI,
     callbacks: SettingsDialogCallbacks,
 ) {
     DialogWindow(
@@ -31,12 +34,12 @@ fun SettingsDialog(
         title = "Settings",
         state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
-        SettingsPanel(callbacks)
+        SettingsPanel(callbacks, settingsUI)
     }
 }
 
 @Composable
-fun SettingsPanel(callbacks: SettingsDialogCallbacks) {
+fun SettingsPanel(callbacks: SettingsDialogCallbacks, settingsUI: SettingsUI) {
     val tabs = mutableStateListOf("Appearance", "Logs", "Plugins")
     var tabIndex by remember { mutableStateOf(0) }
     Row(modifier = Modifier.padding(4.dp)) {
@@ -45,7 +48,7 @@ fun SettingsPanel(callbacks: SettingsDialogCallbacks) {
         }
         Column {
             when (tabIndex) {
-                0 -> AppearancePanel(callbacks)
+                0 -> AppearancePanel(callbacks, settingsUI)
                 1 -> LogsPanel(callbacks)
                 2 -> PluginsPanel(callbacks)
                 else -> Unit
@@ -58,6 +61,7 @@ fun SettingsPanel(callbacks: SettingsDialogCallbacks) {
 @Composable
 fun PreviewSettingsDialog() {
     SettingsPanel(callbacks = object : SettingsDialogCallbacks {
+        override fun onSettingsUIUpdate(settings: SettingsUI) = Unit
 
-    })
+    }, settingsUI = SettingsUI(12, 1))
 }

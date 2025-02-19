@@ -1,7 +1,7 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
+    "version": 2,
     "identityHash": "97f94ff8795c014c981a341cc8de70c8",
     "entities": [
       {
@@ -42,14 +42,8 @@
       },
       {
         "tableName": "SettingsUIEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `fontSize` INTEGER NOT NULL, `fontType` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fontSize` INTEGER NOT NULL, `fontType` INTEGER NOT NULL, `id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
           {
             "fieldPath": "fontSize",
             "columnName": "fontSize",
@@ -59,6 +53,12 @@
           {
             "fieldPath": "fontType",
             "columnName": "fontType",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "id",
+            "columnName": "id",
             "affinity": "INTEGER",
             "notNull": true
           }

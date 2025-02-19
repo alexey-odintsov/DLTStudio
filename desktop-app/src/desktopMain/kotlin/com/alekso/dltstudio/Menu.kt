@@ -22,22 +22,12 @@ interface MainMenuCallbacks {
     fun onSaveTimelineFiltersFile(file: File)
     fun onClearColorFilters()
     fun onClearTimelineFilters()
+    fun onSettingsClicked()
 }
 
 @Composable
 fun FrameWindowScope.MainMenu(callbacks: MainMenuCallbacks) {
-    var settingsDialogState by remember { mutableStateOf(false) }
     var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
-
-    if (settingsDialogState) {
-        SettingsDialog(
-            visible = settingsDialogState,
-            onDialogClosed = { settingsDialogState = false },
-            callbacks = object : SettingsDialogCallbacks {
-
-            }
-        )
-    }
 
     if (stateIOpenFileDialog.visibility) {
         FileChooserDialog(
@@ -103,7 +93,7 @@ fun FrameWindowScope.MainMenu(callbacks: MainMenuCallbacks) {
             })
             Separator()
             Item("Settings", onClick = {
-                settingsDialogState = true
+                callbacks.onSettingsClicked()
             })
         }
         Menu("Color filters") {
