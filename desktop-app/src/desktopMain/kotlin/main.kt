@@ -14,6 +14,8 @@ import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.settings.SettingsDialog
 import com.alekso.dltstudio.ui.MainWindow
+import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog2
+import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog2
 import com.alekso.logger.Log
 
 
@@ -55,7 +57,8 @@ fun main() = application {
                     )
                 }
 
-                MainMenu(mainViewModel.mainMenuCallbacks)
+                AppMenu(mainViewModel.menuItems)
+                FileChooserDialog2(mainViewModel.fileChooseDialogState, { files -> mainViewModel.onOpenDLTFiles(files) })
                 MainWindow(mainViewModel)
             }
         }

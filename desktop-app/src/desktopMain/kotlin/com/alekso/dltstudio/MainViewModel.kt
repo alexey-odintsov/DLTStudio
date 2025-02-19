@@ -23,6 +23,8 @@ import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
+import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
+import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -45,6 +47,8 @@ class MainViewModel(
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
 ) {
+    var fileChooseDialogState by mutableStateOf(FileChooserDialogState())
+
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
@@ -63,6 +67,24 @@ class MainViewModel(
     }
     val panels = mutableStateListOf<PluginPanel>()
     val panelsNames = mutableStateListOf<String>() // todo: Find way to synchronize panels and names
+    val menuItems = mutableStateListOf<MainMenuItem>(
+        MainMenuItem("File",
+            children = mutableStateListOf(
+                ChildMenuItem("Open", {
+                    fileChooseDialogState = FileChooserDialogState(
+                        true, FileChooserDialogState.DialogContext.OPEN_DLT_FILE
+                    )
+                }),
+            )
+        ),
+        MainMenuItem("Color filters",
+            children = mutableStateListOf(
+                ChildMenuItem("Open", {}),
+                ChildMenuItem("Save", {}),
+                ChildMenuItem("Clear", {}),
+            )
+        ),
+    )
 
 
     var settingsDialogState by mutableStateOf(false)
@@ -82,6 +104,13 @@ class MainViewModel(
         )
 
     private var parseJob: Job? = null
+
+    fun onOpenDLTFiles(files: List<File>?) {
+        fileChooseDialogState = fileChooseDialogState.copy(visibility = false)
+        if (files != null) {
+//            parseFile(files)
+        }
+    }
 
     val mainMenuCallbacks = object : MainMenuCallbacks {
         override fun onOpenDLTFiles(files: List<File>) {
