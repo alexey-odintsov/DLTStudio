@@ -26,6 +26,7 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun updateSettingsLogs(item: SettingsLogsEntity) {
+        println("Repo updateSettingsLogs $item")
         database.getSettingsDao().updateSettingsLogs(item)
     }
 

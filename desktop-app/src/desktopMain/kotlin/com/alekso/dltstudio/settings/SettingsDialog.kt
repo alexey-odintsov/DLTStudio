@@ -23,10 +23,12 @@ import com.alekso.dltstudio.uicomponents.TabsPanel
 
 interface SettingsDialogCallbacks {
     fun onSettingsUIUpdate(settings: SettingsUI)
+    fun onSettingsLogsUpdate(settings: SettingsLogs)
 
     companion object {
         val Stub = object : SettingsDialogCallbacks {
             override fun onSettingsUIUpdate(settings: SettingsUI) = Unit
+            override fun onSettingsLogsUpdate(settings: SettingsLogs) = Unit
         }
     }
 }
@@ -52,7 +54,7 @@ fun SettingsDialog(
 fun SettingsPanel(
     callbacks: SettingsDialogCallbacks,
     settingsUI: SettingsUI,
-    settingsLogs: SettingsLogs
+    settingsLogs: SettingsLogs,
 ) {
     val tabs = mutableStateListOf("Appearance", "Logs", "Plugins")
     var tabIndex by remember { mutableStateOf(0) }
@@ -74,10 +76,8 @@ fun SettingsPanel(
 @Preview
 @Composable
 fun PreviewSettingsDialog() {
-    SettingsPanel(callbacks = object : SettingsDialogCallbacks {
-        override fun onSettingsUIUpdate(settings: SettingsUI) = Unit
-
-    },
+    SettingsPanel(
+        callbacks = SettingsDialogCallbacks.Stub,
         settingsUI = SettingsUI(12, FontFamily.Serif),
         settingsLogs = SettingsLogs(backendType = PayloadStorageType.Binary)
     )

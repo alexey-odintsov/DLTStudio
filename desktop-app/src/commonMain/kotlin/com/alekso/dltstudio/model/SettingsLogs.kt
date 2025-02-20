@@ -8,14 +8,20 @@ data class SettingsLogs(
 ) {
     companion object {
         val Default = SettingsLogs(backendType = PayloadStorageType.Binary)
+        fun getBackendById(id: Int): PayloadStorageType {
+            return PayloadStorageType.entries.firstOrNull { it.id == id }
+                ?: PayloadStorageType.Binary
+        }
+
+        fun getIdByBackend(backendType: PayloadStorageType): Int {
+            return PayloadStorageType.entries.firstOrNull { it == backendType }?.id
+                ?: Default.backendType.id
+        }
     }
 }
 
 fun SettingsLogsEntity.toSettingsLogs(): SettingsLogs =
-    SettingsLogs(PayloadStorageType.entries.firstOrNull { it.id == id }
-        ?: PayloadStorageType.Binary)
+    SettingsLogs(SettingsLogs.getBackendById(id))
 
 fun SettingsLogs.toSettingsLogsEntity(): SettingsLogsEntity =
-    SettingsLogsEntity(
-        backendType = PayloadStorageType.entries.firstOrNull { it == backendType }?.id ?: 2
-    )
+    SettingsLogsEntity(SettingsLogs.getIdByBackend(backendType))

@@ -13,6 +13,7 @@ import com.alekso.dltstudio.model.SettingsLogs
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.toSettingsLogs
+import com.alekso.dltstudio.model.toSettingsLogsEntity
 import com.alekso.dltstudio.model.toSettingsUI
 import com.alekso.dltstudio.model.toSettingsUIEntity
 import com.alekso.dltstudio.plugins.DependencyManager
@@ -44,6 +45,13 @@ class MainViewModel(
         override fun onSettingsUIUpdate(settings: SettingsUI) {
             CoroutineScope(IO).launch {
                 settingsRepository.updateSettingsUI(settings.toSettingsUIEntity())
+            }
+        }
+
+        override fun onSettingsLogsUpdate(settings: SettingsLogs) {
+            println("onSettingsLogsUpdate $settings")
+            CoroutineScope(IO).launch {
+                settingsRepository.updateSettingsLogs(settings.toSettingsLogsEntity())
             }
         }
     }
