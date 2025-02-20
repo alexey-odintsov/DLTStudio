@@ -9,9 +9,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface SettingsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE) // Use for insert and update
-    suspend fun updateUISettings(item: SettingsUIEntity)
+    suspend fun updateSettingsUI(item: SettingsUIEntity)
 
     @Query("SELECT * FROM SettingsUIEntity LIMIT 1")
-    fun getUISettingsFlow(): Flow<SettingsUIEntity>
+    fun getSettingsUIFlow(): Flow<SettingsUIEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateSettingsLogs(item: SettingsLogsEntity)
+
+    @Query("SELECT * FROM SettingsLogsEntity LIMIT 1")
+    fun getSettingsLogsFlow(): Flow<SettingsLogsEntity>
 
 }

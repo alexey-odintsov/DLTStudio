@@ -16,6 +16,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltmessage.PayloadStorageType
+import com.alekso.dltstudio.model.SettingsLogs
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.uicomponents.TabsPanel
 
@@ -34,6 +36,7 @@ fun SettingsDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
     settingsUI: SettingsUI,
+    settingsLogs: SettingsLogs,
     callbacks: SettingsDialogCallbacks,
 ) {
     DialogWindow(
@@ -41,12 +44,16 @@ fun SettingsDialog(
         title = "Settings",
         state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
-        SettingsPanel(callbacks, settingsUI)
+        SettingsPanel(callbacks, settingsUI, settingsLogs)
     }
 }
 
 @Composable
-fun SettingsPanel(callbacks: SettingsDialogCallbacks, settingsUI: SettingsUI) {
+fun SettingsPanel(
+    callbacks: SettingsDialogCallbacks,
+    settingsUI: SettingsUI,
+    settingsLogs: SettingsLogs
+) {
     val tabs = mutableStateListOf("Appearance", "Logs", "Plugins")
     var tabIndex by remember { mutableStateOf(0) }
     Row(modifier = Modifier.padding(4.dp)) {
@@ -56,7 +63,7 @@ fun SettingsPanel(callbacks: SettingsDialogCallbacks, settingsUI: SettingsUI) {
         Column(Modifier.weight(1f)) {
             when (tabIndex) {
                 0 -> AppearancePanel(callbacks, settingsUI)
-                1 -> LogsPanel(callbacks)
+                1 -> LogsPanel(callbacks, settingsLogs)
                 2 -> PluginsPanel(callbacks)
                 else -> Unit
             }
@@ -70,5 +77,8 @@ fun PreviewSettingsDialog() {
     SettingsPanel(callbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) = Unit
 
-    }, settingsUI = SettingsUI(12, FontFamily.Serif))
+    },
+        settingsUI = SettingsUI(12, FontFamily.Serif),
+        settingsLogs = SettingsLogs(backendType = PayloadStorageType.Binary)
+    )
 }

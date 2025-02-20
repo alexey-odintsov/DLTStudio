@@ -9,8 +9,10 @@ import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.LogsPlugin
+import com.alekso.dltstudio.model.SettingsLogs
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.model.toSettingsLogs
 import com.alekso.dltstudio.model.toSettingsUI
 import com.alekso.dltstudio.model.toSettingsUIEntity
 import com.alekso.dltstudio.plugins.DependencyManager
@@ -41,7 +43,7 @@ class MainViewModel(
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
             CoroutineScope(IO).launch {
-                settingsRepository.updateUISettings(settings.toSettingsUIEntity())
+                settingsRepository.updateSettingsUI(settings.toSettingsUIEntity())
             }
         }
     }
@@ -53,14 +55,24 @@ class MainViewModel(
     private var _settingsUI = mutableStateOf(SettingsUI.Default)
     val settingsUI: State<SettingsUI> = _settingsUI
 
-    private fun observeSettingsUI() {
+    private var _settingsLogs = mutableStateOf(SettingsLogs.Default)
+    val settingsLogs: State<SettingsLogs> = _settingsLogs
+
+    private fun observeSettings() {
         println("observeSettingsUI")
         CoroutineScope(IO).launch {
-            settingsRepository.getUISettingsFlow().collect {
+            settingsRepository.getSettingsUIFlow().collect {
                 println("onUpdateUISettings($it)")
 
                 withContext(Main) {
                     _settingsUI.value = it.toSettingsUI()
+                }
+            }
+            settingsRepository.getSettingsLogsFlow().collect {
+                println("onUpdateLogsSettings($it)")
+
+                withContext(Main) {
+                    _settingsLogs.value = it.toSettingsLogs()
                 }
             }
         }
@@ -68,7 +80,7 @@ class MainViewModel(
 
 
     init {
-        observeSettingsUI()
+        observeSettings()
     }
 
     private var parseJob: Job? = null

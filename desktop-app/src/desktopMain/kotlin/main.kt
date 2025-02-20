@@ -47,6 +47,7 @@ fun main() = application {
                         visible = mainViewModel.settingsDialogState,
                         onDialogClosed = { mainViewModel.closeSettingsDialog() },
                         settingsUI = mainViewModel.settingsUI.value,
+                        settingsLogs = mainViewModel.settingsLogs.value,
                         callbacks = mainViewModel.settingsCallbacks,
                     )
                 }
