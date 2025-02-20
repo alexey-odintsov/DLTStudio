@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
@@ -20,6 +21,12 @@ import com.alekso.dltstudio.uicomponents.TabsPanel
 
 interface SettingsDialogCallbacks {
     fun onSettingsUIUpdate(settings: SettingsUI)
+
+    companion object {
+        val Stub = object : SettingsDialogCallbacks {
+            override fun onSettingsUIUpdate(settings: SettingsUI) = Unit
+        }
+    }
 }
 
 @Composable
@@ -43,10 +50,10 @@ fun SettingsPanel(callbacks: SettingsDialogCallbacks, settingsUI: SettingsUI) {
     val tabs = mutableStateListOf("Appearance", "Logs", "Plugins")
     var tabIndex by remember { mutableStateOf(0) }
     Row(modifier = Modifier.padding(4.dp)) {
-        Column(Modifier.width(200.dp)) {
+        Column(Modifier.width(140.dp)) {
             TabsPanel(tabIndex, tabs, { i -> tabIndex = i }, vertical = true)
         }
-        Column {
+        Column(Modifier.weight(1f)) {
             when (tabIndex) {
                 0 -> AppearancePanel(callbacks, settingsUI)
                 1 -> LogsPanel(callbacks)
@@ -63,5 +70,5 @@ fun PreviewSettingsDialog() {
     SettingsPanel(callbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) = Unit
 
-    }, settingsUI = SettingsUI(12, 1))
+    }, settingsUI = SettingsUI(12, FontFamily.Serif))
 }
