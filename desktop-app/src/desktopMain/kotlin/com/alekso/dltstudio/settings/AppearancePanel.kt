@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.SupportedFontFamilies
@@ -31,17 +32,19 @@ fun AppearancePanel(
     var fontFamily by remember { mutableStateOf(settingsUI.fontFamily) }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(text = "Appearance", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 10.dp))
+
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Font size: ${settingsUI.fontSize}")
+            Text("Font size:", Modifier.width(70.dp))
             CustomEditText(
-                modifier = Modifier.width(100.dp),
+                modifier = Modifier.width(50.dp),
                 value = fontSize, onValueChange = {
                     fontSize = it
                 }
             )
         }
-        Row {
-            Text("Font type: $fontFamily")
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Font:", Modifier.width(70.dp))
             CustomDropDown(
                 modifier = Modifier.width(150.dp).padding(horizontal = 4.dp),
                 items = SupportedFontFamilies.entries.map { it.name },
