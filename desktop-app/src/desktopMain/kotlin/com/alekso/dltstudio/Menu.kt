@@ -20,6 +20,7 @@ interface MainMenuCallbacks {
     fun onSaveTimelineFiltersFile(file: File)
     fun onClearColorFilters()
     fun onClearTimelineFilters()
+    fun onSettingsClicked()
 }
 
 @Composable
@@ -87,6 +88,10 @@ fun FrameWindowScope.MainMenu(callbacks: MainMenuCallbacks) {
                 stateIOpenFileDialog = FileChooserDialogState(
                     true, FileChooserDialogState.DialogContext.OPEN_DLT_FILE
                 )
+            })
+            Separator()
+            Item("Settings", onClick = {
+                callbacks.onSettingsClicked()
             })
         }
         Menu("Color filters") {

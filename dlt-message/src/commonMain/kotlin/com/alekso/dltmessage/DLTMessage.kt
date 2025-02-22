@@ -3,10 +3,10 @@ package com.alekso.dltmessage
 import com.alekso.dltmessage.extendedheader.ExtendedHeader
 import com.alekso.dltmessage.standardheader.StandardHeader
 
-enum class PayloadStorageType {
-    Structured,
-    Plain,
-    Binary,
+enum class PayloadStorageType(val id: Int) {
+    Structured(0),
+    Plain(1),
+    Binary(2),
 }
 
 /**

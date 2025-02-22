@@ -9,14 +9,12 @@ import java.util.Locale
 
 
 interface DLTParser {
-    val payloadStorageType: PayloadStorageType
-
     companion object {
         const val SIGNATURE_D = 'D'.code.toByte()
         const val SIGNATURE_L = 'L'.code.toByte()
         const val SIGNATURE_T = 'T'.code.toByte()
         const val SIGNATURE_01 = 1.toByte()
-        const val DEBUG_LOG = true // WARNING: Logging drastically slow down parsing!!!
+        const val DEBUG_LOG = false // WARNING: Logging drastically slow down parsing!!!
         const val MAX_BYTES_TO_READ_DEBUG = -1 // put -1 to ignore
         const val DLT_HEADER_SIZE_BYTES = 16
 
@@ -25,7 +23,9 @@ interface DLTParser {
     }
 
     suspend fun read(
-        progressCallback: (Float) -> Unit, files: List<File>
+        files: List<File>,
+        payloadStorageType: PayloadStorageType,
+        progressCallback: (Float) -> Unit,
     ): List<DLTMessage>
 
 }
