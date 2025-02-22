@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.com.alekso.dltstudio.settings
+package com.alekso.dltstudio.settings
 
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable

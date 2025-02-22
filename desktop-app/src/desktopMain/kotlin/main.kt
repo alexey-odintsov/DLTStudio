@@ -8,11 +8,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialog
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.preferences.Preferences
+import com.alekso.dltstudio.settings.SettingsDialog
 import com.alekso.dltstudio.ui.MainWindow
 import com.alekso.logger.Log
 

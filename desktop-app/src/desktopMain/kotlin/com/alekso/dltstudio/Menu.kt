@@ -7,8 +7,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialog
-import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState

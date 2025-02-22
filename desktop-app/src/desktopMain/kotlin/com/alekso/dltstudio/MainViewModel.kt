@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alekso.dltparser.DLTParser
-import com.alekso.dltstudio.com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.SettingsLogs
@@ -22,6 +21,7 @@ import com.alekso.dltstudio.plugins.contract.MessagesProvider
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
+import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO

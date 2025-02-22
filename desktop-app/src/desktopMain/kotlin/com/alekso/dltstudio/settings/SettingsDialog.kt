@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.com.alekso.dltstudio.settings
+package com.alekso.dltstudio.settings
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
