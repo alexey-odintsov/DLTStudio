@@ -1,6 +1,5 @@
 package com.alekso.dltstudio
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,6 +27,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -41,6 +45,9 @@ class MainViewModel(
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
 ) {
+    private val viewModelJob = SupervisorJob()
+    private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
             CoroutineScope(IO).launch {
@@ -49,7 +56,6 @@ class MainViewModel(
         }
 
         override fun onSettingsLogsUpdate(settings: SettingsLogs) {
-            println("onSettingsLogsUpdate $settings")
             CoroutineScope(IO).launch {
                 settingsRepository.updateSettingsLogs(settings.toSettingsLogsEntity())
             }
@@ -60,36 +66,20 @@ class MainViewModel(
 
 
     var settingsDialogState by mutableStateOf(false)
-    private var _settingsUI = mutableStateOf(SettingsUI.Default)
-    val settingsUI: State<SettingsUI> = _settingsUI
 
-    private var _settingsLogs = mutableStateOf(SettingsLogs.Default)
-    val settingsLogs: State<SettingsLogs> = _settingsLogs
+    val settingsUI: StateFlow<SettingsUI> =
+        settingsRepository.getSettingsUIFlow().map { it.toSettingsUI() }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = SettingsUI.Default
+        )
 
-    private fun observeSettings() {
-        println("observeSettingsUI")
-        CoroutineScope(IO).launch {
-            settingsRepository.getSettingsUIFlow().collect {
-                println("onUpdateUISettings($it)")
-
-                withContext(Main) {
-                    _settingsUI.value = it.toSettingsUI()
-                }
-            }
-            settingsRepository.getSettingsLogsFlow().collect {
-                println("onUpdateLogsSettings($it)")
-
-                withContext(Main) {
-                    _settingsLogs.value = it.toSettingsLogs()
-                }
-            }
-        }
-    }
-
-
-    init {
-        observeSettings()
-    }
+    val settingsLogs: StateFlow<SettingsLogs> =
+        settingsRepository.getSettingsLogsFlow().map { it.toSettingsLogs() }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = SettingsLogs.Default
+        )
 
     private var parseJob: Job? = null
 

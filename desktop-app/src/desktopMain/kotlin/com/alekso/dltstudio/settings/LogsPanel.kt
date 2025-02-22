@@ -8,10 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -24,8 +20,7 @@ import com.alekso.dltstudio.uicomponents.CustomDropDown
 
 @Composable
 fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
-    println("Recompose LogsPanel $settingsLogs")
-    var backendType by remember { mutableStateOf(settingsLogs.backendType) }
+    var backendType = settingsLogs.backendType
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(

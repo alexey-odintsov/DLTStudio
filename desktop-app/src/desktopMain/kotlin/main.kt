@@ -1,6 +1,7 @@
 package com.alekso.dltstudio
 
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.unit.dp
@@ -37,17 +38,19 @@ fun main() = application {
     ) {
         AppTheme {
             val mainViewModel = remember { DependencyManager.provideMainViewModel() }
+            val settingsUI = mainViewModel.settingsUI.collectAsState()
+            val settingsLogs = mainViewModel.settingsLogs.collectAsState()
             CompositionLocalProvider(
                 LocalFormatter provides DependencyManager.provideFormatter(),
-                LocalSettingsUI provides mainViewModel.settingsUI.value,
+                LocalSettingsUI provides settingsUI.value,
             ) {
 
                 if (mainViewModel.settingsDialogState) {
                     SettingsDialog(
                         visible = mainViewModel.settingsDialogState,
                         onDialogClosed = { mainViewModel.closeSettingsDialog() },
-                        settingsUI = mainViewModel.settingsUI.value,
-                        settingsLogs = mainViewModel.settingsLogs.value,
+                        settingsUI = LocalSettingsUI.current,
+                        settingsLogs = settingsLogs.value,
                         callbacks = mainViewModel.settingsCallbacks,
                     )
                 }

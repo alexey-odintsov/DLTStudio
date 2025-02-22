@@ -21,7 +21,7 @@ data class SettingsLogs(
 }
 
 fun SettingsLogsEntity.toSettingsLogs(): SettingsLogs =
-    SettingsLogs(SettingsLogs.getBackendById(id))
+    SettingsLogs(SettingsLogs.getBackendById(backendType))
 
 fun SettingsLogs.toSettingsLogsEntity(): SettingsLogsEntity =
     SettingsLogsEntity(SettingsLogs.getIdByBackend(backendType))

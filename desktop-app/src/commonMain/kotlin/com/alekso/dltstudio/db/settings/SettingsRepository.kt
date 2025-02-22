@@ -1,7 +1,6 @@
 package com.alekso.dltstudio.db.settings
 
 import com.alekso.dltstudio.db.AppDatabase
-import com.alekso.dltstudio.model.SettingsLogs
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
@@ -26,7 +25,6 @@ class SettingsRepositoryImpl(
     }
 
     override suspend fun updateSettingsLogs(item: SettingsLogsEntity) {
-        println("Repo updateSettingsLogs $item")
         database.getSettingsDao().updateSettingsLogs(item)
     }
 
