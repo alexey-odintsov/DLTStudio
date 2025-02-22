@@ -3,7 +3,6 @@ package com.alekso.dltstudio.plugins
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.alekso.dltparser.DLTParserV2
-import com.alekso.dltmessage.PayloadStorageType
 import com.alekso.dltstudio.AppFormatter
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory
@@ -71,7 +70,7 @@ object DependencyManager {
     }
 
     private val mainViewModel = MainViewModel(
-        dltParser = DLTParserV2(PayloadStorageType.Binary),
+        dltParser = DLTParserV2(),
         messagesHolder = provideMessageHolder(),
         messagesProvider = provideMessagesProvider(),
         timelineHolder = provideTimelineViewModel(),

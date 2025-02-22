@@ -153,7 +153,11 @@ class MainViewModel(
         messagesHolder.clearMessages()
         parseJob = CoroutineScope(IO).launch {
             messagesHolder.storeMessages(
-                dltParser.read(DependencyManager.onProgressUpdate, dltFiles).map { LogMessage(it) })
+                dltParser.read(
+                    dltFiles,
+                    settingsLogs.value.backendType,
+                    DependencyManager.onProgressUpdate
+                ).map { LogMessage(it) })
         }
     }
 

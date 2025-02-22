@@ -3,17 +3,10 @@ package com.alekso.dltparser
 import com.alekso.datautils.Endian
 import com.alekso.datautils.isBitSet
 import com.alekso.datautils.toHex
-import com.alekso.dltmessage.Payload
-import com.alekso.dltparser.DLTParser.Companion.DEBUG_LOG
-import com.alekso.dltparser.DLTParser.Companion.DLT_HEADER_SIZE_BYTES
-import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_01
-import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_D
-import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_L
-import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_T
-import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.dltmessage.BinaryDLTMessage
 import com.alekso.dltmessage.ControlMessagePayload
 import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltmessage.Payload
 import com.alekso.dltmessage.PayloadStorageType
 import com.alekso.dltmessage.PlainDLTMessage
 import com.alekso.dltmessage.StructuredDLTMessage
@@ -25,6 +18,13 @@ import com.alekso.dltmessage.nonverbosepayload.NonVerbosePayload
 import com.alekso.dltmessage.standardheader.HeaderType
 import com.alekso.dltmessage.standardheader.StandardHeader
 import com.alekso.dltmessage.verbosepayload.VerbosePayload
+import com.alekso.dltparser.DLTParser.Companion.DEBUG_LOG
+import com.alekso.dltparser.DLTParser.Companion.DLT_HEADER_SIZE_BYTES
+import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_01
+import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_D
+import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_L
+import com.alekso.dltparser.DLTParser.Companion.SIGNATURE_T
+import com.alekso.dltparser.DLTParser.Companion.simpleDateFormat
 import com.alekso.logger.Log
 import java.io.EOFException
 import java.io.File
@@ -32,12 +32,10 @@ import java.io.File
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
-class DLTParserV2(
-    override val payloadStorageType: PayloadStorageType,
-) : DLTParser {
+class DLTParserV2() : DLTParser {
 
     init {
-        Log.d("Init parser ${this.javaClass.simpleName} with payloadStorageType: $payloadStorageType")
+        Log.d("Init parser ${this.javaClass.simpleName}")
     }
 
     /**
@@ -45,7 +43,9 @@ class DLTParserV2(
      * https://www.autosar.org/fileadmin/standards/R22-11/FO/AUTOSAR_PRS_LogAndTraceProtocol.pdf - Header Type for protocol version "2"
      */
     override suspend fun read(
-        progressCallback: (Float) -> Unit, files: List<File>
+        files: List<File>,
+        payloadStorageType: PayloadStorageType,
+        progressCallback: (Float) -> Unit,
     ): List<DLTMessage> {
         progressCallback.invoke(0f)
         val messages = mutableListOf<DLTMessage>()
@@ -55,13 +55,12 @@ class DLTParserV2(
         val startMs = System.currentTimeMillis()
 
         // todo: What to do with non-DLT files? silently skip?
-        Log.d("Total ${files.size} file(s) with size: $totalSize bytes")
+        Log.d("Parsing using payloadType:'$payloadStorageType' ${files.size} file(s) with size: $totalSize bytes")
         files.forEach { file ->
             val fileSize = file.length()
             Log.d("Parsing '$file'")
             ParserInputStream(file.inputStream().buffered(64 * 1024 * 1024)).use { stream ->
                 var i = 0L
-                var shouldLog: Boolean
                 var bufByte: Byte
 
                 var prevTs = System.currentTimeMillis()
@@ -89,10 +88,9 @@ class DLTParserV2(
                             i++; skippedBytes++
                             continue
                         }
-                        shouldLog = false //logsReadCount == 3
 
                         // DLT signature was matched, now we can try to parse DLT message
-                        val (dltMessage, len) = parseDLTMessage(stream, i, shouldLog)
+                        val (dltMessage, len) = parseDLTMessage(stream, i, payloadStorageType)
                         messages.add(dltMessage)
                         i += len
                     } catch (e: EOFException) {
@@ -116,7 +114,7 @@ class DLTParserV2(
     fun parseDLTMessage(
         stream: ParserInputStream,
         offset: Long,
-        shouldLog: Boolean
+        payloadStorageType: PayloadStorageType,
     ): Pair<DLTMessage, Int> {
         var i = offset
         val timeStampSec = stream.readIntLittle()
@@ -125,21 +123,12 @@ class DLTParserV2(
         val ecuId = stream.readString(4)
         i += DLT_HEADER_SIZE_BYTES
 
-        if (DEBUG_LOG && shouldLog) {
-            println(
-                "timestamp: '${
-                    simpleDateFormat.format(
-                        timeStampSec * 1000L
-                    )
-                }', ecu: '$ecuId'"
-            )
-        }
-        val standardHeader = parseStandardHeader(shouldLog, stream)
+        val standardHeader = parseStandardHeader(stream)
         i += standardHeader.getSize()
 
         var extendedHeader: ExtendedHeader? = null
         if (standardHeader.headerType.useExtendedHeader) {
-            extendedHeader = parseExtendedHeader(shouldLog, stream)
+            extendedHeader = parseExtendedHeader(stream)
             i += extendedHeader.getSize()
         }
 
@@ -257,21 +246,16 @@ class DLTParserV2(
     }
 
     private fun parseStandardHeader(
-        shouldLog: Boolean,
         stream: ParserInputStream,
     ): StandardHeader {
-        if (DEBUG_LOG && shouldLog) {
-            println("StandardHeader.parse")
-        }
-
-        val headerType = parseStandardHeaderType(shouldLog, stream.readByte())
+        val headerType = parseStandardHeaderType(stream.readByte())
         val messageCounter = stream.readUnsignedByte().toUByte()
         val length = stream.readUnsignedShort().toUShort()
         val ecuId = if (headerType.withEcuId) stream.readString(4) else null
         val sessionId = if (headerType.withSessionId) stream.readInt() else null
         val timeStamp = if (headerType.withTimestamp) stream.readInt().toUInt() else null
 
-        if (DEBUG_LOG && shouldLog) {
+        if (DEBUG_LOG) {
             println(
                 "   messageCounter: $messageCounter; length: $length: ecuId: '$ecuId', sessionId: $sessionId; timeStamp: ${
                     if (timeStamp != null) simpleDateFormat.format(timeStamp.toLong() / 10000) else "null"
@@ -284,7 +268,7 @@ class DLTParserV2(
         )
     }
 
-    private fun parseStandardHeaderType(shouldLog: Boolean, byte: Byte): HeaderType {
+    private fun parseStandardHeaderType(byte: Byte): HeaderType {
         val useExtendedHeader = byte.isBitSet(0)
         val payloadBigEndian = byte.isBitSet(1)
         val withEcuId = byte.isBitSet(2)
@@ -292,7 +276,7 @@ class DLTParserV2(
         val withTimestamp = byte.isBitSet(4)
         val versionNumber = (byte.toInt() shr 5).toByte()
 
-        if (DEBUG_LOG && shouldLog) {
+        if (DEBUG_LOG) {
             println(
                 "   HeaderType.parse: " + "${byte.toHex()} (${
                     byte.toString(2).padStart(8, '0')
@@ -312,10 +296,9 @@ class DLTParserV2(
     }
 
     private fun parseExtendedHeader(
-        shouldLog: Boolean,
         stream: ParserInputStream,
     ): ExtendedHeader {
-        if (DEBUG_LOG && shouldLog) {
+        if (DEBUG_LOG) {
             println("ExtendedHeader.parse:")
         }
         val messageInfo = parseMessageInfo(stream.readByte())
@@ -323,7 +306,7 @@ class DLTParserV2(
         val applicationId = stream.readString(4)
         val contextId = stream.readString(4)
 
-        if (DEBUG_LOG && shouldLog) {
+        if (DEBUG_LOG) {
             println(
                 "   messageInfo: $messageInfo, argumentsCount: $argumentsCount, applicationId: $applicationId, contextId: $contextId"
             )
