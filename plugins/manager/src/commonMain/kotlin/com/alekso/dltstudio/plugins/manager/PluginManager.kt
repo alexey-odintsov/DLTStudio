@@ -14,16 +14,14 @@ import java.util.Enumeration
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
 
-private const val DEFAULT_PLUGINS_FOLDER = "/plugins/"
-
 class PluginManager(
+    val pluginsPath: String,
     private val formatter: Formatter,
     private val messagesProvider: MessagesProvider,
     private val onProgressUpdate: (Float) -> Unit
 ) {
     private val predefinedPlugins = mutableListOf<DLTStudioPlugin>()
-    internal val plugins = mutableListOf<DLTStudioPlugin>()
-
+    val plugins = mutableListOf<DLTStudioPlugin>()
 
     fun registerPredefinedPlugin(plugin: DLTStudioPlugin) {
         if (!predefinedPlugins.contains(plugin)) {
@@ -42,18 +40,12 @@ class PluginManager(
             }
             plugins.add(plugin)
         }
-        loadJarPlugins("plugins")
+        loadJarPlugins()
     }
 
-    internal fun loadJarPlugins(path: String? = null) {
+    internal fun loadJarPlugins() {
         Log.d("Loading Jar plugins")
-        val pluginsDir: File = if (path != null) {
-            File(path)
-        } else {
-            val curPath = File("").absolutePath
-            File("$curPath$DEFAULT_PLUGINS_FOLDER")
-        }
-
+        val pluginsDir = File(pluginsPath)
         val files = pluginsDir.listFiles()?.filter { it.name.endsWith(".jar") }
 
         Log.d("Found ${files?.size} jars")

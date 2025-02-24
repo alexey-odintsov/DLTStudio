@@ -4,6 +4,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import com.alekso.dltparser.DLTParserV2
 import com.alekso.dltstudio.AppFormatter
+import com.alekso.dltstudio.Env
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
@@ -37,6 +38,7 @@ object DependencyManager {
 
     private val pluginsManager by lazy {
         PluginManager(
+            pluginsPath = Env.getPluginsPath(),
             formatter = formatter,
             messagesProvider = provideMessagesProvider(),
             onProgressUpdate = onProgressUpdate,

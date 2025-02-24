@@ -56,7 +56,7 @@ fun SettingsPanel(
     settingsUI: SettingsUI,
     settingsLogs: SettingsLogs,
 ) {
-    val tabs = mutableStateListOf("Appearance", "Logs")
+    val tabs = mutableStateListOf("Appearance", "Logs", "Plugins")
     var tabIndex by remember { mutableStateOf(0) }
     Row(modifier = Modifier.padding(4.dp)) {
         Column(Modifier.width(140.dp)) {
@@ -66,6 +66,7 @@ fun SettingsPanel(
             when (tabIndex) {
                 0 -> AppearancePanel(callbacks, settingsUI)
                 1 -> LogsPanel(callbacks, settingsLogs)
+                2 -> PluginsPanel(callbacks)
                 else -> Unit
             }
         }

@@ -7,6 +7,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesProvider
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import org.junit.Test
+import java.io.File
 
 class PluginTest {
 
@@ -17,10 +18,14 @@ class PluginTest {
                 return mutableStateListOf()
             }
         }
-        val pluginManager = PluginManager(Formatter.STUB, messagesProvider, { _ -> })
+        val pluginManager = PluginManager(
+            "${File("").absolutePath}/plugins/",
+            Formatter.STUB,
+            messagesProvider,
+            { _ -> })
         pluginManager.loadJarPlugins()
         println("Loaded plugins: ${pluginManager.plugins}")
-        assert(pluginManager.plugins.size > 0)
+        assert(pluginManager.plugins.filter { it.pluginName().lowercase().contains("testplugin") }.isNotEmpty())
     }
 
 }
