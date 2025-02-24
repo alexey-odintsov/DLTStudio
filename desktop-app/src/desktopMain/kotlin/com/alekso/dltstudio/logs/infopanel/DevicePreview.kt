@@ -47,7 +47,7 @@ fun DevicePreviewView(
                 modifier = paddingModifier, text = "Device Preview for #$messageIndex:"
             )
 //            val headerText =
-//                "${TimeFormatter.formatDateTime(it.timeStampNano)} " + "${it.extendedHeader?.applicationId} " + "${it.extendedHeader?.contextId} "
+//                "${TimeFormatter.formatDateTime(it.timeStampUs)} " + "${it.extendedHeader?.applicationId} " + "${it.extendedHeader?.contextId} "
 //            TableRow(0, "", headerText)
 //            TableRow(0, "", it.payload)
 //        }

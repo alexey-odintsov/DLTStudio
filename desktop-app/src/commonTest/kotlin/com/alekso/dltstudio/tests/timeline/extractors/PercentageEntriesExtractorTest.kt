@@ -15,7 +15,7 @@ class PercentageEntriesExtractorTest {
     @Test
     fun `Test PercentageEntriesExtractor named groups many entries`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L, payload = "12% 67% 89%"
+            timeStampUs = 1234567890L, payload = "12% 67% 89%"
         )
         val pattern = """(?<g1>\d+)%\s(?<g2>\d+)%\s(?<g3>\d+)%"""
 
@@ -36,7 +36,7 @@ class PercentageEntriesExtractorTest {
     @Test
     fun `Test PercentageEntriesExtractor named groups one entry, empty key`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L, payload = "GPU Load: 5.18%, Preemptions: 39"
+            timeStampUs = 1234567890L, payload = "GPU Load: 5.18%, Preemptions: 39"
         )
         val pattern = """GPU Load:\s+(?<value>\d+.\d+)%(?<key>)"""
 
@@ -55,7 +55,7 @@ class PercentageEntriesExtractorTest {
     @Test
     fun `Test PercentageEntriesExtractor with dynamic group names`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L, payload = "cpu0: 12% cpu1: 34% cpu3: 66%"
+            timeStampUs = 1234567890L, payload = "cpu0: 12% cpu1: 34% cpu3: 66%"
         )
         val pattern = """(.*):\s(\d+)%\s(.*):\s(\d+)%\s(.*):\s(\d+)%"""
 

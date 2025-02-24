@@ -25,7 +25,7 @@ class MinMaxEntriesExtractor : EntriesExtractor {
                 if (value != null) {
                     list.add(
                         TimeLineFloatEntry(
-                            message.timeStampNano,
+                            message.timeStampUs,
                             key,
                             value.toFloat()
                         )
@@ -41,7 +41,7 @@ class MinMaxEntriesExtractor : EntriesExtractor {
                             val value = group.value
                             list.add(
                                 TimeLineFloatEntry(
-                                    message.timeStampNano,
+                                    message.timeStampUs,
                                     key ?: "",
                                     value.toFloat()
                                 )
@@ -59,7 +59,7 @@ class MinMaxEntriesExtractor : EntriesExtractor {
                         val value = matches.groups[i + 1]?.value
                         if (key != null && value != null) {
                             list.add(
-                                TimeLineFloatEntry(message.timeStampNano, key, value.toFloat())
+                                TimeLineFloatEntry(message.timeStampUs, key, value.toFloat())
                             )
                         }
                     }

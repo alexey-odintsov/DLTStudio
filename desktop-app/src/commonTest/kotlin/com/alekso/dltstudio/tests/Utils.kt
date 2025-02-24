@@ -14,14 +14,14 @@ import com.alekso.dltmessage.verbosepayload.VerbosePayload
 
 object Utils {
     fun dltMessage(
-        timeStampNano: Long = System.nanoTime(),
+        timeStampUs: Long = System.currentTimeMillis() * 1000,
         ecuId: String = "ECU1",
         appId: String = "App",
         contextId: String = "Context",
         payload: String = "Test payload",
     ): DLTMessage {
         return StructuredDLTMessage(
-            timeStampNano,
+            timeStampUs,
             StandardHeader(
                 HeaderType(
                     61.toByte(),

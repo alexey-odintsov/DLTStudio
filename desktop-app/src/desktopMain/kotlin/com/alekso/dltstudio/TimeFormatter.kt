@@ -25,9 +25,9 @@ class AppFormatter : Formatter {
     }
     private var _timeZone by mutableStateOf(TimeZone.currentSystemDefault())
 
-    override fun formatDateTime(timeStampNano: Long): String = format(dateTimeFormat, timeStampNano)
+    override fun formatDateTime(timeStampUs: Long): String = format(dateTimeFormat, timeStampUs)
 
-    override fun formatTime(timeStampNano: Long): String = format(timeFormat, timeStampNano)
+    override fun formatTime(timeStampUs: Long): String = format(timeFormat, timeStampUs)
 
     override fun formatSizeHuman(size: Long): String {
         return when {
@@ -43,9 +43,9 @@ class AppFormatter : Formatter {
 
     override fun getTimeZone(): TimeZone = _timeZone
 
-    private fun format(formatter: DateTimeFormat<LocalDateTime>, timeStampNano: Long): String {
+    private fun format(formatter: DateTimeFormat<LocalDateTime>, timeStampUs: Long): String {
         val instant =
-            Instant.fromEpochSeconds(timeStampNano / 1000000L, (timeStampNano % 1000000) * 1000L)
+            Instant.fromEpochSeconds(timeStampUs / 1_000_000L, (timeStampUs % 1_000_000L) * 1000L)
         return instant.toLocalDateTime(_timeZone).format(formatter)
     }
 

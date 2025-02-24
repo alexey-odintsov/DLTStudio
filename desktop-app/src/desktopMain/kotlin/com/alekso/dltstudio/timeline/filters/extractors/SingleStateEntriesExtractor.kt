@@ -23,7 +23,7 @@ class SingleStateEntriesExtractor : EntriesExtractor {
 
                 if (value != null) {
                     list.add(
-                        TimeLineSingleStateEntry(message.timeStampNano, key, value)
+                        TimeLineSingleStateEntry(message.timeStampUs, key, value)
                     )
                 }
             }
@@ -36,7 +36,7 @@ class SingleStateEntriesExtractor : EntriesExtractor {
                     val value = matches.groups[INDEX_VALUE + 1]?.value
                     if (key != null && value != null) {
                         list.add(
-                            TimeLineSingleStateEntry(message.timeStampNano, key, value)
+                            TimeLineSingleStateEntry(message.timeStampUs, key, value)
                         )
                     }
                 }

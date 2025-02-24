@@ -31,7 +31,7 @@ fun DLTDetailedInfoView(
                 )
                 TableRow(
                     parameterRowWidth, "Timestamp",
-                    "${it.timeStampNano}"
+                    "${it.timeStampUs}"
                 )
                 TableRow(
                     parameterRowWidth, "ECU Id",

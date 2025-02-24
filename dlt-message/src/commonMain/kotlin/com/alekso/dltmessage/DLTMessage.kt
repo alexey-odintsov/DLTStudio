@@ -14,7 +14,7 @@ enum class PayloadStorageType(val id: Int) {
  * https://github.com/esrlabs/dlt-core
  */
 abstract class DLTMessage (
-    open val timeStampNano: Long,
+    open val timeStampUs: Long,
     open val standardHeader: StandardHeader,
     open val extendedHeader: ExtendedHeader?,
 ) {

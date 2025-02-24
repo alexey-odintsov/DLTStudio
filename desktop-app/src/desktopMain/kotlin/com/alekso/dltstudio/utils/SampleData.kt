@@ -15,7 +15,7 @@ object SampleData {
 
         for (i in 0..size) {
             val dltMessage = create(
-                timeStampNano = System.currentTimeMillis(),
+                timeStampUs = System.currentTimeMillis() * 1000,
                 payloadText = "Test message $i"
             )
             list.add(dltMessage)
@@ -25,7 +25,7 @@ object SampleData {
     }
 
     fun create(
-        timeStampNano: Long = System.nanoTime(),
+        timeStampUs: Long = System.currentTimeMillis() * 1000,
         messageType: MessageType = MessageType.DLT_TYPE_LOG,
         messageTypeInfo: MessageTypeInfo = MessageTypeInfo.DLT_LOG_DEBUG,
         ecuId: String? = "ECU1",
@@ -36,7 +36,7 @@ object SampleData {
         timeStamp: UInt? = 1U
     ): DLTMessage {
         return PlainDLTMessage(
-            timeStampNano = timeStampNano,
+            timeStampUs = timeStampUs,
             standardHeader = StandardHeader(
                 HeaderType(
                     originalByte = 0.toByte(),

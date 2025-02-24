@@ -108,7 +108,7 @@ class DLTParserV2() : DLTParser {
         }
         progressCallback.invoke(1f)
         Log.d("Parsing complete in ${(System.currentTimeMillis() - startMs) / 1000} sec. Parsed ${messages.size} messages; $bytesRead bytes read and $skippedBytes skipped bytes")
-        return messages.sortedBy { it.timeStampNano }
+        return messages.sortedBy { it.timeStampUs }
     }
 
     fun parseDLTMessage(
@@ -118,9 +118,9 @@ class DLTParserV2() : DLTParser {
     ): Pair<DLTMessage, Int> {
         var i = offset
         val timeStampSec = stream.readIntLittle()
-        val timeStampUs = stream.readIntLittle()
-        val timeStampNano = timeStampSec * 1000000L + timeStampUs
-        val ecuId = stream.readString(4)
+        val microSeconds = stream.readIntLittle()
+        val timeStampUs = timeStampSec * 1000000L + microSeconds
+        val ecuId = stream.readString(4) // don't remove it!
         i += DLT_HEADER_SIZE_BYTES
 
         val standardHeader = parseStandardHeader(stream)
@@ -145,7 +145,7 @@ class DLTParserV2() : DLTParser {
                     payload =
                         parseStructuredPayload(stream, payloadSize, extendedHeader, payloadEndian)
                 }
-                StructuredDLTMessage(timeStampNano, standardHeader, extendedHeader, payload)
+                StructuredDLTMessage(timeStampUs, standardHeader, extendedHeader, payload)
             }
 
             PayloadStorageType.Plain -> {
@@ -165,7 +165,7 @@ class DLTParserV2() : DLTParser {
 //                    }
                 }
                 PlainDLTMessage(
-                    timeStampNano = timeStampNano,
+                    timeStampUs = timeStampUs,
                     standardHeader = standardHeader,
                     extendedHeader = extendedHeader,
                     payload = payload
@@ -181,7 +181,7 @@ class DLTParserV2() : DLTParser {
                     payload = parseBinaryPayload(stream, payloadSize)
                 }
                 BinaryDLTMessage(
-                    timeStampNano = timeStampNano,
+                    timeStampUs = timeStampUs,
                     standardHeader = standardHeader,
                     extendedHeader = extendedHeader,
                     payload = payload,

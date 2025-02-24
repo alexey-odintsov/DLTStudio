@@ -15,10 +15,10 @@ class DurationEntriesExtractorTest {
     @Test
     fun `Test DurationEntriesExtractor using named groups`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L, payload = "TestAppActivity.onStart"
+            timeStampUs = 1234567890L, payload = "TestAppActivity.onStart"
         )
         val dltMessage2 = Utils.dltMessage(
-            timeStampNano = 1234567895L, payload = "TestAppActivity.onStop"
+            timeStampUs = 1234567895L, payload = "TestAppActivity.onStop"
         )
         val pattern = """(?<key>.*)\.((?<begin>onStart)|(?<end>onStop))"""
 
