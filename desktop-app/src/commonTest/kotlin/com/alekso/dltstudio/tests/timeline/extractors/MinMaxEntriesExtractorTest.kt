@@ -15,7 +15,7 @@ class MinMaxEntriesExtractorTest {
     @Test
     fun `Test MinMaxEntriesExtractor using named groups`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L, payload = "12345 67 890"
+            timeStampUs = 1234567890L, payload = "12345 67 890"
         )
         val pattern = """(?<g1>\d+)\s(?<g2>\d+)\s(?<g3>\d+)"""
 
@@ -34,7 +34,7 @@ class MinMaxEntriesExtractorTest {
     @Test
     fun `Test MinMaxEntriesExtractor using named groups one entry`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L, payload = "MaxRSS: 345"
+            timeStampUs = 1234567890L, payload = "MaxRSS: 345"
         )
         val pattern = """(?<key>MaxRSS):\s(?<value>\d+)"""
 
@@ -51,7 +51,7 @@ class MinMaxEntriesExtractorTest {
     @Test
     fun `Test MinMaxEntriesExtractor with dynamic group names`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L, payload = "cpu0: 12 cpu1: 34 cpu3: 66"
+            timeStampUs = 1234567890L, payload = "cpu0: 12 cpu1: 34 cpu3: 66"
         )
         val pattern = """(.*):\s(\d+)\s(.*):\s(\d+)\s(.*):\s(\d+)"""
 

@@ -47,7 +47,7 @@ fun DLTSimplifiedInfoView(
                     modifier = paddingModifier,
                     text = "DLT Message #$messageIndex:"
                 )
-                val headerText = "${LocalFormatter.current.formatDateTime(it.timeStampNano)} " +
+                val headerText = "${LocalFormatter.current.formatDateTime(it.timeStampUs)} " +
                         "${it.extendedHeader?.applicationId} " +
                         "${it.extendedHeader?.contextId} "
                 TableRow(0, "", headerText)

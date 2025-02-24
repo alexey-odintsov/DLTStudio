@@ -16,7 +16,7 @@ class EventEntriesExtractorTest {
     @Test
     fun `Test EventEntriesExtractor using named groups`() {
         val dltMessage = Utils.dltMessage(
-            timeStampNano = 1234567890L,
+            timeStampUs = 1234567890L,
             payload = "Crash (JAVA_CRASH) detected. Filename: /data/system/dropbox/system_app_crash@1705410604456.txt. Process: com.myapp (PID: 8275). Exception: java.lang.AbstractMethodError.. Crash ID: JAVA:fc4dc801f9b4bf581e24224e8ed117c2617e083c"
         )
         val pattern =

@@ -23,7 +23,7 @@ class DurationEntriesExtractor : EntriesExtractor {
                 val end: String? = matches.groups[Param.END.value]?.value
 
                 list.add(
-                    TimeLineDurationEntry(message.timeStampNano, key, Pair(begin, end))
+                    TimeLineDurationEntry(message.timeStampUs, key, Pair(begin, end))
                 )
             }
 

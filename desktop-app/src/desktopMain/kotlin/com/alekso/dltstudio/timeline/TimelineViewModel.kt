@@ -97,7 +97,7 @@ class TimelineViewModel(
                 dltMessages.forEachIndexed { index, message ->
                     yield()
                     // timeStamps
-                    val ts = message.dltMessage.timeStampNano
+                    val ts = message.dltMessage.timeStampUs
                     if (ts > _timeEnd) {
                         _timeEnd = ts
                     }

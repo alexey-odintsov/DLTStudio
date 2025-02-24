@@ -24,7 +24,7 @@ class StateEntriesExtractor : EntriesExtractor {
                 if (value != null && oldValue != null) {
                     list.add(
                         TimeLineStateEntry(
-                            message.timeStampNano,
+                            message.timeStampUs,
                             key,
                             Pair(value, oldValue)
                         )
@@ -41,7 +41,7 @@ class StateEntriesExtractor : EntriesExtractor {
                     val oldValue = matches.groups[INDEX_OLD_VALUE + 1]?.value
                     if (key != null && value != null && oldValue != null) {
                         list.add(
-                            TimeLineStateEntry(message.timeStampNano, key, Pair(value, oldValue))
+                            TimeLineStateEntry(message.timeStampUs, key, Pair(value, oldValue))
                         )
                     }
                 }

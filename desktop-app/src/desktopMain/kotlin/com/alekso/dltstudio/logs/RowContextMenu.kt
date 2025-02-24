@@ -60,7 +60,7 @@ fun RowContextMenu(
             })
     }
 
-    message.dltMessage.timeStampNano.let {
+    message.dltMessage.timeStampUs.let {
         menuItems.add(ContextMenuItem("Remove rows before") {
             rowContextMenuCallbacks.onRemoveClicked(LogRemoveContext.BeforeTimestamp, it.toString())
         })

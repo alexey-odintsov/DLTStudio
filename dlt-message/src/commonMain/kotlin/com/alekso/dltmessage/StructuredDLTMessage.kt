@@ -5,14 +5,14 @@ import com.alekso.dltmessage.standardheader.StandardHeader
 
 
 data class StructuredDLTMessage(
-    override val timeStampNano: Long,
+    override val timeStampUs: Long,
     override val standardHeader: StandardHeader,
     override val extendedHeader: ExtendedHeader?,
     val payload: Payload?,
-) : DLTMessage(timeStampNano, standardHeader, extendedHeader) {
+) : DLTMessage(timeStampUs, standardHeader, extendedHeader) {
 
     override fun toString(): String {
-        return "{$timeStampNano\n" +
+        return "{$timeStampUs\n" +
                 " $standardHeader\n" +
                 " $extendedHeader}\n" +
                 " '${payload?.asText()}'}"

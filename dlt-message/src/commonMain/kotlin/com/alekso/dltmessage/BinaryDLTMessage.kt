@@ -10,11 +10,11 @@ import com.alekso.dltmessage.standardheader.StandardHeader
 import com.alekso.dltmessage.verbosepayload.VerbosePayload
 
 data class BinaryDLTMessage(
-    override val timeStampNano: Long,
+    override val timeStampUs: Long,
     override val standardHeader: StandardHeader,
     override val extendedHeader: ExtendedHeader?,
     val payload: ByteArray?,
-) : DLTMessage(timeStampNano, standardHeader, extendedHeader) {
+) : DLTMessage(timeStampUs, standardHeader, extendedHeader) {
     override fun payloadText(): String = if (payload != null) parsePayload(payload) else ""
 
     override fun payloadBytes(): ByteArray? = payload
@@ -65,7 +65,7 @@ data class BinaryDLTMessage(
 
         other as BinaryDLTMessage
 
-        if (timeStampNano != other.timeStampNano) return false
+        if (timeStampUs != other.timeStampUs) return false
         if (standardHeader != other.standardHeader) return false
         if (extendedHeader != other.extendedHeader) return false
         if (!payload.contentEquals(other.payload)) return false
@@ -74,7 +74,7 @@ data class BinaryDLTMessage(
     }
 
     override fun hashCode(): Int {
-        var result = timeStampNano.hashCode()
+        var result = timeStampUs.hashCode()
         result = 31 * result + standardHeader.hashCode()
         result = 31 * result + (extendedHeader?.hashCode() ?: 0)
         result = 31 * result + (payload?.contentHashCode() ?: 0)

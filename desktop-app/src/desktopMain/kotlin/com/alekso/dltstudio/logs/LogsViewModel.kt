@@ -403,8 +403,8 @@ class LogsViewModel(
                     LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId != filter
                     LogRemoveContext.EcuId -> message.standardHeader.ecuId != filter
                     LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() != filter
-                    LogRemoveContext.BeforeTimestamp -> message.timeStampNano >= filter.toLong()
-                    LogRemoveContext.AfterTimestamp -> message.timeStampNano <= filter.toLong()
+                    LogRemoveContext.BeforeTimestamp -> message.timeStampUs >= filter.toLong()
+                    LogRemoveContext.AfterTimestamp -> message.timeStampUs <= filter.toLong()
                     LogRemoveContext.Payload -> {
                         true
                     }

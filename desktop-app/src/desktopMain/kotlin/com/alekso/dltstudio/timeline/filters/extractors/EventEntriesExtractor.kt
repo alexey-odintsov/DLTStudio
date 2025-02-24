@@ -25,7 +25,7 @@ class EventEntriesExtractor : EntriesExtractor {
                 if (value != null) {
                     list.add(
                         TimeLineEventEntry(
-                            message.timeStampNano,
+                            message.timeStampUs,
                             key,
                             TimeLineEvent(value, info)
                         )
