@@ -8,15 +8,22 @@ import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 
+enum class TestEnum {
+    Enum1,
+    Enum2
+}
+
 class TestPlugin : DLTStudioPlugin, PluginPanel {
+    private var value: TestEnum = TestEnum.Enum2
+
     override fun pluginName(): String = "TestPlugin"
 
     override fun pluginVersion(): String = "1.0.0"
 
-    override fun pluginClassName(): String = "com.alekso.dltstudio.plugins.testplugin.TestPlugin"
+    override fun pluginClassName(): String = TestPlugin::class.qualifiedName.toString()
 
     override fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit) {
-
+        val value = TestEnum.Enum1
     }
 
     override fun onLogsChanged() {
@@ -28,6 +35,7 @@ class TestPlugin : DLTStudioPlugin, PluginPanel {
     @Composable
     override fun renderPanel(modifier: Modifier) {
         Text("Test plugin works!")
+        Text("value = $value")
     }
 
 }
