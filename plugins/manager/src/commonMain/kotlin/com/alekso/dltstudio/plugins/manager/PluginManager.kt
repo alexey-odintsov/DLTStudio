@@ -90,14 +90,18 @@ class PluginManager(
 
 
                         val pluginClass = urlLoader.loadClass(className)
-                        val plugin: DLTStudioPlugin =
-                            pluginClass.getConstructor().newInstance() as DLTStudioPlugin
-                        val identifyResult = pluginClass.getMethod("pluginName").invoke(plugin)
-                        Log.i("Identify: $identifyResult")
-                        Log.i("Class: $plugin")
-                        Log.i("Methods: ${plugin.javaClass.declaredMethods.map { it.name }}")
-                        jarPlugins.add(plugin)
-
+                        var plugin: DLTStudioPlugin? = null
+                        try { // todo: Skip non DLTStudioPlugin classes
+                            plugin = pluginClass.getConstructor().newInstance() as DLTStudioPlugin
+                        } catch (ignored: Exception) {
+                        }
+                        if (plugin != null) {
+                            val identifyResult = pluginClass.getMethod("pluginName").invoke(plugin)
+                            Log.i("Identify: $identifyResult")
+                            Log.i("Class: $plugin")
+                            Log.i("Methods: ${plugin.javaClass.declaredMethods.map { it.name }}")
+                            jarPlugins.add(plugin)
+                        }
                     } catch (ex: Exception) {
                         Log.e(ex.toString())
                     }
