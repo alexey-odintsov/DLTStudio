@@ -23,9 +23,9 @@ class PluginTest {
             Formatter.STUB,
             messagesProvider,
             { _ -> })
-        pluginManager.loadJarPlugins()
+        val plugins = pluginManager.loadJarPlugins()
         println("Loaded plugins: ${pluginManager.plugins}")
-        assert(pluginManager.plugins.filter { it.pluginName().lowercase().contains("testplugin") }.isNotEmpty())
+        assert(plugins.filter { it.pluginName().lowercase().contains("testplugin") }.isNotEmpty())
     }
 
 }

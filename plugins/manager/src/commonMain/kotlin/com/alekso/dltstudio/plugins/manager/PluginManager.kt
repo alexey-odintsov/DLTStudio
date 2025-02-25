@@ -30,7 +30,11 @@ class PluginManager(
     }
 
     suspend fun loadPlugins() {
-        predefinedPlugins.forEach { plugin ->
+        val mergedPlugins = mutableListOf<DLTStudioPlugin>()
+        mergedPlugins.addAll(predefinedPlugins)
+        mergedPlugins.addAll(loadJarPlugins())
+
+        mergedPlugins.forEach { plugin ->
             plugin.init(
                 logs = messagesProvider.getMessages(),
                 onProgressUpdate = onProgressUpdate,
@@ -40,11 +44,11 @@ class PluginManager(
             }
             plugins.add(plugin)
         }
-        loadJarPlugins()
     }
 
-    internal fun loadJarPlugins() {
+    internal fun loadJarPlugins(): List<DLTStudioPlugin> {
         Log.d("Loading Jar plugins")
+        val jarPlugins = mutableListOf<DLTStudioPlugin>()
         val pluginsDir = File(pluginsPath)
         val files = pluginsDir.listFiles()?.filter { it.name.endsWith(".jar") }
 
@@ -86,19 +90,24 @@ class PluginManager(
 
 
                         val pluginClass = urlLoader.loadClass(className)
-                        val plugin: DLTStudioPlugin =
-                            pluginClass.getConstructor().newInstance() as DLTStudioPlugin
-                        val identifyResult = pluginClass.getMethod("pluginName").invoke(plugin)
-                        Log.i("Identify: $identifyResult")
-                        Log.i("Class: $plugin")
-                        Log.i("Methods: ${plugin.javaClass.declaredMethods.map { it.name }}")
-                        plugins.add(plugin)
-
-                    } catch (ex: ClassNotFoundException) {
+                        var plugin: DLTStudioPlugin? = null
+                        try { // todo: Skip non DLTStudioPlugin classes
+                            plugin = pluginClass.getConstructor().newInstance() as DLTStudioPlugin
+                        } catch (ignored: Exception) {
+                        }
+                        if (plugin != null) {
+                            val identifyResult = pluginClass.getMethod("pluginName").invoke(plugin)
+                            Log.i("Identify: $identifyResult")
+                            Log.i("Class: $plugin")
+                            Log.i("Methods: ${plugin.javaClass.declaredMethods.map { it.name }}")
+                            jarPlugins.add(plugin)
+                        }
+                    } catch (ex: Exception) {
                         Log.e(ex.toString())
                     }
                 }
             }
+        return jarPlugins
     }
 
     fun getPluginPanels(): List<PluginPanel> {
