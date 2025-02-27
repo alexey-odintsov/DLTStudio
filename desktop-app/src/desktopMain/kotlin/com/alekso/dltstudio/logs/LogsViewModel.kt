@@ -509,6 +509,8 @@ class LogsViewModel(
     override fun getMessages(): SnapshotStateList<LogMessage> = logMessages
     override fun clearMessages() {
         _logMessages.clear()
+        _searchResults.clear()
+        _searchIndexes.clear()
     }
 
     override fun storeMessages(logMessages: List<LogMessage>) {
