@@ -24,7 +24,6 @@ import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
