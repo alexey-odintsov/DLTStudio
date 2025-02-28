@@ -8,23 +8,31 @@ import javax.swing.filechooser.FileSystemView
 
 @Composable
 fun FileChooserDialog2(
-    dialogState: FileChooserDialogState,
+    dialogState: FileDialogState,
     onFilesSelected: (List<File>?) -> Unit
 ) {
-    if (dialogState.visibility) {
+    if (dialogState.visible) {
         val fileChooser = JFileChooser(FileSystemView.getFileSystemView())
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-        fileChooser.currentDirectory = File(System.getProperty("user.dir"))
-//        fileChooser.dialogTitle = title
+        fileChooser.currentDirectory = dialogState.directory
+        fileChooser.dialogTitle = dialogState.title
         fileChooser.fileSelectionMode = JFileChooser.FILES_ONLY
         fileChooser.isAcceptAllFileFilterUsed = true
-//        fileChooser.selectedFile = File(fileName ?: "")
-        fileChooser.currentDirectory = null
+        fileChooser.selectedFile = dialogState.file
+        fileChooser.isMultiSelectionEnabled = dialogState.isMultiSelectionEnabled
 
-        if (fileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            val files = fileChooser.selectedFiles
-            println("Files $files")
-            onFilesSelected(files.asList())
+        val result = when (dialogState.operation) {
+            DialogOperation.OPEN -> fileChooser.showOpenDialog(null)
+            DialogOperation.SAVE -> fileChooser.showSaveDialog(null)
+        }
+        if (result == JFileChooser.APPROVE_OPTION) {
+            if (dialogState.isMultiSelectionEnabled) {
+                val files = fileChooser.selectedFiles
+                onFilesSelected(files.asList())
+            } else {
+                val files = fileChooser.selectedFile
+                onFilesSelected(listOf(files))
+            }
         } else {
             println("Files null")
             onFilesSelected(null)

@@ -57,7 +57,7 @@ fun main() = application {
                 }
 
                 AppMenu(mainViewModel.menuItems)
-                FileChooserDialog2(mainViewModel.fileChooseDialogState, { files -> mainViewModel.onOpenDLTFiles(files) })
+                FileChooserDialog2(mainViewModel.openDLTFileDialogState, { files -> mainViewModel.onOpenDLTFiles(files) })
                 MainWindow(mainViewModel)
             }
         }

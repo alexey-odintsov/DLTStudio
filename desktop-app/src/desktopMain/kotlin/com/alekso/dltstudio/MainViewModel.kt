@@ -23,7 +23,8 @@ import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
+import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -46,7 +47,13 @@ class MainViewModel(
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
 ) {
-    var fileChooseDialogState by mutableStateOf(FileChooserDialogState())
+    var openDLTFileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Open DLT file(s)",
+            isMultiSelectionEnabled = true,
+            operation = DialogOperation.OPEN,
+        )
+    )
 
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
@@ -67,16 +74,16 @@ class MainViewModel(
     val panels = mutableStateListOf<PluginPanel>()
     val panelsNames = mutableStateListOf<String>() // todo: Find way to synchronize panels and names
     val menuItems = mutableStateListOf<MainMenuItem>(
-        MainMenuItem("File",
+        MainMenuItem(
+            "File",
             children = mutableStateListOf(
                 ChildMenuItem("Open", {
-                    fileChooseDialogState = FileChooserDialogState(
-                        true, FileChooserDialogState.DialogContext.OPEN_DLT_FILE
-                    )
+                    openDLTFileDialogState = openDLTFileDialogState.copy(visible = true)
                 }),
             )
         ),
-        MainMenuItem("Color filters",
+        MainMenuItem(
+            "Color filters",
             children = mutableStateListOf(
                 ChildMenuItem("Open", {}),
                 ChildMenuItem("Save", {}),
@@ -105,9 +112,9 @@ class MainViewModel(
     private var parseJob: Job? = null
 
     fun onOpenDLTFiles(files: List<File>?) {
-        fileChooseDialogState = fileChooseDialogState.copy(visibility = false)
+        openDLTFileDialogState = openDLTFileDialogState.copy(visible = false)
         if (files != null) {
-//            parseFile(files)
+            parseFile(files)
         }
     }
 
