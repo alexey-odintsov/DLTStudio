@@ -47,11 +47,12 @@ class MainViewModel(
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
 ) {
-    var openDLTFileDialogState by mutableStateOf(
+    var fileDialogState by mutableStateOf(
         FileDialogState(
             title = "Open DLT file(s)",
             isMultiSelectionEnabled = true,
             operation = DialogOperation.OPEN,
+            callback = { onOpenDLTFiles(it) }
         )
     )
 
@@ -77,17 +78,44 @@ class MainViewModel(
         MainMenuItem(
             "File",
             children = mutableStateListOf(
-                ChildMenuItem("Open", {
-                    openDLTFileDialogState = openDLTFileDialogState.copy(visible = true)
-                }),
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open DLT file(s)",
+                        isMultiSelectionEnabled = true,
+                        operation = DialogOperation.OPEN,
+                        callback = { onOpenDLTFiles(it) }
+                    )
+                },
+                ChildMenuItem("Settings") {
+                    settingsDialogState = true
+                },
             )
         ),
         MainMenuItem(
             "Color filters",
             children = mutableStateListOf(
-                ChildMenuItem("Open", {}),
-                ChildMenuItem("Save", {}),
-                ChildMenuItem("Clear", {}),
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open Color filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.OPEN,
+                        callback = { loadColorFilters(it[0]) }
+                    )
+                },
+                ChildMenuItem("Save") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Save Color filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.SAVE,
+                        callback = { loadColorFilters(it[0]) }
+                    )
+                },
+                ChildMenuItem("Clear") {
+                    clearColorFilters()
+                },
             )
         ),
     )
@@ -111,11 +139,9 @@ class MainViewModel(
 
     private var parseJob: Job? = null
 
-    fun onOpenDLTFiles(files: List<File>?) {
-        openDLTFileDialogState = openDLTFileDialogState.copy(visible = false)
-        if (files != null) {
-            parseFile(files)
-        }
+    fun onOpenDLTFiles(files: List<File>) {
+        fileDialogState = fileDialogState.copy(visible = false)
+        parseFile(files)
     }
 
     val mainMenuCallbacks = object : MainMenuCallbacks {

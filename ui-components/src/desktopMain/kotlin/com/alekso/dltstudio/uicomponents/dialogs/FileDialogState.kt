@@ -14,4 +14,5 @@ data class FileDialogState(
     val file: File? = null,
     val directory: File? = null,
     val isMultiSelectionEnabled: Boolean = false,
+    val callback: (List<File>) -> Unit,
 )

@@ -1,15 +1,13 @@
 package com.alekso.dltstudio.uicomponents.dialogs
 
 import androidx.compose.runtime.Composable
-import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
 
 @Composable
-fun FileChooserDialog2(
+fun FileDialog(
     dialogState: FileDialogState,
-    onFilesSelected: (List<File>?) -> Unit
 ) {
     if (dialogState.visible) {
         val fileChooser = JFileChooser(FileSystemView.getFileSystemView())
@@ -28,14 +26,11 @@ fun FileChooserDialog2(
         if (result == JFileChooser.APPROVE_OPTION) {
             if (dialogState.isMultiSelectionEnabled) {
                 val files = fileChooser.selectedFiles
-                onFilesSelected(files.asList())
+                dialogState.callback(files.asList())
             } else {
                 val files = fileChooser.selectedFile
-                onFilesSelected(listOf(files))
+                dialogState.callback(listOf(files))
             }
-        } else {
-            println("Files null")
-            onFilesSelected(null)
         }
     }
 }
