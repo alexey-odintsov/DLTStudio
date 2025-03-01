@@ -10,6 +10,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.FormatterConsumer
 import com.alekso.dltstudio.plugins.contract.PluginPanel
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 
@@ -42,6 +43,8 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     override fun renderPanel(modifier: Modifier) {
         println("Recompose FilesPlugin.renderPanel")
 
+        FileDialog(viewModel.fileDialogState)
+
         CompositionLocalProvider(LocalFormatter provides formatter) {
             FilesPanel(
                 analyzeState = viewModel.analyzeState.value,
@@ -51,7 +54,6 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 onSearchButtonClicked = {
                     viewModel.startFilesSearch(logMessages)
                 },
-                onSaveFileClicked = viewModel::saveFile,
                 onFileEntryClicked = viewModel::onFileClicked
             )
         }

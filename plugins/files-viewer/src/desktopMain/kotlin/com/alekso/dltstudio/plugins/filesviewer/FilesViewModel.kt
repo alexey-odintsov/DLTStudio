@@ -2,10 +2,14 @@ package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +51,20 @@ class FilesViewModel(
 
     private var _previewState: MutableState<PreviewState?> = mutableStateOf(null)
     val previewState: State<PreviewState?> = _previewState
+
+    var fileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Save file",
+            operation = DialogOperation.SAVE,
+            file = previewState.value?.entry?.name?.let { File(it) },
+            fileCallback = { saveFile(it[0]) },
+            cancelCallback = ::closeFileDialog
+        )
+    )
+
+    private fun closeFileDialog() {
+        fileDialogState = fileDialogState.copy(visible = false)
+    }
 
     private var analyzeJob: Job? = null
 
@@ -131,6 +149,14 @@ class FilesViewModel(
 
                 else -> {
                     _previewState.value = FilePreviewState(entry = entry)
+                    fileDialogState = FileDialogState(
+                        title = "Save file",
+                        visible = true,
+                        operation = DialogOperation.SAVE,
+                        file = File(entry.name),
+                        fileCallback = { saveFile(it[0]) },
+                        cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+                    )
                 }
             }
         }
@@ -141,6 +167,7 @@ class FilesViewModel(
     }
 
     fun saveFile(file: File) {
+        fileDialogState = fileDialogState.copy(visible = false)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val fileEntry = _previewState.value

@@ -23,6 +23,8 @@ import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
+import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -45,8 +47,22 @@ class MainViewModel(
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
 ) {
+    var fileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Open DLT file(s)",
+            isMultiSelectionEnabled = true,
+            operation = DialogOperation.OPEN,
+            fileCallback = { onOpenDLTFiles(it) },
+            cancelCallback = ::closeFileDialog
+        )
+    )
+
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
+    private fun closeFileDialog() {
+        fileDialogState = fileDialogState.copy(visible = false)
+    }
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -63,7 +79,83 @@ class MainViewModel(
     }
     val panels = mutableStateListOf<PluginPanel>()
     val panelsNames = mutableStateListOf<String>() // todo: Find way to synchronize panels and names
-
+    val menuItems = mutableStateListOf<MainMenuItem>(
+        MainMenuItem(
+            "File",
+            children = mutableStateListOf(
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open DLT file(s)",
+                        isMultiSelectionEnabled = true,
+                        operation = DialogOperation.OPEN,
+                        fileCallback = { onOpenDLTFiles(it) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                AppChildMenuSeparator(),
+                ChildMenuItem("Settings") {
+                    settingsDialogState = true
+                },
+            )
+        ),
+        MainMenuItem(
+            "Color filters",
+            children = mutableStateListOf(
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open Color filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.OPEN,
+                        fileCallback = { loadColorFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                ChildMenuItem("Save") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Save Color filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.SAVE,
+                        fileCallback = { saveColorFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                ChildMenuItem("Clear") {
+                    clearColorFilters()
+                },
+            )
+        ),
+        MainMenuItem(
+            "Timeline filters",
+            children = mutableStateListOf(
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open Timeline filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.OPEN,
+                        fileCallback = { loadTimeLineFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                ChildMenuItem("Save") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Save Timeline filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.SAVE,
+                        fileCallback = { saveTimeLineFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                ChildMenuItem("Clear") {
+                    clearTimeLineFilters()
+                },
+            )
+        ),
+    )
 
     var settingsDialogState by mutableStateOf(false)
 
@@ -83,38 +175,9 @@ class MainViewModel(
 
     private var parseJob: Job? = null
 
-    val mainMenuCallbacks = object : MainMenuCallbacks {
-        override fun onOpenDLTFiles(files: List<File>) {
-            parseFile(files)
-        }
-
-        override fun onLoadColorFiltersFile(file: File) {
-            loadColorFilters(file)
-        }
-
-        override fun onSaveColorFiltersFile(file: File) {
-            saveColorFilters(file)
-        }
-
-        override fun onLoadTimelineFiltersFile(file: File) {
-            loadTimeLineFilters(file)
-        }
-
-        override fun onSaveTimelineFiltersFile(file: File) {
-            saveTimeLineFilters(file)
-        }
-
-        override fun onClearColorFilters() {
-            clearColorFilters()
-        }
-
-        override fun onClearTimelineFilters() {
-            clearTimeLineFilters()
-        }
-
-        override fun onSettingsClicked() {
-            settingsDialogState = true
-        }
+    fun onOpenDLTFiles(files: List<File>) {
+        fileDialogState = fileDialogState.copy(visible = false)
+        parseFile(files)
     }
 
     init {
