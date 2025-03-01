@@ -1,9 +1,25 @@
 package com.alekso.dltstudio.uicomponents.dialogs
 
 import androidx.compose.runtime.Composable
+import java.io.File
 import javax.swing.JFileChooser
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
+
+enum class DialogOperation {
+    OPEN,
+    SAVE,
+}
+
+data class FileDialogState(
+    val operation: DialogOperation,
+    val title: String,
+    val visible: Boolean = false,
+    val file: File? = null,
+    val directory: File? = null,
+    val isMultiSelectionEnabled: Boolean = false,
+    val callback: (List<File>) -> Unit,
+)
 
 @Composable
 fun FileDialog(
