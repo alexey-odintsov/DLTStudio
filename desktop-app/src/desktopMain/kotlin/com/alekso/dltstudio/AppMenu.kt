@@ -8,13 +8,17 @@ import androidx.compose.ui.window.MenuBar
 
 data class MainMenuItem(
     val title: String,
-    val children: SnapshotStateList<ChildMenuItem> = mutableStateListOf(),
+    val children: SnapshotStateList<AppChildMenuItem> = mutableStateListOf(),
 )
+
+interface AppChildMenuItem
+
+class AppChildMenuSeparator : AppChildMenuItem
 
 data class ChildMenuItem(
     val title: String,
     val callback: () -> Unit,
-)
+) : AppChildMenuItem
 
 @Composable
 fun FrameWindowScope.AppMenu(menuItems: SnapshotStateList<MainMenuItem>) {
@@ -22,7 +26,17 @@ fun FrameWindowScope.AppMenu(menuItems: SnapshotStateList<MainMenuItem>) {
         menuItems.forEach { menu ->
             Menu(menu.title) {
                 menu.children.forEach { child ->
-                    Item(child.title, onClick = child.callback)
+                    when (child) {
+                        is ChildMenuItem -> {
+                            Item(child.title, onClick = child.callback)
+                        }
+
+                        is AppChildMenuSeparator -> {
+                            Separator()
+                        }
+
+                        else -> {}
+                    }
                 }
             }
         }

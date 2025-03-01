@@ -93,6 +93,7 @@ class MainViewModel(
                         cancelCallback = ::closeFileDialog,
                     )
                 },
+                AppChildMenuSeparator(),
                 ChildMenuItem("Settings") {
                     settingsDialogState = true
                 },
