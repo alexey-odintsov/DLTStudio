@@ -47,10 +47,8 @@ fun FilesPanel(
     previewState: State<PreviewState?>,
     onPreviewDialogClosed: () -> Unit,
     onSearchButtonClicked: () -> Unit,
-    onSaveFileClicked: (File) -> Unit,
     onFileEntryClicked: (FileEntry) -> Unit,
 ) {
-
     when (val state = previewState.value) {
         is TextPreviewState -> {
             TextPreviewDialog(
@@ -69,15 +67,15 @@ fun FilesPanel(
             )
         }
 
-        is FilePreviewState -> {
-            FileDialog(FileDialogState(
-                title = "Save file",
-                visible = true,
-                operation = DialogOperation.SAVE,
-                file = state.entry.name.let { File(it) },
-                callback = { onSaveFileClicked(it[0]) }
-            ))
-        }
+//        is FilePreviewState -> {
+//            FileDialog(FileDialogState(
+//                title = "Save file",
+//                visible = true,
+//                operation = DialogOperation.SAVE,
+//                file = state.entry.name.let { File(it) },
+//                callback = { onSaveFileClicked(it[0]) }
+//            ))
+//        }
 
         else -> {}
     }
@@ -198,7 +196,6 @@ fun PreviewFilesPanel() {
                 FileEntry(name = "some screenshot.png", size = 456643),
             ),
             mutableStateOf<PreviewState?>(null),
-            {},
             {},
             {},
             {},

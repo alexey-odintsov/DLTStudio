@@ -18,7 +18,8 @@ data class FileDialogState(
     val file: File? = null,
     val directory: File? = null,
     val isMultiSelectionEnabled: Boolean = false,
-    val callback: (List<File>) -> Unit,
+    val fileCallback: (List<File>) -> Unit,
+    val cancelCallback: () -> Unit,
 )
 
 @Composable
@@ -42,11 +43,13 @@ fun FileDialog(
         if (result == JFileChooser.APPROVE_OPTION) {
             if (dialogState.isMultiSelectionEnabled) {
                 val files = fileChooser.selectedFiles
-                dialogState.callback(files.asList())
+                dialogState.fileCallback(files.asList())
             } else {
                 val files = fileChooser.selectedFile
-                dialogState.callback(listOf(files))
+                dialogState.fileCallback(listOf(files))
             }
+        } else {
+            dialogState.cancelCallback()
         }
     }
 }

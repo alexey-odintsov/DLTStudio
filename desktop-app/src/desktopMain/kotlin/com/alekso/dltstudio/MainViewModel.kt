@@ -52,12 +52,17 @@ class MainViewModel(
             title = "Open DLT file(s)",
             isMultiSelectionEnabled = true,
             operation = DialogOperation.OPEN,
-            callback = { onOpenDLTFiles(it) }
+            fileCallback = { onOpenDLTFiles(it) },
+            cancelCallback = ::closeFileDialog
         )
     )
 
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
+    private fun closeFileDialog() {
+        fileDialogState = fileDialogState.copy(visible = false)
+    }
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -84,7 +89,8 @@ class MainViewModel(
                         title = "Open DLT file(s)",
                         isMultiSelectionEnabled = true,
                         operation = DialogOperation.OPEN,
-                        callback = { onOpenDLTFiles(it) }
+                        fileCallback = { onOpenDLTFiles(it) },
+                        cancelCallback = ::closeFileDialog,
                     )
                 },
                 ChildMenuItem("Settings") {
@@ -101,7 +107,8 @@ class MainViewModel(
                         title = "Open Color filter file",
                         isMultiSelectionEnabled = false,
                         operation = DialogOperation.OPEN,
-                        callback = { loadColorFilters(it[0]) }
+                        fileCallback = { loadColorFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
                     )
                 },
                 ChildMenuItem("Save") {
@@ -110,7 +117,8 @@ class MainViewModel(
                         title = "Save Color filter file",
                         isMultiSelectionEnabled = false,
                         operation = DialogOperation.SAVE,
-                        callback = { loadColorFilters(it[0]) }
+                        fileCallback = { saveColorFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
                     )
                 },
                 ChildMenuItem("Clear") {
@@ -127,7 +135,8 @@ class MainViewModel(
                         title = "Open Timeline filter file",
                         isMultiSelectionEnabled = false,
                         operation = DialogOperation.OPEN,
-                        callback = { loadTimeLineFilters(it[0]) }
+                        fileCallback = { loadTimeLineFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
                     )
                 },
                 ChildMenuItem("Save") {
@@ -136,7 +145,8 @@ class MainViewModel(
                         title = "Save Timeline filter file",
                         isMultiSelectionEnabled = false,
                         operation = DialogOperation.SAVE,
-                        callback = { saveTimeLineFilters(it[0]) }
+                        fileCallback = { saveTimeLineFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
                     )
                 },
                 ChildMenuItem("Clear") {
