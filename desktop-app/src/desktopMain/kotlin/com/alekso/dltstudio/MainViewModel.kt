@@ -118,8 +118,33 @@ class MainViewModel(
                 },
             )
         ),
+        MainMenuItem(
+            "Timeline filters",
+            children = mutableStateListOf(
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open Timeline filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.OPEN,
+                        callback = { loadTimeLineFilters(it[0]) }
+                    )
+                },
+                ChildMenuItem("Save") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Save Timeline filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.SAVE,
+                        callback = { saveTimeLineFilters(it[0]) }
+                    )
+                },
+                ChildMenuItem("Clear") {
+                    clearTimeLineFilters()
+                },
+            )
+        ),
     )
-
 
     var settingsDialogState by mutableStateOf(false)
 
@@ -142,40 +167,6 @@ class MainViewModel(
     fun onOpenDLTFiles(files: List<File>) {
         fileDialogState = fileDialogState.copy(visible = false)
         parseFile(files)
-    }
-
-    val mainMenuCallbacks = object : MainMenuCallbacks {
-        override fun onOpenDLTFiles(files: List<File>) {
-            parseFile(files)
-        }
-
-        override fun onLoadColorFiltersFile(file: File) {
-            loadColorFilters(file)
-        }
-
-        override fun onSaveColorFiltersFile(file: File) {
-            saveColorFilters(file)
-        }
-
-        override fun onLoadTimelineFiltersFile(file: File) {
-            loadTimeLineFilters(file)
-        }
-
-        override fun onSaveTimelineFiltersFile(file: File) {
-            saveTimeLineFilters(file)
-        }
-
-        override fun onClearColorFilters() {
-            clearColorFilters()
-        }
-
-        override fun onClearTimelineFilters() {
-            clearTimeLineFilters()
-        }
-
-        override fun onSettingsClicked() {
-            settingsDialogState = true
-        }
     }
 
     init {
