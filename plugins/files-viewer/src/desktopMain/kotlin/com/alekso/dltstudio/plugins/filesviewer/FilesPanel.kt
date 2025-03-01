@@ -21,8 +21,10 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,8 +32,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
+import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 import java.io.File
@@ -67,16 +70,13 @@ fun FilesPanel(
         }
 
         is FilePreviewState -> {
-            FileChooserDialog(
-                dialogContext = FileChooserDialogState.DialogContext.SAVE_FILE,
-                fileName = state.entry.name,
+            FileDialog(FileDialogState(
                 title = "Save file",
-                onFileSelected = { file ->
-                    if (file != null) {
-                        onSaveFileClicked(file)
-                    }
-                },
-            )
+                visible = true,
+                operation = DialogOperation.SAVE,
+                file = state.entry.name.let { File(it) },
+                callback = { onSaveFileClicked(it[0]) }
+            ))
         }
 
         else -> {}
