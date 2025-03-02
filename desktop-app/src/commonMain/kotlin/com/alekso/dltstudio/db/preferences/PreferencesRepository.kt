@@ -7,6 +7,10 @@ import kotlinx.coroutines.flow.Flow
 interface PreferencesRepository {
     suspend fun addNewSearch(item: SearchEntity)
     fun getRecentSearch(): Flow<List<SearchEntity>>
+    suspend fun addNewRecentColorFilter(item: RecentColorFilterFileEntry)
+    fun getRecentColorFilters(): Flow<List<RecentColorFilterFileEntry>>
+    suspend fun addNewRecentTimelineFilter(item: RecentTimelineFilterFileEntry)
+    fun getRecentTimelineFilters(): Flow<List<RecentTimelineFilterFileEntry>>
 }
 
 class PreferencesRepositoryImpl(
@@ -19,6 +23,22 @@ class PreferencesRepositoryImpl(
 
     override fun getRecentSearch(): Flow<List<SearchEntity>> {
         return database.getPreferencesDao().getRecentSearchFlow()
+    }
+
+    override suspend fun addNewRecentColorFilter(item: RecentColorFilterFileEntry) {
+        database.getPreferencesDao().addNewRecentColorFilter(item)
+    }
+
+    override fun getRecentColorFilters(): Flow<List<RecentColorFilterFileEntry>> {
+        return database.getPreferencesDao().getRecentColorFilterFlow()
+    }
+
+    override suspend fun addNewRecentTimelineFilter(item: RecentTimelineFilterFileEntry) {
+        database.getPreferencesDao().addNewRecentTimelineFilter(item)
+    }
+
+    override fun getRecentTimelineFilters(): Flow<List<RecentTimelineFilterFileEntry>> {
+        return database.getPreferencesDao().getRecentTimelineFilterFlow()
     }
 
 }

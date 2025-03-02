@@ -4,8 +4,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
+import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
+import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.SettingsLogs
@@ -22,7 +25,6 @@ import com.alekso.dltstudio.plugins.contract.MessagesProvider
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
-import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
@@ -34,6 +36,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -191,6 +194,15 @@ class MainViewModel(
         parseFile(files)
     }
 
+
+    private val _recentColorFiltersFiles = mutableStateListOf<RecentColorFilterFileEntry>()
+    val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>
+        get() = _recentColorFiltersFiles
+
+    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
+    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
+        get() = _recentTimelineFiltersFiles
+
     init {
         panels.add(
             LogsPlugin(
@@ -205,6 +217,21 @@ class MainViewModel(
         )
 
         panelsNames.addAll(panels.map { it.getPanelName() })
+
+        viewModelScope.launch {
+            preferencesRepository.getRecentColorFilters().collectLatest {
+                _recentColorFiltersFiles.clear()
+                _recentColorFiltersFiles.addAll(it)
+            }
+        }
+
+        viewModelScope.launch {
+            preferencesRepository.getRecentTimelineFilters().collectLatest {
+                _recentTimelineFiltersFiles.clear()
+                _recentTimelineFiltersFiles.addAll(it)
+            }
+        }
+
         CoroutineScope(IO).launch {
             val pluginManager = DependencyManager.providePluginsManager()
 
