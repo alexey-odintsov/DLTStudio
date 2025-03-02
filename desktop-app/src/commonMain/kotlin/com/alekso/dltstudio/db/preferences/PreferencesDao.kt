@@ -32,41 +32,41 @@ interface PreferencesDao {
     suspend fun removeSearch(value: String)
 
 
-    suspend fun addNewRecentColorFilter(item: RecentColorFilterEntry) {
+    suspend fun addNewRecentColorFilter(item: RecentColorFilterFileEntry) {
         removeRecentColorFilter(item.fileName)
         addRecentColorFilter(item)
         ensureRecentColorFilterCapacity()
     }
 
     @Upsert
-    suspend fun addRecentColorFilter(item: RecentColorFilterEntry)
+    suspend fun addRecentColorFilter(item: RecentColorFilterFileEntry)
 
-    @Query("SELECT * FROM RecentColorFilterEntry LIMIT $MAX_RECENT_COLOR_FILTERS")
-    fun getRecentColorFilterFlow(): Flow<List<RecentColorFilterEntry>>
+    @Query("SELECT * FROM RecentColorFilterFileEntry LIMIT $MAX_RECENT_COLOR_FILTERS")
+    fun getRecentColorFilterFlow(): Flow<List<RecentColorFilterFileEntry>>
 
-    @Query("DELETE FROM RecentColorFilterEntry WHERE id NOT IN (SELECT id FROM RecentColorFilterEntry ORDER BY id DESC LIMIT $MAX_RECENT_COLOR_FILTERS)")
+    @Query("DELETE FROM RecentColorFilterFileEntry WHERE id NOT IN (SELECT id FROM RecentColorFilterFileEntry ORDER BY id DESC LIMIT $MAX_RECENT_COLOR_FILTERS)")
     suspend fun ensureRecentColorFilterCapacity()
 
-    @Query("DELETE FROM RecentColorFilterEntry WHERE fileName = :value")
+    @Query("DELETE FROM RecentColorFilterFileEntry WHERE fileName = :value")
     suspend fun removeRecentColorFilter(value: String)
 
 
-    suspend fun addNewRecentTimelineFilter(item: RecentTimelineEntry) {
+    suspend fun addNewRecentTimelineFilter(item: RecentTimelineFilterFileEntry) {
         removeRecentTimelineFilter(item.fileName)
         addRecentTimelineFilter(item)
         ensureRecentTimelineFilterCapacity()
     }
 
     @Upsert
-    suspend fun addRecentTimelineFilter(item: RecentTimelineEntry)
+    suspend fun addRecentTimelineFilter(item: RecentTimelineFilterFileEntry)
 
-    @Query("SELECT * FROM RecentTimelineEntry LIMIT $MAX_RECENT_TIMELINE_FILTERS")
-    fun getRecentTimelineFilterFlow(): Flow<List<RecentTimelineEntry>>
+    @Query("SELECT * FROM RecentTimelineFilterFileEntry LIMIT $MAX_RECENT_TIMELINE_FILTERS")
+    fun getRecentTimelineFilterFlow(): Flow<List<RecentTimelineFilterFileEntry>>
 
-    @Query("DELETE FROM RecentTimelineEntry WHERE id NOT IN (SELECT id FROM RecentTimelineEntry ORDER BY id DESC LIMIT $MAX_RECENT_TIMELINE_FILTERS)")
+    @Query("DELETE FROM RecentTimelineFilterFileEntry WHERE id NOT IN (SELECT id FROM RecentTimelineFilterFileEntry ORDER BY id DESC LIMIT $MAX_RECENT_TIMELINE_FILTERS)")
     suspend fun ensureRecentTimelineFilterCapacity()
 
-    @Query("DELETE FROM RecentTimelineEntry WHERE fileName = :value")
+    @Query("DELETE FROM RecentTimelineFilterFileEntry WHERE fileName = :value")
     suspend fun removeRecentTimelineFilter(value: String)
 
     companion object {

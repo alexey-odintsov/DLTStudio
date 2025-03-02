@@ -8,8 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
-import com.alekso.dltstudio.db.preferences.RecentTimelineEntry
+import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
+import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import java.io.File
@@ -28,8 +28,8 @@ interface MainMenuCallbacks {
 @Composable
 fun FrameWindowScope.MainMenu(
     callbacks: MainMenuCallbacks,
-    recentColorFiltersFiles: SnapshotStateList<RecentColorFilterEntry>,
-    recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineEntry>
+    recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>,
+    recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
 ) {
     var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 

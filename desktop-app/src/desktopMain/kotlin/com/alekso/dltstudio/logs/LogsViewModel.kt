@@ -9,7 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
-import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
+import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
@@ -364,7 +364,7 @@ class LogsViewModel(
         viewModelScope.launch {
             ColorFilterManager().saveToFile(colorFilters, file)
             preferencesRepository.addNewRecentColorFilter(
-                RecentColorFilterEntry(
+                RecentColorFilterFileEntry(
                     file.name,
                     file.absolutePath
                 )
@@ -379,7 +379,7 @@ class LogsViewModel(
                 colorFilters.addAll(it)
             }
             preferencesRepository.addNewRecentColorFilter(
-                RecentColorFilterEntry(
+                RecentColorFilterFileEntry(
                     file.name,
                     file.absolutePath
                 )

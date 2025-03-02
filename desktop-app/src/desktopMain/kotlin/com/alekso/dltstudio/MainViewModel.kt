@@ -7,8 +7,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
-import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
-import com.alekso.dltstudio.db.preferences.RecentTimelineEntry
+import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
+import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.SettingsLogs
@@ -123,12 +123,12 @@ class MainViewModel(
         }
     }
 
-    private val _recentColorFiltersFiles = mutableStateListOf<RecentColorFilterEntry>()
-    val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterEntry>
+    private val _recentColorFiltersFiles = mutableStateListOf<RecentColorFilterFileEntry>()
+    val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>
         get() = _recentColorFiltersFiles
 
-    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineEntry>()
-    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineEntry>
+    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
+    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
         get() = _recentTimelineFiltersFiles
 
 

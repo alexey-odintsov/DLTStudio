@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity
-data class RecentColorFilterEntry(
+data class RecentTimelineFilterFileEntry(
     val fileName: String,
     val path: String,
     @PrimaryKey(autoGenerate = true)

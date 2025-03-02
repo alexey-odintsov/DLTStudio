@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.db.preferences.PreferencesRepositoryImpl
-import com.alekso.dltstudio.db.preferences.RecentTimelineEntry
+import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
@@ -173,7 +173,7 @@ class TimelineViewModel(
         viewModelScope.launch {
             TimeLineFilterManager().saveToFile(timelineFilters, file)
             preferencesRepository.addNewRecentTimelineFilter(
-                RecentTimelineEntry(
+                RecentTimelineFilterFileEntry(
                     file.name,
                     file.absolutePath
                 )
@@ -188,7 +188,7 @@ class TimelineViewModel(
                 timelineFilters.addAll(it)
             }
             preferencesRepository.addNewRecentTimelineFilter(
-                RecentTimelineEntry(
+                RecentTimelineFilterFileEntry(
                     file.name,
                     file.absolutePath
                 )
