@@ -4,9 +4,10 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.alekso.dltstudio.db.preferences.PreferencesRepositoryImpl
+import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.TimelineHolder
-import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.timeline.filters.AnalyzeState
 import com.alekso.dltstudio.timeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.timeline.filters.TimelineFilter
@@ -16,7 +17,9 @@ import com.alekso.dltstudio.timeline.filters.predefinedTimelineFilters
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -27,8 +30,12 @@ import java.io.File
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
 class TimelineViewModel(
-    private val onProgressChanged: (Float) -> Unit
-): TimelineHolder {
+    private val onProgressChanged: (Float) -> Unit,
+    private val preferencesRepository: PreferencesRepositoryImpl,
+) : TimelineHolder {
+    private val viewModelJob = SupervisorJob()
+    private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
     private var analyzeJob: Job? = null
 
     var offset = mutableStateOf(0f)
@@ -44,7 +51,8 @@ class TimelineViewModel(
     private var _analyzeState = MutableStateFlow<AnalyzeState>(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
 
-    val timelineFilters = mutableStateListOf<TimelineFilter>(*predefinedTimelineFilters.toTypedArray())
+    val timelineFilters =
+        mutableStateListOf<TimelineFilter>(*predefinedTimelineFilters.toTypedArray())
 
     var timeStart = Long.MAX_VALUE
     var timeEnd = Long.MIN_VALUE
@@ -162,16 +170,30 @@ class TimelineViewModel(
     }
 
     override fun saveTimeLineFilters(file: File) {
-        TimeLineFilterManager().saveToFile(timelineFilters, file)
-        Preferences.addRecentTimelineFilter(file.name, file.absolutePath)
+        viewModelScope.launch {
+            TimeLineFilterManager().saveToFile(timelineFilters, file)
+            preferencesRepository.addNewRecentTimelineFilter(
+                RecentTimelineFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
+        }
     }
 
     override fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
-        TimeLineFilterManager().loadFromFile(file)?.let {
-            timelineFilters.addAll(it)
+        viewModelScope.launch {
+            TimeLineFilterManager().loadFromFile(file)?.let {
+                timelineFilters.addAll(it)
+            }
+            preferencesRepository.addNewRecentTimelineFilter(
+                RecentTimelineFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
         }
-        Preferences.addRecentTimelineFilter(file.name, file.absolutePath)
     }
 
     override fun clearTimeLineFilters() {
