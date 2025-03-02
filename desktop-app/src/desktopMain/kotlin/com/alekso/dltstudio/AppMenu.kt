@@ -5,6 +5,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
+import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 
 data class MainMenuItem(
     val title: String,
@@ -21,7 +23,11 @@ data class ChildMenuItem(
 ) : AppChildMenuItem
 
 @Composable
-fun FrameWindowScope.AppMenu(menuItems: SnapshotStateList<MainMenuItem>) {
+fun FrameWindowScope.AppMenu(
+    menuItems: SnapshotStateList<MainMenuItem>,
+    recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>,
+    recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
+) {
     MenuBar {
         menuItems.forEach { menu ->
             Menu(menu.title) {
