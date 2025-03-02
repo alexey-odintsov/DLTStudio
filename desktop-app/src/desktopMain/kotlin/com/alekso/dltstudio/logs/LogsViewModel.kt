@@ -9,6 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
+import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
@@ -31,7 +32,6 @@ import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.contract.MessagesProvider
-import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -361,16 +361,30 @@ class LogsViewModel(
     }
 
     override fun saveColorFilters(file: File) {
-        ColorFilterManager().saveToFile(colorFilters, file)
-        Preferences.addRecentColorFilter(file.name, file.absolutePath)
+        viewModelScope.launch {
+            ColorFilterManager().saveToFile(colorFilters, file)
+            preferencesRepository.addNewRecentColorFilter(
+                RecentColorFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
+        }
     }
 
     override fun loadColorFilters(file: File) {
         colorFilters.clear()
-        ColorFilterManager().loadFromFile(file)?.let {
-            colorFilters.addAll(it)
+        viewModelScope.launch {
+            ColorFilterManager().loadFromFile(file)?.let {
+                colorFilters.addAll(it)
+            }
+            preferencesRepository.addNewRecentColorFilter(
+                RecentColorFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
         }
-        Preferences.addRecentColorFilter(file.name, file.absolutePath)
     }
 
     override fun clearColorFilters() {

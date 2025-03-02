@@ -78,7 +78,10 @@ object DependencyManager {
     )
 
     private val timelineViewModel by lazy {
-        TimelineViewModel(onProgressChanged = onProgressUpdate)
+        TimelineViewModel(
+            onProgressChanged = onProgressUpdate,
+            preferencesRepository = preferencesRepository,
+        )
     }
 
     private val mainViewModel = MainViewModel(
@@ -88,6 +91,7 @@ object DependencyManager {
         timelineHolder = provideTimelineViewModel(),
         pluginManager = providePluginsManager(),
         settingsRepository = settingsRepository,
+        preferencesRepository = preferencesRepository,
     )
 
     fun provideMessageHolder(): MessagesHolder {
