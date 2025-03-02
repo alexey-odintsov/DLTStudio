@@ -43,6 +43,7 @@ fun FilesPanel(
     onSearchButtonClicked: () -> Unit,
     onFileEntryClicked: (FileEntry) -> Unit,
 ) {
+
     when (val state = previewState.value) {
         is TextPreviewState -> {
             TextPreviewDialog(
