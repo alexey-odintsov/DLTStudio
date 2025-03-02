@@ -31,7 +31,28 @@ interface PreferencesDao {
     @Query("DELETE FROM SearchEntity WHERE value = :value")
     suspend fun removeSearch(value: String)
 
+
+
+    suspend fun addNewRecentColorFilter(item: RecentColorFilterEntry) {
+        removeRecentColorFilter(item.fileName)
+        addRecentColorFilter(item)
+        ensureRecentColorFilterCapacity()
+    }
+
+    @Upsert
+    suspend fun addRecentColorFilter(item: RecentColorFilterEntry)
+
+    @Query("SELECT * FROM RecentColorFilterEntry LIMIT $MAX_RECENT_COLOR_FILTERS")
+    fun getRecentRecentColorFilterFlow(): Flow<List<RecentColorFilterEntry>>
+
+    @Query("DELETE FROM RecentColorFilterEntry WHERE id NOT IN (SELECT id FROM RecentColorFilterEntry ORDER BY id DESC LIMIT $MAX_RECENT_COLOR_FILTERS)")
+    suspend fun ensureRecentColorFilterCapacity()
+
+    @Query("DELETE FROM RecentColorFilterEntry WHERE fileName = :value")
+    suspend fun removeRecentColorFilter(value: String)
+
     companion object {
         const val MAX_SEARCH_SUGGESTIONS = 100
+        const val MAX_RECENT_COLOR_FILTERS = 10
     }
 }

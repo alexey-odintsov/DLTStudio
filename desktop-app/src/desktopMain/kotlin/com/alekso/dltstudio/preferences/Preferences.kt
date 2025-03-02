@@ -25,33 +25,10 @@ object Preferences {
     class State(
         var recentColorFilters: MutableList<RecentFile> = mutableListOf(),
         var recentTimelineFilters: MutableList<RecentFile> = mutableListOf(),
-        var recentSearchQueries: MutableList<String> = mutableListOf(),
     )
 
     private var state = State()
     private val file = File(Env.getPreferencesPath())
-
-    fun addRecentSearch(searchText: String) {
-        if (state.recentSearchQueries.any { it == searchText }) {
-            return
-        }
-
-        state.recentSearchQueries.add(searchText)
-        if (state.recentSearchQueries.size > MAX_RECENT_SEARCH) {
-            state.recentSearchQueries.removeFirst()
-        }
-    }
-
-    fun addRecentColorFilter(fileName: String, filePath: String) {
-        if (state.recentColorFilters.any { it.absolutePath == filePath }) {
-            return
-        }
-
-        state.recentColorFilters.add(RecentFile(filePath, fileName))
-        if (state.recentColorFilters.size > MAX_RECENT_COLOR_FILTER) {
-            state.recentColorFilters.removeFirst()
-        }
-    }
 
     fun addRecentTimelineFilter(fileName: String, filePath: String) {
         if (state.recentTimelineFilters.any { it.absolutePath == filePath }) {

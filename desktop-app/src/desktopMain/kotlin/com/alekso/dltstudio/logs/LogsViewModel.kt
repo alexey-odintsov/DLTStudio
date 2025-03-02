@@ -9,6 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
+import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
@@ -361,16 +362,30 @@ class LogsViewModel(
     }
 
     override fun saveColorFilters(file: File) {
-        ColorFilterManager().saveToFile(colorFilters, file)
-        Preferences.addRecentColorFilter(file.name, file.absolutePath)
+        viewModelScope.launch {
+            ColorFilterManager().saveToFile(colorFilters, file)
+            preferencesRepository.addNewRecentColorFilter(
+                RecentColorFilterEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
+        }
     }
 
     override fun loadColorFilters(file: File) {
         colorFilters.clear()
-        ColorFilterManager().loadFromFile(file)?.let {
-            colorFilters.addAll(it)
+        viewModelScope.launch {
+            ColorFilterManager().loadFromFile(file)?.let {
+                colorFilters.addAll(it)
+            }
+            preferencesRepository.addNewRecentColorFilter(
+                RecentColorFilterEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
         }
-        Preferences.addRecentColorFilter(file.name, file.absolutePath)
     }
 
     override fun clearColorFilters() {
