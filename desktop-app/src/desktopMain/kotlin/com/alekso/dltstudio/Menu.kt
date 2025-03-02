@@ -5,8 +5,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
+import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
 import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
@@ -24,7 +26,10 @@ interface MainMenuCallbacks {
 }
 
 @Composable
-fun FrameWindowScope.MainMenu(callbacks: MainMenuCallbacks) {
+fun FrameWindowScope.MainMenu(
+    callbacks: MainMenuCallbacks,
+    recentColorFiltersFiles: SnapshotStateList<RecentColorFilterEntry>
+) {
     var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
     if (stateIOpenFileDialog.visibility) {
@@ -95,12 +100,12 @@ fun FrameWindowScope.MainMenu(callbacks: MainMenuCallbacks) {
             })
         }
         Menu("Color filters") {
-            Preferences.recentColorFilters().forEach {
+            recentColorFiltersFiles.forEach {
                 Item(it.fileName, onClick = {
-                    callbacks.onLoadColorFiltersFile(File(it.absolutePath))
+                    callbacks.onLoadColorFiltersFile(File(it.path))
                 })
             }
-            if (Preferences.recentColorFilters().isNotEmpty()) {
+            if (recentColorFiltersFiles.isNotEmpty()) {
                 Separator()
             }
 

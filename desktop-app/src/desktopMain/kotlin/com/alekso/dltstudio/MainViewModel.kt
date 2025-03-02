@@ -4,7 +4,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.DLTParser
+import com.alekso.dltstudio.db.preferences.PreferencesRepository
+import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.SettingsLogs
@@ -30,6 +33,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -44,6 +48,7 @@ class MainViewModel(
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
+    private val preferencesRepository: PreferencesRepository,
 ) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
@@ -117,6 +122,11 @@ class MainViewModel(
         }
     }
 
+    private val _recentColorFiltersFiles = mutableStateListOf<RecentColorFilterEntry>()
+    val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterEntry>
+        get() = _recentColorFiltersFiles
+
+
     init {
         panels.add(
             LogsPlugin(
@@ -131,6 +141,12 @@ class MainViewModel(
         )
 
         panelsNames.addAll(panels.map { it.getPanelName() })
+        viewModelScope.launch {
+            preferencesRepository.getRecentColorFilters().collectLatest {
+                _recentColorFiltersFiles.clear()
+                _recentColorFiltersFiles.addAll(it)
+            }
+        }
         CoroutineScope(IO).launch {
             val pluginManager = DependencyManager.providePluginsManager()
 

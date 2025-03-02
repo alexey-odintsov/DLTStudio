@@ -10,8 +10,6 @@ import java.io.FileReader
 import java.io.FileWriter
 
 
-private const val MAX_RECENT_SEARCH = 10
-private const val MAX_RECENT_COLOR_FILTER = 5
 private const val MAX_RECENT_TIMELINE_FILTER = 5
 
 @Serializable
@@ -23,7 +21,6 @@ data class RecentFile(
 object Preferences {
     @Serializable
     class State(
-        var recentColorFilters: MutableList<RecentFile> = mutableListOf(),
         var recentTimelineFilters: MutableList<RecentFile> = mutableListOf(),
     )
 
@@ -40,8 +37,6 @@ object Preferences {
             state.recentTimelineFilters.removeFirst()
         }
     }
-
-    fun recentColorFilters() = state.recentColorFilters
 
     fun recentTimelineFilters() = state.recentTimelineFilters
 

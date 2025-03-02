@@ -88,6 +88,7 @@ object DependencyManager {
         timelineHolder = provideTimelineViewModel(),
         pluginManager = providePluginsManager(),
         settingsRepository = settingsRepository,
+        preferencesRepository = preferencesRepository,
     )
 
     fun provideMessageHolder(): MessagesHolder {
