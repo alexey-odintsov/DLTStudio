@@ -30,7 +30,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -68,14 +68,14 @@ class MainViewModel(
     var settingsDialogState by mutableStateOf(false)
 
     val settingsUI: StateFlow<SettingsUI> =
-        settingsRepository.getSettingsUIFlow().map { it.toSettingsUI() }.stateIn(
+        settingsRepository.getSettingsUIFlow().mapNotNull { it?.toSettingsUI() }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = SettingsUI.Default
         )
 
     val settingsLogs: StateFlow<SettingsLogs> =
-        settingsRepository.getSettingsLogsFlow().map { it.toSettingsLogs() }.stateIn(
+        settingsRepository.getSettingsLogsFlow().mapNotNull { it?.toSettingsLogs() }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.Lazily,
             initialValue = SettingsLogs.Default

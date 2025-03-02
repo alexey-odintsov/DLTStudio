@@ -28,7 +28,7 @@ data class SettingsUI(
 ) {
     companion object {
         val Default = SettingsUI(
-            fontSize = 12, fontFamily = FontFamily.Monospace
+            fontSize = 10, fontFamily = FontFamily.Monospace
         )
     }
 }
