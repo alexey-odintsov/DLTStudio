@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltstudio.db.preferences.PreferencesRepository
+import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.db.virtualdevice.toVirtualDevice
@@ -36,6 +38,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -65,7 +68,11 @@ class LogsViewModel(
     private val insightsRepository: InsightsRepository,
     private val virtualDeviceRepository: VirtualDeviceRepository,
     private val onProgressChanged: (Float) -> Unit,
+    private val preferencesRepository: PreferencesRepository,
 ) : MessagesHolder, MessagesProvider {
+    private val viewModelJob = SupervisorJob()
+    private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
         get() = _logMessages
@@ -94,10 +101,7 @@ class LogsViewModel(
     val searchIndexes: SnapshotStateList<Int>
         get() = _searchIndexes
 
-    private val _searchAutocomplete = mutableStateListOf<String>()
-    val searchAutocomplete: SnapshotStateList<String>
-        get() = _searchAutocomplete
-
+    val searchAutocomplete = mutableStateListOf<String>()
 
     fun onSearchClicked(searchType: SearchType, searchText: String) {
         when (_searchState.value.state) {
@@ -199,6 +203,14 @@ class LogsViewModel(
                     _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
                 }
             }
+
+            preferencesRepository.getRecentSearch().collect {
+                withContext(Main) {
+                    searchAutocomplete.clear()
+                    searchAutocomplete.addAll(it.map { it.value })
+                }
+            }
+
         }
     }
 
@@ -260,16 +272,13 @@ class LogsViewModel(
     }
 
     private fun startSearch(searchType: SearchType, searchText: String) {
-        Preferences.addRecentSearch(searchText)
-
         _searchState.value = _searchState.value.copy(
             searchText = searchText, state = SearchState.State.SEARCHING
         )
         searchJob = CoroutineScope(IO).launch {
+            preferencesRepository.addNewSearch(SearchEntity(searchText))
+
             var prevTs = System.currentTimeMillis()
-            if (!_searchAutocomplete.contains(searchText)) {
-                _searchAutocomplete.add(searchText)
-            }
             _searchResults.clear()
             _searchIndexes.clear()
             val startMs = System.currentTimeMillis()
