@@ -32,7 +32,6 @@ interface PreferencesDao {
     suspend fun removeSearch(value: String)
 
 
-
     suspend fun addNewRecentColorFilter(item: RecentColorFilterEntry) {
         removeRecentColorFilter(item.fileName)
         addRecentColorFilter(item)
@@ -51,8 +50,22 @@ interface PreferencesDao {
     @Query("DELETE FROM RecentColorFilterEntry WHERE fileName = :value")
     suspend fun removeRecentColorFilter(value: String)
 
+
+    @Upsert
+    suspend fun addRecentTimelineFilter(item: RecentTimelineEntry)
+
+    @Query("SELECT * FROM RecentTimelineEntry LIMIT $MAX_RECENT_TIMELINE_FILTERS")
+    fun getRecentTimelineFilterFlow(): Flow<List<RecentTimelineEntry>>
+
+    @Query("DELETE FROM RecentTimelineEntry WHERE id NOT IN (SELECT id FROM RecentTimelineEntry ORDER BY id DESC LIMIT $MAX_RECENT_TIMELINE_FILTERS)")
+    suspend fun ensureRecentTimelineFilterCapacity()
+
+    @Query("DELETE FROM RecentTimelineEntry WHERE fileName = :value")
+    suspend fun removeRecentTimelineFilter(value: String)
+
     companion object {
         const val MAX_SEARCH_SUGGESTIONS = 100
         const val MAX_RECENT_COLOR_FILTERS = 10
+        const val MAX_RECENT_TIMELINE_FILTERS = 10
     }
 }

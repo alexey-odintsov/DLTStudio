@@ -8,6 +8,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
+import com.alekso.dltstudio.db.preferences.RecentTimelineEntry
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.model.SettingsLogs
@@ -126,6 +127,10 @@ class MainViewModel(
     val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterEntry>
         get() = _recentColorFiltersFiles
 
+    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineEntry>()
+    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineEntry>
+        get() = _recentTimelineFiltersFiles
+
 
     init {
         panels.add(
@@ -141,12 +146,21 @@ class MainViewModel(
         )
 
         panelsNames.addAll(panels.map { it.getPanelName() })
+
         viewModelScope.launch {
             preferencesRepository.getRecentColorFilters().collectLatest {
                 _recentColorFiltersFiles.clear()
                 _recentColorFiltersFiles.addAll(it)
             }
         }
+
+        viewModelScope.launch {
+            preferencesRepository.getRecentTimelineFilters().collectLatest {
+                _recentTimelineFiltersFiles.clear()
+                _recentTimelineFiltersFiles.addAll(it)
+            }
+        }
+
         CoroutineScope(IO).launch {
             val pluginManager = DependencyManager.providePluginsManager()
 

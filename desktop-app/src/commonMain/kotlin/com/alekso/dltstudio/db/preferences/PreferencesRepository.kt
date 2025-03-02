@@ -9,6 +9,8 @@ interface PreferencesRepository {
     fun getRecentSearch(): Flow<List<SearchEntity>>
     suspend fun addNewRecentColorFilter(item: RecentColorFilterEntry)
     fun getRecentColorFilters(): Flow<List<RecentColorFilterEntry>>
+    suspend fun addNewRecentTimelineFilter(item: RecentTimelineEntry)
+    fun getRecentTimelineFilters(): Flow<List<RecentTimelineEntry>>
 }
 
 class PreferencesRepositoryImpl(
@@ -29,6 +31,14 @@ class PreferencesRepositoryImpl(
 
     override fun getRecentColorFilters(): Flow<List<RecentColorFilterEntry>> {
         return database.getPreferencesDao().getRecentRecentColorFilterFlow()
+    }
+
+    override suspend fun addNewRecentTimelineFilter(item: RecentTimelineEntry) {
+        database.getPreferencesDao().addRecentTimelineFilter(item)
+    }
+
+    override fun getRecentTimelineFilters(): Flow<List<RecentTimelineEntry>> {
+        return database.getPreferencesDao().getRecentTimelineFilterFlow()
     }
 
 }

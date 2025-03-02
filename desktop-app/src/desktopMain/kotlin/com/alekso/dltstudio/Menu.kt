@@ -9,7 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.alekso.dltstudio.db.preferences.RecentColorFilterEntry
-import com.alekso.dltstudio.preferences.Preferences
+import com.alekso.dltstudio.db.preferences.RecentTimelineEntry
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import java.io.File
@@ -28,7 +28,8 @@ interface MainMenuCallbacks {
 @Composable
 fun FrameWindowScope.MainMenu(
     callbacks: MainMenuCallbacks,
-    recentColorFiltersFiles: SnapshotStateList<RecentColorFilterEntry>
+    recentColorFiltersFiles: SnapshotStateList<RecentColorFilterEntry>,
+    recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineEntry>
 ) {
     var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
 
@@ -125,12 +126,12 @@ fun FrameWindowScope.MainMenu(
         }
         Menu("Timeline") {
             Menu("Filters") {
-                Preferences.recentTimelineFilters().forEach {
+                recentTimelineFiltersFiles.forEach {
                     Item(it.fileName, onClick = {
-                        callbacks.onLoadTimelineFiltersFile(File(it.absolutePath))
+                        callbacks.onLoadTimelineFiltersFile(File(it.path))
                     })
                 }
-                if (Preferences.recentTimelineFilters().isNotEmpty()) {
+                if (recentTimelineFiltersFiles.isNotEmpty()) {
                     Separator()
                 }
                 Item("Open", onClick = {

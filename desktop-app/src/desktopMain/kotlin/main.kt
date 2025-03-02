@@ -11,7 +11,6 @@ import androidx.compose.ui.window.application
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
-import com.alekso.dltstudio.preferences.Preferences
 import com.alekso.dltstudio.settings.SettingsDialog
 import com.alekso.dltstudio.ui.MainWindow
 import com.alekso.logger.Log
@@ -28,10 +27,8 @@ fun main() = application {
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
         Log.e("Uncaught exception occurred in $thread: $throwable\n${throwable.stackTraceToString()}")
     }
-    Preferences.loadFromFile()
     Window(
         onCloseRequest = {
-            Preferences.saveToFile()
             Log.d("Application closed")
             exitApplication()
         }, title = "DLT Studio", state = WindowState(width = 1280.dp, height = 768.dp)
@@ -57,7 +54,8 @@ fun main() = application {
 
                 MainMenu(
                     mainViewModel.mainMenuCallbacks,
-                    mainViewModel.recentColorFiltersFiles
+                    mainViewModel.recentColorFiltersFiles,
+                    mainViewModel.recentTimelineFiltersFiles,
                 )
                 MainWindow(mainViewModel)
             }

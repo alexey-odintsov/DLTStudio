@@ -78,7 +78,10 @@ object DependencyManager {
     )
 
     private val timelineViewModel by lazy {
-        TimelineViewModel(onProgressChanged = onProgressUpdate)
+        TimelineViewModel(
+            onProgressChanged = onProgressUpdate,
+            preferencesRepository = preferencesRepository,
+        )
     }
 
     private val mainViewModel = MainViewModel(
