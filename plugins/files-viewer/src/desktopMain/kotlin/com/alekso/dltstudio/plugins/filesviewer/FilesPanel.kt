@@ -32,12 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
-import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
-import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
-import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -66,16 +62,6 @@ fun FilesPanel(
                 imageBitmap = state.imageBitmap,
             )
         }
-
-//        is FilePreviewState -> {
-//            FileDialog(FileDialogState(
-//                title = "Save file",
-//                visible = true,
-//                operation = DialogOperation.SAVE,
-//                file = state.entry.name.let { File(it) },
-//                callback = { onSaveFileClicked(it[0]) }
-//            ))
-//        }
 
         else -> {}
     }
