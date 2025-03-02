@@ -8,6 +8,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltstudio.db.preferences.PreferencesRepository
+import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepository
 import com.alekso.dltstudio.db.virtualdevice.toVirtualDevice
@@ -36,8 +38,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
@@ -64,8 +68,12 @@ class LogsViewModel(
     private val formatter: Formatter,
     private val insightsRepository: InsightsRepository,
     private val virtualDeviceRepository: VirtualDeviceRepository,
+    private val preferencesRepository: PreferencesRepository,
     private val onProgressChanged: (Float) -> Unit,
 ) : MessagesHolder, MessagesProvider {
+    private val viewModelJob = SupervisorJob()
+    private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
         get() = _logMessages
@@ -192,12 +200,16 @@ class LogsViewModel(
 
 
     init {
-        CoroutineScope(IO).launch {
-            virtualDeviceRepository.getAllAsFlow().collect {
-                withContext(Main) {
-                    _virtualDevices.clear()
-                    _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
-                }
+        viewModelScope.launch {
+            preferencesRepository.getRecentSearch().collectLatest {
+                _searchAutocomplete.clear()
+                _searchAutocomplete.addAll(it.map { it.value })
+            }
+        }
+        viewModelScope.launch {
+            virtualDeviceRepository.getAllAsFlow().collectLatest {
+                _virtualDevices.clear()
+                _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
             }
         }
     }
@@ -259,17 +271,20 @@ class LogsViewModel(
         }
     }
 
-    private fun startSearch(searchType: SearchType, searchText: String) {
-        Preferences.addRecentSearch(searchText)
+    private fun shouldSaveSearch(text: String): Boolean {
+        return text.length >= 3
+    }
 
+    private fun startSearch(searchType: SearchType, searchText: String) {
         _searchState.value = _searchState.value.copy(
             searchText = searchText, state = SearchState.State.SEARCHING
         )
         searchJob = CoroutineScope(IO).launch {
-            var prevTs = System.currentTimeMillis()
-            if (!_searchAutocomplete.contains(searchText)) {
-                _searchAutocomplete.add(searchText)
+            if (shouldSaveSearch(searchText)) {
+                preferencesRepository.addNewSearch(SearchEntity(searchText))
             }
+
+            var prevTs = System.currentTimeMillis()
             _searchResults.clear()
             _searchIndexes.clear()
             val startMs = System.currentTimeMillis()

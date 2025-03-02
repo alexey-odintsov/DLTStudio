@@ -7,6 +7,7 @@ import com.alekso.dltstudio.AppFormatter
 import com.alekso.dltstudio.Env
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.db.DBFactory
+import com.alekso.dltstudio.db.preferences.PreferencesRepositoryImpl
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceRepositoryImpl
 import com.alekso.dltstudio.logs.LogsViewModel
@@ -58,11 +59,20 @@ object DependencyManager {
             scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
         )
     }
+
+    private val preferencesRepository by lazy {
+        PreferencesRepositoryImpl(
+            database = database,
+            scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+        )
+    }
+
     private val insightsRepository by lazy { InsightsRepository() }
 
     private val logsViewModel = LogsViewModel(
         insightsRepository = insightsRepository,
         virtualDeviceRepository = virtualDeviceRepository,
+        preferencesRepository = preferencesRepository,
         onProgressChanged = onProgressUpdate,
         formatter = formatter
     )
