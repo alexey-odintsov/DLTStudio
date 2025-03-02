@@ -42,7 +42,7 @@ interface PreferencesDao {
     suspend fun addRecentColorFilter(item: RecentColorFilterEntry)
 
     @Query("SELECT * FROM RecentColorFilterEntry LIMIT $MAX_RECENT_COLOR_FILTERS")
-    fun getRecentRecentColorFilterFlow(): Flow<List<RecentColorFilterEntry>>
+    fun getRecentColorFilterFlow(): Flow<List<RecentColorFilterEntry>>
 
     @Query("DELETE FROM RecentColorFilterEntry WHERE id NOT IN (SELECT id FROM RecentColorFilterEntry ORDER BY id DESC LIMIT $MAX_RECENT_COLOR_FILTERS)")
     suspend fun ensureRecentColorFilterCapacity()
@@ -50,6 +50,12 @@ interface PreferencesDao {
     @Query("DELETE FROM RecentColorFilterEntry WHERE fileName = :value")
     suspend fun removeRecentColorFilter(value: String)
 
+
+    suspend fun addNewRecentTimelineFilter(item: RecentTimelineEntry) {
+        removeRecentTimelineFilter(item.fileName)
+        addRecentTimelineFilter(item)
+        ensureRecentTimelineFilterCapacity()
+    }
 
     @Upsert
     suspend fun addRecentTimelineFilter(item: RecentTimelineEntry)

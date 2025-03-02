@@ -30,11 +30,11 @@ class PreferencesRepositoryImpl(
     }
 
     override fun getRecentColorFilters(): Flow<List<RecentColorFilterEntry>> {
-        return database.getPreferencesDao().getRecentRecentColorFilterFlow()
+        return database.getPreferencesDao().getRecentColorFilterFlow()
     }
 
     override suspend fun addNewRecentTimelineFilter(item: RecentTimelineEntry) {
-        database.getPreferencesDao().addRecentTimelineFilter(item)
+        database.getPreferencesDao().addNewRecentTimelineFilter(item)
     }
 
     override fun getRecentTimelineFilters(): Flow<List<RecentTimelineEntry>> {
