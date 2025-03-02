@@ -75,7 +75,6 @@ object DependencyManager {
         preferencesRepository = preferencesRepository,
         onProgressChanged = onProgressUpdate,
         formatter = formatter,
-        preferencesRepository = preferencesRepository,
     )
 
     private val timelineViewModel by lazy {
