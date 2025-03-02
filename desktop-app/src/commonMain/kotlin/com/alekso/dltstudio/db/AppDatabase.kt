@@ -16,8 +16,7 @@ import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
         SettingsUIEntity::class,
         SettingsLogsEntity::class,
         SearchEntity::class,
-    ],
-    version = 4, exportSchema = true,
+    ], version = 4, exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getVirtualDeviceDao(): VirtualDeviceDao

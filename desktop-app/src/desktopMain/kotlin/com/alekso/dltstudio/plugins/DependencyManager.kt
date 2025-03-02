@@ -72,6 +72,7 @@ object DependencyManager {
     private val logsViewModel = LogsViewModel(
         insightsRepository = insightsRepository,
         virtualDeviceRepository = virtualDeviceRepository,
+        preferencesRepository = preferencesRepository,
         onProgressChanged = onProgressUpdate,
         formatter = formatter,
         preferencesRepository = preferencesRepository,

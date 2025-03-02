@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class SearchEntity(
     val value: String,
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    val id: Int = 0, // we use it for ordering
 )

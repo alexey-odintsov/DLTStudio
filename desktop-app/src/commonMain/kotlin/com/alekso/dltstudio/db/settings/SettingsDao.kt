@@ -12,12 +12,12 @@ interface SettingsDao {
     suspend fun updateSettingsUI(item: SettingsUIEntity)
 
     @Query("SELECT * FROM SettingsUIEntity LIMIT 1")
-    fun getSettingsUIFlow(): Flow<SettingsUIEntity>
+    fun getSettingsUIFlow(): Flow<SettingsUIEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateSettingsLogs(item: SettingsLogsEntity)
 
     @Query("SELECT * FROM SettingsLogsEntity LIMIT 1")
-    fun getSettingsLogsFlow(): Flow<SettingsLogsEntity>
+    fun getSettingsLogsFlow(): Flow<SettingsLogsEntity?>
 
 }
