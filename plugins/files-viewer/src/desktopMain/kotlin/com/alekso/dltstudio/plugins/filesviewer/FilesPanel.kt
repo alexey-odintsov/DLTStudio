@@ -30,11 +30,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
-import java.io.File
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -44,7 +41,6 @@ fun FilesPanel(
     previewState: State<PreviewState?>,
     onPreviewDialogClosed: () -> Unit,
     onSearchButtonClicked: () -> Unit,
-    onSaveFileClicked: (File) -> Unit,
     onFileEntryClicked: (FileEntry) -> Unit,
 ) {
 
@@ -63,19 +59,6 @@ fun FilesPanel(
                 onDialogClosed = onPreviewDialogClosed,
                 fileEntry = state.entry,
                 imageBitmap = state.imageBitmap,
-            )
-        }
-
-        is FilePreviewState -> {
-            FileChooserDialog(
-                dialogContext = FileChooserDialogState.DialogContext.SAVE_FILE,
-                fileName = state.entry.name,
-                title = "Save file",
-                onFileSelected = { file ->
-                    if (file != null) {
-                        onSaveFileClicked(file)
-                    }
-                },
             )
         }
 
@@ -198,7 +181,6 @@ fun PreviewFilesPanel() {
                 FileEntry(name = "some screenshot.png", size = 456643),
             ),
             mutableStateOf<PreviewState?>(null),
-            {},
             {},
             {},
             {},
