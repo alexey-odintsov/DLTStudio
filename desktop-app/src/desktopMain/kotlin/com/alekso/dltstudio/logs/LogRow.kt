@@ -71,100 +71,118 @@ fun LogRow(
                     }
                 )
         ) {
-            Cell(
-                modifier = Modifier.width(columnParams[0].size.dp)
-                    .padding(end = 2.dp, start = 2.dp, top = 2.dp),
-                textAlign = TextAlign.Center,
-                text = "",
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-            ) {
-                if (marked) {
-                    Image(
-                        painterResource(Res.drawable.icon_mark),
-                        contentDescription = "Mark log",
-                        modifier = Modifier.size(6.dp),
-                    )
-                } else {
-                    Box(modifier = Modifier.size(6.dp))
+            if (columnParams[0].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[0].size.dp)
+                        .padding(end = 2.dp, start = 2.dp, top = 2.dp),
+                    textAlign = TextAlign.Center,
+                    text = "",
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                ) {
+                    if (marked) {
+                        Image(
+                            painterResource(Res.drawable.icon_mark),
+                            contentDescription = "Mark log",
+                            modifier = Modifier.size(6.dp),
+                        )
+                    } else {
+                        Box(modifier = Modifier.size(6.dp))
+                    }
                 }
             }
-            Cell(
-                modifier = Modifier.width(columnParams[1].size.dp).padding(end = 2.dp),
-                textAlign = TextAlign.Right,
-                text = index,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(columnParams[2].size.dp),
-                textAlign = TextAlign.Center,
-                text = datetime,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(columnParams[3].size.dp).padding(end = 2.dp),
-                textAlign = TextAlign.Right,
-                text = timeOffset,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(columnParams[4].size.dp),
-                textAlign = TextAlign.Center,
-                text = ecuId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(columnParams[5].size.dp),
-                textAlign = TextAlign.Center,
-                text = sessionId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(columnParams[6].size.dp),
-                textAlign = TextAlign.Center,
-                text = applicationId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(columnParams[7].size.dp),
-                textAlign = TextAlign.Center,
-                text = contextId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(columnParams[8].size.dp)
-                    .background(
-                        logTypeIndicator?.logTypeStyle?.backgroundColor
-                            ?: finalCellStyle?.backgroundColor ?: Color.Transparent
-                    ),
-                text = logTypeIndicator?.logTypeSymbol ?: "",
-                textAlign = TextAlign.Center,
-                isHeader = isHeader,
-                cellStyle = logTypeIndicator?.logTypeStyle ?: finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
+            if (columnParams[1].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[1].size.dp).padding(end = 2.dp),
+                    textAlign = TextAlign.Right,
+                    text = index,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[2].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[2].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = datetime,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[3].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[3].size.dp).padding(end = 2.dp),
+                    textAlign = TextAlign.Right,
+                    text = timeOffset,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[4].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[4].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = ecuId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[5].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[5].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = sessionId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[6].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[6].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = applicationId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[7].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[7].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = contextId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[8].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[8].size.dp)
+                        .background(
+                            logTypeIndicator?.logTypeStyle?.backgroundColor
+                                ?: finalCellStyle?.backgroundColor ?: Color.Transparent
+                        ),
+                    text = logTypeIndicator?.logTypeSymbol ?: "",
+                    textAlign = TextAlign.Center,
+                    isHeader = isHeader,
+                    cellStyle = logTypeIndicator?.logTypeStyle ?: finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
             Cell(
                 modifier = Modifier.weight(1f).padding(start = 6.dp),
                 text = content,
