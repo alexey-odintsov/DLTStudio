@@ -38,6 +38,7 @@ fun LogRow(
     index: String,
     datetime: String,
     timeOffset: String,
+    messageCounter: String,
     ecuId: String,
     sessionId: String,
     applicationId: String,
@@ -126,9 +127,9 @@ fun LogRow(
             }
             if (columnParams[4].visible) {
                 Cell(
-                    modifier = Modifier.width(columnParams[4].size.dp),
-                    textAlign = TextAlign.Center,
-                    text = ecuId,
+                    modifier = Modifier.width(columnParams[4].size.dp).padding(end = 2.dp),
+                    textAlign = TextAlign.Right,
+                    text = messageCounter,
                     isHeader = isHeader,
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
@@ -139,7 +140,7 @@ fun LogRow(
                 Cell(
                     modifier = Modifier.width(columnParams[5].size.dp),
                     textAlign = TextAlign.Center,
-                    text = sessionId,
+                    text = ecuId,
                     isHeader = isHeader,
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
@@ -150,7 +151,7 @@ fun LogRow(
                 Cell(
                     modifier = Modifier.width(columnParams[6].size.dp),
                     textAlign = TextAlign.Center,
-                    text = applicationId,
+                    text = sessionId,
                     isHeader = isHeader,
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
@@ -161,7 +162,7 @@ fun LogRow(
                 Cell(
                     modifier = Modifier.width(columnParams[7].size.dp),
                     textAlign = TextAlign.Center,
-                    text = contextId,
+                    text = applicationId,
                     isHeader = isHeader,
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
@@ -170,7 +171,18 @@ fun LogRow(
             }
             if (columnParams[8].visible) {
                 Cell(
-                    modifier = Modifier.width(columnParams[8].size.dp)
+                    modifier = Modifier.width(columnParams[8].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = contextId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[9].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[9].size.dp)
                         .background(
                             logTypeIndicator?.logTypeStyle?.backgroundColor
                                 ?: finalCellStyle?.backgroundColor ?: Color.Transparent
@@ -264,6 +276,7 @@ fun LogRowPreview() {
                 index = (16_345_345 + i).toString(),
                 datetime = "2024-02-04 18:26:23.074689",
                 timeOffset = "1234",
+                messageCounter = "1",
                 ecuId = "EcuId",
                 sessionId = "123",
                 applicationId = "AppId",

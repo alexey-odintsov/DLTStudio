@@ -64,6 +64,7 @@ fun LazyScrollable(
                         "#",
                         "DateTime",
                         "Time",
+                        "Count",
                         "ecuId",
                         "sessId",
                         "appId",
@@ -87,6 +88,7 @@ fun LazyScrollable(
                         if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
                     val sEcuId = "${dltMessage.standardHeader.ecuId}"
                     val sSessionId = "${dltMessage.standardHeader.sessionId}"
+                    val sMessageCounterId = "${dltMessage.standardHeader.messageCounter}"
                     val sApplicationId = "${dltMessage.extendedHeader?.applicationId}"
                     val sContextId = "${dltMessage.extendedHeader?.contextId}"
                     val sContent: String = dltMessage.payloadText()
@@ -122,6 +124,7 @@ fun LazyScrollable(
                             index.toString(),
                             sTime,
                             sTimeOffset,
+                            sMessageCounterId,
                             sEcuId,
                             sSessionId,
                             sApplicationId,

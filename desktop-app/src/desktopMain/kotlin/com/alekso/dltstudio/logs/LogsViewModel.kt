@@ -84,6 +84,7 @@ class LogsViewModel(
         ColumnsParams(true, 54f),
         ColumnsParams(true, 180f),
         ColumnsParams(true, 80f),
+        ColumnsParams(true, 40f),
         ColumnsParams(true, 46f),
         ColumnsParams(true, 46f),
         ColumnsParams(true, 46f),
