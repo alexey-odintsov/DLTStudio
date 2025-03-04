@@ -9,7 +9,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.AnnotatedString
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.ui.Panel
@@ -26,6 +26,7 @@ fun LogsListPanel(
     onLogsRowSelected: (Int, Int) -> Unit,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
 ) {
     Panel(
@@ -43,6 +44,7 @@ fun LogsListPanel(
             listState = logsListState,
             wrapContent = wrapContent,
             rowContextMenuCallbacks = rowContextMenuCallbacks,
+            columnsContextMenuCallbacks = columnsContextMenuCallbacks,
             showComments = showComments,
         )
     }
@@ -65,12 +67,8 @@ fun PreviewLogsListPanel() {
         logsListState = LazyListState(),
         onLogsRowSelected = { _, _ -> },
         wrapContent = true,
-        rowContextMenuCallbacks = object : RowContextMenuCallbacks {
-            override fun onCopyClicked(text: AnnotatedString) = Unit
-            override fun onMarkClicked(i: Int, message: LogMessage) = Unit
-            override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit
-            override fun onRemoveDialogClicked(message: LogMessage) = Unit
-        },
+        rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
+        columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         showComments = true,
     )
 }

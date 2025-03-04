@@ -20,8 +20,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
@@ -76,6 +76,7 @@ fun LogsPanel(
     logsListSelectedRow: Int,
     searchListSelectedRow: Int,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
     onShowVirtualDeviceClicked: () -> Unit = {},
 ) {
@@ -120,6 +121,7 @@ fun LogsPanel(
                             wrapContent = logsToolbarState.toolbarWrapContentChecked,
                             showComments = logsToolbarState.toolbarCommentsChecked,
                             rowContextMenuCallbacks = rowContextMenuCallbacks,
+                            columnsContextMenuCallbacks = columnsContextMenuCallbacks,
                         )
                     }
                     second(20.dp) {
@@ -168,6 +170,7 @@ fun LogsPanel(
                     wrapContent = logsToolbarState.toolbarWrapContentChecked,
                     showComments = logsToolbarState.toolbarCommentsChecked,
                     rowContextMenuCallbacks = rowContextMenuCallbacks,
+                    columnsContextMenuCallbacks = columnsContextMenuCallbacks,
                 )
             }
             splitter {
@@ -227,11 +230,7 @@ fun PreviewLogsPanel() {
         searchListSelectedRow = 0,
         searchAutoComplete = mutableStateListOf(),
         virtualDevices = mutableStateListOf(),
-        rowContextMenuCallbacks = object : RowContextMenuCallbacks {
-            override fun onCopyClicked(text: AnnotatedString) = Unit
-            override fun onMarkClicked(i: Int, message: LogMessage) = Unit
-            override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit
-            override fun onRemoveDialogClicked(message: LogMessage) = Unit
-        },
+        rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
+        columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
     )
 }

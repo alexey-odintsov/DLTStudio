@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
@@ -58,16 +58,12 @@ enum class LogRemoveContext {
 }
 
 data class ColumnsParams(
+    val title: String,
+    val name: String,
     val visible: Boolean,
     val size: Float,
 )
 
-interface RowContextMenuCallbacks {
-    fun onCopyClicked(text: AnnotatedString)
-    fun onMarkClicked(i: Int, message: LogMessage)
-    fun onRemoveClicked(context: LogRemoveContext, filter: String)
-    fun onRemoveDialogClicked(message: LogMessage)
-}
 
 class LogsViewModel(
     private val formatter: Formatter,
@@ -80,17 +76,22 @@ class LogsViewModel(
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
     internal val columnParams = mutableStateListOf<ColumnsParams>(
-        ColumnsParams(true, 20f),
-        ColumnsParams(true, 54f),
-        ColumnsParams(true, 180f),
-        ColumnsParams(true, 80f),
-        ColumnsParams(true, 40f),
-        ColumnsParams(true, 46f),
-        ColumnsParams(true, 46f),
-        ColumnsParams(true, 46f),
-        ColumnsParams(true, 46f),
-        ColumnsParams(true, 14f),
+        ColumnsParams("", "Mark", true, 20f),
+        ColumnsParams("#", "Row number", true, 54f),
+        ColumnsParams("DateTime", "DateTime", true, 180f),
+        ColumnsParams("Time", "Time", true, 80f),
+        ColumnsParams("Count", "Count", true, 40f),
+        ColumnsParams("EcuId", "EcuId", true, 46f),
+        ColumnsParams("SessionId", "SessionId", true, 46f),
+        ColumnsParams("AppId", "AppId", true, 46f),
+        ColumnsParams("CtxId", "CtxId", true, 46f),
+        ColumnsParams("", "Log type", true, 14f),
     )
+    val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
+        override fun onToggleColumnVisibility(index: Int, checked: Boolean) {
+            columnParams[index] = columnParams[index].copy(visible = checked)
+        }
+    }
 
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>

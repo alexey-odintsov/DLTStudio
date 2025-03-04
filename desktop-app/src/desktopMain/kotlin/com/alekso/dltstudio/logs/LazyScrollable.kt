@@ -26,6 +26,8 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenu
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.contract.LogMessage
 
@@ -43,6 +45,7 @@ fun LazyScrollable(
     listState: LazyListState,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
 ) {
     Column(modifier = modifier) {
@@ -57,21 +60,26 @@ fun LazyScrollable(
         Box(modifier = Modifier.weight(1f)) {
             LazyColumn(columnModifier, listState) {
                 stickyHeader {
-                    LogRow(
-                        modifier = Modifier,
-                        columnParams = columnParams,
-                        isSelected = false,
-                        "#",
-                        "DateTime",
-                        "Time",
-                        "Count",
-                        "ecuId",
-                        "sessId",
-                        "appId",
-                        "ctxId",
-                        "content",
-                        wrapContent = wrapContent,
-                    )
+                    ColumnsContextMenu(
+                        columnParams,
+                        columnsContextMenuCallbacks
+                    ) {
+                        LogRow(
+                            modifier = Modifier,
+                            columnParams = columnParams,
+                            isSelected = false,
+                            "#",
+                            "DateTime",
+                            "Time",
+                            "Count",
+                            "ecuId",
+                            "sessId",
+                            "appId",
+                            "ctxId",
+                            "content",
+                            wrapContent = wrapContent,
+                        )
+                    }
                 }
                 itemsIndexed(
                     items = logMessages,
@@ -83,7 +91,8 @@ fun LazyScrollable(
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
                     val index: Int = if (indexes != null) indexes[i] else i
-                    val sTime: String = LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
+                    val sTime: String =
+                        LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
                     val sTimeOffset: String =
                         if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
                     val sEcuId = "${dltMessage.standardHeader.ecuId}"

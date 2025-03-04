@@ -103,6 +103,7 @@ class LogsPlugin(
                     viewModel.removeLogsDialogState.value = RemoveLogsDialogState(true, message)
                 }
             },
+            columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
             onShowVirtualDeviceClicked = {
                 viewModel.devicePreviewsDialogState.value = true
             })
