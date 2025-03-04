@@ -56,6 +56,7 @@ class LogsPlugin(
 
         LogsPanel(
             modifier = modifier,
+            columnParams = viewModel.columnParams,
             logMessages = viewModel.logMessages,
             searchState = searchState,
             searchAutoComplete = viewModel.searchAutocomplete,

@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +33,7 @@ private val selectedCellStyle = CellStyle(backgroundColor = Color.LightGray)
 @Preview
 fun LogRow(
     modifier: Modifier,
+    columnParams: SnapshotStateList<ColumnsParams>,
     isSelected: Boolean,
     index: String,
     datetime: String,
@@ -69,7 +72,8 @@ fun LogRow(
                 )
         ) {
             Cell(
-                modifier = Modifier.width(10.dp).padding(end = 2.dp, start = 2.dp, top = 2.dp),
+                modifier = Modifier.width(columnParams[0].size.dp)
+                    .padding(end = 2.dp, start = 2.dp, top = 2.dp),
                 textAlign = TextAlign.Center,
                 text = "",
                 isHeader = isHeader,
@@ -86,7 +90,7 @@ fun LogRow(
                 }
             }
             Cell(
-                modifier = Modifier.width(54.dp).padding(end = 2.dp),
+                modifier = Modifier.width(columnParams[1].size.dp).padding(end = 2.dp),
                 textAlign = TextAlign.Right,
                 text = index,
                 isHeader = isHeader,
@@ -95,16 +99,16 @@ fun LogRow(
             )
             CellDivider()
             Cell(
-                modifier = Modifier.width(180.dp),
+                modifier = Modifier.width(columnParams[2].size.dp),
                 textAlign = TextAlign.Center,
                 text = datetime,
                 isHeader = isHeader,
                 cellStyle = finalCellStyle,
                 wrapContent = wrapContent,
-                )
+            )
             CellDivider()
             Cell(
-                modifier = Modifier.width(80.dp).padding(end = 2.dp),
+                modifier = Modifier.width(columnParams[3].size.dp).padding(end = 2.dp),
                 textAlign = TextAlign.Right,
                 text = timeOffset,
                 isHeader = isHeader,
@@ -113,7 +117,7 @@ fun LogRow(
             )
             CellDivider()
             Cell(
-                modifier = Modifier.width(46.dp),
+                modifier = Modifier.width(columnParams[4].size.dp),
                 textAlign = TextAlign.Center,
                 text = ecuId,
                 isHeader = isHeader,
@@ -122,7 +126,7 @@ fun LogRow(
             )
             CellDivider()
             Cell(
-                modifier = Modifier.width(46.dp),
+                modifier = Modifier.width(columnParams[5].size.dp),
                 textAlign = TextAlign.Center,
                 text = sessionId,
                 isHeader = isHeader,
@@ -131,7 +135,7 @@ fun LogRow(
             )
             CellDivider()
             Cell(
-                modifier = Modifier.width(46.dp),
+                modifier = Modifier.width(columnParams[6].size.dp),
                 textAlign = TextAlign.Center,
                 text = applicationId,
                 isHeader = isHeader,
@@ -140,7 +144,7 @@ fun LogRow(
             )
             CellDivider()
             Cell(
-                modifier = Modifier.width(46.dp),
+                modifier = Modifier.width(columnParams[7].size.dp),
                 textAlign = TextAlign.Center,
                 text = contextId,
                 isHeader = isHeader,
@@ -149,7 +153,7 @@ fun LogRow(
             )
             CellDivider()
             Cell(
-                modifier = Modifier.width(14.dp)
+                modifier = Modifier.width(columnParams[8].size.dp)
                     .background(
                         logTypeIndicator?.logTypeStyle?.backgroundColor
                             ?: finalCellStyle?.backgroundColor ?: Color.Transparent
@@ -237,6 +241,7 @@ fun LogRowPreview() {
         (0..9).forEach { i ->
             LogRow(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                columnParams = mutableStateListOf(),
                 isSelected = i == 3,
                 index = (16_345_345 + i).toString(),
                 datetime = "2024-02-04 18:26:23.074689",

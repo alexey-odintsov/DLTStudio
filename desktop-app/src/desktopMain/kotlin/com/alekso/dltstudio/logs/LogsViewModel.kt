@@ -57,6 +57,11 @@ enum class LogRemoveContext {
     ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
 }
 
+data class ColumnsParams(
+    val visible: Boolean,
+    val size: Float,
+)
+
 interface RowContextMenuCallbacks {
     fun onCopyClicked(text: AnnotatedString)
     fun onMarkClicked(i: Int, message: LogMessage)
@@ -73,6 +78,18 @@ class LogsViewModel(
 ) : MessagesHolder, MessagesProvider {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
+    internal val columnParams = mutableStateListOf<ColumnsParams>(
+        ColumnsParams(true, 20f),
+        ColumnsParams(true, 54f),
+        ColumnsParams(true, 180f),
+        ColumnsParams(true, 80f),
+        ColumnsParams(true, 46f),
+        ColumnsParams(true, 46f),
+        ColumnsParams(true, 46f),
+        ColumnsParams(true, 46f),
+        ColumnsParams(true, 14f),
+    )
 
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>

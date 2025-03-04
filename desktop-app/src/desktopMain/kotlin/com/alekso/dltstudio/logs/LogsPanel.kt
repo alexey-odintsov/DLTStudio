@@ -52,6 +52,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
+    columnParams: SnapshotStateList<ColumnsParams>,
     logMessages: SnapshotStateList<LogMessage>,
     logInsights: SnapshotStateList<LogInsight>? = null,
     virtualDevices: SnapshotStateList<VirtualDevice>,
@@ -110,6 +111,7 @@ fun LogsPanel(
                     first(20.dp) {
                         LogsListPanel(
                             Modifier.fillMaxSize(),
+                            columnParams,
                             logMessages,
                             mergedFilters,
                             logsListSelectedRow,
@@ -156,6 +158,7 @@ fun LogsPanel(
             second(20.dp) {
                 SearchResultsPanel(
                     Modifier.fillMaxSize(),
+                    columnParams = columnParams,
                     searchResult,
                     searchIndexes,
                     mergedFilters,
@@ -199,6 +202,7 @@ fun PreviewLogsPanel() {
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
+        columnParams = mutableStateListOf(),
         logMessages = list,
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),

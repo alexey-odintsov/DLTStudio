@@ -14,6 +14,7 @@ import com.alekso.dltstudio.ui.Panel
 @Composable
 fun SearchResultsPanel(
     modifier: Modifier = Modifier,
+    columnParams: SnapshotStateList<ColumnsParams>,
     searchResult: SnapshotStateList<LogMessage>,
     searchIndexes: SnapshotStateList<Int>,
     colorFilters: SnapshotStateList<ColorFilter>,
@@ -31,6 +32,7 @@ fun SearchResultsPanel(
     ) {
         LazyScrollable(
             Modifier.fillMaxSize().background(Color.LightGray),
+            columnParams = columnParams,
             searchResult,
             searchIndexes,
             colorFilters,

@@ -34,6 +34,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
+    columnParams: SnapshotStateList<ColumnsParams>,
     logMessages: SnapshotStateList<LogMessage>,
     indexes: SnapshotStateList<Int>? = null,
     colorFilters: SnapshotStateList<ColorFilter>,
@@ -58,6 +59,7 @@ fun LazyScrollable(
                 stickyHeader {
                     LogRow(
                         modifier = Modifier,
+                        columnParams = columnParams,
                         isSelected = false,
                         "#",
                         "DateTime",
@@ -115,6 +117,7 @@ fun LazyScrollable(
                                     }
                                 } else false
                             },
+                            columnParams = columnParams,
                             isSelected = (i == selectedRow),
                             index.toString(),
                             sTime,

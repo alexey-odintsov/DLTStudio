@@ -18,6 +18,7 @@ import com.alekso.dltstudio.utils.SampleData
 @Composable
 fun LogsListPanel(
     modifier: Modifier = Modifier,
+    columnParams: SnapshotStateList<ColumnsParams>,
     messages: SnapshotStateList<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
@@ -33,6 +34,7 @@ fun LogsListPanel(
     ) {
         LazyScrollable(
             Modifier.fillMaxSize().background(Color.LightGray),
+            columnParams,
             messages,
             null,
             colorFilters,
@@ -56,6 +58,7 @@ fun PreviewLogsListPanel() {
 
     LogsListPanel(
         modifier = Modifier.fillMaxSize(),
+        columnParams = mutableStateListOf(),
         messages = list,
         colorFilters = mutableStateListOf(),
         selectedRow = 1,
