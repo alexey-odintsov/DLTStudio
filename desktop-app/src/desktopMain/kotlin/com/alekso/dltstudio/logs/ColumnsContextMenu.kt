@@ -23,7 +23,8 @@ fun ColumnsContextMenu(
     content: @Composable () -> Unit
 ) {
     val menuItems = columnParams.mapIndexed { index, params ->
-        ContextMenuItem("${params.visible} ${params.name}") {
+        val visibilityTitle = if (params.visible) "Hide" else "Show"
+        ContextMenuItem("$visibilityTitle '${params.name}'") {
             rowContextMenuCallbacks.onToggleColumnVisibility(index, !params.visible)
         }
     }
