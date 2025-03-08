@@ -6,6 +6,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltstudio.model.contract.LogMessage
 
+interface RowContextMenuCallbacks {
+    fun onCopyClicked(text: AnnotatedString)
+    fun onMarkClicked(i: Int, message: LogMessage)
+    fun onRemoveClicked(context: LogRemoveContext, filter: String)
+    fun onRemoveDialogClicked(message: LogMessage)
+
+    companion object {
+        val Stub = object : RowContextMenuCallbacks {
+            override fun onCopyClicked(text: AnnotatedString) = Unit
+            override fun onMarkClicked(i: Int, message: LogMessage) = Unit
+            override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit
+            override fun onRemoveDialogClicked(message: LogMessage) = Unit
+        }
+    }
+}
+
 @Composable
 fun RowContextMenu(
     i: Int,
