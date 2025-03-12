@@ -2,8 +2,8 @@ package com.alekso.dltstudio.db.preferences
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.alekso.dltstudio.model.Columns
-import com.alekso.dltstudio.model.ColumnsParams
+import com.alekso.dltstudio.model.Column
+import com.alekso.dltstudio.model.ColumnParams
 
 @Entity
 data class ColumnParamsEntity(
@@ -14,13 +14,11 @@ data class ColumnParamsEntity(
 )
 
 fun ColumnParamsEntity.toColumnParams() =
-    ColumnsParams(
-        key = Columns.valueOf(key),
-        title = "?",
-        name = "?",
+    ColumnParams(
+        column = Column.valueOf(key),
         visible = visible,
         size = size
     )
 
-fun ColumnsParams.toColumnParamsEntity() =
-    ColumnParamsEntity(key = key.name, visible = visible, size = size)
+fun ColumnParams.toColumnParamsEntity() =
+    ColumnParamsEntity(key = column.name, visible = visible, size = size)

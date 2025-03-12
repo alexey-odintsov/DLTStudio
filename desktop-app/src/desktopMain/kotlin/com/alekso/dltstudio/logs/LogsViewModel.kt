@@ -27,8 +27,8 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
-import com.alekso.dltstudio.model.Columns
-import com.alekso.dltstudio.model.ColumnsParams
+import com.alekso.dltstudio.model.Column
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -70,12 +70,12 @@ class LogsViewModel(
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
-    internal val columnParams = mutableStateListOf<ColumnsParams>(
-        *ColumnsParams.DefaultParams.toTypedArray()
+    internal val columnParams = mutableStateListOf<ColumnParams>(
+        *ColumnParams.DefaultParams.toTypedArray()
     )
     val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
-        override fun onToggleColumnVisibility(key: Columns, checked: Boolean) {
-            val index = columnParams.indexOfFirst { it.key == key }
+        override fun onToggleColumnVisibility(key: Column, checked: Boolean) {
+            val index = columnParams.indexOfFirst { it.column == key }
             columnParams[index] = columnParams[index].copy(visible = checked)
         }
     }
@@ -221,7 +221,7 @@ class LogsViewModel(
         viewModelScope.launch {
             preferencesRepository.getColumnParams().collectLatest { params ->
                 params.forEach { param ->
-                    val index = columnParams.indexOfFirst { it.key.name == param.key }
+                    val index = columnParams.indexOfFirst { it.column.name == param.key }
                     if (index >= 0) {
                         columnParams[index] = columnParams[index].copy(
                             visible = param.visible, size = param.size

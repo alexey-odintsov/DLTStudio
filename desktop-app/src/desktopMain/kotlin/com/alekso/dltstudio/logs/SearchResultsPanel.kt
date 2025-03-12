@@ -9,14 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import com.alekso.dltstudio.model.ColumnsParams
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.ui.Panel
 
 @Composable
 fun SearchResultsPanel(
     modifier: Modifier = Modifier,
-    columnParams: SnapshotStateList<ColumnsParams>,
+    columnParams: SnapshotStateList<ColumnParams>,
     searchResult: SnapshotStateList<LogMessage>,
     searchIndexes: SnapshotStateList<Int>,
     colorFilters: SnapshotStateList<ColorFilter>,

@@ -29,7 +29,7 @@ import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenu
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import com.alekso.dltstudio.model.ColumnsParams
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 
 
@@ -37,7 +37,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
-    columnParams: SnapshotStateList<ColumnsParams>,
+    columnParams: SnapshotStateList<ColumnParams>,
     logMessages: SnapshotStateList<LogMessage>,
     indexes: SnapshotStateList<Int>? = null,
     colorFilters: SnapshotStateList<ColorFilter>,

@@ -32,7 +32,7 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.toolbar.LogsToolbar
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
-import com.alekso.dltstudio.model.ColumnsParams
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.utils.SampleData
@@ -53,7 +53,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    columnParams: SnapshotStateList<ColumnsParams>,
+    columnParams: SnapshotStateList<ColumnParams>,
     logMessages: SnapshotStateList<LogMessage>,
     logInsights: SnapshotStateList<LogInsight>? = null,
     virtualDevices: SnapshotStateList<VirtualDevice>,

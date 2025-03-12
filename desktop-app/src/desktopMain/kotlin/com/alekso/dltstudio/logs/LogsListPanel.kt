@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import com.alekso.dltstudio.model.ColumnsParams
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.ui.Panel
 import com.alekso.dltstudio.utils.SampleData
@@ -19,7 +19,7 @@ import com.alekso.dltstudio.utils.SampleData
 @Composable
 fun LogsListPanel(
     modifier: Modifier = Modifier,
-    columnParams: SnapshotStateList<ColumnsParams>,
+    columnParams: SnapshotStateList<ColumnParams>,
     messages: SnapshotStateList<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,

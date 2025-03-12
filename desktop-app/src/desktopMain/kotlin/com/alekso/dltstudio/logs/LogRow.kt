@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
-import com.alekso.dltstudio.model.ColumnsParams
+import com.alekso.dltstudio.model.ColumnParams
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource
@@ -34,7 +34,7 @@ private val selectedCellStyle = CellStyle(backgroundColor = Color.LightGray)
 @Preview
 fun LogRow(
     modifier: Modifier,
-    columnParams: SnapshotStateList<ColumnsParams>,
+    columnParams: SnapshotStateList<ColumnParams>,
     isSelected: Boolean,
     index: String,
     datetime: String,
