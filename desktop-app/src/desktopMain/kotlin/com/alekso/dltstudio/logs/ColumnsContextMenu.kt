@@ -4,14 +4,15 @@ import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.alekso.dltstudio.logs.ColumnsParams
+import com.alekso.dltstudio.model.Columns
+import com.alekso.dltstudio.model.ColumnsParams
 
 interface ColumnsContextMenuCallbacks {
-    fun onToggleColumnVisibility(index: Int, checked: Boolean)
+    fun onToggleColumnVisibility(key: Columns, checked: Boolean)
 
     companion object {
         val Stub = object : ColumnsContextMenuCallbacks {
-            override fun onToggleColumnVisibility(index: Int, checked: Boolean) = Unit
+            override fun onToggleColumnVisibility(key: Columns, checked: Boolean) = Unit
         }
     }
 }
@@ -22,10 +23,10 @@ fun ColumnsContextMenu(
     rowContextMenuCallbacks: ColumnsContextMenuCallbacks,
     content: @Composable () -> Unit
 ) {
-    val menuItems = columnParams.mapIndexed { index, params ->
+    val menuItems = columnParams.map { params ->
         val visibilityTitle = if (params.visible) "Hide" else "Show"
         ContextMenuItem("$visibilityTitle '${params.name}'") {
-            rowContextMenuCallbacks.onToggleColumnVisibility(index, !params.visible)
+            rowContextMenuCallbacks.onToggleColumnVisibility(params.key, !params.visible)
         }
     }
 

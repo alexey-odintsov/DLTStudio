@@ -11,6 +11,7 @@ interface PreferencesRepository {
     fun getRecentColorFilters(): Flow<List<RecentColorFilterFileEntry>>
     suspend fun addNewRecentTimelineFilter(item: RecentTimelineFilterFileEntry)
     fun getRecentTimelineFilters(): Flow<List<RecentTimelineFilterFileEntry>>
+    fun getColumnParams(): Flow<List<ColumnParamsEntity>>
 }
 
 class PreferencesRepositoryImpl(
@@ -39,6 +40,10 @@ class PreferencesRepositoryImpl(
 
     override fun getRecentTimelineFilters(): Flow<List<RecentTimelineFilterFileEntry>> {
         return database.getPreferencesDao().getRecentTimelineFilterFlow()
+    }
+
+    override fun getColumnParams(): Flow<List<ColumnParamsEntity>> {
+        return database.getPreferencesDao().getColumnsParamsFlow()
     }
 
 }

@@ -69,6 +69,15 @@ interface PreferencesDao {
     @Query("DELETE FROM RecentTimelineFilterFileEntry WHERE fileName = :value")
     suspend fun removeRecentTimelineFilter(value: String)
 
+    @Upsert
+    suspend fun updateColumnParams(item: ColumnParamsEntity)
+
+    @Query("SELECT * FROM ColumnParamsEntity")
+    fun getColumnsParamsFlow(): Flow<List<ColumnParamsEntity>>
+
+    @Query("DELETE FROM ColumnParamsEntity")
+    suspend fun removeColumnsParams()
+
     companion object {
         const val MAX_SEARCH_SUGGESTIONS = 100
         const val MAX_RECENT_COLOR_FILTERS = 10

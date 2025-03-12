@@ -27,6 +27,8 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
+import com.alekso.dltstudio.model.Columns
+import com.alekso.dltstudio.model.ColumnsParams
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -57,13 +59,6 @@ enum class LogRemoveContext {
     ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
 }
 
-data class ColumnsParams(
-    val title: String,
-    val name: String,
-    val visible: Boolean,
-    val size: Float,
-)
-
 
 class LogsViewModel(
     private val formatter: Formatter,
@@ -76,19 +71,11 @@ class LogsViewModel(
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
     internal val columnParams = mutableStateListOf<ColumnsParams>(
-        ColumnsParams("", "Mark", true, 20f),
-        ColumnsParams("#", "Row number", true, 54f),
-        ColumnsParams("DateTime", "DateTime", true, 180f),
-        ColumnsParams("Time", "Time", true, 80f),
-        ColumnsParams("Count", "Count", true, 40f),
-        ColumnsParams("EcuId", "EcuId", true, 46f),
-        ColumnsParams("SessionId", "SessionId", true, 46f),
-        ColumnsParams("AppId", "AppId", true, 46f),
-        ColumnsParams("CtxId", "CtxId", true, 46f),
-        ColumnsParams("", "Log type", true, 14f),
+        *ColumnsParams.DefaultParams.toTypedArray()
     )
     val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
-        override fun onToggleColumnVisibility(index: Int, checked: Boolean) {
+        override fun onToggleColumnVisibility(key: Columns, checked: Boolean) {
+            val index = columnParams.indexOfFirst { it.key == key }
             columnParams[index] = columnParams[index].copy(visible = checked)
         }
     }
@@ -229,6 +216,18 @@ class LogsViewModel(
             virtualDeviceRepository.getAllAsFlow().collectLatest {
                 _virtualDevices.clear()
                 _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
+            }
+        }
+        viewModelScope.launch {
+            preferencesRepository.getColumnParams().collectLatest { params ->
+                params.forEach { param ->
+                    val index = columnParams.indexOfFirst { it.key.name == param.key }
+                    if (index >= 0) {
+                        columnParams[index] = columnParams[index].copy(
+                            visible = param.visible, size = param.size
+                        )
+                    }
+                }
             }
         }
     }

@@ -32,6 +32,7 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.toolbar.LogsToolbar
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
+import com.alekso.dltstudio.model.ColumnsParams
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.utils.SampleData

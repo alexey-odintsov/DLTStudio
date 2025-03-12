@@ -29,6 +29,7 @@ import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenu
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.model.ColumnsParams
 import com.alekso.dltstudio.model.contract.LogMessage
 
 

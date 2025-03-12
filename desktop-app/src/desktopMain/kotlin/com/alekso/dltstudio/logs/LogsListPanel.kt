@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.model.ColumnsParams
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.ui.Panel
 import com.alekso.dltstudio.utils.SampleData
