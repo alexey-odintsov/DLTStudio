@@ -58,7 +58,6 @@ enum class LogRemoveContext {
     ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
 }
 
-
 class LogsViewModel(
     private val formatter: Formatter,
     private val insightsRepository: InsightsRepository,
@@ -75,7 +74,9 @@ class LogsViewModel(
     val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
         override fun onToggleColumnVisibility(key: Column, checked: Boolean) {
             val index = columnParams.indexOfFirst { it.column == key }
-            columnParams[index] = columnParams[index].copy(visible = checked)
+            viewModelScope.launch {
+                preferencesRepository.updateColumnParams(columnParams[index].copy(visible = checked))
+            }
         }
     }
 
