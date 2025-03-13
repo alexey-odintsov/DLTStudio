@@ -74,8 +74,9 @@ class LogsViewModel(
     val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
         override fun onToggleColumnVisibility(key: Column, checked: Boolean) {
             val index = columnParams.indexOfFirst { it.column == key }
-            viewModelScope.launch {
-                preferencesRepository.updateColumnParams(columnParams[index].copy(visible = checked))
+            val updatedColumnParams = columnParams[index].copy(visible = checked)
+            viewModelScope.launch(IO) {
+                preferencesRepository.updateColumnParams(updatedColumnParams)
             }
         }
     }
