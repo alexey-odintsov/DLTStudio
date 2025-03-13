@@ -79,6 +79,14 @@ class LogsViewModel(
                 preferencesRepository.updateColumnParams(updatedColumnParams)
             }
         }
+
+        override fun onResetParams() {
+            viewModelScope.launch(IO) {
+                preferencesRepository.resetColumnsParams()
+                columnParams.clear()
+                columnParams.addAll(ColumnParams.DefaultParams)
+            }
+        }
     }
 
     private val _logMessages = mutableStateListOf<LogMessage>()

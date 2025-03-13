@@ -14,6 +14,7 @@ interface PreferencesRepository {
     fun getRecentTimelineFilters(): Flow<List<RecentTimelineFilterFileEntry>>
     fun getColumnParams(): Flow<List<ColumnParamsEntity>>
     suspend fun updateColumnParams(item: ColumnParams)
+    suspend fun resetColumnsParams()
 }
 
 class PreferencesRepositoryImpl(
@@ -50,5 +51,9 @@ class PreferencesRepositoryImpl(
 
     override suspend fun updateColumnParams(item: ColumnParams) {
         database.getPreferencesDao().updateColumnParams(item.toColumnParamsEntity())
+    }
+
+    override suspend fun resetColumnsParams() {
+        database.getPreferencesDao().removeColumnsParams()
     }
 }

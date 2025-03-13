@@ -9,10 +9,12 @@ import com.alekso.dltstudio.model.ColumnParams
 
 interface ColumnsContextMenuCallbacks {
     fun onToggleColumnVisibility(key: Column, checked: Boolean)
+    fun onResetParams()
 
     companion object {
         val Stub = object : ColumnsContextMenuCallbacks {
             override fun onToggleColumnVisibility(key: Column, checked: Boolean) = Unit
+            override fun onResetParams() = Unit
         }
     }
 }
@@ -28,7 +30,13 @@ fun ColumnsContextMenu(
         ContextMenuItem("$visibilityTitle '${params.column.menuName}'") {
             rowContextMenuCallbacks.onToggleColumnVisibility(params.column, !params.visible)
         }
-    }
+    }.toMutableList()
+
+    menuItems.add(
+        ContextMenuItem("Reset columns") {
+            rowContextMenuCallbacks.onResetParams()
+        }
+    )
 
     ContextMenuArea(items = { menuItems }) {
         content()
