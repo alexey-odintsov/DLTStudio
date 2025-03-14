@@ -2,6 +2,7 @@ package com.alekso.dltstudio.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import com.alekso.dltstudio.db.preferences.ColumnParamsEntity
 import com.alekso.dltstudio.db.preferences.PreferencesDao
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
@@ -20,8 +21,9 @@ import com.alekso.dltstudio.db.virtualdevice.VirtualDeviceEntity
         SearchEntity::class,
         RecentColorFilterFileEntry::class,
         RecentTimelineFilterFileEntry::class,
+        ColumnParamsEntity::class,
     ],
-    version = 5, exportSchema = true,
+    version = 6, exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getVirtualDeviceDao(): VirtualDeviceDao

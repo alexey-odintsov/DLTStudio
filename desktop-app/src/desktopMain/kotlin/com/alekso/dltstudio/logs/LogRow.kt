@@ -15,11 +15,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
+import com.alekso.dltstudio.model.ColumnParams
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource
@@ -31,10 +34,12 @@ private val selectedCellStyle = CellStyle(backgroundColor = Color.LightGray)
 @Preview
 fun LogRow(
     modifier: Modifier,
+    columnParams: SnapshotStateList<ColumnParams>,
     isSelected: Boolean,
     index: String,
     datetime: String,
     timeOffset: String,
+    messageCounter: String,
     ecuId: String,
     sessionId: String,
     applicationId: String,
@@ -68,99 +73,129 @@ fun LogRow(
                     }
                 )
         ) {
-            Cell(
-                modifier = Modifier.width(10.dp).padding(end = 2.dp, start = 2.dp, top = 2.dp),
-                textAlign = TextAlign.Center,
-                text = "",
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-            ) {
-                if (marked) {
-                    Image(
-                        painterResource(Res.drawable.icon_mark),
-                        contentDescription = "Mark log",
-                        modifier = Modifier.size(6.dp),
-                    )
-                } else {
-                    Box(modifier = Modifier.size(6.dp))
+            if (columnParams[0].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[0].size.dp)
+                        .padding(end = 2.dp, start = 2.dp, top = 2.dp),
+                    textAlign = TextAlign.Center,
+                    text = "",
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                ) {
+                    if (marked) {
+                        Image(
+                            painterResource(Res.drawable.icon_mark),
+                            contentDescription = "Mark log",
+                            modifier = Modifier.size(6.dp),
+                        )
+                    } else {
+                        Box(modifier = Modifier.size(6.dp))
+                    }
                 }
             }
-            Cell(
-                modifier = Modifier.width(54.dp).padding(end = 2.dp),
-                textAlign = TextAlign.Right,
-                text = index,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(180.dp),
-                textAlign = TextAlign.Center,
-                text = datetime,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
+            if (columnParams[1].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[1].size.dp).padding(end = 2.dp),
+                    textAlign = TextAlign.Right,
+                    text = index,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
                 )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(80.dp).padding(end = 2.dp),
-                textAlign = TextAlign.Right,
-                text = timeOffset,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(46.dp),
-                textAlign = TextAlign.Center,
-                text = ecuId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(46.dp),
-                textAlign = TextAlign.Center,
-                text = sessionId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(46.dp),
-                textAlign = TextAlign.Center,
-                text = applicationId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(46.dp),
-                textAlign = TextAlign.Center,
-                text = contextId,
-                isHeader = isHeader,
-                cellStyle = finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
-            Cell(
-                modifier = Modifier.width(14.dp)
-                    .background(
-                        logTypeIndicator?.logTypeStyle?.backgroundColor
-                            ?: finalCellStyle?.backgroundColor ?: Color.Transparent
-                    ),
-                text = logTypeIndicator?.logTypeSymbol ?: "",
-                textAlign = TextAlign.Center,
-                isHeader = isHeader,
-                cellStyle = logTypeIndicator?.logTypeStyle ?: finalCellStyle,
-                wrapContent = wrapContent,
-            )
-            CellDivider()
+                CellDivider()
+            }
+            if (columnParams[2].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[2].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = datetime,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[3].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[3].size.dp).padding(end = 2.dp),
+                    textAlign = TextAlign.Right,
+                    text = timeOffset,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[4].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[4].size.dp).padding(end = 2.dp),
+                    textAlign = TextAlign.Right,
+                    text = messageCounter,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[5].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[5].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = ecuId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[6].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[6].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = sessionId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[7].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[7].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = applicationId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[8].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[8].size.dp),
+                    textAlign = TextAlign.Center,
+                    text = contextId,
+                    isHeader = isHeader,
+                    cellStyle = finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
+            if (columnParams[9].visible) {
+                Cell(
+                    modifier = Modifier.width(columnParams[9].size.dp)
+                        .background(
+                            logTypeIndicator?.logTypeStyle?.backgroundColor
+                                ?: finalCellStyle?.backgroundColor ?: Color.Transparent
+                        ),
+                    text = logTypeIndicator?.logTypeSymbol ?: "",
+                    textAlign = TextAlign.Center,
+                    isHeader = isHeader,
+                    cellStyle = logTypeIndicator?.logTypeStyle ?: finalCellStyle,
+                    wrapContent = wrapContent,
+                )
+                CellDivider()
+            }
             Cell(
                 modifier = Modifier.weight(1f).padding(start = 6.dp),
                 text = content,
@@ -237,10 +272,12 @@ fun LogRowPreview() {
         (0..9).forEach { i ->
             LogRow(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                columnParams = mutableStateListOf(),
                 isSelected = i == 3,
                 index = (16_345_345 + i).toString(),
                 datetime = "2024-02-04 18:26:23.074689",
                 timeOffset = "1234",
+                messageCounter = "1",
                 ecuId = "EcuId",
                 sessionId = "123",
                 applicationId = "AppId",

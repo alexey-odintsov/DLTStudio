@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
@@ -27,6 +26,8 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
+import com.alekso.dltstudio.model.Column
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -57,13 +58,6 @@ enum class LogRemoveContext {
     ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
 }
 
-interface RowContextMenuCallbacks {
-    fun onCopyClicked(text: AnnotatedString)
-    fun onMarkClicked(i: Int, message: LogMessage)
-    fun onRemoveClicked(context: LogRemoveContext, filter: String)
-    fun onRemoveDialogClicked(message: LogMessage)
-}
-
 class LogsViewModel(
     private val formatter: Formatter,
     private val insightsRepository: InsightsRepository,
@@ -73,6 +67,27 @@ class LogsViewModel(
 ) : MessagesHolder, MessagesProvider {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
+    internal val columnParams = mutableStateListOf<ColumnParams>(
+        *ColumnParams.DefaultParams.toTypedArray()
+    )
+    val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
+        override fun onToggleColumnVisibility(key: Column, checked: Boolean) {
+            val index = columnParams.indexOfFirst { it.column == key }
+            val updatedColumnParams = columnParams[index].copy(visible = checked)
+            viewModelScope.launch(IO) {
+                preferencesRepository.updateColumnParams(updatedColumnParams)
+            }
+        }
+
+        override fun onResetParams() {
+            viewModelScope.launch(IO) {
+                preferencesRepository.resetColumnsParams()
+                columnParams.clear()
+                columnParams.addAll(ColumnParams.DefaultParams)
+            }
+        }
+    }
 
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
@@ -210,6 +225,18 @@ class LogsViewModel(
             virtualDeviceRepository.getAllAsFlow().collectLatest {
                 _virtualDevices.clear()
                 _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
+            }
+        }
+        viewModelScope.launch {
+            preferencesRepository.getColumnParams().collectLatest { params ->
+                params.forEach { param ->
+                    val index = columnParams.indexOfFirst { it.column.name == param.key }
+                    if (index >= 0) {
+                        columnParams[index] = columnParams[index].copy(
+                            visible = param.visible, size = param.size
+                        )
+                    }
+                }
             }
         }
     }
