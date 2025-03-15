@@ -26,8 +26,8 @@ fun SearchResultsPanel(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
-
-    ) {
+    onColumnResized: (String, Float) -> Unit,
+) {
     Panel(
         modifier = modifier,
         title = if (searchResult.isNotEmpty()) "Search results: ${searchResult.size} items" else "Search results"
@@ -45,6 +45,7 @@ fun SearchResultsPanel(
             showComments = showComments,
             rowContextMenuCallbacks = rowContextMenuCallbacks,
             columnsContextMenuCallbacks = columnsContextMenuCallbacks,
+            onColumnResized = onColumnResized,
         )
     }
 

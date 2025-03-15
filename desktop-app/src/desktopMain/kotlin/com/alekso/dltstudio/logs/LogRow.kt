@@ -3,6 +3,7 @@ package com.alekso.dltstudio.logs
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -19,6 +20,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
@@ -26,6 +30,7 @@ import com.alekso.dltstudio.model.ColumnParams
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource
+import java.awt.Cursor
 
 
 private val selectedCellStyle = CellStyle(backgroundColor = Color.LightGray)
@@ -52,6 +57,7 @@ fun LogRow(
     marked: Boolean = false,
     comment: String? = null,
     showComments: Boolean = false,
+    onColumnResized: (String, Float) -> Unit,
 ) {
     Column(
         modifier = modifier.then(
@@ -61,17 +67,15 @@ fun LogRow(
         val finalCellStyle = if (isSelected) selectedCellStyle else cellStyle
 
         Row(
-            modifier
-                .height(IntrinsicSize.Max)
-                .background(
-                    if (isHeader) {
-                        Color.Transparent
-                    } else if (finalCellStyle != null) {
-                        finalCellStyle.backgroundColor ?: Color(250, 250, 250)
-                    } else {
-                        Color.White
-                    }
-                )
+            modifier.height(IntrinsicSize.Max).background(
+                if (isHeader) {
+                    Color.White
+                } else if (finalCellStyle != null) {
+                    finalCellStyle.backgroundColor ?: Color(250, 250, 250)
+                } else {
+                    Color.White
+                }
+            )
         ) {
             if (columnParams[0].visible) {
                 Cell(
@@ -92,6 +96,11 @@ fun LogRow(
                         Box(modifier = Modifier.size(6.dp))
                     }
                 }
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[0].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[1].visible) {
                 Cell(
@@ -102,7 +111,11 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[1].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[2].visible) {
                 Cell(
@@ -113,7 +126,11 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[2].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[3].visible) {
                 Cell(
@@ -124,7 +141,11 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[3].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[4].visible) {
                 Cell(
@@ -135,7 +156,11 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[4].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[5].visible) {
                 Cell(
@@ -146,7 +171,11 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[5].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[6].visible) {
                 Cell(
@@ -157,7 +186,11 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[6].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[7].visible) {
                 Cell(
@@ -168,7 +201,11 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[7].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[8].visible) {
                 Cell(
@@ -179,22 +216,29 @@ fun LogRow(
                     cellStyle = finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[8].column.name,
+                    onResized = onColumnResized,
+                )
             }
             if (columnParams[9].visible) {
                 Cell(
-                    modifier = Modifier.width(columnParams[9].size.dp)
-                        .background(
-                            logTypeIndicator?.logTypeStyle?.backgroundColor
-                                ?: finalCellStyle?.backgroundColor ?: Color.Transparent
-                        ),
+                    modifier = Modifier.width(columnParams[9].size.dp).background(
+                        logTypeIndicator?.logTypeStyle?.backgroundColor
+                            ?: finalCellStyle?.backgroundColor ?: Color.Transparent
+                    ),
                     text = logTypeIndicator?.logTypeSymbol ?: "",
                     textAlign = TextAlign.Center,
                     isHeader = isHeader,
                     cellStyle = logTypeIndicator?.logTypeStyle ?: finalCellStyle,
                     wrapContent = wrapContent,
                 )
-                CellDivider()
+                CellDivider(
+                    resizeable = isHeader,
+                    key = columnParams[9].column.name,
+                    onResized = onColumnResized,
+                )
             }
             Cell(
                 modifier = Modifier.weight(1f).padding(start = 6.dp),
@@ -207,15 +251,13 @@ fun LogRow(
         if (showComments && comment != null) {
             RowDivider()
             Row(
-                modifier
-                    .height(IntrinsicSize.Max)
-                    .background(
-                        if (finalCellStyle != null) {
-                            finalCellStyle.backgroundColor ?: Color(250, 250, 250)
-                        } else {
-                            Color.White
-                        }
-                    )
+                modifier.height(IntrinsicSize.Max).background(
+                    if (finalCellStyle != null) {
+                        finalCellStyle.backgroundColor ?: Color(250, 250, 250)
+                    } else {
+                        Color.White
+                    }
+                )
             ) {
                 Cell(
                     modifier = Modifier.weight(1f).padding(start = 6.dp),
@@ -231,13 +273,26 @@ fun LogRow(
 }
 
 @Composable
-fun CellDivider() {
-    Box(
-        Modifier
-            .fillMaxHeight()
-            .width(1.dp)
-            .background(color = Color.LightGray)
-    )
+fun CellDivider(
+    modifier: Modifier = Modifier,
+    resizeable: Boolean = false,
+    key: String = "",
+    onResized: ((String, Float) -> Unit) = { _, _ -> }
+) {
+    var modifier = modifier.fillMaxHeight().width(1.dp).background(color = Color.LightGray)
+
+    if (resizeable) {
+        modifier = modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
+            .pointerInput("divider-$key") {
+                detectDragGestures { change, _ ->
+                    change.consume()
+                    println("Move to ${change.position.x}")
+                    onResized(key, change.position.x)
+                }
+            }
+
+    }
+    Box(modifier)
 }
 
 @Composable
@@ -302,7 +357,7 @@ fun LogRowPreview() {
                 marked = i % 2 == 0,
                 comment = contents[i][1],
                 showComments = true,
-            )
+                onColumnResized = { _, _ -> })
         }
     }
 }

@@ -106,6 +106,8 @@ class LogsPlugin(
             columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
             onShowVirtualDeviceClicked = {
                 viewModel.devicePreviewsDialogState.value = true
-            })
+            },
+            onColumnResized = viewModel::onColumnResized,
+        )
     }
 }

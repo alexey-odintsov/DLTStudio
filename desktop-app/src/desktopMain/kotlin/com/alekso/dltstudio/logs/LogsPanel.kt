@@ -79,6 +79,7 @@ fun LogsPanel(
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
     onShowVirtualDeviceClicked: () -> Unit = {},
+    onColumnResized: (String, Float) -> Unit,
 ) {
 
     Column(modifier = modifier) {
@@ -122,6 +123,7 @@ fun LogsPanel(
                             showComments = logsToolbarState.toolbarCommentsChecked,
                             rowContextMenuCallbacks = rowContextMenuCallbacks,
                             columnsContextMenuCallbacks = columnsContextMenuCallbacks,
+                            onColumnResized = onColumnResized,
                         )
                     }
                     second(20.dp) {
@@ -171,6 +173,7 @@ fun LogsPanel(
                     showComments = logsToolbarState.toolbarCommentsChecked,
                     rowContextMenuCallbacks = rowContextMenuCallbacks,
                     columnsContextMenuCallbacks = columnsContextMenuCallbacks,
+                    onColumnResized = onColumnResized,
                 )
             }
             splitter {
@@ -226,11 +229,12 @@ fun PreviewLogsPanel() {
         searchListState = LazyListState(),
         onLogsRowSelected = { i, r -> },
         onSearchRowSelected = { i, r -> },
-        logsListSelectedRow =0,
+        logsListSelectedRow = 0,
         searchListSelectedRow = 0,
         searchAutoComplete = mutableStateListOf(),
         virtualDevices = mutableStateListOf(),
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
+        onColumnResized = { _, _ -> }
     )
 }
