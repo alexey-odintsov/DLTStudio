@@ -34,5 +34,7 @@ data class ColumnParams(
             ColumnParams(Column.CtxId, true, 46f),
             ColumnParams(Column.LogType, true, 14f),
         )
+
+        const val MIN_SIZE = 14f
     }
 }

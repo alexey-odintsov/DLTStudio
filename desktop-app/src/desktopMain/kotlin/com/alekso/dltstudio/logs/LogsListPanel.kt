@@ -28,6 +28,7 @@ fun LogsListPanel(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
+    onColumnResized: (String, Float) -> Unit,
 ) {
     Panel(
         modifier = modifier,
@@ -46,6 +47,7 @@ fun LogsListPanel(
             rowContextMenuCallbacks = rowContextMenuCallbacks,
             columnsContextMenuCallbacks = columnsContextMenuCallbacks,
             showComments = showComments,
+            onColumnResized = onColumnResized,
         )
     }
 }
@@ -70,5 +72,6 @@ fun PreviewLogsListPanel() {
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         showComments = true,
+        onColumnResized = { _, _ -> }
     )
 }

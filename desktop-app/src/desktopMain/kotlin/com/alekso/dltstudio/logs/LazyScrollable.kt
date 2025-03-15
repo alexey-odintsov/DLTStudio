@@ -46,6 +46,7 @@ fun LazyScrollable(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
+    onColumnResized: (String, Float) -> Unit,
 ) {
     Column(modifier = modifier) {
 
@@ -77,6 +78,8 @@ fun LazyScrollable(
                             "ctxId",
                             "content",
                             wrapContent = wrapContent,
+                            onColumnResized = onColumnResized,
+                            isHeader = true,
                         )
                     }
                 }
@@ -144,6 +147,7 @@ fun LazyScrollable(
                             marked = logMessage.marked,
                             comment = logMessage.comment,
                             showComments = showComments,
+                            onColumnResized = onColumnResized,
                         )
                     }
                 }
