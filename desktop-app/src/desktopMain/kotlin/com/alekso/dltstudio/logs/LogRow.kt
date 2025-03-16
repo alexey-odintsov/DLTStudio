@@ -279,20 +279,18 @@ fun CellDivider(
     key: String = "",
     onResized: ((String, Float) -> Unit) = { _, _ -> }
 ) {
-    var modifier = modifier.fillMaxHeight().width(1.dp).background(color = Color.LightGray)
+    var finalModifier = modifier.fillMaxHeight().width(1.dp).background(color = Color.LightGray)
 
     if (resizeable) {
-        modifier = modifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
+        finalModifier = finalModifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
             .pointerInput("divider-$key") {
-                detectDragGestures { change, _ ->
+                detectDragGestures { change, dragAmount ->
                     change.consume()
-                    println("Move to ${change.position.x}")
-                    onResized(key, change.position.x)
+                    onResized(key, dragAmount.x / 2f) // TODO: why is it 2x bigger?
                 }
             }
-
     }
-    Box(modifier)
+    Box(finalModifier)
 }
 
 @Composable
