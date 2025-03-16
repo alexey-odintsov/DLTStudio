@@ -51,6 +51,7 @@ import kotlinx.datetime.TimeZone
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
+import kotlin.math.max
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
@@ -572,5 +573,14 @@ class LogsViewModel(
     override fun storeMessages(logMessages: List<LogMessage>) {
         _logMessages.clear()
         _logMessages.addAll(logMessages)
+    }
+
+    fun onColumnResized(columnKey: String, delta: Float) {
+        val index = columnParams.indexOfFirst { it.column.name == columnKey }
+        if (index >= 0) {
+            val params = columnParams[index]
+            val newSize = max(params.size + delta, ColumnParams.MIN_SIZE)
+            columnParams[index] = params.copy(size = newSize)
+        }
     }
 }
