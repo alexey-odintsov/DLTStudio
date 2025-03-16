@@ -1,6 +1,8 @@
 package com.alekso.dltstudio.logs.infopanel
 
 import androidx.compose.ui.geometry.Rect
+import kotlin.math.max
+import kotlin.math.min
 
 data class DeviceView(
     val rect: Rect,
@@ -100,27 +102,24 @@ data class DeviceView(
             """.trimIndent()
             ).findAll(text)
             for (match in viewMatches) {
+                val l = match.groups["left"]!!.value.toFloat()
+                val t = match.groups["top"]!!.value.toFloat()
+                val r = match.groups["right"]!!.value.toFloat()
+                val d = match.groups["down"]!!.value.toFloat()
                 list.add(
                     DeviceView(
-                        Rect(
-                            match.groups["left"]!!.value.toFloat(),
-                            match.groups["top"]!!.value.toFloat(),
-                            match.groups["right"]!!.value.toFloat(),
-                            match.groups["down"]!!.value.toFloat()
-                        ),
+                        Rect(min(l,r), t, max(r,l), d),
                         id = match.groups["resid"]?.value
                     )
                 )
             }
 
             for (match in rectMatches) {
-                println(match.value)
-                val rect = Rect(
-                    match.groups["left"]!!.value.toFloat(),
-                    match.groups["top"]!!.value.toFloat(),
-                    match.groups["right"]!!.value.toFloat(),
-                    match.groups["down"]!!.value.toFloat()
-                )
+                val l = match.groups["left"]!!.value.toFloat()
+                val t = match.groups["top"]!!.value.toFloat()
+                val r = match.groups["right"]!!.value.toFloat()
+                val d = match.groups["down"]!!.value.toFloat()
+                val rect = Rect(min(l,r), t, max(r,l), d)
                 if (list.any { it.rect == rect }.not()) {
                     list.add(DeviceView(rect = rect))
                 }
