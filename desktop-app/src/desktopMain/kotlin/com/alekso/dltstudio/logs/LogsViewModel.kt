@@ -579,7 +579,6 @@ class LogsViewModel(
         val index = columnParams.indexOfFirst { it.column.name == columnKey }
         if (index >= 0) {
             val params = columnParams[index]
-            // TODO: Size jumps from -delta to +delta
             val newSize = max(params.size + delta, ColumnParams.MIN_SIZE)
             columnParams[index] = params.copy(size = newSize)
         }
