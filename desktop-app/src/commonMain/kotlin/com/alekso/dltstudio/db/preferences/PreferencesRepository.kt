@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.db.preferences
 
 import com.alekso.dltstudio.db.AppDatabase
+import com.alekso.dltstudio.model.ColumnParams
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 
@@ -11,6 +12,9 @@ interface PreferencesRepository {
     fun getRecentColorFilters(): Flow<List<RecentColorFilterFileEntry>>
     suspend fun addNewRecentTimelineFilter(item: RecentTimelineFilterFileEntry)
     fun getRecentTimelineFilters(): Flow<List<RecentTimelineFilterFileEntry>>
+    fun getColumnParams(): Flow<List<ColumnParamsEntity>>
+    suspend fun updateColumnParams(item: ColumnParams)
+    suspend fun resetColumnsParams()
 }
 
 class PreferencesRepositoryImpl(
@@ -41,4 +45,15 @@ class PreferencesRepositoryImpl(
         return database.getPreferencesDao().getRecentTimelineFilterFlow()
     }
 
+    override fun getColumnParams(): Flow<List<ColumnParamsEntity>> {
+        return database.getPreferencesDao().getColumnsParamsFlow()
+    }
+
+    override suspend fun updateColumnParams(item: ColumnParams) {
+        database.getPreferencesDao().updateColumnParams(item.toColumnParamsEntity())
+    }
+
+    override suspend fun resetColumnsParams() {
+        database.getPreferencesDao().removeColumnsParams()
+    }
 }

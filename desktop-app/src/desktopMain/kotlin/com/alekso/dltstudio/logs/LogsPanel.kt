@@ -20,7 +20,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterError
@@ -32,6 +31,7 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.toolbar.LogsToolbar
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.utils.SampleData
@@ -52,6 +52,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
+    columnParams: SnapshotStateList<ColumnParams>,
     logMessages: SnapshotStateList<LogMessage>,
     logInsights: SnapshotStateList<LogInsight>? = null,
     virtualDevices: SnapshotStateList<VirtualDevice>,
@@ -75,8 +76,10 @@ fun LogsPanel(
     logsListSelectedRow: Int,
     searchListSelectedRow: Int,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
+    columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
     onShowVirtualDeviceClicked: () -> Unit = {},
+    onColumnResized: (String, Float) -> Unit,
 ) {
 
     Column(modifier = modifier) {
@@ -110,6 +113,7 @@ fun LogsPanel(
                     first(20.dp) {
                         LogsListPanel(
                             Modifier.fillMaxSize(),
+                            columnParams,
                             logMessages,
                             mergedFilters,
                             logsListSelectedRow,
@@ -118,6 +122,8 @@ fun LogsPanel(
                             wrapContent = logsToolbarState.toolbarWrapContentChecked,
                             showComments = logsToolbarState.toolbarCommentsChecked,
                             rowContextMenuCallbacks = rowContextMenuCallbacks,
+                            columnsContextMenuCallbacks = columnsContextMenuCallbacks,
+                            onColumnResized = onColumnResized,
                         )
                     }
                     second(20.dp) {
@@ -156,6 +162,7 @@ fun LogsPanel(
             second(20.dp) {
                 SearchResultsPanel(
                     Modifier.fillMaxSize(),
+                    columnParams = columnParams,
                     searchResult,
                     searchIndexes,
                     mergedFilters,
@@ -165,6 +172,8 @@ fun LogsPanel(
                     wrapContent = logsToolbarState.toolbarWrapContentChecked,
                     showComments = logsToolbarState.toolbarCommentsChecked,
                     rowContextMenuCallbacks = rowContextMenuCallbacks,
+                    columnsContextMenuCallbacks = columnsContextMenuCallbacks,
+                    onColumnResized = onColumnResized,
                 )
             }
             splitter {
@@ -199,6 +208,7 @@ fun PreviewLogsPanel() {
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
+        columnParams = mutableStateListOf(),
         logMessages = list,
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
@@ -219,15 +229,12 @@ fun PreviewLogsPanel() {
         searchListState = LazyListState(),
         onLogsRowSelected = { i, r -> },
         onSearchRowSelected = { i, r -> },
-        logsListSelectedRow =0,
+        logsListSelectedRow = 0,
         searchListSelectedRow = 0,
         searchAutoComplete = mutableStateListOf(),
         virtualDevices = mutableStateListOf(),
-        rowContextMenuCallbacks = object : RowContextMenuCallbacks {
-            override fun onCopyClicked(text: AnnotatedString) = Unit
-            override fun onMarkClicked(i: Int, message: LogMessage) = Unit
-            override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit
-            override fun onRemoveDialogClicked(message: LogMessage) = Unit
-        },
+        rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
+        columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
+        onColumnResized = { _, _ -> }
     )
 }

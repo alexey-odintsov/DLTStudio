@@ -56,6 +56,7 @@ class LogsPlugin(
 
         LogsPanel(
             modifier = modifier,
+            columnParams = viewModel.columnParams,
             logMessages = viewModel.logMessages,
             searchState = searchState,
             searchAutoComplete = viewModel.searchAutocomplete,
@@ -102,8 +103,11 @@ class LogsPlugin(
                     viewModel.removeLogsDialogState.value = RemoveLogsDialogState(true, message)
                 }
             },
+            columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
             onShowVirtualDeviceClicked = {
                 viewModel.devicePreviewsDialogState.value = true
-            })
+            },
+            onColumnResized = viewModel::onColumnResized,
+        )
     }
 }

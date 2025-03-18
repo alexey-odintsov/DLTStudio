@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
@@ -27,6 +26,8 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
+import com.alekso.dltstudio.model.Column
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -50,18 +51,12 @@ import kotlinx.datetime.TimeZone
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
+import kotlin.math.max
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
 enum class LogRemoveContext {
     ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
-}
-
-interface RowContextMenuCallbacks {
-    fun onCopyClicked(text: AnnotatedString)
-    fun onMarkClicked(i: Int, message: LogMessage)
-    fun onRemoveClicked(context: LogRemoveContext, filter: String)
-    fun onRemoveDialogClicked(message: LogMessage)
 }
 
 class LogsViewModel(
@@ -73,6 +68,27 @@ class LogsViewModel(
 ) : MessagesHolder, MessagesProvider {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
+    internal val columnParams = mutableStateListOf<ColumnParams>(
+        *ColumnParams.DefaultParams.toTypedArray()
+    )
+    val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
+        override fun onToggleColumnVisibility(key: Column, checked: Boolean) {
+            val index = columnParams.indexOfFirst { it.column == key }
+            val updatedColumnParams = columnParams[index].copy(visible = checked)
+            viewModelScope.launch(IO) {
+                preferencesRepository.updateColumnParams(updatedColumnParams)
+            }
+        }
+
+        override fun onResetParams() {
+            viewModelScope.launch(IO) {
+                preferencesRepository.resetColumnsParams()
+                columnParams.clear()
+                columnParams.addAll(ColumnParams.DefaultParams)
+            }
+        }
+    }
 
     private val _logMessages = mutableStateListOf<LogMessage>()
     val logMessages: SnapshotStateList<LogMessage>
@@ -210,6 +226,18 @@ class LogsViewModel(
             virtualDeviceRepository.getAllAsFlow().collectLatest {
                 _virtualDevices.clear()
                 _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
+            }
+        }
+        viewModelScope.launch {
+            preferencesRepository.getColumnParams().collectLatest { params ->
+                params.forEach { param ->
+                    val index = columnParams.indexOfFirst { it.column.name == param.key }
+                    if (index >= 0) {
+                        columnParams[index] = columnParams[index].copy(
+                            visible = param.visible, size = param.size
+                        )
+                    }
+                }
             }
         }
     }
@@ -545,5 +573,14 @@ class LogsViewModel(
     override fun storeMessages(logMessages: List<LogMessage>) {
         _logMessages.clear()
         _logMessages.addAll(logMessages)
+    }
+
+    fun onColumnResized(columnKey: String, delta: Float) {
+        val index = columnParams.indexOfFirst { it.column.name == columnKey }
+        if (index >= 0) {
+            val params = columnParams[index]
+            val newSize = max(params.size + delta, ColumnParams.MIN_SIZE)
+            columnParams[index] = params.copy(size = newSize)
+        }
     }
 }

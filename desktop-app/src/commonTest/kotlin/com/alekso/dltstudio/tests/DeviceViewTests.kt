@@ -49,5 +49,17 @@ class DeviceViewTests {
         )
     }
 
+    @Test
+    fun `Test DeviceView parsing negative width`() {
+        val text =
+            "pages.views.test{44f6b84 V.E...... ......I. 396, 0 - 384, 0} onAttachedToWindow."
+        val expectedText = listOf(DeviceView(Rect(384f, 0f, 396f, 0f)))
+        val parsed = DeviceView.parse(text)
+        Assert.assertTrue(
+            "\n$parsed\n!=\n$expectedText",
+            parsed == expectedText
+        )
+    }
+
 
 }
