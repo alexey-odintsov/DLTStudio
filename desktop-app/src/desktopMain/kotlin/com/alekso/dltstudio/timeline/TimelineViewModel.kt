@@ -1,8 +1,10 @@
 package com.alekso.dltstudio.timeline
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.db.preferences.PreferencesRepositoryImpl
 import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
@@ -209,5 +211,11 @@ class TimelineViewModel(
             DiagramType.Duration -> entriesMap[filter.key] as? TimeLineDurationEntries
             DiagramType.Events -> entriesMap[filter.key] as? TimeLineEventEntries
         }
+    }
+
+    var legendSize by mutableStateOf(250f)
+
+    fun onLegendResized(diff: Float) {
+        legendSize += diff
     }
 }
