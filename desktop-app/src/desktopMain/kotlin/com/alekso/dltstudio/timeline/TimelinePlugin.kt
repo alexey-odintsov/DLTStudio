@@ -33,9 +33,11 @@ class TimelinePlugin(
             timeEnd = viewModel.timeEnd,
             entriesMap = viewModel.entriesMap,
             highlightedKeysMap = viewModel.highlightedKeysMap,
+            legendSize = viewModel.legendSize,
             onAnalyzeClicked = viewModel::onAnalyzeClicked,
             filtersDialogCallbacks = viewModel.timelineFiltersDialogCallbacks,
             retrieveEntriesForFilter = viewModel::retrieveEntriesForFilter,
+            onLegendResized = viewModel::onLegendResized,
         )
     }
 }

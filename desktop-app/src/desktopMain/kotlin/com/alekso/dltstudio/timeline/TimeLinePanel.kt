@@ -3,6 +3,8 @@ package com.alekso.dltstudio.timeline
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,7 +42,10 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.input.pointer.pointerHoverIcon
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -61,8 +66,8 @@ import com.alekso.dltstudio.timeline.graph.TimelinePercentageView
 import com.alekso.dltstudio.timeline.graph.TimelineSingleStateView
 import com.alekso.dltstudio.timeline.graph.TimelineStateView
 import com.alekso.dltstudio.utils.SampleData
+import java.awt.Cursor
 
-private val LEGEND_WIDTH_DP = 250.dp
 private val TIME_MARKER_WIDTH_DP = 140.dp
 private val TIME_MARKER_HEIGHT_DP = 12.dp
 private const val MOVE_TIMELINE_STEP_PX = 10
@@ -86,6 +91,8 @@ fun TimeLinePanel(
     highlightedKeysMap: SnapshotStateMap<String, String?>,
     filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> TimeLineEntries<*>?,
+    onLegendResized: (Float) -> Unit = { _ -> },
+    legendSize: Float,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
@@ -170,7 +177,7 @@ fun TimeLinePanel(
             Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
 
             Row {
-                Box(modifier = Modifier.width(LEGEND_WIDTH_DP))
+                Box(modifier = Modifier.width(legendSize.dp))
                 TimeRuler(
                     Modifier.fillMaxWidth(1f),
                     offsetSec,
@@ -183,13 +190,14 @@ fun TimeLinePanel(
 
             val state = rememberLazyListState()
             val panels = mutableStateListOf<@Composable () -> Unit>()
+            val viewModifier = remember { Modifier.height(200.dp).weight(1f) }
 
             timelineFilters.forEachIndexed { index, timelineFilter ->
                 if (timelineFilter.enabled) {
                     panels.add {
                         Row {
                             TimelineLegend(
-                                modifier = Modifier.width(LEGEND_WIDTH_DP).height(200.dp),
+                                modifier = Modifier.width(legendSize.dp).height(200.dp),
                                 title = timelineFilter.name,
                                 entries = entriesMap[timelineFilter.key],
                                 { key ->
@@ -197,10 +205,11 @@ fun TimeLinePanel(
                                 },
                                 highlightedKey = highlightedKeysMap[timelineFilter.key]
                             )
+                            LegendResizer(Modifier.height(200.dp), key = "$index", onResized = onLegendResized)
                             when (timelineFilter.diagramType) {
                                 DiagramType.Percentage -> {
                                     TimelinePercentageView(
-                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        modifier = viewModifier
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
@@ -212,7 +221,7 @@ fun TimeLinePanel(
 
                                 DiagramType.MinMaxValue -> {
                                     TimelineMinMaxValueView(
-                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        modifier = viewModifier
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
@@ -224,7 +233,7 @@ fun TimeLinePanel(
 
                                 DiagramType.State -> {
                                     TimelineStateView(
-                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        modifier = viewModifier
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
@@ -236,7 +245,7 @@ fun TimeLinePanel(
 
                                 DiagramType.SingleState -> {
                                     TimelineSingleStateView(
-                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        modifier = viewModifier
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
@@ -248,7 +257,7 @@ fun TimeLinePanel(
 
                                 DiagramType.Duration -> {
                                     TimelineDurationView(
-                                        modifier = Modifier.height(200.dp).fillMaxWidth()
+                                        modifier = viewModifier
                                             .onPointerEvent(
                                                 PointerEventType.Move,
                                                 onEvent = { dragCallback(it, size.width) }),
@@ -259,7 +268,7 @@ fun TimeLinePanel(
                                 }
 
                                 DiagramType.Events -> TimelineEventView(
-                                    modifier = Modifier.height(200.dp).fillMaxWidth()
+                                    modifier = viewModifier
                                         .onPointerEvent(
                                             PointerEventType.Move,
                                             onEvent = { dragCallback(it, size.width) }),
@@ -297,9 +306,8 @@ fun TimeLinePanel(
                 val textMeasurer = rememberTextMeasurer()
                 val formatter = LocalFormatter.current
                 Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
-                    if (cursorPosition.x < LEGEND_WIDTH_DP.toPx()) return@Canvas
-                    secSizePx =
-                        ((size.width - LEGEND_WIDTH_DP.toPx()) * scale) / totalSeconds
+                    if (cursorPosition.x < legendSize.dp.toPx()) return@Canvas
+                    secSizePx = ((size.width - legendSize.dp.toPx()) * scale) / totalSeconds
 
                     val doesMarkerFit =
                         (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
@@ -309,8 +317,7 @@ fun TimeLinePanel(
                         Offset(cursorPosition.x, 0f),
                         Offset(cursorPosition.x, size.height)
                     )
-                    val cursorOffsetSec: Float =
-                        ((cursorPosition.x - LEGEND_WIDTH_DP.toPx()) / secSizePx) - offsetSec
+                    val cursorOffsetSec: Float = ((cursorPosition.x - legendSize.dp.toPx()) / secSizePx) - offsetSec
                     val cursorTimestamp: Long =
                         (1000000L * cursorOffsetSec).toLong() + timeStart
 
@@ -333,6 +340,24 @@ fun TimeLinePanel(
             }
         }
     }
+}
+
+@Composable
+fun LegendResizer(
+    modifier: Modifier = Modifier,
+    onResized: (Float) -> Unit = { _ -> },
+    key: String
+) {
+    var finalModifier = modifier.fillMaxHeight().width(2.dp).background(color = Color.LightGray)
+
+    finalModifier = finalModifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
+        .pointerInput("legend-divider-$key") {
+            detectDragGestures { change, dragAmount ->
+                change.consume()
+                onResized(dragAmount.x / 2f)
+            }
+        }
+    Box(finalModifier)
 }
 
 @Preview
@@ -361,6 +386,7 @@ fun PreviewTimeline() {
         onAnalyzeClicked = {},
         highlightedKeysMap = mutableStateMapOf(),
         filtersDialogCallbacks = callbacks,
-        retrieveEntriesForFilter = { i -> TimeLineStateEntries() }
+        retrieveEntriesForFilter = { i -> TimeLineStateEntries() },
+        legendSize = 250f,
     )
 }
