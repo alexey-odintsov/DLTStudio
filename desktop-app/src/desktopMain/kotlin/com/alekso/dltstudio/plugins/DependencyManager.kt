@@ -74,7 +74,7 @@ object DependencyManager {
         virtualDeviceRepository = virtualDeviceRepository,
         preferencesRepository = preferencesRepository,
         onProgressChanged = onProgressUpdate,
-        formatter = formatter
+        formatter = formatter,
     )
 
     private val timelineViewModel by lazy {
