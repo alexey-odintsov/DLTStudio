@@ -1,12 +1,14 @@
 package com.alekso.dltstudio.timeline.graph
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineDurationEntry
@@ -291,14 +293,30 @@ fun DrawScope.renderLabels(
 ) {
     val step = (maxValue - minValue) / (seriesCount - 1)
 
+    var maxWidth = 0
+    var maxHeight = 0
     for (i in 0..<seriesCount) {
-        val y = calculateY(seriesCount, i, size.height - verticalPaddingPx * 2)
-        val measureResult = textMeasurer.measure(
-            "${"%.0f".format(maxValue - (i * step))}$seriesPostfix",
+        val maxValueResult = textMeasurer.measure(
+            "${"%,.0f".format(maxValue - (i * step))}$seriesPostfix",
             style = seriesTextStyle
         )
+        maxHeight = maxValueResult.size.height
+        if (maxValueResult.size.width > maxWidth) {
+            maxWidth = maxValueResult.size.width
+        }
+    }
+
+    for (i in 0..<seriesCount) {
+        val y = calculateY(seriesCount, i, size.height - verticalPaddingPx * 2)
         drawText(
-            measureResult, topLeft = Offset(3.dp.toPx(), y + measureResult.size.height / 2f)
+            textMeasurer = textMeasurer,
+            text = "${"%,.0f".format(maxValue - (i * step))}$seriesPostfix",
+            topLeft = Offset(3.dp.toPx(), y + maxHeight / 2f),
+            style = seriesTextStyle,
+            overflow = TextOverflow.Clip,
+            softWrap = true,
+            maxLines = 1,
+            size = Size(maxWidth.toFloat(), maxHeight.toFloat()),
         )
     }
 }

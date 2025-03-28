@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.colors.ColorPalette
@@ -50,6 +51,7 @@ fun TimelineMinMaxValueView(
             fontSize = viewStyle.fontSize,
             lineHeight = viewStyle.labelHeight,
             background = viewStyle.labelBackgroundColor,
+            textAlign = TextAlign.End,
             lineHeightStyle = LineHeightStyle(
                 LineHeightStyle.Alignment.Center,
                 LineHeightStyle.Trim.None
