@@ -19,11 +19,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
@@ -56,9 +58,29 @@ fun LazyScrollable(
         } else {
             Modifier.horizontalScroll(horizontalState).width(3000.dp)
         }
+        val focusManager = LocalFocusManager.current
 
         Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(columnModifier, listState) {
+            LazyColumn(
+                columnModifier
+                    .onKeyEvent(onKeyEvent = { e ->
+                        if (e.type == KeyEventType.KeyDown) {
+                            return@onKeyEvent when (e.key) {
+                                Key.S, Key.DirectionDown -> {
+                                    focusManager.moveFocus(FocusDirection.Down)
+                                    true
+                                }
+                                Key.W, Key.DirectionUp -> {
+                                    focusManager.moveFocus(FocusDirection.Up)
+                                    true
+                                }
+                                else -> false
+                            }
+                        }
+                        false
+                    }),
+                listState
+            ) {
                 stickyHeader {
                     ColumnsContextMenu(
                         columnParams,
