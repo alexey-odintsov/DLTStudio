@@ -208,7 +208,7 @@ fun PreviewLogsPanel() {
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
-        columnParams = mutableStateListOf(),
+        columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
         logMessages = list,
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
