@@ -21,8 +21,6 @@ class LogsPlugin(
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
     override fun renderPanel(modifier: Modifier) {
-        println("Recompose LogsPlugin.renderPanel")
-
         val clipboardManager = LocalClipboardManager.current
 
         if (viewModel.colorFiltersDialogState.value) {
@@ -70,8 +68,7 @@ class LogsPlugin(
             vSplitterState = viewModel.vSplitterState,
             hSplitterState = viewModel.hSplitterState,
             logsListState = viewModel.logsListState,
-            logsListSelectedRow = viewModel.logsListSelectedRow.value,
-            searchListSelectedRow = viewModel.searchListSelectedRow.value,
+            logSelection = viewModel.logSelection,
             searchListState = viewModel.searchListState,
             onLogsRowSelected = { i, r ->
                 viewModel.onLogsRowSelected(i, r)

@@ -20,6 +20,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -135,23 +136,28 @@ fun LazyScrollable(
                         rowContextMenuCallbacks = rowContextMenuCallbacks,
                     ) {
                         LogRow(
-                            modifier = Modifier.selectable(
-                                selected = i == selectedRow,
-                                onClick = { onRowSelected(i, index) }
-                            ).onKeyEvent { e ->
-                                if (e.type == KeyEventType.KeyDown) {
-                                    when (e.key) {
-                                        Key.Spacebar -> {
-                                            rowContextMenuCallbacks.onMarkClicked(i, logMessage)
-                                            true
-                                        }
-
-                                        else -> {
-                                            false
-                                        }
+                            modifier = Modifier
+                                .onFocusChanged { state ->
+                                    if (state.isFocused) {
+                                        onRowSelected(i, index)
                                     }
-                                } else false
-                            },
+                                }
+                                .selectable(
+                                    selected = i == selectedRow,
+                                    onClick = { onRowSelected(i, index) }
+                                )
+                                .onKeyEvent { e ->
+                                    if (e.type == KeyEventType.KeyDown) {
+                                        when (e.key) {
+                                            Key.Spacebar -> {
+                                                rowContextMenuCallbacks.onMarkClicked(i, logMessage)
+                                                true
+                                            }
+
+                                            else -> false
+                                        }
+                                    } else false
+                                },
                             columnParams = columnParams,
                             isSelected = (i == selectedRow),
                             index.toString(),
