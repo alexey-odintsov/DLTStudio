@@ -59,6 +59,12 @@ enum class LogRemoveContext {
     ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
 }
 
+data class LogSelection(
+    val logsSelectedRowId: Int,
+    val searchSelectedRowId: Int,
+    val previewRowId: Int, // index from logMessages
+)
+
 class LogsViewModel(
     private val formatter: Formatter,
     private val insightsRepository: InsightsRepository,
@@ -104,10 +110,11 @@ class LogsViewModel(
     private var searchJob: Job? = null
 
     val logsListState = LazyListState()
-    var logsListSelectedRow = mutableStateOf(0)
-
     val searchListState = LazyListState()
-    var searchListSelectedRow = mutableStateOf(0)
+
+    var logSelection by mutableStateOf(LogSelection(0, 0, 0))
+        private set
+
     val logInsights = mutableStateListOf<LogInsight>()
 
     private var _searchResults = mutableStateListOf<LogMessage>()
@@ -267,11 +274,16 @@ class LogsViewModel(
         }
     }
 
-    fun onLogsRowSelected(index: Int, rowId: Int) {
+    fun onLogsRowSelected(listIndex: Int, logsIndex: Int) {
         CoroutineScope(IO).launch {
-            logsListSelectedRow.value = rowId
-            onLogSelected(_logMessages[rowId])
+           selectLogRow(listIndex, logsIndex)
         }
+    }
+
+    private suspend fun selectLogRow(listIndex: Int, logsIndex: Int) {
+        logSelection =
+            logSelection.copy(logsSelectedRowId = listIndex, previewRowId = logsIndex)
+        onLogSelected(_logMessages[logsIndex])
     }
 
     private fun onLogSelected(logMessage: LogMessage) {
@@ -283,19 +295,23 @@ class LogsViewModel(
         }
     }
 
-    fun onSearchRowSelected(index: Int, rowId: Int) {
+    fun onSearchRowSelected(listIndex: Int, logsIndex: Int) {
         CoroutineScope(Main).launch {
-            if (searchListSelectedRow.value == index) { // simulate second click
-                try {
-                    logsListSelectedRow.value = rowId
-                    onLogSelected(_logMessages[rowId])
-                    logsListState.scrollToItem(rowId)
-                } catch (e: Exception) {
-                    Log.e("Failed to select row $rowId: $e")
-                }
-            } else {
-                searchListSelectedRow.value = index
+            selectSearchRow(listIndex, logsIndex)
+        }
+    }
+
+    private suspend fun selectSearchRow(listIndex: Int, logsIndex: Int) {
+        if (logSelection.searchSelectedRowId == listIndex) { // simulate second click
+            try {
+                selectLogRow(logsIndex, logsIndex)
+                logsListState.scrollToItem(logsIndex)
+            } catch (e: Exception) {
+                Log.e("Failed to select $listIndex-$logsIndex: $e")
             }
+        } else {
+            logSelection =
+                logSelection.copy(searchSelectedRowId = listIndex, previewRowId = logsIndex)
         }
     }
 

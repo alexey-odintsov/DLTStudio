@@ -325,7 +325,7 @@ fun LogRowPreview() {
         (0..9).forEach { i ->
             LogRow(
                 modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                columnParams = mutableStateListOf(),
+                columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
                 isSelected = i == 3,
                 index = (16_345_345 + i).toString(),
                 datetime = "2024-02-04 18:26:23.074689",

@@ -73,13 +73,12 @@ fun LogsPanel(
     searchListState: LazyListState,
     onLogsRowSelected: (Int, Int) -> Unit,
     onSearchRowSelected: (Int, Int) -> Unit,
-    logsListSelectedRow: Int,
-    searchListSelectedRow: Int,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
     onShowVirtualDeviceClicked: () -> Unit = {},
     onColumnResized: (String, Float) -> Unit,
+    logSelection: LogSelection,
 ) {
 
     Column(modifier = modifier) {
@@ -116,7 +115,7 @@ fun LogsPanel(
                             columnParams,
                             logMessages,
                             mergedFilters,
-                            logsListSelectedRow,
+                            selectedRow = logSelection.logsSelectedRowId,
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
                             wrapContent = logsToolbarState.toolbarWrapContentChecked,
@@ -129,10 +128,10 @@ fun LogsPanel(
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            logMessages.getOrNull(logsListSelectedRow),
+                            logMessages.getOrNull(logSelection.previewRowId),
                             logInsights = logInsights,
                             virtualDevices = virtualDevices,
-                            messageIndex = logsListSelectedRow,
+                            messageIndex = logSelection.previewRowId,
                             onShowVirtualDeviceClicked = onShowVirtualDeviceClicked,
                             onCommentUpdated = onCommentUpdated,
                         )
@@ -166,7 +165,7 @@ fun LogsPanel(
                     searchResult,
                     searchIndexes,
                     mergedFilters,
-                    searchListSelectedRow,
+                    logSelection.searchSelectedRowId,
                     searchListState = searchListState,
                     onSearchRowSelected = onSearchRowSelected,
                     wrapContent = logsToolbarState.toolbarWrapContentChecked,
@@ -208,11 +207,13 @@ fun PreviewLogsPanel() {
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
-        columnParams = mutableStateListOf(),
+        columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
         logMessages = list,
+        virtualDevices = mutableStateListOf(),
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
         searchIndexes = SnapshotStateList(),
+        searchAutoComplete = mutableStateListOf(),
         colorFilters = SnapshotStateList(),
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
@@ -229,12 +230,9 @@ fun PreviewLogsPanel() {
         searchListState = LazyListState(),
         onLogsRowSelected = { i, r -> },
         onSearchRowSelected = { i, r -> },
-        logsListSelectedRow = 0,
-        searchListSelectedRow = 0,
-        searchAutoComplete = mutableStateListOf(),
-        virtualDevices = mutableStateListOf(),
+        logSelection = LogSelection(0, 0, 0),
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
-        onColumnResized = { _, _ -> }
+        onColumnResized = { _, _ -> },
     )
 }

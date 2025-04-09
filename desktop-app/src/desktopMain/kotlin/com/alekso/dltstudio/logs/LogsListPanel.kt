@@ -62,7 +62,7 @@ fun PreviewLogsListPanel() {
 
     LogsListPanel(
         modifier = Modifier.fillMaxSize(),
-        columnParams = mutableStateListOf(),
+        columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
         messages = list,
         colorFilters = mutableStateListOf(),
         selectedRow = 1,
