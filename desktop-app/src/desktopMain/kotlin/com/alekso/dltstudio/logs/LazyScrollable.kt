@@ -116,16 +116,15 @@ fun LazyScrollable(
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
                     val index: Int = if (indexes != null) indexes[i] else i
-                    val sTime: String =
-                        LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
-                    val sTimeOffset: String =
-                        if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
+                    val sTime = LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
+                    val timeStamp = dltMessage.standardHeader.timeStamp
+                    val sTimeOffset = if (timeStamp != null) timeStamp.toString() else "-"
                     val sEcuId = "${dltMessage.standardHeader.ecuId}"
                     val sSessionId = "${dltMessage.standardHeader.sessionId}"
                     val sMessageCounterId = "${dltMessage.standardHeader.messageCounter}"
                     val sApplicationId = "${dltMessage.extendedHeader?.applicationId}"
                     val sContextId = "${dltMessage.extendedHeader?.contextId}"
-                    val sContent: String = dltMessage.payloadText()
+                    val sContent = dltMessage.payloadText()
                     val logTypeIndicator: LogTypeIndicator? =
                         LogTypeIndicator.fromMessageType(dltMessage.extendedHeader?.messageInfo?.messageTypeInfo)
 
