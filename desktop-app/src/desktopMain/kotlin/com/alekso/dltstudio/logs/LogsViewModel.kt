@@ -429,11 +429,11 @@ class LogsViewModel(
                 if (!assessFilter(filters, logMessage.dltMessage)) {
                     filtered.add(logMessage)
                 }
+            }
 
-                withContext(Main) {
-                    _logMessages.clear()
-                    _logMessages.addAll(filtered)
-                }
+            withContext(Main) {
+                _logMessages.clear()
+                _logMessages.addAll(filtered)
             }
             Log.d("done removing messages by filter in $duration ms")
         }
