@@ -10,13 +10,16 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
+import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.decodeToImageBitmap
 import java.io.File
@@ -43,11 +46,11 @@ data class ImagePreviewState(override val entry: FileEntry, val imageBitmap: Ima
     PreviewState(Type.Image, entry)
 
 
-private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
-
 class FilesViewModel(
     private val onProgressChanged: (Float) -> Unit
 ) {
+    private val viewModelJob = SupervisorJob()
+    private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
     private var _previewState: MutableState<PreviewState?> = mutableStateOf(null)
     val previewState: State<PreviewState?> = _previewState
@@ -90,29 +93,20 @@ class FilesViewModel(
         _analyzeState.value = FilesState.IDLE
     }
 
-    fun startAnalyzing(dltMessages: List<LogMessage>) {
+    private fun startAnalyzing(dltMessages: List<LogMessage>) {
         cleanup()
         _analyzeState.value = FilesState.ANALYZING
-        analyzeJob = CoroutineScope(Dispatchers.IO).launch {
+        analyzeJob = viewModelScope.launch(IO) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
                 val fileExtractor = FileExtractor()
 
                 Log.d("Start Files analyzing .. ${dltMessages.size} messages")
-
-                var prevTs = System.currentTimeMillis()
-                dltMessages.forEachIndexed { index, message ->
-                    yield()
-
+                forEachWithProgress(dltMessages, onProgressChanged) { index, message ->
                     try {
                         fileExtractor.searchForFiles(message.dltMessage)
                     } catch (e: Exception) {
                         Log.e(e.toString())
-                    }
-                    val nowTs = System.currentTimeMillis()
-                    if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
-                        prevTs = nowTs
-                        onProgressChanged(index.toFloat() / dltMessages.size)
                     }
                 }
 
@@ -121,7 +115,6 @@ class FilesViewModel(
                     filesEntries.addAll(fileExtractor.filesMap.values.toList().sortedBy { it.name })
                     _analyzeState.value = FilesState.IDLE
                 }
-                onProgressChanged(1f)
             }
             Log.d("Done analyzing files ${System.currentTimeMillis() - start}ms")
         }
@@ -129,7 +122,7 @@ class FilesViewModel(
 
     @OptIn(ExperimentalResourceApi::class)
     fun onFileClicked(entry: FileEntry) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(IO) {
             println("On file clicked ${entry.name}")
 
             when (entry.getExtension()) {
@@ -168,7 +161,7 @@ class FilesViewModel(
 
     fun saveFile(file: File) {
         fileDialogState = fileDialogState.copy(visible = false)
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(IO) {
             try {
                 val fileEntry = _previewState.value
                 if (fileEntry is FilePreviewState) {
