@@ -16,9 +16,10 @@ import com.alekso.dltstudio.timeline.filters.TimelineFilter
 import com.alekso.dltstudio.timeline.filters.TimelineFiltersDialogCallbacks
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.timeline.filters.predefinedTimelineFilters
+import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -26,10 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import java.io.File
-
-private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit,
@@ -84,7 +82,7 @@ class TimelineViewModel(
     private fun startAnalyzing(dltMessages: SnapshotStateList<LogMessage>) {
         cleanup()
         _analyzeState.value = AnalyzeState.ANALYZING
-        analyzeJob = CoroutineScope(Dispatchers.IO).launch {
+        analyzeJob = viewModelScope.launch(IO) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
                 val _userEntries = mutableStateMapOf<String, TimeLineEntries<*>>()
@@ -103,9 +101,7 @@ class TimelineViewModel(
                     regexps.add(index, timelineFilter.extractPattern?.toRegex())
                 }
 
-                var prevTs = System.currentTimeMillis()
-                dltMessages.forEachIndexed { index, message ->
-                    yield()
+                forEachWithProgress(dltMessages, onProgressChanged) { _, message ->
                     // timeStamps
                     val ts = message.dltMessage.timeStampUs
                     if (ts > _timeEnd) {
@@ -130,14 +126,9 @@ class TimelineViewModel(
                             )
                         }
                     }
-                    val nowTs = System.currentTimeMillis()
-                    if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
-                        prevTs = nowTs
-                        onProgressChanged(index.toFloat() / dltMessages.size)
-                    }
                 }
 
-                withContext(Dispatchers.Default) {
+                withContext(Main) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     entriesMap.clear()
                     entriesMap.putAll(_userEntries)
@@ -145,7 +136,6 @@ class TimelineViewModel(
                     timeEnd = _timeEnd
                     _analyzeState.value = AnalyzeState.IDLE
                 }
-                onProgressChanged(1f)
             }
             Log.d("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
         }

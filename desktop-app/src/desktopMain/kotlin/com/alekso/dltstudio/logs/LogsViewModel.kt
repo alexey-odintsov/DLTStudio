@@ -33,9 +33,9 @@ import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.contract.MessagesProvider
+import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -44,16 +44,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.swing.Swing
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.yield
 import kotlinx.datetime.TimeZone
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
 import kotlin.math.max
 
-private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
 enum class LogRemoveContext {
     ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
@@ -276,7 +273,7 @@ class LogsViewModel(
 
     fun onLogsRowSelected(listIndex: Int, logsIndex: Int) {
         CoroutineScope(IO).launch {
-           selectLogRow(listIndex, logsIndex)
+            selectLogRow(listIndex, logsIndex)
         }
     }
 
@@ -323,28 +320,24 @@ class LogsViewModel(
         _searchState.value = _searchState.value.copy(
             searchText = searchText, state = SearchState.State.SEARCHING
         )
-        searchJob = CoroutineScope(IO).launch {
+        searchJob = viewModelScope.launch(IO) {
             if (shouldSaveSearch(searchText)) {
                 preferencesRepository.addNewSearch(SearchEntity(searchText))
             }
 
-            var prevTs = System.currentTimeMillis()
             _searchResults.clear()
             _searchIndexes.clear()
-            val startMs = System.currentTimeMillis()
             Log.d("Start searching for $searchType '$searchText'")
 
             val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
 
-            _logMessages.forEachIndexed { i, logMessage ->
-                yield()
+            val durationMs = forEachWithProgress(_logMessages, onProgressChanged) { i, logMessage ->
                 val payload = logMessage.getMessageText()
 
                 val matches = when (searchType) {
                     SearchType.Text -> {
-                        ((searchRegex != null && searchRegex.containsMatchIn(payload)) || (payload.contains(
-                            searchText
-                        )))
+                        ((searchRegex != null && searchRegex.containsMatchIn(payload))
+                                || (payload.contains(searchText)))
                     }
 
                     SearchType.MarkedRows -> {
@@ -359,24 +352,17 @@ class LogsViewModel(
                 }
 
                 if (matches) {
-                    withContext(Dispatchers.Swing) {
+                    withContext(Main) {
                         _searchResults.add(logMessage)
                         _searchIndexes.add(i)
                     }
-                }
-
-                val nowTs = System.currentTimeMillis()
-                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
-                    prevTs = nowTs
-                    onProgressChanged(i.toFloat() / logMessages.size)
                 }
             }
 
             _searchState.value = _searchState.value.copy(
                 searchText = searchText, state = SearchState.State.IDLE
             )
-            onProgressChanged(1f)
-            Log.d("Search complete in ${(System.currentTimeMillis() - startMs) / 1000} sec.")
+            Log.d("Search complete in ${durationMs / 1000} sec.")
         }
     }
 
@@ -436,79 +422,52 @@ class LogsViewModel(
     }
 
     fun removeMessagesByFilters(filters: Map<FilterParameter, FilterCriteria>) {
-        CoroutineScope(IO).launch {
-            Log.d("start removing by '$filters'")
-            var prevTs = System.currentTimeMillis()
-            val filtered = _logMessages.filterIndexed { index, logMessage ->
-                val message = logMessage.dltMessage
-                val nowTs = System.currentTimeMillis()
-                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
-                    prevTs = nowTs
-                    onProgressChanged(index.toFloat() / _logMessages.size)
+        viewModelScope.launch(IO) {
+            Log.d("start removing messages by filter '$filters'")
+            val filtered = mutableListOf<LogMessage>()
+            val duration = forEachWithProgress(_logMessages, onProgressChanged) { _, logMessage ->
+                if (!assessFilter(filters, logMessage.dltMessage)) {
+                    filtered.add(logMessage)
                 }
-
-                !assessFilter(filters, message)
             }
 
-            withContext(Dispatchers.Swing) {
+            withContext(Main) {
                 _logMessages.clear()
                 _logMessages.addAll(filtered)
             }
-            onProgressChanged(1f)
-            Log.d("done removing by filters '$filters'")
+            Log.d("done removing messages by filter in $duration ms")
         }
     }
 
     fun removeMessages(type: LogRemoveContext, filter: String) {
-        CoroutineScope(IO).launch {
-            Log.d("start removing '$filter' $type")
-            var prevTs = System.currentTimeMillis()
-            val filtered = _logMessages.filterIndexed { index, logMessage ->
+        viewModelScope.launch(IO) {
+            Log.d("start removing messages by $type '$filter'")
+            val filtered = mutableListOf<LogMessage>()
+            val duration = forEachWithProgress(_logMessages, onProgressChanged) { i, logMessage ->
                 val message = logMessage.dltMessage
-                val nowTs = System.currentTimeMillis()
-                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
-                    prevTs = nowTs
-                    onProgressChanged(index.toFloat() / _logMessages.size)
-                }
 
-                when (type) {
-                    LogRemoveContext.ContextId -> message.extendedHeader?.contextId != filter
-                    LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId != filter
-                    LogRemoveContext.EcuId -> message.standardHeader.ecuId != filter
-                    LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() != filter
-                    LogRemoveContext.BeforeTimestamp -> message.timeStampUs >= filter.toLong()
-                    LogRemoveContext.AfterTimestamp -> message.timeStampUs <= filter.toLong()
+                val shouldRemove = when (type) {
+                    LogRemoveContext.ContextId -> message.extendedHeader?.contextId == filter
+                    LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId == filter
+                    LogRemoveContext.EcuId -> message.standardHeader.ecuId == filter
+                    LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() == filter
+                    LogRemoveContext.BeforeTimestamp -> message.timeStampUs < filter.toLong()
+                    LogRemoveContext.AfterTimestamp -> message.timeStampUs > filter.toLong()
                     LogRemoveContext.Payload -> {
-                        true
+                        false
                     }
+                }
+                if (!shouldRemove) {
+                    filtered.add(logMessage)
                 }
             }
 
-            withContext(Dispatchers.Swing) {
+            withContext(Main) {
                 _logMessages.clear()
                 _logMessages.addAll(filtered)
             }
-            onProgressChanged(1f)
 
-            // TODO: update searchIndexes as well otherwise they will be broken
-//            val filteredSearch = searchResult.filterIndexed { index, message ->
-//                val nowTs = System.currentTimeMillis()
-//                if (nowTs - prevTs > PROGRESS_UPDATE_DEBOUNCE_MS) {
-//                    prevTs = nowTs
-//                    onProgressChanged(index.toFloat() / dltMessages.size)
-//                }
-//
-//                when (type) {
-//                    "context" -> message.extendedHeader?.contextId != filter
-//                    "app" -> message.extendedHeader?.applicationId != filter
-//                    else -> false
-//                }
-//            }
-//
-//            searchResult.clear()
-//            searchResult.addAll(filteredSearch)
-            onProgressChanged(1f)
-            Log.d("done removing '$filter'")
+            Log.d("done removing messages by $type '$filter' $duration ms")
         }
     }
 
