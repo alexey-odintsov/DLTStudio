@@ -17,9 +17,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.search.SearchState
@@ -141,15 +138,10 @@ fun LogsToolbar(
             )
         }
         AutoCompleteEditText(
-            modifier = Modifier.height(20.dp).weight(1f)
-                .onKeyEvent { e ->
-                    if (e.key == Key.Enter) {
-                        callbacks.onSearchButtonClicked(SearchType.Text, text)
-                        true
-                    } else {
-                        false
-                    }
-                },
+            modifier = Modifier.height(20.dp).weight(1f),
+            onEnterClicked = {
+                callbacks.onSearchButtonClicked(SearchType.Text, text)
+            },
             value = text,
             onValueChange = {
                 text = it
@@ -180,6 +172,9 @@ fun LogsToolbar(
             onValueChange = {
                 timeZoneText = it
                 callbacks.onTimeZoneChanged(it)
+            },
+            onEnterClicked = {
+                callbacks.onTimeZoneChanged(timeZoneText)
             },
             items = TimeZone.availableZoneIds.map { it }.toMutableStateList()
         )
