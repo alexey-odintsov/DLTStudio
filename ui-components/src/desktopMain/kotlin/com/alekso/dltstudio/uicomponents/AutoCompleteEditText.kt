@@ -16,6 +16,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,6 +32,7 @@ fun AutoCompleteEditText(
     singleLine: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     items: SnapshotStateList<String>,
+    onEnterClicked: () -> Unit
 ) {
 
     var expanded by remember { mutableStateOf(false) }
@@ -39,7 +43,16 @@ fun AutoCompleteEditText(
                 expanded = true
                 onValueChange(it)
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
+                .onKeyEvent { e ->
+                    if (e.key == Key.Enter) {
+                        expanded = false
+                        onEnterClicked()
+                        true
+                    } else {
+                        false
+                    }
+                },
             singleLine = singleLine,
             interactionSource = interactionSource,
         )
