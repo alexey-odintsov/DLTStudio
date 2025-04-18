@@ -46,6 +46,7 @@ class DLTParserV2() : DLTParser {
         files: List<File>,
         payloadStorageType: PayloadStorageType,
         progressCallback: (Float) -> Unit,
+        fixOrdering: Boolean,
     ): List<DLTMessage> {
         progressCallback.invoke(0f)
         val messages = mutableListOf<DLTMessage>()
@@ -108,7 +109,35 @@ class DLTParserV2() : DLTParser {
         }
         progressCallback.invoke(1f)
         Log.d("Parsing complete in ${(System.currentTimeMillis() - startMs) / 1000} sec. Parsed ${messages.size} messages; $bytesRead bytes read and $skippedBytes skipped bytes")
-        return messages.sortedBy { it.timeStampUs }
+        return if (fixOrdering) {
+            val reorderedMessages = mutableListOf<DLTMessage>()
+            val ecuMessages: Map<String?, List<DLTMessage>> = ArrayDeque(messages).sortedWith(
+                compareBy<DLTMessage> { it.standardHeader.timeStamp }
+                    .thenBy { it.standardHeader.messageCounter }
+            ).groupBy { it.standardHeader.ecuId }
+
+            val keys = ecuMessages.keys.toList()
+            val totalMessages = ecuMessages.values.sumOf { it.size }
+            var processedCount = 0
+
+            while (processedCount < totalMessages) {
+                val firstElements = mutableMapOf<String, DLTMessage>()
+                keys.forEach { k ->
+                    val el = ecuMessages[k]?.firstOrNull()
+                    if (el != null && k != null) {
+                        firstElements[k] = el
+                    }
+                }
+                val min = firstElements.minBy { it.value.timeStampUs }
+                (ecuMessages[min.key] as ArrayList?)?.removeFirst()
+                firstElements.clear()
+                processedCount++
+                reorderedMessages.add(min.value)
+            }
+            reorderedMessages
+        } else {
+            messages.sortedBy { it.timeStampUs }
+        }
     }
 
     fun parseDLTMessage(

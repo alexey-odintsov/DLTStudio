@@ -186,7 +186,8 @@ class MainViewModel(
                 dltParser.read(
                     dltFiles,
                     settingsLogs.value.backendType,
-                    DependencyManager.onProgressUpdate
+                    DependencyManager.onProgressUpdate,
+                    true,
                 ).map { LogMessage(it) })
         }
     }

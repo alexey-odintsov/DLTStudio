@@ -26,6 +26,7 @@ interface DLTParser {
         files: List<File>,
         payloadStorageType: PayloadStorageType,
         progressCallback: (Float) -> Unit,
+        fixOrdering: Boolean = false,
     ): List<DLTMessage>
 
 }
