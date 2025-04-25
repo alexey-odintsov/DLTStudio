@@ -11,10 +11,15 @@ class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
     private lateinit var viewModel: DeviceAnalyzeViewModel
 
     override fun pluginName(): String = "Device Analyze Plugin"
+    override fun pluginDirectoryName(): String = "device-analyze"
     override fun pluginVersion(): String = "1.0.0"
-    override fun pluginClassName(): String = "com.alekso.dltstudio.plugins.deviceplugin.DeviceAnalyzePlugin"
+    override fun pluginClassName(): String = DeviceAnalyzePlugin::class.simpleName.toString()
 
-    override fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit) {
+    override fun init(
+        logs: SnapshotStateList<LogMessage>,
+        onProgressUpdate: (Float) -> Unit,
+        pluginDirectoryPath: String
+    ) {
         viewModel = DeviceAnalyzeViewModel(onProgressUpdate)
     }
 
@@ -26,8 +31,6 @@ class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
 
     @Composable
     override fun renderPanel(modifier: Modifier) {
-        println("Recompose DeviceAnalyzePlugin.renderPanel")
-
         DeviceAnalysePanel(
             modifier = modifier,
             responseState = viewModel.analyzeState,

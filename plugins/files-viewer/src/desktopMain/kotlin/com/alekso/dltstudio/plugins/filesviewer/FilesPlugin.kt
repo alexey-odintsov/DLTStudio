@@ -20,10 +20,15 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     private lateinit var formatter: Formatter
 
     override fun pluginName(): String = "Files Viewer Plugin"
+    override fun pluginDirectoryName(): String = "files-plugin"
     override fun pluginVersion(): String = "1.0.0"
-    override fun pluginClassName(): String = "com.alekso.dltstudio.plugins.filesviewer.FilesPlugin"
+    override fun pluginClassName(): String = FilesPlugin::class.simpleName.toString()
 
-    override fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit) {
+    override fun init(
+        logs: SnapshotStateList<LogMessage>,
+        onProgressUpdate: (Float) -> Unit,
+        pluginDirectoryPath: String
+    ) {
         logMessages = logs
         viewModel = FilesViewModel(onProgressUpdate)
     }

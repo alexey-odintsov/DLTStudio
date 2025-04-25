@@ -65,7 +65,7 @@ import com.alekso.dltstudio.timeline.graph.TimelineMinMaxValueView
 import com.alekso.dltstudio.timeline.graph.TimelinePercentageView
 import com.alekso.dltstudio.timeline.graph.TimelineSingleStateView
 import com.alekso.dltstudio.timeline.graph.TimelineStateView
-import com.alekso.dltstudio.utils.SampleData
+import com.alekso.dltmessage.SampleData
 import java.awt.Cursor
 
 private val TIME_MARKER_WIDTH_DP = 140.dp

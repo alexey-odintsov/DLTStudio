@@ -32,9 +32,10 @@ import com.alekso.dltstudio.logs.toolbar.LogsToolbar
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
 import com.alekso.dltstudio.model.ColumnParams
-import com.alekso.dltstudio.model.VirtualDevice
 import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.utils.SampleData
+import com.alekso.dltmessage.SampleData
+import com.alekso.dltstudio.LogSelection
+import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
@@ -55,7 +56,7 @@ fun LogsPanel(
     columnParams: SnapshotStateList<ColumnParams>,
     logMessages: SnapshotStateList<LogMessage>,
     logInsights: SnapshotStateList<LogInsight>? = null,
-    virtualDevices: SnapshotStateList<VirtualDevice>,
+    previewPanels: SnapshotStateList<PluginLogPreview>,
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
@@ -76,7 +77,6 @@ fun LogsPanel(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
-    onShowVirtualDeviceClicked: () -> Unit = {},
     onColumnResized: (String, Float) -> Unit,
     logSelection: LogSelection,
 ) {
@@ -130,10 +130,9 @@ fun LogsPanel(
                             Modifier.fillMaxSize(),
                             logMessages.getOrNull(logSelection.previewRowId),
                             logInsights = logInsights,
-                            virtualDevices = virtualDevices,
                             messageIndex = logSelection.previewRowId,
-                            onShowVirtualDeviceClicked = onShowVirtualDeviceClicked,
                             onCommentUpdated = onCommentUpdated,
+                            previewPanels = previewPanels,
                         )
                     }
                     splitter {
@@ -209,7 +208,7 @@ fun PreviewLogsPanel() {
         Modifier.fillMaxSize(),
         columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
         logMessages = list,
-        virtualDevices = mutableStateListOf(),
+//        virtualDevices = mutableStateListOf(),
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
         searchIndexes = SnapshotStateList(),
@@ -234,5 +233,6 @@ fun PreviewLogsPanel() {
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         onColumnResized = { _, _ -> },
+        previewPanels = mutableStateListOf(),
     )
 }

@@ -1,0 +1,65 @@
+package com.alekso.dltstudio.plugins.virtualdevice
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Modifier
+import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.plugins.contract.PluginLogPreview
+import com.alekso.dltstudio.plugins.virtualdevice.db.VirtualDeviceRepository
+import com.alekso.dltstudio.plugins.virtualdevice.db.VirtualDeviceRepositoryImpl
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+
+class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
+
+    private lateinit var viewModel: VirtualDeviceViewModel
+    private lateinit var virtualDeviceRepository: VirtualDeviceRepository
+
+    override fun pluginName(): String = "Virtual Device"
+    override fun pluginDirectoryName(): String = "virtual-device"
+    override fun pluginVersion(): String = "0.0.1"
+    override fun pluginClassName(): String = VirtualDevicePlugin::class.simpleName.toString()
+
+    override fun init(
+        logs: SnapshotStateList<LogMessage>,
+        onProgressUpdate: (Float) -> Unit,
+        pluginDirectoryPath: String
+    ) {
+        virtualDeviceRepository = VirtualDeviceRepositoryImpl(
+            database = DBFactory().createDatabase("${pluginDirectoryPath}/virtual_device.db"),
+            scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+        )
+        viewModel = VirtualDeviceViewModel(virtualDeviceRepository)
+    }
+
+    override fun onLogsChanged() {
+
+    }
+
+    @Composable
+    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
+        if (viewModel.devicePreviewsDialogState) {
+            VirtualDevicesDialog(
+                visible = viewModel.devicePreviewsDialogState,
+                onDialogClosed = { viewModel.devicePreviewsDialogState = false },
+                virtualDevices = viewModel.virtualDevices,
+                onVirtualDeviceUpdate = { device -> viewModel.onVirtualDeviceUpdate(device) },
+                onVirtualDeviceDelete = { device -> viewModel.onVirtualDeviceDelete(device) },
+            )
+        }
+        DevicePreviewView(
+            modifier = modifier,
+            virtualDevices = viewModel.virtualDevices,
+            logMessage = logMessage,
+            messageIndex = messageIndex,
+            onShowVirtualDeviceClicked = {
+                viewModel.devicePreviewsDialogState = true
+            }
+        )
+    }
+
+    override fun getPanelName(): String = "Virtual device"
+
+}

@@ -19,7 +19,7 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
-import com.alekso.dltstudio.colors.ColorPalette
+import com.alekso.dltstudio.uicomponents.ColorPalette
 import com.alekso.dltstudio.timeline.TimeFrame
 import com.alekso.dltstudio.timeline.TimeLineFloatEntry
 import com.alekso.dltstudio.timeline.TimeLineMinMaxEntries

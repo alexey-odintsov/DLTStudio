@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draganddrop.DragAndDropEvent
@@ -63,14 +64,14 @@ fun MainWindow(
                 }
             })
     ) {
-        TabsPanel(tabIndex, mainViewModel.panelsNames, tabClickListener)
+        TabsPanel(tabIndex, mainViewModel.panels.map { it.getPanelName() }.toMutableStateList(), tabClickListener)
 
         Row(Modifier.weight(1f)) {
             // PluginPanel as this parameter to renderPanel is unstable, so we marked PluginPanel as Stable
             (mainViewModel.panels[tabIndex]).renderPanel(modifier = Modifier.weight(1f))
         }
         Divider()
-        val messagesSize = DependencyManager.provideMessagesProvider().getMessages().size
+        val messagesSize = DependencyManager.provideMessageRepository().getMessages().size
         val statusText = if (messagesSize > 0) {
             "Messages: ${"%,d".format(messagesSize)}"
         } else {

@@ -6,15 +6,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
+import com.alekso.dltstudio.LogRemoveContext
+import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
-import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 
 
 class LogsPlugin(
-    private val viewModel: LogsViewModel,
+    private val viewModel: MainViewModel,
+    private val messagesRepository: MessagesRepository,
 ) : PluginPanel {
     override fun getPanelName(): String = "Logs"
 
@@ -31,15 +34,7 @@ class LogsPlugin(
                 callbacks = viewModel.colorFiltersDialogCallbacks,
             )
         }
-        if (viewModel.devicePreviewsDialogState.value) {
-            VirtualDevicesDialog(
-                visible = viewModel.devicePreviewsDialogState.value,
-                onDialogClosed = { viewModel.devicePreviewsDialogState.value = false },
-                virtualDevices = viewModel.virtualDevices,
-                onVirtualDeviceUpdate = { device -> viewModel.onVirtualDeviceUpdate(device) },
-                onVirtualDeviceDelete = { device -> viewModel.onVirtualDeviceDelete(device) },
-            )
-        }
+
         if (viewModel.removeLogsDialogState.value.visible) {
             RemoveLogsDialog(
                 visible = viewModel.removeLogsDialogState.value.visible,
@@ -54,12 +49,12 @@ class LogsPlugin(
 
         LogsPanel(
             modifier = modifier,
+            previewPanels = viewModel.previewPanels,
             columnParams = viewModel.columnParams,
-            logMessages = viewModel.logMessages,
+            logMessages = messagesRepository.getMessages(),
             searchState = searchState,
             searchAutoComplete = viewModel.searchAutocomplete,
             logInsights = viewModel.logInsights,
-            virtualDevices = viewModel.virtualDevices,
             searchResult = viewModel.searchResults,
             searchIndexes = viewModel.searchIndexes,
             colorFilters = viewModel.colorFilters,
@@ -101,9 +96,6 @@ class LogsPlugin(
                 }
             },
             columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
-            onShowVirtualDeviceClicked = {
-                viewModel.devicePreviewsDialogState.value = true
-            },
             onColumnResized = viewModel::onColumnResized,
         )
     }

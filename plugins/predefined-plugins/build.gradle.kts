@@ -14,6 +14,9 @@ kotlin {
             implementation(project(":plugins:contract"))
             implementation(project(":plugins:files-viewer"))
             implementation(project(":plugins:device-analyze"))
+            implementation(project(":plugins:virtual-device"))
+            implementation(project(":plugins:dlt-detailed-view"))
+            implementation(project(":plugins:log-info-view"))
         }
 
         desktopMain.dependencies {

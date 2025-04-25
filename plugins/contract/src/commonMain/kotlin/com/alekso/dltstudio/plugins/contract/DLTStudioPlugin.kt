@@ -13,6 +13,11 @@ interface DLTStudioPlugin {
     fun pluginName(): String
 
     /**
+     * Name of the plugin directory
+     */
+    fun pluginDirectoryName(): String
+
+    /**
      * Version of the plugin. Could be in any format.
      */
     fun pluginVersion(): String
@@ -27,7 +32,7 @@ interface DLTStudioPlugin {
      * @param logs – list of logs
      * @param onProgressUpdate – callback to update progress indicator
      */
-    fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit)
+    fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit, pluginDirectoryPath: String)
 
     /**
      * Callback which is triggered when new logs were loaded. Plugin should clean all current state that depends on logs.

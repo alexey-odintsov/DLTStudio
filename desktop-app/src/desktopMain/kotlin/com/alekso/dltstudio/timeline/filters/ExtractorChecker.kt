@@ -2,7 +2,7 @@ package com.alekso.dltstudio.timeline.filters
 
 import com.alekso.dltstudio.timeline.DiagramType
 import com.alekso.dltstudio.timeline.filters.extractors.EntriesExtractor
-import com.alekso.dltstudio.utils.SampleData
+import com.alekso.dltmessage.SampleData
 
 object ExtractorChecker {
     fun testRegex(
