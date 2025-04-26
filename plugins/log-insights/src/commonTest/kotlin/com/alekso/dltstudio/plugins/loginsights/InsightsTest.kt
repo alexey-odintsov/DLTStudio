@@ -1,6 +1,5 @@
-package com.alekso.dltstudio.tests.insights
+package com.alekso.dltstudio.plugins.loginsights
 
-import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltmessage.SampleData
 import org.junit.Test

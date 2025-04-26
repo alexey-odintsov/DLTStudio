@@ -17,6 +17,7 @@ kotlin {
             implementation(project(":plugins:virtual-device"))
             implementation(project(":plugins:dlt-detailed-view"))
             implementation(project(":plugins:log-info-view"))
+            implementation(project(":plugins:log-insights"))
         }
 
         desktopMain.dependencies {

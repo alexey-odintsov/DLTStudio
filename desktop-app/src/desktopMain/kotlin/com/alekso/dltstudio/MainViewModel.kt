@@ -22,8 +22,6 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
 import com.alekso.dltstudio.logs.filtering.FilterCriteria
 import com.alekso.dltstudio.logs.filtering.FilterParameter
 import com.alekso.dltstudio.logs.filtering.checkTextCriteria
-import com.alekso.dltstudio.logs.insights.InsightsRepository
-import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
@@ -86,7 +84,6 @@ class MainViewModel(
     private val preferencesRepository: PreferencesRepository,
     private val onProgressChanged: (Float) -> Unit,
     private val formatter: AppFormatter,
-    private val insightsRepository: InsightsRepository,
 ) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
@@ -118,8 +115,6 @@ class MainViewModel(
 
     var logSelection by mutableStateOf(LogSelection(0, 0, 0))
         private set
-
-    val logInsights = mutableStateListOf<LogInsight>()
 
     private var _searchResults = mutableStateListOf<LogMessage>()
     val searchResults: SnapshotStateList<LogMessage>
@@ -495,6 +490,7 @@ class MainViewModel(
         }
     }
 
+    // TODO: Commenting is not working - fix it!
     fun updateComment(message: LogMessage, comment: String?) {
         val updatedMessage = message.copy(comment = comment)
         val logMessageIndex = messagesRepository.getMessages().indexOf(message)
@@ -512,7 +508,10 @@ class MainViewModel(
         viewModelScope.launch(IO) {
             Log.d("start removing messages by $type '$filter'")
             val filtered = mutableListOf<LogMessage>()
-            val duration = forEachWithProgress(messagesRepository.getMessages(), onProgressChanged) { i, logMessage ->
+            val duration = forEachWithProgress(
+                messagesRepository.getMessages(),
+                onProgressChanged
+            ) { i, logMessage ->
                 val message = logMessage.dltMessage
 
                 val shouldRemove = when (type) {
@@ -543,7 +542,10 @@ class MainViewModel(
         viewModelScope.launch(IO) {
             Log.d("start removing messages by filter '$filters'")
             val filtered = mutableListOf<LogMessage>()
-            val duration = forEachWithProgress(messagesRepository.getMessages(), onProgressChanged) { _, logMessage ->
+            val duration = forEachWithProgress(
+                messagesRepository.getMessages(),
+                onProgressChanged
+            ) { _, logMessage ->
                 if (!assessFilter(filters, logMessage.dltMessage)) {
                     filtered.add(logMessage)
                 }
@@ -579,16 +581,6 @@ class MainViewModel(
 
     private suspend fun selectLogRow(listIndex: Int, index: Int) {
         logSelection = logSelection.copy(logsSelectedRowId = listIndex, previewRowId = index)
-        onLogSelected(messagesRepository.getMessageByIndex(index))
-    }
-
-    private fun onLogSelected(logMessage: LogMessage) {
-        try {
-            logInsights.clear()
-            logInsights.addAll(insightsRepository.findInsight(logMessage))
-        } catch (e: Exception) {
-            Log.e(e.toString())
-        }
     }
 
     fun onSearchRowSelected(listIndex: Int, logsIndex: Int) {
@@ -630,7 +622,10 @@ class MainViewModel(
 
             val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
 
-            val durationMs = forEachWithProgress(messagesRepository.getMessages(), onProgressChanged) { i, logMessage ->
+            val durationMs = forEachWithProgress(
+                messagesRepository.getMessages(),
+                onProgressChanged
+            ) { i, logMessage ->
                 val payload = logMessage.getMessageText()
 
                 val matches = when (searchType) {

@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.logs.insights
+package com.alekso.dltstudio.plugins.loginsights
 
 data class LogInsight(
     val name: String,

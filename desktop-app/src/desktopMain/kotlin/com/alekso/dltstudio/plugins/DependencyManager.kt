@@ -10,7 +10,6 @@ import com.alekso.dltstudio.com.alekso.dltstudio.logs.MessagesRepositoryImpl
 import com.alekso.dltstudio.db.DBFactory
 import com.alekso.dltstudio.db.preferences.PreferencesRepositoryImpl
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
-import com.alekso.dltstudio.logs.insights.InsightsRepository
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.manager.PluginManager
@@ -63,8 +62,6 @@ object DependencyManager {
         )
     }
 
-    private val insightsRepository by lazy { InsightsRepository() }
-
     private val timelineViewModel by lazy {
         TimelineViewModel(
             onProgressChanged = onProgressUpdate,
@@ -80,7 +77,6 @@ object DependencyManager {
         settingsRepository = settingsRepository,
         preferencesRepository = preferencesRepository,
         formatter = formatter,
-        insightsRepository = insightsRepository,
         onProgressChanged = onProgressUpdate,
     )
 
