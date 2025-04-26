@@ -64,7 +64,7 @@ fun DevicePreviewView(
             CustomDropDown(
                 modifier = Modifier.width(200.dp).padding(horizontal = 4.dp),
                 items = virtualDevices.map { device -> "${device.name}: ${device.width}x${device.height}" },
-                initialSelectedIndex = 0,
+                initialSelectedIndex = currentDeviceIndex,
                 onItemsSelected = onDeviceSelected
             )
 
