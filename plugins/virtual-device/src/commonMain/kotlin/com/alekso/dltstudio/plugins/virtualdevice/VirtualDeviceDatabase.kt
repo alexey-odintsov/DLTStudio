@@ -9,7 +9,7 @@ import com.alekso.dltstudio.plugins.virtualdevice.db.VirtualDeviceEntity
     entities = [
         VirtualDeviceEntity::class,
     ],
-    version = 2, exportSchema = true,
+    version = 3, exportSchema = true,
 )
 abstract class VirtualDeviceDatabase : RoomDatabase() {
     abstract fun getVirtualDeviceDao(): VirtualDeviceDao

@@ -49,6 +49,7 @@ fun VirtualDevicePreview(
                 fontSize = 11.sp,
             )
         }
+
         Row(modifier = Modifier.fillMaxWidth().weight(1f)) {
             Canvas(
                 modifier = Modifier
@@ -56,9 +57,7 @@ fun VirtualDevicePreview(
                     .fillMaxWidth()
                     .padding(12.dp)
             ) {
-
                 val rectStyle = Stroke(width = 2.dp.toPx())
-
                 val scale: Float = min(
                     1f,
                     max(
@@ -133,7 +132,7 @@ private fun DrawScope.renderRectView(
 fun PreviewVirtualDevicePreview() {
     VirtualDevicePreview(
         modifier = Modifier.fillMaxSize(),
-        deviceSize = Size(600f, 300f),
+        deviceSize = Size(2600f, 900f),
         deviceViews = listOf(
             DeviceView(Rect(10f, 50f, 295f, 290f), id = "Left rect long name goes here again"),
             DeviceView(

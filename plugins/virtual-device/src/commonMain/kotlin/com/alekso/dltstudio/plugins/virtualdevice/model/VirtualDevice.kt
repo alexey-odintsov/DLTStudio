@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.plugins.virtualdevice.model
 
 data class VirtualDevice(
-    val id: Long,
+    val id: Int,
     val name: String,
     val width: Int,
     val height: Int,

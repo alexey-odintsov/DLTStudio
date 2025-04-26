@@ -23,14 +23,17 @@ class VirtualDeviceViewModel(
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
-    var devicePreviewsDialogState by mutableStateOf(false)
+    var devicePreviewDialogState by mutableStateOf(false)
+
+    var currentDeviceIndex by mutableStateOf(0)
+        private set
 
     private val _virtualDevices = mutableStateListOf<VirtualDevice>()
     val virtualDevices: SnapshotStateList<VirtualDevice>
         get() = _virtualDevices
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(IO) {
             virtualDeviceRepository.getAllAsFlow().collectLatest {
                 _virtualDevices.clear()
                 _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
@@ -39,7 +42,7 @@ class VirtualDeviceViewModel(
     }
 
     fun onVirtualDeviceUpdate(device: VirtualDevice) {
-        CoroutineScope(IO).launch {
+        viewModelScope.launch(IO) {
             virtualDeviceRepository.insert(
                 if (device.id >= 0) {
                     VirtualDeviceEntity(
@@ -58,8 +61,12 @@ class VirtualDeviceViewModel(
     }
 
     fun onVirtualDeviceDelete(device: VirtualDevice) {
-        CoroutineScope(IO).launch {
+        viewModelScope.launch(IO) {
             virtualDeviceRepository.delete(device.toVirtualDeviceEntity())
         }
+    }
+
+    fun onDeviceSelected(index: Int) {
+        currentDeviceIndex = index
     }
 }

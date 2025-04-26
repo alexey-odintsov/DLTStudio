@@ -21,6 +21,7 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
     override fun pluginDirectoryName(): String = "virtual-device"
     override fun pluginVersion(): String = "0.0.1"
     override fun pluginClassName(): String = VirtualDevicePlugin::class.simpleName.toString()
+    override fun getPanelName(): String = "Virtual device"
 
     override fun init(
         logs: SnapshotStateList<LogMessage>,
@@ -40,10 +41,10 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
 
     @Composable
     override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
-        if (viewModel.devicePreviewsDialogState) {
+        if (viewModel.devicePreviewDialogState) {
             VirtualDevicesDialog(
-                visible = viewModel.devicePreviewsDialogState,
-                onDialogClosed = { viewModel.devicePreviewsDialogState = false },
+                visible = viewModel.devicePreviewDialogState,
+                onDialogClosed = { viewModel.devicePreviewDialogState = false },
                 virtualDevices = viewModel.virtualDevices,
                 onVirtualDeviceUpdate = { device -> viewModel.onVirtualDeviceUpdate(device) },
                 onVirtualDeviceDelete = { device -> viewModel.onVirtualDeviceDelete(device) },
@@ -51,15 +52,15 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
         }
         DevicePreviewView(
             modifier = modifier,
+            currentDeviceIndex = viewModel.currentDeviceIndex,
             virtualDevices = viewModel.virtualDevices,
             logMessage = logMessage,
             messageIndex = messageIndex,
             onShowVirtualDeviceClicked = {
-                viewModel.devicePreviewsDialogState = true
-            }
+                viewModel.devicePreviewDialogState = true
+            },
+            onDeviceSelected = viewModel::onDeviceSelected
         )
     }
-
-    override fun getPanelName(): String = "Virtual device"
 
 }
