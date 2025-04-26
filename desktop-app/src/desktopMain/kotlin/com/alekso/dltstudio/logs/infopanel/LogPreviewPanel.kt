@@ -18,7 +18,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltmessage.SampleData
-import com.alekso.dltstudio.logs.insights.LogInsight
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.ui.Panel
@@ -29,9 +28,7 @@ fun LogPreviewPanel(
     modifier: Modifier,
     logMessage: LogMessage?,
     messageIndex: Int,
-    logInsights: SnapshotStateList<LogInsight>? = null,
     previewPanels: SnapshotStateList<PluginLogPreview>,
-    onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
     if (previewPanels.size < 1) return
 

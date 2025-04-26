@@ -54,7 +54,6 @@ class LogsPlugin(
             logMessages = messagesRepository.getMessages(),
             searchState = searchState,
             searchAutoComplete = viewModel.searchAutocomplete,
-            logInsights = viewModel.logInsights,
             searchResult = viewModel.searchResults,
             searchIndexes = viewModel.searchIndexes,
             colorFilters = viewModel.colorFilters,
@@ -70,11 +69,6 @@ class LogsPlugin(
             },
             onSearchRowSelected = { i, r ->
                 viewModel.onSearchRowSelected(i, r)
-            },
-            onCommentUpdated = { logMessage, comment ->
-                viewModel.updateComment(
-                    logMessage, comment
-                )
             },
             rowContextMenuCallbacks = object : RowContextMenuCallbacks {
                 override fun onCopyClicked(text: AnnotatedString) {
