@@ -36,7 +36,6 @@ fun LogInfoView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
     messageIndex: Int,
-//    insights: SnapshotStateList<LogInsight>? = null,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
     if (logMessage == null) return
@@ -49,7 +48,7 @@ fun LogInfoView(
             logMessage.dltMessage.let {
                 Header(
                     modifier = paddingModifier,
-                    text = "DLT Message #$messageIndex:"
+                    text = "Message #$messageIndex:"
                 )
                 val headerText = "${LocalFormatter.current.formatDateTime(it.timeStampUs)} " +
                         "${it.extendedHeader?.applicationId} " +
@@ -80,18 +79,6 @@ fun LogInfoView(
                     }) {
                     Text(text = if (logMessage.comment != null) "Update" else "Add")
                 }
-
-//                insights?.forEachIndexed { index, insight ->
-//                    Header(
-//                        modifier = paddingModifier.padding(top = 8.dp),
-//                        text = "Insight $index:"
-//                    )
-//                    TableRow(
-//                        0,
-//                        "",
-//                        insight.text, // todo: To use AnnotatedString.fromHtml in compose 1.7.0-alpha07 and later
-//                    )
-//                }
             }
         }
     }
