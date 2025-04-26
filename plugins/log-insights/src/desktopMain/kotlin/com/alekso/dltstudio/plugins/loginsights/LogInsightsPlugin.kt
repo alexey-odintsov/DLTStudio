@@ -5,9 +5,10 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.plugins.contract.LogSelectionObserver
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 
-class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview {
+class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview, LogSelectionObserver {
     private lateinit var viewModel: LogInsightsViewModel
 
     override fun pluginName(): String = "Logs insights"
@@ -30,11 +31,11 @@ class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview {
 
     @Composable
     override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
-        // todo: Not the best way doing that, should we have a dedicated callback when a message was selected?
-        if (logMessage != null) {
-            viewModel.onLogSelected(logMessage)
-        }
         LogInsightsView(modifier, logMessage, messageIndex, viewModel.logInsights)
+    }
+
+    override fun onMessageSelected(logMessage: LogMessage) {
+        viewModel.onLogSelected(logMessage)
     }
 
 }

@@ -374,7 +374,9 @@ class MainViewModel(
     }
 
     fun parseFile(dltFiles: List<File>) {
-        pluginManager.notifyLogsChanged()
+        viewModelScope.launch(IO) {
+            pluginManager.notifyLogsChanged()
+        }
         parseJob?.cancel()
         clearMessages()
         parseJob = viewModelScope.launch(IO) {
@@ -581,6 +583,7 @@ class MainViewModel(
 
     private suspend fun selectLogRow(listIndex: Int, index: Int) {
         logSelection = logSelection.copy(logsSelectedRowId = listIndex, previewRowId = index)
+        pluginManager.notifyLogSelected(messagesRepository.getMessageByIndex(index))
     }
 
     fun onSearchRowSelected(listIndex: Int, logsIndex: Int) {
