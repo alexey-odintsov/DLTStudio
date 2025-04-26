@@ -31,8 +31,9 @@ interface DLTStudioPlugin {
      * Method that initializes plugin with necessary dependencies
      * @param logs – list of logs
      * @param onProgressUpdate – callback to update progress indicator
+     * @param pluginDirectory - name of directory where plugin can store files, like database or cache files.
      */
-    fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit, pluginDirectoryPath: String)
+    fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit, pluginDirectory: String)
 
     /**
      * Callback which is triggered when new logs were loaded. Plugin should clean all current state that depends on logs.

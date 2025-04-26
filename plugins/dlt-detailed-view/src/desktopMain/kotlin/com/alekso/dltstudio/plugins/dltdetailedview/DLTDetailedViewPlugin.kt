@@ -7,25 +7,23 @@ import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 
-class DLTDetailedViewPlugin: DLTStudioPlugin, PluginLogPreview {
+class DLTDetailedViewPlugin : DLTStudioPlugin, PluginLogPreview {
     override fun pluginName(): String = "DLT detailed vide"
-
     override fun pluginDirectoryName(): String = "dlt-detailed-view"
-
     override fun pluginVersion(): String = "0.0.1"
-
     override fun pluginClassName(): String = DLTDetailedViewPlugin::class.simpleName.toString()
+    override fun getPanelName(): String = "DLT Details"
 
     override fun init(
         logs: SnapshotStateList<LogMessage>,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectoryPath: String
+        pluginDirectory: String,
     ) {
-
+        // do nothing
     }
 
     override fun onLogsChanged() {
-
+        // do nothing
     }
 
     @Composable
@@ -33,5 +31,4 @@ class DLTDetailedViewPlugin: DLTStudioPlugin, PluginLogPreview {
         DLTDetailedInfoView(modifier, logMessage, messageIndex)
     }
 
-    override fun getPanelName(): String = "DLT Details"
 }

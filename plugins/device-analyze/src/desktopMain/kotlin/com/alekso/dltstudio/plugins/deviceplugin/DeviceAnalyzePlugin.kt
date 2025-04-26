@@ -14,11 +14,12 @@ class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
     override fun pluginDirectoryName(): String = "device-analyze"
     override fun pluginVersion(): String = "1.0.0"
     override fun pluginClassName(): String = DeviceAnalyzePlugin::class.simpleName.toString()
+    override fun getPanelName(): String = "Device Analyse"
 
     override fun init(
         logs: SnapshotStateList<LogMessage>,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectoryPath: String
+        pluginDirectory: String,
     ) {
         viewModel = DeviceAnalyzeViewModel(onProgressUpdate)
     }
@@ -26,8 +27,6 @@ class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
     override fun onLogsChanged() {
         // ignore
     }
-
-    override fun getPanelName(): String = "Device Analyse"
 
     @Composable
     override fun renderPanel(modifier: Modifier) {

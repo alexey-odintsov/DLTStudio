@@ -48,7 +48,7 @@ class PluginManager(
             plugin.init(
                 logs = messagesRepository.getMessages(),
                 onProgressUpdate = onProgressUpdate,
-                pluginDirectoryPath = pluginDir.absolutePath
+                pluginDirectory = pluginDir.absolutePath
             )
             if (plugin is FormatterConsumer) {
                 plugin.initFormatter(formatter)

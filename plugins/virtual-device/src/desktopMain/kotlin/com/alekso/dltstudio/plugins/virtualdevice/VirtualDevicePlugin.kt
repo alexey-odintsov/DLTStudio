@@ -13,7 +13,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 
 class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
-
     private lateinit var viewModel: VirtualDeviceViewModel
     private lateinit var virtualDeviceRepository: VirtualDeviceRepository
 
@@ -26,17 +25,17 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
     override fun init(
         logs: SnapshotStateList<LogMessage>,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectoryPath: String
+        pluginDirectory: String,
     ) {
         virtualDeviceRepository = VirtualDeviceRepositoryImpl(
-            database = DBFactory().createDatabase("${pluginDirectoryPath}/virtual_device.db"),
+            database = DBFactory().createDatabase("${pluginDirectory}/virtual_device.db"),
             scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
         )
         viewModel = VirtualDeviceViewModel(virtualDeviceRepository)
     }
 
     override fun onLogsChanged() {
-
+        // do nothing
     }
 
     @Composable
