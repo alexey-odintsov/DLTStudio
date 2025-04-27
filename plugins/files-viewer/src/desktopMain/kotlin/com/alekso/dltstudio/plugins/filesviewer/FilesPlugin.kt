@@ -27,7 +27,7 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     override fun init(
         messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectory: String,
+        pluginFilesPath: String,
     ) {
         this.messagesRepository = messagesRepository
         viewModel = FilesViewModel(onProgressUpdate)

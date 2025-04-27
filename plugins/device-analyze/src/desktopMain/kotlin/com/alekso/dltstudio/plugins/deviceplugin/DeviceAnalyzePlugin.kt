@@ -18,7 +18,7 @@ class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
     override fun init(
         messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectory: String,
+        pluginFilesPath: String,
     ) {
         viewModel = DeviceAnalyzeViewModel(onProgressUpdate)
     }

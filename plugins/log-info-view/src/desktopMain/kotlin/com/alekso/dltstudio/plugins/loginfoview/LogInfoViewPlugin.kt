@@ -24,7 +24,7 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview {
     override fun init(
         messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectory: String,
+        pluginFilesPath: String,
     ) {
         // do nothing
         viewModel = LogInfoViewViewModel(messagesRepository)

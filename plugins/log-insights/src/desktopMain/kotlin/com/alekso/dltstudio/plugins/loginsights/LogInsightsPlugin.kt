@@ -20,7 +20,7 @@ class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview, LogSelectionObserve
     override fun init(
         messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectory: String
+        pluginFilesPath: String
     ) {
         viewModel = LogInsightsViewModel(InsightsRepository())
     }

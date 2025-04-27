@@ -25,10 +25,10 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
     override fun init(
         messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectory: String,
+        pluginFilesPath: String,
     ) {
         virtualDeviceRepository = VirtualDeviceRepositoryImpl(
-            database = DBFactory().createDatabase("${pluginDirectory}/virtual_device.db"),
+            database = DBFactory().createDatabase("${pluginFilesPath}/virtual_device.db"),
             scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
         )
         viewModel = VirtualDeviceViewModel(virtualDeviceRepository)

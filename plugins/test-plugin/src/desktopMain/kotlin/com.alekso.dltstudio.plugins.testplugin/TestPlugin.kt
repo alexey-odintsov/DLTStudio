@@ -17,7 +17,7 @@ class TestPlugin : DLTStudioPlugin, PluginPanel {
     override fun init(
         messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
-        pluginDirectory: String,
+        pluginFilesPath: String,
     ) {
         // do nothing
     }
