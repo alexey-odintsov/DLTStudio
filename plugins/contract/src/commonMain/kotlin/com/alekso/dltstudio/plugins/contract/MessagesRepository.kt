@@ -8,4 +8,5 @@ interface MessagesRepository {
     fun storeMessages(logMessages: List<LogMessage>)
     fun getMessages(): SnapshotStateList<LogMessage>
     fun getMessageByIndex(index: Int): LogMessage
+    fun updateLogComment(key: String, comment: String?)
 }

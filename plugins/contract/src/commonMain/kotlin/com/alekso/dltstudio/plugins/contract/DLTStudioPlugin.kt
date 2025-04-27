@@ -1,8 +1,5 @@
 package com.alekso.dltstudio.plugins.contract
 
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import com.alekso.dltstudio.model.contract.LogMessage
-
 /**
  * Base plugin interface. All plugins should implement it.
  */
@@ -29,11 +26,11 @@ interface DLTStudioPlugin {
 
     /**
      * Method that initializes plugin with necessary dependencies
-     * @param logs – list of logs
+     * @param messagesRepository – repository to work with logs
      * @param onProgressUpdate – callback to update progress indicator
      * @param pluginDirectory - name of directory where plugin can store files, like database or cache files.
      */
-    fun init(logs: SnapshotStateList<LogMessage>, onProgressUpdate: (Float) -> Unit, pluginDirectory: String)
+    fun init(messagesRepository: MessagesRepository, onProgressUpdate: (Float) -> Unit, pluginDirectory: String)
 
     /**
      * Callback which is triggered when new logs were loaded. Plugin should clean all current state that depends on logs.

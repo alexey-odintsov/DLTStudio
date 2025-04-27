@@ -26,6 +26,8 @@ class PluginTest {
             override fun getMessageByIndex(index: Int): LogMessage {
                 return messages[0]
             }
+
+            override fun updateLogComment(key: String, comment: String?) = Unit
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",

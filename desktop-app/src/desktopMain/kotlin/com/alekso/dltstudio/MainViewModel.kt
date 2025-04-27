@@ -492,19 +492,18 @@ class MainViewModel(
         }
     }
 
-    // TODO: Commenting is not working - fix it!
-    fun updateComment(message: LogMessage, comment: String?) {
-        val updatedMessage = message.copy(comment = comment)
-        val logMessageIndex = messagesRepository.getMessages().indexOf(message)
-        val searchMessageIndex = _searchResults.indexOf(message)
-
-        if (logMessageIndex != -1) {
-            messagesRepository.getMessages()[logMessageIndex] = updatedMessage
-        }
-        if (searchMessageIndex != -1) {
-            _searchResults[searchMessageIndex] = updatedMessage
-        }
-    }
+    // TODO: Commenting is not working - fix it! Should we let Plugins to update logs through messagesRepository?
+//    fun updateComment(message: LogMessage, comment: String?) {
+//        val updatedMessage = message.copy(comment = comment)
+//
+//        messageUpdater.updateLogComment(message.key, comment)
+//
+//        val searchMessageIndex = _searchResults.indexOf(message)
+//
+//        if (searchMessageIndex != -1) {
+//            _searchResults[searchMessageIndex] = updatedMessage
+//        }
+//    }
 
     fun removeMessages(type: LogRemoveContext, filter: String) {
         viewModelScope.launch(IO) {

@@ -1,18 +1,20 @@
 package com.alekso.dltstudio.plugins.loginfoview
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 
 
 class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview {
+    private lateinit var viewModel: LogInfoViewViewModel
+
     override fun pluginName(): String = "Log info view"
     override fun pluginDirectoryName(): String = "log-info-view"
     override fun pluginVersion(): String = "0.0.1"
@@ -20,11 +22,12 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview {
     override fun getPanelName(): String = "Info view"
 
     override fun init(
-        logs: SnapshotStateList<LogMessage>,
+        messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
         pluginDirectory: String,
     ) {
         // do nothing
+        viewModel = LogInfoViewViewModel(messagesRepository)
     }
 
     override fun onLogsChanged() {
@@ -33,6 +36,6 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview {
 
     @Composable
     override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
-        LogInfoView(modifier, logMessage, messageIndex)
+        LogInfoView(modifier, logMessage, messageIndex, onCommentUpdated = viewModel::onCommentUpdated)
     }
 }

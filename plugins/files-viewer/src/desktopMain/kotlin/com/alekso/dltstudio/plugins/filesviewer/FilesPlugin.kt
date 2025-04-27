@@ -2,20 +2,19 @@ package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.Formatter
-import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.FormatterConsumer
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 
 class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
-    private lateinit var logMessages: SnapshotStateList<LogMessage>
+    private lateinit var messagesRepository: MessagesRepository
     private lateinit var viewModel: FilesViewModel
     private lateinit var formatter: Formatter
 
@@ -26,11 +25,11 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     override fun getPanelName(): String = "Files"
 
     override fun init(
-        logs: SnapshotStateList<LogMessage>,
+        messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
         pluginDirectory: String,
     ) {
-        logMessages = logs
+        this.messagesRepository = messagesRepository
         viewModel = FilesViewModel(onProgressUpdate)
     }
 
@@ -53,7 +52,7 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 previewState = viewModel.previewState,
                 onPreviewDialogClosed = viewModel::closePreviewDialog,
                 onSearchButtonClicked = {
-                    viewModel.startFilesSearch(logMessages)
+                    viewModel.startFilesSearch(messagesRepository.getMessages())
                 },
                 onFileEntryClicked = viewModel::onFileClicked
             )

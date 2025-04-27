@@ -1,11 +1,11 @@
 package com.alekso.dltstudio.plugins.loginsights
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.LogSelectionObserver
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 
 class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview, LogSelectionObserver {
@@ -18,7 +18,7 @@ class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview, LogSelectionObserve
     override fun getPanelName(): String = "Insights"
 
     override fun init(
-        logs: SnapshotStateList<LogMessage>,
+        messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
         pluginDirectory: String
     ) {

@@ -1,10 +1,9 @@
 package com.alekso.dltstudio.plugins.deviceplugin
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 
 class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
@@ -17,7 +16,7 @@ class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
     override fun getPanelName(): String = "Device Analyse"
 
     override fun init(
-        logs: SnapshotStateList<LogMessage>,
+        messagesRepository: MessagesRepository,
         onProgressUpdate: (Float) -> Unit,
         pluginDirectory: String,
     ) {

@@ -48,7 +48,7 @@ class PluginManager(
                 Log.e("Can't create plugin directory: $e")
             }
             plugin.init(
-                logs = messagesRepository.getMessages(),
+                messagesRepository = messagesRepository,
                 onProgressUpdate = onProgressUpdate,
                 pluginDirectory = pluginDir.absolutePath
             )
