@@ -9,4 +9,5 @@ interface MessagesRepository {
     fun getMessages(): SnapshotStateList<LogMessage>
     fun getMessageByIndex(index: Int): LogMessage
     fun updateLogComment(key: String, comment: String?)
+    fun toggleMark(key: String)
 }

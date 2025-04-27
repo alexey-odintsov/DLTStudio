@@ -36,4 +36,12 @@ class MessagesRepositoryImpl : MessagesRepository {
         }
     }
 
+    override fun toggleMark(key: String) {
+        val index = _logMessages.indexOfFirst { it.key == key }
+        if (index > -1) {
+            val currentMark = _logMessages[index].marked
+            _logMessages[index] = _logMessages[index].copy(marked = !currentMark)
+        }
+    }
+
 }

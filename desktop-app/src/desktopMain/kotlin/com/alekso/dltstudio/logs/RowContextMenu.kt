@@ -3,19 +3,18 @@ package com.alekso.dltstudio.logs
 import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.model.contract.LogMessage
 
 interface RowContextMenuCallbacks {
-    fun onCopyClicked(text: AnnotatedString)
     fun onMarkClicked(i: Int, message: LogMessage)
     fun onRemoveClicked(context: LogRemoveContext, filter: String)
     fun onRemoveDialogClicked(message: LogMessage)
 
     companion object {
         val Stub = object : RowContextMenuCallbacks {
-            override fun onCopyClicked(text: AnnotatedString) = Unit
             override fun onMarkClicked(i: Int, message: LogMessage) = Unit
             override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit
             override fun onRemoveDialogClicked(message: LogMessage) = Unit
@@ -31,9 +30,10 @@ fun RowContextMenu(
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     content: @Composable () -> Unit
 ) {
+    val clipboardManager = LocalClipboardManager.current
     val menuItems = mutableListOf(
         ContextMenuItem("Copy") {
-            rowContextMenuCallbacks.onCopyClicked(AnnotatedString(rowContent))
+            clipboardManager.setText(AnnotatedString(rowContent))
         },
         ContextMenuItem(if (message.marked) "Unmark" else "Mark") {
             rowContextMenuCallbacks.onMarkClicked(

@@ -28,6 +28,7 @@ class PluginTest {
             }
 
             override fun updateLogComment(key: String, comment: String?) = Unit
+            override fun toggleMark(key: String) = Unit
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",

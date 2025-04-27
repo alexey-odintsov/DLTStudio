@@ -16,6 +16,7 @@ import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.logs.RemoveLogsDialogState
+import com.alekso.dltstudio.logs.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
@@ -99,6 +100,22 @@ class MainViewModel(
             viewModelScope.launch(IO) {
                 settingsRepository.updateSettingsLogs(settings.toSettingsLogsEntity())
             }
+        }
+    }
+
+    val rowContextMenuCallbacks = object : RowContextMenuCallbacks {
+        override fun onMarkClicked(i: Int, message: LogMessage) {
+            messagesRepository.toggleMark(message.key)
+        }
+
+        override fun onRemoveClicked(
+            context: LogRemoveContext, filter: String
+        ) {
+            removeMessages(context, filter)
+        }
+
+        override fun onRemoveDialogClicked(message: LogMessage) {
+            removeLogsDialogState.value = RemoveLogsDialogState(true, message)
         }
     }
 
@@ -479,33 +496,7 @@ class MainViewModel(
         }
     }
 
-    fun markMessage(i: Int, message: LogMessage) {
-        val updatedMessage = message.copy(marked = message.marked.not())
-        val logMessageIndex = messagesRepository.getMessages().indexOf(message)
-        val searchMessageIndex = _searchResults.indexOf(message)
-
-        if (logMessageIndex != -1) {
-            messagesRepository.getMessages()[logMessageIndex] = updatedMessage
-        }
-        if (searchMessageIndex != -1) {
-            _searchResults[searchMessageIndex] = updatedMessage
-        }
-    }
-
-    // TODO: Commenting is not working - fix it! Should we let Plugins to update logs through messagesRepository?
-//    fun updateComment(message: LogMessage, comment: String?) {
-//        val updatedMessage = message.copy(comment = comment)
-//
-//        messageUpdater.updateLogComment(message.key, comment)
-//
-//        val searchMessageIndex = _searchResults.indexOf(message)
-//
-//        if (searchMessageIndex != -1) {
-//            _searchResults[searchMessageIndex] = updatedMessage
-//        }
-//    }
-
-    fun removeMessages(type: LogRemoveContext, filter: String) {
+    private fun removeMessages(type: LogRemoveContext, filter: String) {
         viewModelScope.launch(IO) {
             Log.d("start removing messages by $type '$filter'")
             val filtered = mutableListOf<LogMessage>()

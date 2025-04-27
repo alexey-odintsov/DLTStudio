@@ -4,12 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
-import com.alekso.dltstudio.LogRemoveContext
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
-import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -24,8 +20,6 @@ class LogsPlugin(
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
     override fun renderPanel(modifier: Modifier) {
-        val clipboardManager = LocalClipboardManager.current
-
         if (viewModel.colorFiltersDialogState.value) {
             ColorFiltersDialog(
                 visible = viewModel.colorFiltersDialogState.value,
@@ -70,25 +64,7 @@ class LogsPlugin(
             onSearchRowSelected = { i, r ->
                 viewModel.onSearchRowSelected(i, r)
             },
-            rowContextMenuCallbacks = object : RowContextMenuCallbacks {
-                override fun onCopyClicked(text: AnnotatedString) {
-                    clipboardManager.setText(text)
-                }
-
-                override fun onMarkClicked(i: Int, message: LogMessage) {
-                    viewModel.markMessage(i, message)
-                }
-
-                override fun onRemoveClicked(
-                    context: LogRemoveContext, filter: String
-                ) {
-                    viewModel.removeMessages(context, filter)
-                }
-
-                override fun onRemoveDialogClicked(message: LogMessage) {
-                    viewModel.removeLogsDialogState.value = RemoveLogsDialogState(true, message)
-                }
-            },
+            rowContextMenuCallbacks = viewModel.rowContextMenuCallbacks,
             columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
             onColumnResized = viewModel::onColumnResized,
         )
