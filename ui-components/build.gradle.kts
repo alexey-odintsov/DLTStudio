@@ -19,12 +19,12 @@ kotlin {
             implementation(project(":logger"))
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
             implementation(compose.ui)
             implementation(compose.components.resources)
         }
 
         desktopMain.dependencies {
+            implementation(compose.material3)
             implementation(compose.desktop.currentOs)
         }
 
