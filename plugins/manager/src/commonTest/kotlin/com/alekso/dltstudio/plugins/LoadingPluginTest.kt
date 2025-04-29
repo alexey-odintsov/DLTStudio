@@ -16,17 +16,13 @@ class PluginTest {
         val messagesProvider = object : MessagesRepository {
             private val messages = mutableStateListOf<LogMessage>()
             override fun clearMessages() = Unit
-
+            override fun clearSearchResults() = Unit
             override fun storeMessages(logMessages: List<LogMessage>) = Unit
-
-            override fun getMessages(): SnapshotStateList<LogMessage> {
-                return messages
-            }
-
-            override fun getMessageByIndex(index: Int): LogMessage {
-                return messages[0]
-            }
-
+            override fun addSearchResult(logMessages: LogMessage, index: Int) = Unit
+            override fun getMessages(): SnapshotStateList<LogMessage> = messages
+            override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
+            override fun getSearchIndexes(): SnapshotStateList<Int> = mutableStateListOf()
+            override fun getMessageByIndex(index: Int): LogMessage = messages[0]
             override fun updateLogComment(key: String, comment: String?) = Unit
             override fun toggleMark(key: String) = Unit
         }

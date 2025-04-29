@@ -8,12 +8,18 @@ import com.alekso.dltstudio.plugins.contract.MessagesRepository
 class MessagesRepositoryImpl : MessagesRepository {
 
     private val _logMessages = mutableStateListOf<LogMessage>()
-    private val logMessages: SnapshotStateList<LogMessage>
-        get() = _logMessages
+    private var _searchResults = mutableStateListOf<LogMessage>()
+    private val _searchIndexes = mutableStateListOf<Int>()
 
 
     override fun clearMessages() {
         _logMessages.clear()
+        clearSearchResults()
+    }
+
+    override fun clearSearchResults() {
+        _searchResults.clear()
+        _searchIndexes.clear()
     }
 
     override fun storeMessages(logMessages: List<LogMessage>) {
@@ -21,8 +27,21 @@ class MessagesRepositoryImpl : MessagesRepository {
         _logMessages.addAll(logMessages)
     }
 
+    override fun addSearchResult(logMessages: LogMessage, index: Int) {
+        _searchResults.add(logMessages)
+        _searchIndexes.add(index)
+    }
+
     override fun getMessages(): SnapshotStateList<LogMessage> {
-        return logMessages
+        return _logMessages
+    }
+
+    override fun getSearchResults(): SnapshotStateList<LogMessage> {
+        return _searchResults
+    }
+
+    override fun getSearchIndexes(): SnapshotStateList<Int> {
+        return _searchIndexes
     }
 
     override fun getMessageByIndex(index: Int): LogMessage {
@@ -34,6 +53,10 @@ class MessagesRepositoryImpl : MessagesRepository {
         if (index > -1) {
             _logMessages[index] = _logMessages[index].copy(comment = comment)
         }
+        val searchIndex = _searchResults.indexOfFirst { it.key == key }
+        if (searchIndex > -1) {
+            _searchResults[searchIndex] = _searchResults[searchIndex].copy(comment = comment)
+        }
     }
 
     override fun toggleMark(key: String) {
@@ -41,6 +64,11 @@ class MessagesRepositoryImpl : MessagesRepository {
         if (index > -1) {
             val currentMark = _logMessages[index].marked
             _logMessages[index] = _logMessages[index].copy(marked = !currentMark)
+        }
+        val searchIndex = _searchResults.indexOfFirst { it.key == key }
+        if (searchIndex > -1) {
+            val currentMark = _searchResults[searchIndex].marked
+            _searchResults[searchIndex] = _searchResults[searchIndex].copy(marked = !currentMark)
         }
     }
 

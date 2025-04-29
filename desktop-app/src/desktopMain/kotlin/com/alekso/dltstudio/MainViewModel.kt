@@ -133,13 +133,6 @@ class MainViewModel(
     var logSelection by mutableStateOf(LogSelection(0, 0, 0))
         private set
 
-    private var _searchResults = mutableStateListOf<LogMessage>()
-    val searchResults: SnapshotStateList<LogMessage>
-        get() = _searchResults
-
-    private val _searchIndexes = mutableStateListOf<Int>()
-    val searchIndexes: SnapshotStateList<Int>
-        get() = _searchIndexes
 
     private val _searchAutocomplete = mutableStateListOf<String>()
     val searchAutocomplete: SnapshotStateList<String>
@@ -441,8 +434,6 @@ class MainViewModel(
 
     private fun clearMessages() {
         messagesRepository.clearMessages()
-        _searchResults.clear()
-        _searchIndexes.clear()
     }
 
 
@@ -609,8 +600,7 @@ class MainViewModel(
                 preferencesRepository.addNewSearch(SearchEntity(searchText))
             }
 
-            _searchResults.clear()
-            _searchIndexes.clear()
+            messagesRepository.clearSearchResults()
             Log.d("Start searching for $searchType '$searchText'")
 
             val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
@@ -640,8 +630,7 @@ class MainViewModel(
 
                 if (matches) {
                     withContext(Main) {
-                        _searchResults.add(logMessage)
-                        _searchIndexes.add(i)
+                        messagesRepository.addSearchResult(logMessage, i)
                     }
                 }
             }
