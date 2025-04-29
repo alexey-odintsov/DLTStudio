@@ -51,11 +51,12 @@ class MessagesRepositoryImpl : MessagesRepository {
     override fun updateLogComment(key: String, comment: String?) {
         val index = _logMessages.indexOfFirst { it.key == key }
         if (index > -1) {
-            _logMessages[index] = _logMessages[index].copy(comment = comment)
-        }
-        val searchIndex = _searchResults.indexOfFirst { it.key == key }
-        if (searchIndex > -1) {
-            _searchResults[searchIndex] = _searchResults[searchIndex].copy(comment = comment)
+            val updatedMessage = _logMessages[index].copy(comment = comment)
+            _logMessages[index] = updatedMessage
+            val searchIndex = _searchResults.indexOfFirst { it.key == key }
+            if (searchIndex > -1) {
+                _searchResults[searchIndex] = updatedMessage
+            }
         }
     }
 
@@ -63,12 +64,12 @@ class MessagesRepositoryImpl : MessagesRepository {
         val index = _logMessages.indexOfFirst { it.key == key }
         if (index > -1) {
             val currentMark = _logMessages[index].marked
-            _logMessages[index] = _logMessages[index].copy(marked = !currentMark)
-        }
-        val searchIndex = _searchResults.indexOfFirst { it.key == key }
-        if (searchIndex > -1) {
-            val currentMark = _searchResults[searchIndex].marked
-            _searchResults[searchIndex] = _searchResults[searchIndex].copy(marked = !currentMark)
+            val updatedMessage = _logMessages[index].copy(marked = !currentMark)
+            _logMessages[index] = updatedMessage
+            val searchIndex = _searchResults.indexOfFirst { it.key == key }
+            if (searchIndex > -1) {
+                _searchResults[searchIndex] = updatedMessage
+            }
         }
     }
 
