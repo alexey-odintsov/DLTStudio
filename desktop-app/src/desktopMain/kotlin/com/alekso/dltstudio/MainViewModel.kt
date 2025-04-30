@@ -491,13 +491,13 @@ class MainViewModel(
         viewModelScope.launch(IO) {
             Log.d("start removing messages by $type '$filter'")
             val duration = messagesRepository.removeMessages(onProgressChanged) {
-                getShouldRemove(type, it.dltMessage, filter)
+                shouldRemove(type, it.dltMessage, filter)
             }
             Log.d("done removing messages by $type '$filter' $duration ms")
         }
     }
 
-    private fun getShouldRemove(
+    private fun shouldRemove(
         type: LogRemoveContext,
         message: DLTMessage,
         filter: String
