@@ -46,7 +46,6 @@ import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
-import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -514,18 +513,8 @@ class MainViewModel(
     fun removeMessagesByFilters(filters: Map<FilterParameter, FilterCriteria>) {
         viewModelScope.launch(IO) {
             Log.d("start removing messages by filter '$filters'")
-            val filtered = mutableListOf<LogMessage>()
-            val duration = forEachWithProgress(
-                messagesRepository.getMessages(),
-                onProgressChanged
-            ) { _, logMessage ->
-                if (!assessFilter(filters, logMessage.dltMessage)) {
-                    filtered.add(logMessage)
-                }
-            }
-
-            withContext(Main) {
-                messagesRepository.storeMessages(filtered)
+            val duration = messagesRepository.removeMessages(onProgressChanged) {
+                assessFilter(filters, it.dltMessage)
             }
             Log.d("done removing messages by filter in $duration ms")
         }
