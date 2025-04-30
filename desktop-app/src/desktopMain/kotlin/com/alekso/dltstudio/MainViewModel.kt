@@ -1,6 +1,7 @@
 package com.alekso.dltstudio
 
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,7 +53,6 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -122,8 +122,8 @@ class MainViewModel(
     val panels = mutableStateListOf<PluginPanel>()
     val previewPanels = mutableStateListOf<PluginLogPreview>()
 
-    private var _searchState = MutableStateFlow<SearchState>(SearchState())
-    val searchState: StateFlow<SearchState> = _searchState
+    private var _searchState = mutableStateOf<SearchState>(SearchState())
+    val searchState: State<SearchState> = _searchState
 
     private var searchJob: Job? = null
 
@@ -490,35 +490,25 @@ class MainViewModel(
     private fun removeMessages(type: LogRemoveContext, filter: String) {
         viewModelScope.launch(IO) {
             Log.d("start removing messages by $type '$filter'")
-            val filtered = mutableListOf<LogMessage>()
-            val duration = forEachWithProgress(
-                messagesRepository.getMessages(),
-                onProgressChanged
-            ) { i, logMessage ->
-                val message = logMessage.dltMessage
-
-                val shouldRemove = when (type) {
-                    LogRemoveContext.ContextId -> message.extendedHeader?.contextId == filter
-                    LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId == filter
-                    LogRemoveContext.EcuId -> message.standardHeader.ecuId == filter
-                    LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() == filter
-                    LogRemoveContext.BeforeTimestamp -> message.timeStampUs < filter.toLong()
-                    LogRemoveContext.AfterTimestamp -> message.timeStampUs > filter.toLong()
-                    LogRemoveContext.Payload -> {
-                        false
-                    }
-                }
-                if (!shouldRemove) {
-                    filtered.add(logMessage)
-                }
+            val duration = messagesRepository.removeMessages(onProgressChanged) {
+                getShouldRemove(type, it.dltMessage, filter)
             }
-
-            withContext(Main) {
-                messagesRepository.storeMessages(filtered)
-            }
-
             Log.d("done removing messages by $type '$filter' $duration ms")
         }
+    }
+
+    private fun getShouldRemove(
+        type: LogRemoveContext,
+        message: DLTMessage,
+        filter: String
+    ) = when (type) {
+        LogRemoveContext.ContextId -> message.extendedHeader?.contextId == filter
+        LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId == filter
+        LogRemoveContext.EcuId -> message.standardHeader.ecuId == filter
+        LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() == filter
+        LogRemoveContext.BeforeTimestamp -> message.timeStampUs < filter.toLong()
+        LogRemoveContext.AfterTimestamp -> message.timeStampUs > filter.toLong()
+        LogRemoveContext.Payload -> false
     }
 
     fun removeMessagesByFilters(filters: Map<FilterParameter, FilterCriteria>) {

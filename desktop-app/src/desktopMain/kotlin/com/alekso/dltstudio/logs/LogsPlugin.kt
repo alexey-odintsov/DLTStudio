@@ -1,8 +1,6 @@
 package com.alekso.dltstudio.logs
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
@@ -39,14 +37,13 @@ class LogsPlugin(
                 onFilterClicked = { f -> viewModel.removeMessagesByFilters(f) },
             )
         }
-        val searchState by viewModel.searchState.collectAsState()
 
         LogsPanel(
             modifier = modifier,
             previewPanels = viewModel.previewPanels,
             columnParams = viewModel.columnParams,
             logMessages = messagesRepository.getMessages(),
-            searchState = searchState,
+            searchState = viewModel.searchState.value,
             searchAutoComplete = viewModel.searchAutocomplete,
             searchResult = messagesRepository.getSearchResults(),
             searchIndexes = messagesRepository.getSearchIndexes(),

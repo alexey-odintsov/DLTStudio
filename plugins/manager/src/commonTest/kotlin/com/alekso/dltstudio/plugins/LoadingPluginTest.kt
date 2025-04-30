@@ -25,6 +25,10 @@ class PluginTest {
             override fun getMessageByIndex(index: Int): LogMessage = messages[0]
             override fun updateLogComment(key: String, comment: String?) = Unit
             override fun toggleMark(key: String) = Unit
+            override suspend fun removeMessages(
+                progress: (Float) -> Unit,
+                predicate: (LogMessage) -> Boolean
+            ): Long = 0L
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",

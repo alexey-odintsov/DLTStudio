@@ -14,4 +14,6 @@ interface MessagesRepository {
     fun getMessageByIndex(index: Int): LogMessage
     fun updateLogComment(key: String, comment: String?)
     fun toggleMark(key: String)
+
+    suspend fun removeMessages(progress: (Float) -> Unit, predicate: (LogMessage) -> Boolean): Long
 }

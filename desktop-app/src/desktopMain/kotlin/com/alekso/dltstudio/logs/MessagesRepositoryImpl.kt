@@ -4,6 +4,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
+import com.alekso.dltstudio.uicomponents.forEachWithProgress
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.withContext
 
 class MessagesRepositoryImpl : MessagesRepository {
 
@@ -34,6 +37,35 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     override fun getMessages(): SnapshotStateList<LogMessage> {
         return _logMessages
+    }
+
+    override suspend fun removeMessages(
+        progress: (Float) -> Unit,
+        predicate: (LogMessage) -> Boolean
+    ): Long {
+        val filtered = mutableListOf<LogMessage>()
+        val duration = forEachWithProgress(_logMessages, progress) { i, logMessage ->
+            val shouldRemove = predicate(logMessage)
+            if (!shouldRemove) {
+                filtered.add(logMessage)
+            }
+        }
+        withContext(Main) {
+            storeMessages(filtered)
+        }
+        val searchFiltered = mutableListOf<LogMessage>()
+        val searchDuration = forEachWithProgress(_searchResults, progress) { i, logMessage ->
+            val shouldRemove = predicate(logMessage)
+            if (!shouldRemove) {
+                searchFiltered.add(logMessage)
+            }
+        }
+        withContext(Main) {
+            _searchResults.clear()
+            _searchResults.addAll(searchFiltered)
+        }
+            return duration + searchDuration
+
     }
 
     override fun getSearchResults(): SnapshotStateList<LogMessage> {
