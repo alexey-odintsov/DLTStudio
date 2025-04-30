@@ -31,9 +31,7 @@ class PluginTest {
             override suspend fun searchMessages(
                 progress: (Float) -> Unit,
                 predicate: (LogMessage) -> Boolean
-            ): Long {
-
-            }
+            ): Long = 0L
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",
