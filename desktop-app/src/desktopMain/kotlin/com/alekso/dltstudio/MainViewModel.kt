@@ -589,46 +589,44 @@ class MainViewModel(
             if (shouldSaveSearch(searchText)) {
                 preferencesRepository.addNewSearch(SearchEntity(searchText))
             }
-
-            messagesRepository.clearSearchResults()
             Log.d("Start searching for $searchType '$searchText'")
 
             val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
 
-            val durationMs = forEachWithProgress(
-                messagesRepository.getMessages(),
-                onProgressChanged
-            ) { i, logMessage ->
-                val payload = logMessage.getMessageText()
-
-                val matches = when (searchType) {
-                    SearchType.Text -> {
-                        ((searchRegex != null && searchRegex.containsMatchIn(payload))
-                                || (payload.contains(searchText)))
-                    }
-
-                    SearchType.MarkedRows -> {
-                        logMessage.marked
-                    }
-
-                    SearchType.TextAndMarkedRows -> {
-                        logMessage.marked || ((searchRegex != null && searchRegex.containsMatchIn(
-                            payload
-                        )) || (payload.contains(searchText)))
-                    }
-                }
-
-                if (matches) {
-                    withContext(Main) {
-                        messagesRepository.addSearchResult(logMessage, i)
-                    }
-                }
+            val duration = messagesRepository.searchMessages(onProgressChanged) {
+                matchSearch(searchType, searchRegex, searchText, it)
             }
 
             _searchState.value = _searchState.value.copy(
                 searchText = searchText, state = SearchState.State.IDLE
             )
-            Log.d("Search complete in ${durationMs / 1000} sec.")
+            Log.d("Search complete in $duration ms.")
+        }
+    }
+
+    private fun matchSearch(
+        searchType: SearchType,
+        searchRegex: Regex?,
+        searchText: String,
+        logMessage: LogMessage
+    ): Boolean {
+        val payload = logMessage.getMessageText()
+        return when (searchType) {
+
+            SearchType.Text -> {
+                ((searchRegex != null && searchRegex.containsMatchIn(payload))
+                        || (payload.contains(searchText)))
+            }
+
+            SearchType.MarkedRows -> {
+                logMessage.marked
+            }
+
+            SearchType.TextAndMarkedRows -> {
+                logMessage.marked || ((searchRegex != null && searchRegex.containsMatchIn(
+                    payload
+                )) || (payload.contains(searchText)))
+            }
         }
     }
 

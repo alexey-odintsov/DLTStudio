@@ -16,9 +16,7 @@ class PluginTest {
         val messagesProvider = object : MessagesRepository {
             private val messages = mutableStateListOf<LogMessage>()
             override fun clearMessages() = Unit
-            override fun clearSearchResults() = Unit
             override fun storeMessages(logMessages: List<LogMessage>) = Unit
-            override fun addSearchResult(logMessages: LogMessage, index: Int) = Unit
             override fun getMessages(): SnapshotStateList<LogMessage> = messages
             override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
             override fun getSearchIndexes(): SnapshotStateList<Int> = mutableStateListOf()
@@ -29,6 +27,13 @@ class PluginTest {
                 progress: (Float) -> Unit,
                 predicate: (LogMessage) -> Boolean
             ): Long = 0L
+
+            override suspend fun searchMessages(
+                progress: (Float) -> Unit,
+                predicate: (LogMessage) -> Boolean
+            ): Long {
+
+            }
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",

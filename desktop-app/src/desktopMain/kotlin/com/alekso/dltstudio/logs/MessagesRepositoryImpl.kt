@@ -20,7 +20,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         clearSearchResults()
     }
 
-    override fun clearSearchResults() {
+    private fun clearSearchResults() {
         _searchResults.clear()
         _searchIndexes.clear()
     }
@@ -30,7 +30,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         _logMessages.addAll(logMessages)
     }
 
-    override fun addSearchResult(logMessages: LogMessage, index: Int) {
+    private fun addSearchResult(logMessages: LogMessage, index: Int) {
         _searchResults.add(logMessages)
         _searchIndexes.add(index)
     }
@@ -64,9 +64,27 @@ class MessagesRepositoryImpl : MessagesRepository {
             _searchResults.clear()
             _searchResults.addAll(searchFiltered)
         }
-            return duration + searchDuration
-
+        return duration + searchDuration
     }
+
+
+    override suspend fun searchMessages(
+        progress: (Float) -> Unit,
+        predicate: (LogMessage) -> Boolean
+    ): Long {
+        clearSearchResults()
+
+        val duration = forEachWithProgress(_logMessages, progress) { i, logMessage ->
+            val match = predicate(logMessage)
+            if (match) {
+                withContext(Main) {
+                    addSearchResult(logMessage, i)
+                }
+            }
+        }
+        return duration
+    }
+
 
     override fun getSearchResults(): SnapshotStateList<LogMessage> {
         return _searchResults

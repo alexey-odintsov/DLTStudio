@@ -5,9 +5,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 
 interface MessagesRepository {
     fun clearMessages()
-    fun clearSearchResults()
     fun storeMessages(logMessages: List<LogMessage>)
-    fun addSearchResult(logMessages: LogMessage, index: Int)
     fun getMessages(): SnapshotStateList<LogMessage>
     fun getSearchResults(): SnapshotStateList<LogMessage>
     fun getSearchIndexes(): SnapshotStateList<Int>
@@ -30,7 +28,15 @@ interface MessagesRepository {
      * Remove messages and search results by a predicate
      * @param progress - removing progress callback
      * @param predicate - predicate that asses removing condition
-     * @return Duration of the removal operation
+     * @return Duration of the operation
      */
     suspend fun removeMessages(progress: (Float) -> Unit, predicate: (LogMessage) -> Boolean): Long
+
+    /**
+     * Applies search filter
+     * @param progress - search progress callback
+     * @param predicate - predicate that asses search condition
+     * @return Duration of the operation
+     * */
+    suspend fun searchMessages(progress: (Float) -> Unit, predicate: (LogMessage) -> Boolean): Long
 }
