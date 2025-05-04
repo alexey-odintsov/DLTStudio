@@ -70,9 +70,18 @@ enum class LogRemoveContext {
 }
 
 data class LogSelection(
-    val logsSelectedRowId: Int,
-    val searchSelectedRowId: Int,
-    val previewRowId: Int, // index from logMessages
+    /**
+     * Logs list focus index
+     */
+    val logsIndex: Int,
+    /**
+     * Search list focus index
+     */
+    val searchIndex: Int,
+    /**
+     * Message key for preview
+     */
+    val selectedMessage: LogMessage? = null,
 )
 
 class MainViewModel(
@@ -129,7 +138,7 @@ class MainViewModel(
     val logsListState = LazyListState()
     val searchListState = LazyListState()
 
-    var logSelection by mutableStateOf(LogSelection(0, 0, 0))
+    var logSelection by mutableStateOf(LogSelection(0, 0, null))
         private set
 
 
@@ -389,6 +398,7 @@ class MainViewModel(
         parseJob?.cancel()
         clearMessages()
         parseJob = viewModelScope.launch(IO) {
+            LogMessage.resetCounter()
             messagesRepository.storeMessages(
                 dltParser.read(
                     dltFiles,
@@ -535,34 +545,38 @@ class MainViewModel(
         }
     }
 
-    fun onLogsRowSelected(listIndex: Int, logsIndex: Int) {
+    fun onLogsRowSelected(listIndex: Int, key: String) {
         viewModelScope.launch(IO) {
-            selectLogRow(listIndex, logsIndex)
+            selectLogRow(listIndex, key)
         }
     }
 
-    private suspend fun selectLogRow(listIndex: Int, index: Int) {
-        logSelection = logSelection.copy(logsSelectedRowId = listIndex, previewRowId = index)
-        pluginManager.notifyLogSelected(messagesRepository.getMessageByIndex(index))
+    private suspend fun selectLogRow(listIndex: Int, key: String) {
+        val selectedMessage = messagesRepository.getMessages().first { it.key == key }
+        logSelection =
+            logSelection.copy(logsIndex = listIndex, selectedMessage = selectedMessage)
+        pluginManager.notifyLogSelected(selectedMessage)
     }
 
-    fun onSearchRowSelected(listIndex: Int, logsIndex: Int) {
+    fun onSearchRowSelected(listIndex: Int, key: String) {
         viewModelScope.launch(Main) {
-            selectSearchRow(listIndex, logsIndex)
+            selectSearchRow(listIndex, key)
         }
     }
 
-    private suspend fun selectSearchRow(listIndex: Int, logsIndex: Int) {
-        if (logSelection.searchSelectedRowId == listIndex) { // simulate second click
+    private suspend fun selectSearchRow(listIndex: Int, key: String) {
+        if (logSelection.searchIndex == listIndex) { // simulate second click
             try {
-                selectLogRow(logsIndex, logsIndex)
-                logsListState.scrollToItem(logsIndex)
+                val index = messagesRepository.getMessages().indexOfFirst { it.key == key }
+                selectLogRow(listIndex, key)
+                logsListState.scrollToItem(index)
             } catch (e: Exception) {
-                Log.e("Failed to select $listIndex-$logsIndex: $e")
+                Log.e("Failed to select $listIndex-$key: $e")
             }
         } else {
+            val selectedMessage = messagesRepository.getMessages().first { it.key == key }
             logSelection =
-                logSelection.copy(searchSelectedRowId = listIndex, previewRowId = logsIndex)
+                logSelection.copy(searchIndex = listIndex, selectedMessage = selectedMessage)
         }
     }
 

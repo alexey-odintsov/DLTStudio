@@ -12,9 +12,6 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     private val _logMessages = mutableStateListOf<LogMessage>()
     private var _searchResults = mutableStateListOf<LogMessage>()
-    private val _searchIndexes = mutableStateListOf<Int>()
-
-
     override fun clearMessages() {
         _logMessages.clear()
         clearSearchResults()
@@ -22,7 +19,6 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     private fun clearSearchResults() {
         _searchResults.clear()
-        _searchIndexes.clear()
     }
 
     override fun storeMessages(logMessages: List<LogMessage>) {
@@ -32,7 +28,6 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     private fun addSearchResult(logMessages: LogMessage, index: Int) {
         _searchResults.add(logMessages)
-        _searchIndexes.add(index)
     }
 
     override fun getMessages(): SnapshotStateList<LogMessage> {
@@ -88,14 +83,6 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     override fun getSearchResults(): SnapshotStateList<LogMessage> {
         return _searchResults
-    }
-
-    override fun getSearchIndexes(): SnapshotStateList<Int> {
-        return _searchIndexes
-    }
-
-    override fun getMessageByIndex(index: Int): LogMessage {
-        return _logMessages[index]
     }
 
     override fun updateLogComment(key: String, comment: String?) {

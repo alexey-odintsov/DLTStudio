@@ -46,7 +46,6 @@ class LogsPlugin(
             searchState = viewModel.searchState.value,
             searchAutoComplete = viewModel.searchAutocomplete,
             searchResult = messagesRepository.getSearchResults(),
-            searchIndexes = messagesRepository.getSearchIndexes(),
             colorFilters = viewModel.colorFilters,
             logsToolbarState = viewModel.logsToolbarState,
             logsToolbarCallbacks = viewModel.logsToolbarCallbacks,

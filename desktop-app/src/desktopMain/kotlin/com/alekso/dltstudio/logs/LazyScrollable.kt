@@ -40,10 +40,9 @@ fun LazyScrollable(
     modifier: Modifier,
     columnParams: SnapshotStateList<ColumnParams>,
     logMessages: SnapshotStateList<LogMessage>,
-    indexes: SnapshotStateList<Int>? = null,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
-    onRowSelected: (Int, Int) -> Unit,
+    onRowSelected: (Int, String) -> Unit,
     listState: LazyListState,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
@@ -115,7 +114,7 @@ fun LazyScrollable(
                     val cellStyle =
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
-                    val index: Int = if (indexes != null) indexes[i] else i
+                    val index: Int = logMessage.num
                     val sTime: String =
                         LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
                     val sTimeOffset: String =
@@ -139,12 +138,12 @@ fun LazyScrollable(
                             modifier = Modifier
                                 .onFocusChanged { state ->
                                     if (state.isFocused) {
-                                        onRowSelected(i, index)
+                                        onRowSelected(i, logMessage.key)
                                     }
                                 }
                                 .selectable(
                                     selected = i == selectedRow,
-                                    onClick = { onRowSelected(i, index) }
+                                    onClick = { onRowSelected(i, logMessage.key) }
                                 )
                                 .onKeyEvent { e ->
                                     if (e.type == KeyEventType.KeyDown) {

@@ -8,8 +8,6 @@ interface MessagesRepository {
     fun storeMessages(logMessages: List<LogMessage>)
     fun getMessages(): SnapshotStateList<LogMessage>
     fun getSearchResults(): SnapshotStateList<LogMessage>
-    fun getSearchIndexes(): SnapshotStateList<Int>
-    fun getMessageByIndex(index: Int): LogMessage
 
     /**
      * Sets comment for a message

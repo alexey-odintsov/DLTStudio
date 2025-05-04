@@ -58,7 +58,6 @@ fun LogsPanel(
     // search
     searchState: SearchState,
     searchResult: SnapshotStateList<LogMessage>,
-    searchIndexes: SnapshotStateList<Int>,
     searchAutoComplete: SnapshotStateList<String>,
     // color filters
     colorFilters: SnapshotStateList<ColorFilter>,
@@ -70,8 +69,8 @@ fun LogsPanel(
     hSplitterState: SplitPaneState,
     logsListState: LazyListState,
     searchListState: LazyListState,
-    onLogsRowSelected: (Int, Int) -> Unit,
-    onSearchRowSelected: (Int, Int) -> Unit,
+    onLogsRowSelected: (Int, String) -> Unit,
+    onSearchRowSelected: (Int, String) -> Unit,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     onColumnResized: (String, Float) -> Unit,
@@ -112,7 +111,7 @@ fun LogsPanel(
                             columnParams,
                             logMessages,
                             mergedFilters,
-                            selectedRow = logSelection.logsSelectedRowId,
+                            selectedRow = logSelection.logsIndex,
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
                             wrapContent = logsToolbarState.toolbarWrapContentChecked,
@@ -125,8 +124,7 @@ fun LogsPanel(
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            logMessages.getOrNull(logSelection.previewRowId),
-                            messageIndex = logSelection.previewRowId,
+                            logSelection.selectedMessage,
                             previewPanels = previewPanels,
                         )
                     }
@@ -156,10 +154,9 @@ fun LogsPanel(
                 SearchResultsPanel(
                     Modifier.fillMaxSize(),
                     columnParams = columnParams,
-                    searchResult,
-                    searchIndexes,
-                    mergedFilters,
-                    logSelection.searchSelectedRowId,
+                    searchResult =searchResult,
+                    colorFilters = mergedFilters,
+                    searchResultSelectedRow = logSelection.searchIndex,
                     searchListState = searchListState,
                     onSearchRowSelected = onSearchRowSelected,
                     wrapContent = logsToolbarState.toolbarWrapContentChecked,
@@ -205,7 +202,6 @@ fun PreviewLogsPanel() {
         logMessages = list,
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
-        searchIndexes = SnapshotStateList(),
         searchAutoComplete = mutableStateListOf(),
         colorFilters = SnapshotStateList(),
         logsToolbarState = LogsToolbarState(
@@ -223,7 +219,7 @@ fun PreviewLogsPanel() {
         searchListState = LazyListState(),
         onLogsRowSelected = { i, r -> },
         onSearchRowSelected = { i, r -> },
-        logSelection = LogSelection(0, 0, 0),
+        logSelection = LogSelection(0, 0, null),
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         onColumnResized = { _, _ -> },

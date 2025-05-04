@@ -54,11 +54,11 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
             currentDeviceIndex = viewModel.currentDeviceIndex,
             virtualDevices = viewModel.virtualDevices,
             logMessage = logMessage,
-            messageIndex = messageIndex,
             onShowVirtualDeviceClicked = {
                 viewModel.devicePreviewDialogState = true
             },
-            onDeviceSelected = viewModel::onDeviceSelected
+            onDeviceSelected = viewModel::onDeviceSelected,
+            messageIndex = messageIndex,
         )
     }
 

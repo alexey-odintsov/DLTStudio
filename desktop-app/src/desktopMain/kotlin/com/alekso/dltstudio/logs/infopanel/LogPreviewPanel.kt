@@ -27,7 +27,6 @@ import com.alekso.dltstudio.uicomponents.TabsPanel
 fun LogPreviewPanel(
     modifier: Modifier,
     logMessage: LogMessage?,
-    messageIndex: Int,
     previewPanels: SnapshotStateList<PluginLogPreview>,
 ) {
     if (previewPanels.size < 1) return
@@ -49,7 +48,7 @@ fun LogPreviewPanel(
                 (previewPanels[tabIndex]).renderPreview(
                     modifier = Modifier.weight(1f),
                     logMessage = logMessage,
-                    messageIndex = messageIndex
+                    messageIndex = logMessage?.num ?: 0
                 )
             }
         }
@@ -65,6 +64,5 @@ fun PreviewLogPreview() {
         Modifier.width(200.dp),
         logMessage = dltMessage,
         previewPanels = mutableStateListOf(),
-        messageIndex = 0,
     )
 }
