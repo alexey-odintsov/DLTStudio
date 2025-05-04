@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.MessagesProvider
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import org.junit.Test
 import java.io.File
@@ -13,10 +13,23 @@ class PluginTest {
 
     @Test
     fun `Test Loading Jar test plugin`() {
-        val messagesProvider = object : MessagesProvider {
-            override fun getMessages(): SnapshotStateList<LogMessage> {
-                return mutableStateListOf()
-            }
+        val messagesProvider = object : MessagesRepository {
+            private val messages = mutableStateListOf<LogMessage>()
+            override fun clearMessages() = Unit
+            override fun storeMessages(logMessages: List<LogMessage>) = Unit
+            override fun getMessages(): SnapshotStateList<LogMessage> = messages
+            override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
+            override fun updateLogComment(key: String, comment: String?) = Unit
+            override fun toggleMark(key: String) = Unit
+            override suspend fun removeMessages(
+                progress: (Float) -> Unit,
+                predicate: (LogMessage) -> Boolean
+            ): Long = 0L
+
+            override suspend fun searchMessages(
+                progress: (Float) -> Unit,
+                predicate: (LogMessage) -> Boolean
+            ): Long = 0L
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",

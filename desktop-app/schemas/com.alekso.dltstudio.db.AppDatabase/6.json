@@ -2,44 +2,8 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "0eac61e355ea62ebbeceac02694d04fe",
+    "identityHash": "71c7bbabc582373055db11b3900fc630",
     "entities": [
-      {
-        "tableName": "VirtualDeviceEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `width` INTEGER NOT NULL, `height` INTEGER NOT NULL)",
-        "fields": [
-          {
-            "fieldPath": "id",
-            "columnName": "id",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "title",
-            "columnName": "title",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "width",
-            "columnName": "width",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "height",
-            "columnName": "height",
-            "affinity": "INTEGER",
-            "notNull": true
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": true,
-          "columnNames": [
-            "id"
-          ]
-        }
-      },
       {
         "tableName": "SettingsUIEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fontSize` INTEGER NOT NULL, `fontType` INTEGER NOT NULL, `id` INTEGER NOT NULL, PRIMARY KEY(`id`))",
@@ -211,7 +175,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '0eac61e355ea62ebbeceac02694d04fe')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '71c7bbabc582373055db11b3900fc630')"
     ]
   }
 }

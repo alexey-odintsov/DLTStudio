@@ -30,7 +30,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
-import com.alekso.dltstudio.utils.SampleData
+import com.alekso.dltmessage.SampleData
 
 
 class RemoveLogsDialogState(

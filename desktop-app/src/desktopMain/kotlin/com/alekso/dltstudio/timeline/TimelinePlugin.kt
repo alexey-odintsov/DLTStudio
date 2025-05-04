@@ -3,14 +3,13 @@ package com.alekso.dltstudio.timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 
 class TimelinePlugin(
     private val viewModel: TimelineViewModel,
-    private val logMessages: SnapshotStateList<LogMessage>,
+    private val messagesRepository: MessagesRepository,
 ) : PluginPanel {
     override fun getPanelName(): String = "Timeline"
 
@@ -21,7 +20,7 @@ class TimelinePlugin(
 
         TimeLinePanel(
             modifier = modifier,
-            logMessages = logMessages,
+            logMessages = messagesRepository.getMessages(),
             offsetSec = viewModel.offset.value,
             scale = viewModel.scale.value,
             offsetUpdate = viewModel.offsetUpdateCallback,

@@ -5,10 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -17,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TabsPanel(
     tabIndex: Int,
@@ -31,12 +35,14 @@ fun TabsPanel(
             }
         }
     } else {
-        Row {
-            tabs.onEachIndexed { index, title ->
-                Tab(title, index, tabIndex == index, callback)
+        Column {
+            FlowRow(modifier = Modifier.wrapContentSize()) {
+                tabs.forEachIndexed { i, tab ->
+                    Tab(tab, i, tabIndex == i, callback)
+                }
             }
+            HorizontalDivider(Modifier.height(1.dp).fillMaxWidth())
         }
-        Divider()
     }
 }
 
@@ -48,6 +54,7 @@ private fun Tab(title: String, index: Int, selected: Boolean, callback: (Int) ->
     ) {
         Text(
             text = title,
+            maxLines = 1,
             modifier = Modifier.padding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
         )
     }
@@ -56,7 +63,19 @@ private fun Tab(title: String, index: Int, selected: Boolean, callback: (Int) ->
 @Preview
 @Composable
 fun PreviewHorizontalTabs() {
-    TabsPanel(1, mutableStateListOf("Logs", "CPU", "Memory"), { i -> })
+    Column {
+        TabsPanel(
+            1,
+            mutableStateListOf(
+                "Logs",
+                "CPU Usage",
+                "Memory Analyze",
+                "Device Explorer",
+                "Insights"
+            ),
+            { i -> })
+        Text("Content")
+    }
 }
 
 @Preview

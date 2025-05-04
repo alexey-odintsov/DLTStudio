@@ -1,16 +1,35 @@
 package com.alekso.dltstudio
 
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
+import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
+import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPlugin
+import com.alekso.dltstudio.logs.RemoveLogsDialogState
+import com.alekso.dltstudio.logs.RowContextMenuCallbacks
+import com.alekso.dltstudio.logs.colorfilters.ColorFilter
+import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
+import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
+import com.alekso.dltstudio.logs.filtering.FilterCriteria
+import com.alekso.dltstudio.logs.filtering.FilterParameter
+import com.alekso.dltstudio.logs.filtering.checkTextCriteria
+import com.alekso.dltstudio.logs.search.SearchState
+import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
+import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
+import com.alekso.dltstudio.model.Column
+import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.SettingsLogs
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -19,14 +38,15 @@ import com.alekso.dltstudio.model.toSettingsLogsEntity
 import com.alekso.dltstudio.model.toSettingsUI
 import com.alekso.dltstudio.model.toSettingsUIEntity
 import com.alekso.dltstudio.plugins.DependencyManager
-import com.alekso.dltstudio.plugins.MessagesHolder
 import com.alekso.dltstudio.plugins.TimelineHolder
-import com.alekso.dltstudio.plugins.contract.MessagesProvider
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
+import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.timeline.TimelinePlugin
+import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -39,37 +59,205 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.TimeZone
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
+import kotlin.math.max
 
+enum class LogRemoveContext {
+    ApplicationId, ContextId, EcuId, SessionId, BeforeTimestamp, AfterTimestamp, Payload
+}
+
+data class LogSelection(
+    /**
+     * Logs list focus index
+     */
+    val logsIndex: Int,
+    /**
+     * Search list focus index
+     */
+    val searchIndex: Int,
+    /**
+     * Message key for preview
+     */
+    val selectedMessage: LogMessage? = null,
+)
 
 class MainViewModel(
     private val dltParser: DLTParser,
-    private val messagesProvider: MessagesProvider,
-    private val messagesHolder: MessagesHolder,
+    private val messagesRepository: MessagesRepository,
     private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
     private val preferencesRepository: PreferencesRepository,
+    private val onProgressChanged: (Float) -> Unit,
+    private val formatter: AppFormatter,
 ) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
-            CoroutineScope(IO).launch {
+            viewModelScope.launch(IO) {
                 settingsRepository.updateSettingsUI(settings.toSettingsUIEntity())
             }
         }
 
         override fun onSettingsLogsUpdate(settings: SettingsLogs) {
-            CoroutineScope(IO).launch {
+            viewModelScope.launch(IO) {
                 settingsRepository.updateSettingsLogs(settings.toSettingsLogsEntity())
             }
         }
     }
-    val panels = mutableStateListOf<PluginPanel>()
-    val panelsNames = mutableStateListOf<String>() // todo: Find way to synchronize panels and names
 
+    val rowContextMenuCallbacks = object : RowContextMenuCallbacks {
+        override fun onMarkClicked(i: Int, message: LogMessage) {
+            messagesRepository.toggleMark(message.key)
+        }
+
+        override fun onRemoveClicked(
+            context: LogRemoveContext, filter: String
+        ) {
+            removeMessages(context, filter)
+        }
+
+        override fun onRemoveDialogClicked(message: LogMessage) {
+            removeLogsDialogState.value = RemoveLogsDialogState(true, message)
+        }
+    }
+
+    val panels = mutableStateListOf<PluginPanel>()
+    val previewPanels = mutableStateListOf<PluginLogPreview>()
+
+    private var _searchState = mutableStateOf<SearchState>(SearchState())
+    val searchState: State<SearchState> = _searchState
+
+    private var searchJob: Job? = null
+
+    val logsListState = LazyListState()
+    val searchListState = LazyListState()
+
+    var logSelection by mutableStateOf(LogSelection(0, 0, null))
+        private set
+
+
+    private val _searchAutocomplete = mutableStateListOf<String>()
+    val searchAutocomplete: SnapshotStateList<String>
+        get() = _searchAutocomplete
+
+    fun onSearchClicked(searchType: SearchType, searchText: String) {
+        when (_searchState.value.state) {
+            SearchState.State.IDLE -> startSearch(searchType, searchText)
+            SearchState.State.SEARCHING -> stopSearch()
+        }
+    }
+
+    @OptIn(ExperimentalSplitPaneApi::class)
+    val vSplitterState = SplitPaneState(0.8f, true)
+
+    @OptIn(ExperimentalSplitPaneApi::class)
+    val hSplitterState = SplitPaneState(0.78f, true)
+    val colorFiltersDialogState = mutableStateOf(false)
+    var logsToolbarState by mutableStateOf(
+        LogsToolbarState(
+            toolbarFatalChecked = true,
+            toolbarErrorChecked = true,
+            toolbarWarningChecked = true,
+            toolbarSearchWithMarkedChecked = false,
+            toolbarWrapContentChecked = false,
+            toolbarCommentsChecked = false,
+        )
+    )
+
+    val logsToolbarCallbacks = object : LogsToolbarCallbacks {
+        override fun onSearchButtonClicked(searchType: SearchType, text: String) {
+            if (logsToolbarState.toolbarSearchWithMarkedChecked && searchType == SearchType.Text) {
+                onSearchClicked(SearchType.TextAndMarkedRows, text)
+            } else {
+                onSearchClicked(searchType, text)
+            }
+        }
+
+        override fun updateToolbarFatalCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarErrorCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWarningCheck(checked: Boolean) {
+            logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarCommentsCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarSearchWithMarkedCheck(logsToolbarState, checked)
+        }
+
+        override fun updateToolbarWrapContentCheck(checked: Boolean) {
+            logsToolbarState =
+                LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
+        }
+
+        override fun onSearchUseRegexChanged(checked: Boolean) {
+            _searchState.value = _searchState.value.copy(searchUseRegex = checked)
+        }
+
+        override fun onColorFiltersClicked() {
+            colorFiltersDialogState.value = true
+        }
+
+        override fun onTimeZoneChanged(timeZoneName: String) {
+            try {
+                formatter.setTimeZone(TimeZone.of(timeZoneName))
+            } catch (ignored: Exception) {
+                // parsing will fail while typing timeZoneName
+            }
+        }
+    }
+
+
+    val previewPlugins = mutableStateListOf<PluginLogPreview>()
+    private fun stopSearch() {
+        searchJob?.cancel()
+        _searchState.value = _searchState.value.copy(
+            state = SearchState.State.IDLE
+        )
+    }
+
+    val removeLogsDialogState = mutableStateOf(
+        RemoveLogsDialogState(
+            visible = false, message = null
+        )
+    )
+
+    internal val columnParams = mutableStateListOf<ColumnParams>(
+        *ColumnParams.DefaultParams.toTypedArray()
+    )
+    val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
+        override fun onToggleColumnVisibility(key: Column, checked: Boolean) {
+            val index = columnParams.indexOfFirst { it.column == key }
+            val updatedColumnParams = columnParams[index].copy(visible = checked)
+            viewModelScope.launch(IO) {
+                preferencesRepository.updateColumnParams(updatedColumnParams)
+            }
+        }
+
+        override fun onResetParams() {
+            viewModelScope.launch(IO) {
+                preferencesRepository.resetColumnsParams()
+                columnParams.clear()
+                columnParams.addAll(ColumnParams.DefaultParams)
+            }
+        }
+    }
 
     var settingsDialogState by mutableStateOf(false)
 
@@ -133,19 +321,16 @@ class MainViewModel(
 
 
     init {
-        panels.add(
-            LogsPlugin(
-                viewModel = DependencyManager.provideLogsViewModel(),
-            )
+        val logsPlugin = LogsPlugin(
+            viewModel = this,
+            messagesRepository = DependencyManager.provideMessageRepository(),
         )
-        panels.add(
-            TimelinePlugin(
-                viewModel = DependencyManager.provideTimelineViewModel(),
-                logMessages = messagesProvider.getMessages(),
-            )
+        val timelinePlugin = TimelinePlugin(
+            viewModel = DependencyManager.provideTimelineViewModel(),
+            messagesRepository = DependencyManager.provideMessageRepository(),
         )
-
-        panelsNames.addAll(panels.map { it.getPanelName() })
+        panels.add(logsPlugin)
+        panels.add(timelinePlugin)
 
         viewModelScope.launch {
             preferencesRepository.getRecentColorFilters().collectLatest {
@@ -161,7 +346,7 @@ class MainViewModel(
             }
         }
 
-        CoroutineScope(IO).launch {
+        viewModelScope.launch(IO) {
             val pluginManager = DependencyManager.providePluginsManager()
 
             predefinedPlugins.forEach { plugin ->
@@ -169,20 +354,52 @@ class MainViewModel(
             }
 
             pluginManager.loadPlugins()
-            val loadedPanel = pluginManager.getPluginPanels()
+            val loadedPanels = pluginManager.getPluginPanels()
             withContext(Main) {
-                panels.addAll(loadedPanel)
-                panelsNames.addAll(loadedPanel.map { it.getPanelName() })
+                panels.addAll(loadedPanels)
             }
+            val loadedPreviewPanels = pluginManager.getPluginLogPreviews()
+            withContext(Main) {
+                previewPanels.addAll(loadedPreviewPanels)
+            }
+        }
+
+        viewModelScope.launch(IO) {
+            preferencesRepository.getRecentSearch().collectLatest {
+                _searchAutocomplete.clear()
+                _searchAutocomplete.addAll(it.map { it.value })
+            }
+        }
+
+        viewModelScope.launch(IO) {
+            preferencesRepository.getColumnParams().collectLatest { params ->
+                params.forEach { param ->
+                    val index = columnParams.indexOfFirst { it.column.name == param.key }
+                    if (index >= 0) {
+                        columnParams[index] = columnParams[index].copy(
+                            visible = param.visible, size = param.size
+                        )
+                    }
+                }
+            }
+        }
+
+        viewModelScope.launch(IO) {
+            val logPreviewPlugins = pluginManager.getPluginLogPreviews()
+            previewPlugins.clear()
+            previewPlugins.addAll(logPreviewPlugins)
         }
     }
 
     fun parseFile(dltFiles: List<File>) {
-        pluginManager.notifyLogsChanged()
+        viewModelScope.launch(IO) {
+            pluginManager.notifyLogsChanged()
+        }
         parseJob?.cancel()
-        messagesHolder.clearMessages()
-        parseJob = CoroutineScope(IO).launch {
-            messagesHolder.storeMessages(
+        clearMessages()
+        parseJob = viewModelScope.launch(IO) {
+            LogMessage.resetCounter()
+            messagesRepository.storeMessages(
                 dltParser.read(
                     dltFiles,
                     settingsLogs.value.backendType,
@@ -191,16 +408,21 @@ class MainViewModel(
         }
     }
 
-    fun loadColorFilters(file: File) {
-        messagesHolder.loadColorFilters(file)
-    }
 
     fun clearColorFilters() {
-        messagesHolder.clearColorFilters()
+        colorFilters.clear()
     }
 
     fun saveColorFilters(file: File) {
-        messagesHolder.saveColorFilters(file)
+        viewModelScope.launch {
+            ColorFilterManager().saveToFile(colorFilters, file)
+            preferencesRepository.addNewRecentColorFilter(
+                RecentColorFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
+        }
     }
 
     fun loadTimeLineFilters(file: File) {
@@ -218,5 +440,221 @@ class MainViewModel(
     fun closeSettingsDialog() {
         settingsDialogState = false
     }
+
+    private fun clearMessages() {
+        messagesRepository.clearMessages()
+    }
+
+
+    fun onColumnResized(columnKey: String, delta: Float) {
+        val index = columnParams.indexOfFirst { it.column.name == columnKey }
+        if (index >= 0) {
+            val params = columnParams[index]
+            val newSize = max(params.size + delta, ColumnParams.MIN_SIZE)
+            columnParams[index] = params.copy(size = newSize)
+        }
+    }
+
+    private fun assessFilter(
+        filters: Map<FilterParameter, FilterCriteria>, message: DLTMessage
+    ): Boolean {
+        return filters.all {
+            val criteria = it.value
+            return@all when (it.key) {
+                FilterParameter.MessageType -> {
+                    checkTextCriteria(
+                        criteria, message.extendedHeader?.messageInfo?.messageType?.name
+                    )
+                }
+
+                FilterParameter.MessageTypeInfo -> {
+                    checkTextCriteria(
+                        criteria, message.extendedHeader?.messageInfo?.messageTypeInfo?.name
+                    )
+                }
+
+                FilterParameter.EcuId -> {
+                    checkTextCriteria(criteria, message.standardHeader.ecuId)
+                }
+
+                FilterParameter.ContextId -> {
+                    checkTextCriteria(criteria, message.extendedHeader?.contextId)
+                }
+
+                FilterParameter.AppId -> {
+                    checkTextCriteria(criteria, message.extendedHeader?.applicationId)
+                }
+
+                FilterParameter.SessionId -> {
+                    criteria.value.isNotEmpty() && message.standardHeader.sessionId == criteria.value.toInt()
+                }
+
+                FilterParameter.Payload -> {
+                    checkTextCriteria(criteria, message.payloadText())
+                }
+            }
+        }
+    }
+
+    private fun removeMessages(type: LogRemoveContext, filter: String) {
+        viewModelScope.launch(IO) {
+            Log.d("start removing messages by $type '$filter'")
+            val duration = messagesRepository.removeMessages(onProgressChanged) {
+                shouldRemove(type, it.dltMessage, filter)
+            }
+            Log.d("done removing messages by $type '$filter' $duration ms")
+        }
+    }
+
+    private fun shouldRemove(
+        type: LogRemoveContext,
+        message: DLTMessage,
+        filter: String
+    ) = when (type) {
+        LogRemoveContext.ContextId -> message.extendedHeader?.contextId == filter
+        LogRemoveContext.ApplicationId -> message.extendedHeader?.applicationId == filter
+        LogRemoveContext.EcuId -> message.standardHeader.ecuId == filter
+        LogRemoveContext.SessionId -> message.standardHeader.sessionId.toString() == filter
+        LogRemoveContext.BeforeTimestamp -> message.timeStampUs < filter.toLong()
+        LogRemoveContext.AfterTimestamp -> message.timeStampUs > filter.toLong()
+        LogRemoveContext.Payload -> false
+    }
+
+    fun removeMessagesByFilters(filters: Map<FilterParameter, FilterCriteria>) {
+        viewModelScope.launch(IO) {
+            Log.d("start removing messages by filter '$filters'")
+            val duration = messagesRepository.removeMessages(onProgressChanged) {
+                assessFilter(filters, it.dltMessage)
+            }
+            Log.d("done removing messages by filter in $duration ms")
+        }
+    }
+
+    private fun loadColorFilters(file: File) {
+        colorFilters.clear()
+        viewModelScope.launch {
+            ColorFilterManager().loadFromFile(file)?.let {
+                colorFilters.addAll(it)
+            }
+            preferencesRepository.addNewRecentColorFilter(
+                RecentColorFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
+        }
+    }
+
+    fun onLogsRowSelected(listIndex: Int, key: Int) {
+        viewModelScope.launch(IO) {
+            selectLogRow(listIndex, key)
+        }
+    }
+
+    private suspend fun selectLogRow(listIndex: Int, key: Int) {
+        val selectedMessage = messagesRepository.getMessages().first { it.num == key }
+        logSelection =
+            logSelection.copy(logsIndex = listIndex, selectedMessage = selectedMessage)
+    }
+
+    fun onSearchRowSelected(listIndex: Int, key: Int) {
+        viewModelScope.launch(Main) {
+            selectSearchRow(listIndex, key)
+        }
+    }
+
+    private suspend fun selectSearchRow(listIndex: Int, key: Int) {
+        if (logSelection.searchIndex == listIndex) { // simulate second click
+            try {
+                val index = messagesRepository.getMessages().indexOfFirst { it.num == key }
+                selectLogRow(index, key)
+                logsListState.scrollToItem(index)
+            } catch (e: Exception) {
+                Log.e("Failed to select $listIndex-$key: $e")
+            }
+        } else {
+            val selectedMessage = messagesRepository.getMessages().first { it.num == key }
+            logSelection =
+                logSelection.copy(searchIndex = listIndex, selectedMessage = selectedMessage)
+        }
+    }
+
+    private fun shouldSaveSearch(text: String): Boolean {
+        return text.length >= 3
+    }
+
+    private fun startSearch(searchType: SearchType, searchText: String) {
+        _searchState.value = _searchState.value.copy(
+            searchText = searchText, state = SearchState.State.SEARCHING
+        )
+        searchJob = viewModelScope.launch(IO) {
+            if (shouldSaveSearch(searchText)) {
+                preferencesRepository.addNewSearch(SearchEntity(searchText))
+            }
+            Log.d("Start searching for $searchType '$searchText'")
+
+            val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
+
+            val duration = messagesRepository.searchMessages(onProgressChanged) {
+                matchSearch(searchType, searchRegex, searchText, it)
+            }
+
+            _searchState.value = _searchState.value.copy(
+                searchText = searchText, state = SearchState.State.IDLE
+            )
+            Log.d("Search complete in $duration ms.")
+        }
+    }
+
+    private fun matchSearch(
+        searchType: SearchType,
+        searchRegex: Regex?,
+        searchText: String,
+        logMessage: LogMessage
+    ): Boolean {
+        val payload = logMessage.getMessageText()
+        return when (searchType) {
+
+            SearchType.Text -> {
+                ((searchRegex != null && searchRegex.containsMatchIn(payload))
+                        || (payload.contains(searchText)))
+            }
+
+            SearchType.MarkedRows -> {
+                logMessage.marked
+            }
+
+            SearchType.TextAndMarkedRows -> {
+                logMessage.marked || ((searchRegex != null && searchRegex.containsMatchIn(
+                    payload
+                )) || (payload.contains(searchText)))
+            }
+        }
+    }
+
+    val colorFilters = mutableStateListOf<ColorFilter>()
+
+    val colorFiltersDialogCallbacks = object : ColorFiltersDialogCallbacks {
+        override fun onColorFilterUpdate(position: Int, filter: ColorFilter) {
+            Log.d("onFilterUpdate $position $filter")
+            if (position < 0 || position > colorFilters.size) {
+                colorFilters.add(filter)
+            } else colorFilters[position] = filter
+        }
+
+        override fun onColorFilterDelete(position: Int) {
+            colorFilters.removeAt(position)
+        }
+
+        override fun onColorFilterMove(index: Int, offset: Int) {
+            if (index + offset in 0..<colorFilters.size) {
+                val temp = colorFilters[index]
+                colorFilters[index] = colorFilters[index + offset]
+                colorFilters[index + offset] = temp
+            }
+
+        }
+    }
+
 
 }

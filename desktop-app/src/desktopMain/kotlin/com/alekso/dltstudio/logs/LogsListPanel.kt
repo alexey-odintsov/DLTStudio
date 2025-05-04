@@ -13,7 +13,7 @@ import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.ui.Panel
-import com.alekso.dltstudio.utils.SampleData
+import com.alekso.dltmessage.SampleData
 
 @Composable
 fun LogsListPanel(
@@ -38,7 +38,6 @@ fun LogsListPanel(
             Modifier.fillMaxSize().background(Color.LightGray),
             columnParams,
             messages,
-            null,
             colorFilters,
             selectedRow = selectedRow,
             onRowSelected = onLogsRowSelected,
