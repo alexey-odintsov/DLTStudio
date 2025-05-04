@@ -10,28 +10,28 @@ import kotlinx.coroutines.withContext
 
 class MessagesRepositoryImpl : MessagesRepository {
 
-    private val _logMessages = mutableStateListOf<LogMessage>()
-    private var _searchResults = mutableStateListOf<LogMessage>()
+    private val logMessages = mutableStateListOf<LogMessage>()
+    private var searchResults = mutableStateListOf<LogMessage>()
     override fun clearMessages() {
-        _logMessages.clear()
+        logMessages.clear()
         clearSearchResults()
     }
 
     private fun clearSearchResults() {
-        _searchResults.clear()
+        searchResults.clear()
     }
 
     override fun storeMessages(logMessages: List<LogMessage>) {
-        _logMessages.clear()
-        _logMessages.addAll(logMessages)
+        this.logMessages.clear()
+        this.logMessages.addAll(logMessages)
     }
 
     private fun addSearchResult(logMessages: LogMessage, index: Int) {
-        _searchResults.add(logMessages)
+        searchResults.add(logMessages)
     }
 
     override fun getMessages(): SnapshotStateList<LogMessage> {
-        return _logMessages
+        return logMessages
     }
 
     override suspend fun removeMessages(
@@ -39,7 +39,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         predicate: (LogMessage) -> Boolean
     ): Long {
         val filtered = mutableListOf<LogMessage>()
-        val duration = forEachWithProgress(_logMessages, progress) { i, logMessage ->
+        val duration = forEachWithProgress(logMessages, progress) { i, logMessage ->
             val shouldRemove = predicate(logMessage)
             if (!shouldRemove) {
                 filtered.add(logMessage)
@@ -49,15 +49,15 @@ class MessagesRepositoryImpl : MessagesRepository {
             storeMessages(filtered)
         }
         val searchFiltered = mutableListOf<LogMessage>()
-        val searchDuration = forEachWithProgress(_searchResults, progress) { i, logMessage ->
+        val searchDuration = forEachWithProgress(searchResults, progress) { i, logMessage ->
             val shouldRemove = predicate(logMessage)
             if (!shouldRemove) {
                 searchFiltered.add(logMessage)
             }
         }
         withContext(Main) {
-            _searchResults.clear()
-            _searchResults.addAll(searchFiltered)
+            searchResults.clear()
+            searchResults.addAll(searchFiltered)
         }
         return duration + searchDuration
     }
@@ -69,7 +69,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     ): Long {
         clearSearchResults()
 
-        val duration = forEachWithProgress(_logMessages, progress) { i, logMessage ->
+        val duration = forEachWithProgress(logMessages, progress) { i, logMessage ->
             val match = predicate(logMessage)
             if (match) {
                 withContext(Main) {
@@ -82,30 +82,30 @@ class MessagesRepositoryImpl : MessagesRepository {
 
 
     override fun getSearchResults(): SnapshotStateList<LogMessage> {
-        return _searchResults
+        return searchResults
     }
 
     override fun updateLogComment(key: String, comment: String?) {
-        val index = _logMessages.indexOfFirst { it.key == key }
+        val index = logMessages.indexOfFirst { it.key == key }
         if (index > -1) {
-            val updatedMessage = _logMessages[index].copy(comment = comment)
-            _logMessages[index] = updatedMessage
-            val searchIndex = _searchResults.indexOfFirst { it.key == key }
+            val updatedMessage = logMessages[index].copy(comment = comment)
+            logMessages[index] = updatedMessage
+            val searchIndex = searchResults.indexOfFirst { it.key == key }
             if (searchIndex > -1) {
-                _searchResults[searchIndex] = updatedMessage
+                searchResults[searchIndex] = updatedMessage
             }
         }
     }
 
     override fun toggleMark(key: String) {
-        val index = _logMessages.indexOfFirst { it.key == key }
+        val index = logMessages.indexOfFirst { it.key == key }
         if (index > -1) {
-            val currentMark = _logMessages[index].marked
-            val updatedMessage = _logMessages[index].copy(marked = !currentMark)
-            _logMessages[index] = updatedMessage
-            val searchIndex = _searchResults.indexOfFirst { it.key == key }
+            val currentMark = logMessages[index].marked
+            val updatedMessage = logMessages[index].copy(marked = !currentMark)
+            logMessages[index] = updatedMessage
+            val searchIndex = searchResults.indexOfFirst { it.key == key }
             if (searchIndex > -1) {
-                _searchResults[searchIndex] = updatedMessage
+                searchResults[searchIndex] = updatedMessage
             }
         }
     }
