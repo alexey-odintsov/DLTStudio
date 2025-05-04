@@ -567,7 +567,7 @@ class MainViewModel(
         if (logSelection.searchIndex == listIndex) { // simulate second click
             try {
                 val index = messagesRepository.getMessages().indexOfFirst { it.key == key }
-                selectLogRow(listIndex, key)
+                selectLogRow(index, key)
                 logsListState.scrollToItem(index)
             } catch (e: Exception) {
                 Log.e("Failed to select $listIndex-$key: $e")
