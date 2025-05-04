@@ -545,35 +545,35 @@ class MainViewModel(
         }
     }
 
-    fun onLogsRowSelected(listIndex: Int, key: String) {
+    fun onLogsRowSelected(listIndex: Int, key: Int) {
         viewModelScope.launch(IO) {
             selectLogRow(listIndex, key)
         }
     }
 
-    private suspend fun selectLogRow(listIndex: Int, key: String) {
-        val selectedMessage = messagesRepository.getMessages().first { it.key == key }
+    private suspend fun selectLogRow(listIndex: Int, key: Int) {
+        val selectedMessage = messagesRepository.getMessages().first { it.num == key }
         logSelection =
             logSelection.copy(logsIndex = listIndex, selectedMessage = selectedMessage)
     }
 
-    fun onSearchRowSelected(listIndex: Int, key: String) {
+    fun onSearchRowSelected(listIndex: Int, key: Int) {
         viewModelScope.launch(Main) {
             selectSearchRow(listIndex, key)
         }
     }
 
-    private suspend fun selectSearchRow(listIndex: Int, key: String) {
+    private suspend fun selectSearchRow(listIndex: Int, key: Int) {
         if (logSelection.searchIndex == listIndex) { // simulate second click
             try {
-                val index = messagesRepository.getMessages().indexOfFirst { it.key == key }
+                val index = messagesRepository.getMessages().indexOfFirst { it.num == key }
                 selectLogRow(index, key)
                 logsListState.scrollToItem(index)
             } catch (e: Exception) {
                 Log.e("Failed to select $listIndex-$key: $e")
             }
         } else {
-            val selectedMessage = messagesRepository.getMessages().first { it.key == key }
+            val selectedMessage = messagesRepository.getMessages().first { it.num == key }
             logSelection =
                 logSelection.copy(searchIndex = listIndex, selectedMessage = selectedMessage)
         }

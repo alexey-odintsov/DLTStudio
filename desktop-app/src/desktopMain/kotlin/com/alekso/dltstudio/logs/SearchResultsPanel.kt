@@ -20,7 +20,7 @@ fun SearchResultsPanel(
     colorFilters: SnapshotStateList<ColorFilter>,
     searchResultSelectedRow: Int,
     searchListState: LazyListState,
-    onSearchRowSelected: (Int, String) -> Unit,
+    onSearchRowSelected: (Int, Int) -> Unit,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,

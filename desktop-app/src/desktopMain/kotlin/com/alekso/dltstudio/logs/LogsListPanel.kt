@@ -23,7 +23,7 @@ fun LogsListPanel(
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
     logsListState: LazyListState,
-    onLogsRowSelected: (Int, String) -> Unit,
+    onLogsRowSelected: (Int, Int) -> Unit,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,

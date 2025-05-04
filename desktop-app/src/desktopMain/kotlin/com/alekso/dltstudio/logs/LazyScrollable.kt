@@ -42,7 +42,7 @@ fun LazyScrollable(
     logMessages: SnapshotStateList<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
-    onRowSelected: (Int, String) -> Unit,
+    onRowSelected: (Int, Int) -> Unit,
     listState: LazyListState,
     wrapContent: Boolean,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
@@ -138,12 +138,12 @@ fun LazyScrollable(
                             modifier = Modifier
                                 .onFocusChanged { state ->
                                     if (state.isFocused) {
-                                        onRowSelected(i, logMessage.key)
+                                        onRowSelected(i, logMessage.num)
                                     }
                                 }
                                 .selectable(
                                     selected = i == selectedRow,
-                                    onClick = { onRowSelected(i, logMessage.key) }
+                                    onClick = { onRowSelected(i, logMessage.num) }
                                 )
                                 .onKeyEvent { e ->
                                     if (e.type == KeyEventType.KeyDown) {
