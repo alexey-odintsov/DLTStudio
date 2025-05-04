@@ -6,7 +6,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 
 interface PluginLogPreview {
     @Composable
-    fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int)
+    fun renderPreview(modifier: Modifier, logMessage: LogMessage?)
 
     fun getPanelName(): String
 

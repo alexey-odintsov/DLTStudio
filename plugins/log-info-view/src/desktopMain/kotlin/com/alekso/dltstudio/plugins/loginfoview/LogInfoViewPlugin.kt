@@ -35,7 +35,7 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview {
     }
 
     @Composable
-    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
-        LogInfoView(modifier, logMessage, messageIndex, onCommentUpdated = viewModel::onCommentUpdated)
+    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
+        LogInfoView(modifier, logMessage, onCommentUpdated = viewModel::onCommentUpdated)
     }
 }

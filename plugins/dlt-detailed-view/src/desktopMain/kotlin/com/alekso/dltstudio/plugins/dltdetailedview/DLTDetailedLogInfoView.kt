@@ -23,7 +23,6 @@ import com.alekso.dltstudio.uicomponents.table.TableTextCell
 fun DLTDetailedInfoView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
-    messageIndex: Int,
 ) {
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)
     val mergedColModifier = Modifier.padding(start = 4.dp, end = 4.dp).fillMaxWidth()
@@ -35,7 +34,7 @@ fun DLTDetailedInfoView(
 
                 TableTextCell(
                     mergedColModifier,
-                    text = "DLT Message #$messageIndex:",
+                    text = "DLT Message #${logMessage.num}:",
                     isHeader = true
                 )
                 Row {
@@ -216,6 +215,5 @@ fun DLTDetailedInfoView(
 fun PreviewDLTDetailedInfoView() {
     DLTDetailedInfoView(
         logMessage = LogMessage(SampleData.create(payloadText = "Test message")),
-        messageIndex = 1
     )
 }

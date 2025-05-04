@@ -30,8 +30,8 @@ class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview, LogSelectionObserve
     }
 
     @Composable
-    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
-        LogInsightsView(modifier, logMessage, messageIndex, viewModel.logInsights)
+    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
+        LogInsightsView(modifier, logMessage, viewModel.logInsights)
     }
 
     override fun onMessageSelected(logMessage: LogMessage) {

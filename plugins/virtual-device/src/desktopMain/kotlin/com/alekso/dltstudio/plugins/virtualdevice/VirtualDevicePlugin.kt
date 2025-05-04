@@ -39,7 +39,7 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
     }
 
     @Composable
-    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
+    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
         if (viewModel.devicePreviewDialogState) {
             VirtualDevicesDialog(
                 visible = viewModel.devicePreviewDialogState,
@@ -58,7 +58,6 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
                 viewModel.devicePreviewDialogState = true
             },
             onDeviceSelected = viewModel::onDeviceSelected,
-            messageIndex = messageIndex,
         )
     }
 

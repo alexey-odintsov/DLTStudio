@@ -48,7 +48,6 @@ fun LogPreviewPanel(
                 (previewPanels[tabIndex]).renderPreview(
                     modifier = Modifier.weight(1f),
                     logMessage = logMessage,
-                    messageIndex = logMessage?.num ?: 0
                 )
             }
         }

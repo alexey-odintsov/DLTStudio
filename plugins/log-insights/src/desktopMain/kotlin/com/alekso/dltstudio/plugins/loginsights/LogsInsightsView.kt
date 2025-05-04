@@ -29,7 +29,6 @@ import com.alekso.dltstudio.model.contract.LogMessage
 fun LogInsightsView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
-    messageIndex: Int,
     insights: SnapshotStateList<LogInsight>? = null,
 ) {
     println("LogInsightsView $logMessage, $insights")
@@ -42,7 +41,7 @@ fun LogInsightsView(
             logMessage.dltMessage.let {
                 Header(
                     modifier = paddingModifier,
-                    text = "DLT Message #$messageIndex:"
+                    text = "DLT Message #${logMessage.num}:"
                 )
 
                 if (!insights.isNullOrEmpty()) {
@@ -121,7 +120,6 @@ fun PreviewLogInsightsView() {
     LogInsightsView(
         Modifier,
         LogMessage(SampleData.create(payloadText = "Choreographer[4476]: Skipped 36 frames!  The application may be doing too much work on its main thread.")),
-        1,
         mutableStateListOf(
             LogInsight("Skipped frames", "The app skipped 55 frames!")
         )
@@ -134,7 +132,6 @@ fun PreviewLogInsightsViewNoInsights() {
     LogInsightsView(
         Modifier,
         LogMessage(SampleData.create(payloadText = "Choreographer[4476]: Skipped 36 frames!  The application may be doing too much work on its main thread.")),
-        1,
         mutableStateListOf()
     )
 }

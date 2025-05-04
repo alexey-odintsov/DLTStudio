@@ -27,8 +27,8 @@ class DLTDetailedViewPlugin : DLTStudioPlugin, PluginLogPreview {
     }
 
     @Composable
-    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?, messageIndex: Int) {
-        DLTDetailedInfoView(modifier, logMessage, messageIndex)
+    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
+        DLTDetailedInfoView(modifier, logMessage)
     }
 
 }

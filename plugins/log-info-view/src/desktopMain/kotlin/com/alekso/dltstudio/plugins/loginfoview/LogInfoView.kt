@@ -35,7 +35,6 @@ import com.alekso.dltstudio.uicomponents.CustomEditText
 fun LogInfoView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
-    messageIndex: Int,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
     if (logMessage == null) return
@@ -48,7 +47,7 @@ fun LogInfoView(
             logMessage.dltMessage.let {
                 Header(
                     modifier = paddingModifier,
-                    text = "Message #$messageIndex:"
+                    text = "Message #${logMessage.num}:"
                 )
                 val headerText = "${LocalFormatter.current.formatDateTime(it.timeStampUs)} " +
                         "${it.extendedHeader?.applicationId} " +
@@ -138,7 +137,7 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 @Preview
 fun PreviewLogSimplifiedInfoView() {
     val dltMessage = LogMessage(SampleData.getSampleDltMessages(1)[0])
-    LogInfoView(Modifier.width(200.dp), logMessage = dltMessage, 0)
+    LogInfoView(Modifier.width(200.dp), logMessage = dltMessage)
 }
 
 @Preview
@@ -150,6 +149,5 @@ fun PreviewLogSimplifiedInfoView2() {
     LogInfoView(
         modifier = Modifier.height(400.dp).fillMaxWidth(),
         logMessage = LogMessage(dltMessage),
-        messageIndex = 0
     )
 }

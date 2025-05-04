@@ -28,7 +28,6 @@ fun DevicePreviewView(
     modifier: Modifier = Modifier,
     virtualDevices: SnapshotStateList<VirtualDevice>,
     logMessage: LogMessage?,
-    messageIndex: Int,
     onShowVirtualDeviceClicked: () -> Unit = {},
     onDeviceSelected: (Int) -> Unit,
     currentDeviceIndex: Int,
@@ -39,7 +38,7 @@ fun DevicePreviewView(
     Column(modifier) {
         logMessage?.dltMessage?.let { message ->
             Header(
-                modifier = paddingModifier, text = "Device Preview for #$messageIndex:"
+                modifier = paddingModifier, text = "Device Preview for #${logMessage.num}:"
             )
             deviceViews = DeviceView.parse(message.payloadText())
             if (deviceViews.isNullOrEmpty()) {
@@ -105,7 +104,6 @@ fun PreviewEmptyDevicePreview() {
         modifier = Modifier.fillMaxSize(),
         virtualDevices = mutableStateListOf(VirtualDevice(0, "Test", 3300, 900)),
         logMessage = null,
-        messageIndex = 0,
         currentDeviceIndex = 0,
         onDeviceSelected = {},
     )
@@ -121,7 +119,6 @@ fun PreviewDevicePreview() {
         modifier = Modifier.fillMaxSize(),
         virtualDevices = mutableStateListOf(VirtualDevice(0, "Test", 3300, 900)),
         logMessage = LogMessage(dltMessage),
-        messageIndex = 0,
         currentDeviceIndex = 0,
         onDeviceSelected = {},
     )
