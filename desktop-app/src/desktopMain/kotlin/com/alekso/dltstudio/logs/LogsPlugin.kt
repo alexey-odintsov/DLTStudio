@@ -94,7 +94,7 @@ class LogsPlugin(
                 Image(
                     painterResource(Res.drawable.icon_upload),
                     contentDescription = "Drag and Drop log file(s) here",
-                    modifier = Modifier.padding(6.dp).size(80.dp),
+                    modifier = Modifier.padding(6.dp).size(60.dp),
                     colorFilter = ColorFilter.tint(Color.Gray),
                 )
                 Text(text = "No logs are currently loaded.")
