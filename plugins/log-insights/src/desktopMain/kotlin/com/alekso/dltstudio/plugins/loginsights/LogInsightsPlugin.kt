@@ -4,11 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.contract.LogSelectionObserver
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 
-class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview, LogSelectionObserver {
+class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview {
     private lateinit var viewModel: LogInsightsViewModel
 
     override fun pluginName(): String = "Logs insights"
@@ -31,11 +30,7 @@ class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview, LogSelectionObserve
 
     @Composable
     override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
+        viewModel.loadInsights(logMessage)
         LogInsightsView(modifier, logMessage, viewModel.logInsights)
     }
-
-    override fun onMessageSelected(logMessage: LogMessage) {
-        viewModel.onLogSelected(logMessage)
-    }
-
 }

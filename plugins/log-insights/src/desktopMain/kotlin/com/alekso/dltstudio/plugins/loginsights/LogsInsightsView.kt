@@ -31,7 +31,6 @@ fun LogInsightsView(
     logMessage: LogMessage?,
     insights: SnapshotStateList<LogInsight>? = null,
 ) {
-    println("LogInsightsView $logMessage, $insights")
     if (logMessage == null) return
 
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)

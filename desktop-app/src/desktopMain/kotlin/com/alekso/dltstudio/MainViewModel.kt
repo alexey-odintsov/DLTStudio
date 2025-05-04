@@ -555,7 +555,6 @@ class MainViewModel(
         val selectedMessage = messagesRepository.getMessages().first { it.key == key }
         logSelection =
             logSelection.copy(logsIndex = listIndex, selectedMessage = selectedMessage)
-        pluginManager.notifyLogSelected(selectedMessage)
     }
 
     fun onSearchRowSelected(listIndex: Int, key: String) {

@@ -1,10 +1,8 @@
 package com.alekso.dltstudio.plugins.manager
 
 import com.alekso.dltstudio.model.contract.Formatter
-import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.FormatterConsumer
-import com.alekso.dltstudio.plugins.contract.LogSelectionObserver
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
@@ -136,11 +134,4 @@ class PluginManager(
             plugin.onLogsChanged()
         }
     }
-
-    suspend fun notifyLogSelected(logMessage: LogMessage) {
-        plugins.filter { it is LogSelectionObserver }.map { it as LogSelectionObserver }.forEach {
-            it.onMessageSelected(logMessage)
-        }
-    }
-
 }
