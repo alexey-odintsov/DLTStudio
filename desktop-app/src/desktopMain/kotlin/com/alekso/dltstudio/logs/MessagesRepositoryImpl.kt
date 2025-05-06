@@ -6,6 +6,8 @@ import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.withContext
 
 class MessagesRepositoryImpl : MessagesRepository {
@@ -70,6 +72,8 @@ class MessagesRepositoryImpl : MessagesRepository {
         clearSearchResults()
 
         val duration = forEachWithProgress(logMessages, progress) { i, logMessage ->
+            currentCoroutineContext().ensureActive()
+
             val match = predicate(logMessage)
             if (match) {
                 withContext(Main) {
