@@ -22,6 +22,19 @@ class DeviceViewTests {
     }
 
     @Test
+    fun `Test Touch region parsing`() {
+        val text = "Registering touch region: FillLevel1, x=1132, y=40, w=240, h=115"
+        val expectedText = listOf(
+            DeviceView(Rect(1132f, 40f, 1132f + 240f, 40f + 115)),
+        )
+        val parsed = DeviceView.parse(text)
+        Assert.assertTrue(
+            "\n$parsed\n!=\n$expectedText",
+            parsed == expectedText
+        )
+    }
+
+    @Test
     fun `Test DeviceView parsing curly brackets`() {
         val text =
             "FocusParkingView[1343]: onGlobalFocusChanged: oldFocus:androidx.appcompat.widget.AppCompatImageView{73a3b5 VFED..C.. ......ID 576,0-696,120 #7f0b0262 app:id/menuIcon}, newFocus:com.android.car.ui.FocusParkingView{5326a41 VFED..... .F...... 0,0-1,1 #7f0b0177 app:id/focus_parking_view}"
