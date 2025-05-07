@@ -92,40 +92,60 @@ data class DeviceView(
          */
         fun parse(text: String): List<DeviceView>? {
             val list = mutableListOf<DeviceView>()
-            val viewMatches = Regex(
-                """
-                \{(?<id2>[a-z0-9]+)?\s?(?<flags1>[A-Z\.]+)?\s?(?<flags2>[A-Z\.]+)?\s?(?<left>\d+),(?<top>\d+)-(?<right>\d+),(?<down>\d+)\s?(?<id>#[a-f0-9]+)?\s?(?<resid>[a-zA-Z0-9\-\_]+:id/[a-zA-Z0-9\_\-]+)?\s?(?<aid>aid\=[0-9]+)?\}
-            """.trimIndent()).findAll(text)
-            val rectMatches = Regex(
-                """
-                ((?<left>\d+)\,\s(?<top>\d+)((\,\s)|(\s-\s))(?<right>\d+)\,\s(?<down>\d+))
-            """.trimIndent()
-            ).findAll(text)
-            for (match in viewMatches) {
-                val l = match.groups["left"]!!.value.toFloat()
-                val t = match.groups["top"]!!.value.toFloat()
-                val r = match.groups["right"]!!.value.toFloat()
-                val d = match.groups["down"]!!.value.toFloat()
-                list.add(
-                    DeviceView(
-                        Rect(min(l,r), t, max(r,l), d),
-                        id = match.groups["resid"]?.value
-                    )
-                )
-            }
+            val patterns = listOf(
+                Regex("""\{(?<id2>[a-z0-9]+)?\s?(?<flags1>[A-Z\.]+)?\s?(?<flags2>[A-Z\.]+)?\s?(?<left>\d+),(?<top>\d+)-(?<right>\d+),(?<down>\d+)\s?(?<id>#[a-f0-9]+)?\s?(?<resid>[a-zA-Z0-9\-\_]+:id/[a-zA-Z0-9\_\-]+)?\s?(?<aid>aid\=[0-9]+)?\}"""),
+                Regex("""((?<left>\d+)\,\s(?<top>\d+)((\,\s)|(\s-\s))(?<right>\d+)\,\s(?<down>\d+))"""),
+                Regex("""x\s*(=|:)\s*(?<left>\d+).*y\s*(=|:)\s*(?<top>\d+).*(w|width)\s*(=|:)\s*(?<width>\d+).*(h|height)\s*(=|:)\s*(?<height>\d+)"""),
+            )
 
-            for (match in rectMatches) {
-                val l = match.groups["left"]!!.value.toFloat()
-                val t = match.groups["top"]!!.value.toFloat()
-                val r = match.groups["right"]!!.value.toFloat()
-                val d = match.groups["down"]!!.value.toFloat()
-                val rect = Rect(min(l,r), t, max(r,l), d)
-                if (list.any { it.rect == rect }.not()) {
-                    list.add(DeviceView(rect = rect))
+            patterns.forEach { pattern ->
+                val viewMatches = pattern.findAll(text)
+                for (match in viewMatches) {
+                    val l = match.groups["left"]!!.value.toFloat()
+                    val t = match.groups["top"]!!.value.toFloat()
+                    val r = try {
+                        match.groups["right"]?.value?.toFloat()
+                    } catch (_: Exception) {
+                        null
+                    }
+                    val d = try {
+                        match.groups["down"]?.value?.toFloat()
+                    } catch (_: Exception) {
+                        null
+                    }
+                    val w = try {
+                        match.groups["width"]?.value?.toFloat()
+                    } catch (_: Exception) {
+                        null
+                    }
+                    val h = try {
+                        match.groups["height"]?.value?.toFloat()
+                    } catch (_: Exception) {
+                        null
+                    }
+                    val resId = try {
+                        match.groups["resid"]?.value
+                    } catch (_: Exception) {
+                        null
+                    }
+                    val rect = if (r != null && d != null) {
+                        Rect(min(l, r), t, max(r, l), d)
+                    } else if (w != null && h != null) {
+                        Rect(l, t, l + w, t + h)
+                    } else {
+                        null
+                    }
+
+                    if (rect != null) {
+                        if (list.any { it.rect == rect }.not()) {
+                            list.add(
+                                DeviceView(rect, id = resId)
+                            )
+                        }
+                    }
                 }
             }
             return list
         }
-
     }
 }
