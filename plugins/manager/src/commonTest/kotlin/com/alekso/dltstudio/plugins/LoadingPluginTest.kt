@@ -1,6 +1,8 @@
 package com.alekso.dltstudio.plugins
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -19,6 +21,7 @@ class PluginTest {
             override fun storeMessages(logMessages: List<LogMessage>) = Unit
             override fun getMessages(): SnapshotStateList<LogMessage> = messages
             override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
+            override fun getSelectedMessage(): State<LogMessage?> = mutableStateOf(null)
             override fun updateLogComment(key: String, comment: String?) = Unit
             override fun toggleMark(key: String) = Unit
             override suspend fun removeMessages(
@@ -30,6 +33,8 @@ class PluginTest {
                 progress: (Float) -> Unit,
                 predicate: (LogMessage) -> Boolean
             ): Long = 0L
+
+            override fun selectMessage(key: Int)  = Unit
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",
