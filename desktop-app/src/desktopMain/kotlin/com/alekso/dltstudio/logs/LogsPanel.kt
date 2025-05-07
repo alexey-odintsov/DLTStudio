@@ -75,6 +75,7 @@ fun LogsPanel(
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     onColumnResized: (String, Float) -> Unit,
     logSelection: LogSelection,
+    selectedMessage: LogMessage?,
 ) {
 
     Column(modifier = modifier) {
@@ -124,7 +125,7 @@ fun LogsPanel(
                     second(20.dp) {
                         LogPreviewPanel(
                             Modifier.fillMaxSize(),
-                            logSelection.selectedMessage,
+                            logMessage = selectedMessage,
                             previewPanels = previewPanels,
                         )
                     }
@@ -200,6 +201,7 @@ fun PreviewLogsPanel() {
         Modifier.fillMaxSize(),
         columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
         logMessages = list,
+        previewPanels = mutableStateListOf(),
         searchState = SearchState(searchText = "Search text"),
         searchResult = SnapshotStateList(),
         searchAutoComplete = mutableStateListOf(),
@@ -219,10 +221,10 @@ fun PreviewLogsPanel() {
         searchListState = LazyListState(),
         onLogsRowSelected = { i, r -> },
         onSearchRowSelected = { i, r -> },
-        logSelection = LogSelection(0, 0, null),
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         onColumnResized = { _, _ -> },
-        previewPanels = mutableStateListOf(),
+        logSelection = LogSelection(0, 0),
+        selectedMessage = null,
     )
 }

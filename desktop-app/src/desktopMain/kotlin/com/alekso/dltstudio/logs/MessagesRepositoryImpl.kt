@@ -1,6 +1,8 @@
 package com.alekso.dltstudio.com.alekso.dltstudio.logs
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
@@ -14,6 +16,8 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     private val logMessages = mutableStateListOf<LogMessage>()
     private var searchResults = mutableStateListOf<LogMessage>()
+    private val selectedMessage = mutableStateOf<LogMessage?>(null)
+
     override fun clearMessages() {
         logMessages.clear()
         clearSearchResults()
@@ -84,9 +88,18 @@ class MessagesRepositoryImpl : MessagesRepository {
         return duration
     }
 
+    override fun selectMessage(key: Int) {
+        val message = logMessages.first { it.num == key }
+        selectedMessage.value = message
+    }
+
 
     override fun getSearchResults(): SnapshotStateList<LogMessage> {
         return searchResults
+    }
+
+    override fun getSelectedMessage(): State<LogMessage?> {
+        return selectedMessage
     }
 
     override fun updateLogComment(key: String, comment: String?) {
@@ -94,6 +107,9 @@ class MessagesRepositoryImpl : MessagesRepository {
         if (index > -1) {
             val updatedMessage = logMessages[index].copy(comment = comment)
             logMessages[index] = updatedMessage
+            if (selectedMessage.value?.key == key) {
+                selectedMessage.value = updatedMessage
+            }
             val searchIndex = searchResults.indexOfFirst { it.key == key }
             if (searchIndex > -1) {
                 searchResults[searchIndex] = updatedMessage

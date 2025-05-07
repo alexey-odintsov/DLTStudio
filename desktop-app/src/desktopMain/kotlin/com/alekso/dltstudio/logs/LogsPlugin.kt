@@ -70,6 +70,7 @@ class LogsPlugin(
                 hSplitterState = viewModel.hSplitterState,
                 logsListState = viewModel.logsListState,
                 logSelection = viewModel.logSelection,
+                selectedMessage = messagesRepository.getSelectedMessage().value,
                 searchListState = viewModel.searchListState,
                 onLogsRowSelected = { i, r ->
                     viewModel.onLogsRowSelected(i, r)

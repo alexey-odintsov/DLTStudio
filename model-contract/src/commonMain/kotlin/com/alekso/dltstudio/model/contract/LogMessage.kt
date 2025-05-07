@@ -6,7 +6,13 @@ import java.util.concurrent.atomic.AtomicInteger
 
 data class LogMessage(
     val dltMessage: DLTMessage,
+    /**
+     * Message number. Unique per session.
+     */
     val num: Int = counter.getAndIncrement(),
+    /**
+     * Unique persistent key to identify message between sessions.
+     */
     val key: String = "$num",
     val marked: Boolean = false,
     val comment: String? = null,

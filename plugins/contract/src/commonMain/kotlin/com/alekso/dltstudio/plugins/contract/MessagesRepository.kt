@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.plugins.contract
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.contract.LogMessage
 
@@ -8,6 +9,7 @@ interface MessagesRepository {
     fun storeMessages(logMessages: List<LogMessage>)
     fun getMessages(): SnapshotStateList<LogMessage>
     fun getSearchResults(): SnapshotStateList<LogMessage>
+    fun getSelectedMessage(): State<LogMessage?>
 
     /**
      * Sets comment for a message
@@ -37,4 +39,5 @@ interface MessagesRepository {
      * @return Duration of the operation
      * */
     suspend fun searchMessages(progress: (Float) -> Unit, predicate: (LogMessage) -> Boolean): Long
+    fun selectMessage(key: Int)
 }

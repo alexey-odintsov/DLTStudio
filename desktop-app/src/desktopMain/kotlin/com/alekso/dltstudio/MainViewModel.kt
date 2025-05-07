@@ -78,10 +78,6 @@ data class LogSelection(
      * Search list focus index
      */
     val searchIndex: Int,
-    /**
-     * Message key for preview
-     */
-    val selectedMessage: LogMessage? = null,
 )
 
 class MainViewModel(
@@ -138,7 +134,7 @@ class MainViewModel(
     val logsListState = LazyListState()
     val searchListState = LazyListState()
 
-    var logSelection by mutableStateOf(LogSelection(0, 0, null))
+    var logSelection by mutableStateOf(LogSelection(0, 0,))
         private set
 
 
@@ -166,7 +162,7 @@ class MainViewModel(
             toolbarWarningChecked = true,
             toolbarSearchWithMarkedChecked = false,
             toolbarWrapContentChecked = false,
-            toolbarCommentsChecked = false,
+            toolbarCommentsChecked = true,
         )
     )
 
@@ -552,9 +548,8 @@ class MainViewModel(
     }
 
     private suspend fun selectLogRow(listIndex: Int, key: Int) {
-        val selectedMessage = messagesRepository.getMessages().first { it.num == key }
-        logSelection =
-            logSelection.copy(logsIndex = listIndex, selectedMessage = selectedMessage)
+        messagesRepository.selectMessage(key)
+        logSelection = logSelection.copy(logsIndex = listIndex)
     }
 
     fun onSearchRowSelected(listIndex: Int, key: Int) {
@@ -573,9 +568,8 @@ class MainViewModel(
                 Log.e("Failed to select $listIndex-$key: $e")
             }
         } else {
-            val selectedMessage = messagesRepository.getMessages().first { it.num == key }
-            logSelection =
-                logSelection.copy(searchIndex = listIndex, selectedMessage = selectedMessage)
+            messagesRepository.selectMessage(key)
+            logSelection = logSelection.copy(searchIndex = listIndex)
         }
     }
 
