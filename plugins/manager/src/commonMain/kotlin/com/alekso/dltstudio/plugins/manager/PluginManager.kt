@@ -57,7 +57,7 @@ class PluginManager(
                 }
                 plugins.add(plugin)
             } catch (e: Exception) {
-                Log.e("Failed to init plugin $e")
+                Log.e("Failed to load plugin ${e.stackTraceToString()}")
             }
         }
     }
