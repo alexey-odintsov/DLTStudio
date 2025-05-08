@@ -177,12 +177,12 @@ class TimelineViewModel(
     fun saveTimeLineFilters(file: File) {
         viewModelScope.launch {
             TimeLineFilterManager().saveToFile(timelineFilters, file)
-//            preferencesRepository.addNewRecentTimelineFilter(
-//                RecentTimelineFilterFileEntry(
-//                    file.name,
-//                    file.absolutePath
-//                )
-//            )
+            timelineRepository.addNewRecentTimelineFilter(
+                RecentTimelineFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
         }
     }
 
@@ -192,12 +192,12 @@ class TimelineViewModel(
             TimeLineFilterManager().loadFromFile(file)?.let {
                 timelineFilters.addAll(it)
             }
-//            preferencesRepository.addNewRecentTimelineFilter(
-//                RecentTimelineFilterFileEntry(
-//                    file.name,
-//                    file.absolutePath
-//                )
-//            )
+            timelineRepository.addNewRecentTimelineFilter(
+                RecentTimelineFilterFileEntry(
+                    file.name,
+                    file.absolutePath
+                )
+            )
         }
     }
 
