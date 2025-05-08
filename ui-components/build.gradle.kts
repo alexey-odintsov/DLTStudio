@@ -21,6 +21,7 @@ kotlin {
             implementation(compose.foundation)
             implementation(compose.ui)
             implementation(compose.components.resources)
+            implementation(libs.material.icons)
         }
 
         desktopMain.dependencies {
