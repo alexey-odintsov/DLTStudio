@@ -21,9 +21,9 @@ import com.alekso.dltstudio.logs.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
-import com.alekso.dltstudio.logs.filtering.FilterCriteria
-import com.alekso.dltstudio.logs.filtering.FilterParameter
-import com.alekso.dltstudio.logs.filtering.checkTextCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterParameter
+import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
@@ -38,14 +38,12 @@ import com.alekso.dltstudio.model.toSettingsLogsEntity
 import com.alekso.dltstudio.model.toSettingsUI
 import com.alekso.dltstudio.model.toSettingsUIEntity
 import com.alekso.dltstudio.plugins.DependencyManager
-import com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
-import com.alekso.dltstudio.timeline.TimelinePlugin
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -83,7 +81,6 @@ data class LogSelection(
 class MainViewModel(
     private val dltParser: DLTParser,
     private val messagesRepository: MessagesRepository,
-    private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
     private val preferencesRepository: PreferencesRepository,
@@ -321,12 +318,7 @@ class MainViewModel(
             viewModel = this,
             messagesRepository = DependencyManager.provideMessageRepository(),
         )
-        val timelinePlugin = TimelinePlugin(
-            viewModel = DependencyManager.provideTimelineViewModel(),
-            messagesRepository = DependencyManager.provideMessageRepository(),
-        )
         panels.add(logsPlugin)
-        panels.add(timelinePlugin)
 
         viewModelScope.launch {
             preferencesRepository.getRecentColorFilters().collectLatest {
@@ -422,15 +414,18 @@ class MainViewModel(
     }
 
     fun loadTimeLineFilters(file: File) {
-        timelineHolder.loadTimeLineFilters(file)
+        // todo: move loading to plugin
+        //timelineHolder.loadTimeLineFilters(file)
     }
 
     fun clearTimeLineFilters() {
-        timelineHolder.clearTimeLineFilters()
+        // todo: move loading to plugin
+        //timelineHolder.clearTimeLineFilters()
     }
 
     fun saveTimeLineFilters(file: File) {
-        timelineHolder.saveTimeLineFilters(file)
+        // todo: move loading to plugin
+        //timelineHolder.saveTimeLineFilters(file)
     }
 
     fun closeSettingsDialog() {
