@@ -7,6 +7,7 @@ import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.logger.Log
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.net.URI
 import java.net.URL
@@ -30,7 +31,7 @@ class PluginManager(
         }
     }
 
-    suspend fun loadPlugins() {
+    suspend fun loadPlugins() = coroutineScope {
         Log.d("Loading plugins")
         val mergedPlugins = mutableListOf<DLTStudioPlugin>()
         mergedPlugins.addAll(predefinedPlugins)
@@ -45,15 +46,19 @@ class PluginManager(
             } catch (e: Exception) {
                 Log.e("Can't create plugin directory: $e")
             }
-            plugin.init(
-                messagesRepository = messagesRepository,
-                onProgressUpdate = onProgressUpdate,
-                pluginFilesPath = pluginDir.absolutePath
-            )
-            if (plugin is FormatterConsumer) {
-                plugin.initFormatter(formatter)
+            try {
+                plugin.init(
+                    messagesRepository = messagesRepository,
+                    onProgressUpdate = onProgressUpdate,
+                    pluginFilesPath = pluginDir.absolutePath
+                )
+                if (plugin is FormatterConsumer) {
+                    plugin.initFormatter(formatter)
+                }
+                plugins.add(plugin)
+            } catch (e: Exception) {
+                Log.e("Failed to load plugin ${e.stackTraceToString()}")
             }
-            plugins.add(plugin)
         }
     }
 
