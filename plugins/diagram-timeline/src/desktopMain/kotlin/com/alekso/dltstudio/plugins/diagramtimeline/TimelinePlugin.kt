@@ -43,7 +43,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         )
 
         this.messagesRepository = messagesRepository
-        viewModel = TimelineViewModel(onProgressUpdate)
+        viewModel = TimelineViewModel(onProgressUpdate, timelineRepository)
     }
 
     override fun initFormatter(formatter: Formatter) {
