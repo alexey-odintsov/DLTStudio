@@ -4,9 +4,9 @@ import androidx.compose.ui.graphics.Color
 import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
-import com.alekso.dltstudio.logs.filtering.FilterCriteria
-import com.alekso.dltstudio.logs.filtering.FilterParameter
-import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterParameter
+import com.alekso.dltstudio.model.contract.filtering.TextCriteria
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
