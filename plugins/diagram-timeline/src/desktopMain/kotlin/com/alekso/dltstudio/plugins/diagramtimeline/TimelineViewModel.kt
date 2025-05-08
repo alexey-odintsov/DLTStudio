@@ -9,6 +9,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 //import com.alekso.dltstudio.db.preferences.PreferencesRepositoryImpl
 //import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimeLineFilterManager
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
@@ -59,6 +60,19 @@ class TimelineViewModel(
     val totalSeconds: Int
         get() = if (timeEnd > 0 && timeStart > 0) ((timeEnd - timeStart) / 1000000).toInt() else 0
 
+    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
+    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
+        get() = _recentTimelineFiltersFiles
+
+
+    init {
+//        viewModelScope.launch {
+//            preferencesRepository.getRecentTimelineFilters().collectLatest {
+//                _recentTimelineFiltersFiles.clear()
+//                _recentTimelineFiltersFiles.addAll(it)
+//            }
+//        }
+    }
 
     fun onAnalyzeClicked(logMessages: SnapshotStateList<LogMessage>) {
         when (_analyzeState.value) {

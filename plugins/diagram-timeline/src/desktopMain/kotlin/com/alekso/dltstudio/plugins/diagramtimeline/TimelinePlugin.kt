@@ -11,11 +11,18 @@ import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.FormatterConsumer
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
+import com.alekso.dltstudio.plugins.diagramtimeline.db.DBFactory
+import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepository
+import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepositoryImpl
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 
 class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     private lateinit var messagesRepository: MessagesRepository
+    private lateinit var timelineRepository: TimelineRepository
     private lateinit var viewModel: TimelineViewModel
     private lateinit var formatter: Formatter
 
@@ -30,6 +37,11 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         onProgressUpdate: (Float) -> Unit,
         pluginFilesPath: String
     ) {
+        timelineRepository = TimelineRepositoryImpl(
+            database = DBFactory().createDatabase("${pluginFilesPath}/timeline.db"),
+            scope = CoroutineScope(Dispatchers.Default + SupervisorJob()),
+        )
+
         this.messagesRepository = messagesRepository
         viewModel = TimelineViewModel(onProgressUpdate)
     }

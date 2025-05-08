@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.db.preferences
+package com.alekso.dltstudio.plugins.diagramtimeline.db
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

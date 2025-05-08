@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import com.alekso.dltstudio.db.preferences.ColumnParamsEntity
 import com.alekso.dltstudio.db.preferences.PreferencesDao
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
-import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.settings.SettingsDao
 import com.alekso.dltstudio.db.settings.SettingsLogsEntity
@@ -17,10 +16,9 @@ import com.alekso.dltstudio.db.settings.SettingsUIEntity
         SettingsLogsEntity::class,
         SearchEntity::class,
         RecentColorFilterFileEntry::class,
-        RecentTimelineFilterFileEntry::class,
         ColumnParamsEntity::class,
     ],
-    version = 7, exportSchema = true,
+    version = 8, exportSchema = true,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getSettingsDao(): SettingsDao

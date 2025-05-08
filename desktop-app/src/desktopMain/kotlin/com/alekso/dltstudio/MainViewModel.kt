@@ -11,7 +11,6 @@ import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
-import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
@@ -283,20 +282,8 @@ class MainViewModel(
             saveColorFilters(file)
         }
 
-        override fun onLoadTimelineFiltersFile(file: File) {
-            loadTimeLineFilters(file)
-        }
-
-        override fun onSaveTimelineFiltersFile(file: File) {
-            saveTimeLineFilters(file)
-        }
-
         override fun onClearColorFilters() {
             clearColorFilters()
-        }
-
-        override fun onClearTimelineFilters() {
-            clearTimeLineFilters()
         }
 
         override fun onSettingsClicked() {
@@ -307,10 +294,6 @@ class MainViewModel(
     private val _recentColorFiltersFiles = mutableStateListOf<RecentColorFilterFileEntry>()
     val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>
         get() = _recentColorFiltersFiles
-
-    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
-    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
-        get() = _recentTimelineFiltersFiles
 
 
     init {
@@ -324,13 +307,6 @@ class MainViewModel(
             preferencesRepository.getRecentColorFilters().collectLatest {
                 _recentColorFiltersFiles.clear()
                 _recentColorFiltersFiles.addAll(it)
-            }
-        }
-
-        viewModelScope.launch {
-            preferencesRepository.getRecentTimelineFilters().collectLatest {
-                _recentTimelineFiltersFiles.clear()
-                _recentTimelineFiltersFiles.addAll(it)
             }
         }
 
@@ -411,21 +387,6 @@ class MainViewModel(
                 )
             )
         }
-    }
-
-    fun loadTimeLineFilters(file: File) {
-        // todo: move loading to plugin
-        //timelineHolder.loadTimeLineFilters(file)
-    }
-
-    fun clearTimeLineFilters() {
-        // todo: move loading to plugin
-        //timelineHolder.clearTimeLineFilters()
-    }
-
-    fun saveTimeLineFilters(file: File) {
-        // todo: move loading to plugin
-        //timelineHolder.saveTimeLineFilters(file)
     }
 
     fun closeSettingsDialog() {
