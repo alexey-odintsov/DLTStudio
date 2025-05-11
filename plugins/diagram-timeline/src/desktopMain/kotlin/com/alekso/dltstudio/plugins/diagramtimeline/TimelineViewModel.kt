@@ -31,6 +31,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
+interface ToolbarCallbacks {
+    fun onTimelineFiltersClicked()
+    fun onLoadFilterClicked()
+    fun onSaveFilterClicked()
+    fun onClearFilterClicked()
+    fun onRecentFilterClicked(path: String)
+
+    object Stub : ToolbarCallbacks {
+        override fun onTimelineFiltersClicked() = Unit
+        override fun onLoadFilterClicked() = Unit
+        override fun onSaveFilterClicked() = Unit
+        override fun onClearFilterClicked() = Unit
+        override fun onRecentFilterClicked(path: String) = Unit
+    }
+}
+
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit,
     private val timelineRepository: TimelineRepository,
@@ -46,6 +62,46 @@ class TimelineViewModel(
     val scaleUpdateCallback: (Float) -> Unit =
         { newScale -> scale.value = if (newScale > 0f) newScale else 1f }
 
+    val filtersDialogState = mutableStateOf(false)
+
+    fun onCloseFiltersDialogClicked() {
+        filtersDialogState.value = false
+    }
+
+    val toolbarCallbacks = object : ToolbarCallbacks {
+        override fun onTimelineFiltersClicked() {
+            filtersDialogState.value = true
+        }
+
+        override fun onLoadFilterClicked() {
+            fileDialogState = FileDialogState(
+                title = "Load filter",
+                visible = true,
+                operation = DialogOperation.OPEN,
+                fileCallback = { loadTimeLineFilters(it[0]) },
+                cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+            )
+        }
+
+        override fun onSaveFilterClicked() {
+            fileDialogState = FileDialogState(
+                title = "Save filter",
+                visible = true,
+                operation = DialogOperation.SAVE,
+                fileCallback = { saveTimeLineFilters(it[0]) },
+                cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+            )
+        }
+
+        override fun onClearFilterClicked() {
+            clearTimeLineFilters()
+        }
+
+        override fun onRecentFilterClicked(path: String) {
+            loadTimeLineFilters(File(path))
+        }
+
+    }
 
     var entriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
     var highlightedKeysMap = mutableStateMapOf<String, String?>()
@@ -201,10 +257,6 @@ class TimelineViewModel(
         }
     }
 
-    fun onRecentFilterClicked(path: String) {
-        loadTimeLineFilters(File(path))
-    }
-
     private fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
         viewModelScope.launch {
@@ -241,23 +293,4 @@ class TimelineViewModel(
         legendSize += diff
     }
 
-    fun onLoadFilterClicked() {
-        fileDialogState = FileDialogState(
-            title = "Load filter",
-            visible = true,
-            operation = DialogOperation.OPEN,
-            fileCallback = { loadTimeLineFilters(it[0]) },
-            cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
-        )
-    }
-
-    fun onSaveFilterClicked() {
-        fileDialogState = FileDialogState(
-            title = "Save filter",
-            visible = true,
-            operation = DialogOperation.SAVE,
-            fileCallback = { saveTimeLineFilters(it[0]) },
-            cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
-        )
-    }
 }

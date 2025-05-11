@@ -45,11 +45,7 @@ fun TimelineToolbar(
     zoomInClick: () -> Unit,
     zoomOutClick: () -> Unit,
     zoomFitClick: () -> Unit,
-    onTimelineFiltersClicked: () -> Unit,
-    onLoadFilterClicked: () -> Unit,
-    onSaveFilterClicked: () -> Unit,
-    onClearFilterClicked: () -> Unit,
-    onRecentFilterClicked: (String) -> Unit,
+    callbacks: ToolbarCallbacks,
     recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
 ) {
 
@@ -59,7 +55,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_color_filters,
                 title = "Timeline filters",
-                onClick = onTimelineFiltersClicked
+                onClick = callbacks::onTimelineFiltersClicked
             )
         }
         Tooltip(text = "Start/Stop timeline analyzing") {
@@ -118,15 +114,15 @@ fun TimelineToolbar(
             )
         }
 
-        CustomButton(onClick = onLoadFilterClicked) {
+        CustomButton(onClick = callbacks::onLoadFilterClicked) {
             Text("Load")
         }
 
-        CustomButton(onClick = onSaveFilterClicked) {
+        CustomButton(onClick = callbacks::onSaveFilterClicked) {
             Text("Save")
         }
 
-        CustomButton(onClick = onClearFilterClicked) {
+        CustomButton(onClick = callbacks::onClearFilterClicked) {
             Text("Clear")
         }
 
@@ -150,7 +146,7 @@ fun TimelineToolbar(
                             selectedIndex = index
                             expanded = false
                             cmd = recentFiltersFiles[index].fileName
-                            onRecentFilterClicked(recentFiltersFiles[index].path)
+                            callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
                         }) {
                             Text(text = s.fileName, maxLines = 1, overflow = TextOverflow.Ellipsis)
                         }

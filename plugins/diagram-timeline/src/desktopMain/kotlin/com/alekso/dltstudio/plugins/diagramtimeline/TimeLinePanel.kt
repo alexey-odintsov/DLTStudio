@@ -86,6 +86,7 @@ fun TimeLinePanel(
     timelineFilters: SnapshotStateList<TimelineFilter>,
     timeStart: Long,
     timeEnd: Long,
+    filtersDialogState: Boolean,
     entriesMap: SnapshotStateMap<String, TimeLineEntries<*>>,
     onAnalyzeClicked: (SnapshotStateList<LogMessage>) -> Unit,
     highlightedKeysMap: SnapshotStateMap<String, String?>,
@@ -94,10 +95,8 @@ fun TimeLinePanel(
     onLegendResized: (Float) -> Unit = { _ -> },
     legendSize: Float,
     recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
-    onLoadFilterClicked: () -> Unit,
-    onSaveFilterClicked: () -> Unit,
-    onClearFilterClicked: () -> Unit,
-    onRecentFilterClicked: (String) -> Unit,
+    toolbarCallbacks: ToolbarCallbacks,
+    onCloseFiltersDialog: () -> Unit,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
@@ -109,7 +108,6 @@ fun TimeLinePanel(
             offsetUpdate(offsetSec + (dragAmount / secSize / scale))
         }
     }
-    val dialogState = remember { mutableStateOf(false) }
 
     Column(modifier = modifier.onKeyEvent { e ->
         if (e.type == KeyEventType.KeyDown) {
@@ -152,18 +150,14 @@ fun TimeLinePanel(
             },
             analyzeState = analyzeState,
             onAnalyzeClick = { onAnalyzeClicked(logMessages) },
-            onTimelineFiltersClicked = { dialogState.value = true },
+            callbacks = toolbarCallbacks,
             recentFiltersFiles = recentFiltersFiles,
-            onLoadFilterClicked = onLoadFilterClicked,
-            onSaveFilterClicked = onSaveFilterClicked,
-            onClearFilterClicked = onClearFilterClicked,
-            onRecentFilterClicked = onRecentFilterClicked,
         )
 
-        if (dialogState.value) {
+        if (filtersDialogState) {
             TimelineFiltersDialog(
-                visible = dialogState.value,
-                onDialogClosed = { dialogState.value = false },
+                visible = filtersDialogState,
+                onDialogClosed = onCloseFiltersDialog,
                 timelineFilters = timelineFilters,
                 callbacks = filtersDialogCallbacks,
             )
@@ -399,9 +393,8 @@ fun PreviewTimeline() {
         retrieveEntriesForFilter = { i -> TimeLineStateEntries() },
         legendSize = 250f,
         recentFiltersFiles = mutableStateListOf(),
-        onLoadFilterClicked = {},
-        onSaveFilterClicked = {},
-        onClearFilterClicked = {},
-        onRecentFilterClicked = {},
+        toolbarCallbacks = ToolbarCallbacks.Stub,
+        filtersDialogState = false,
+        onCloseFiltersDialog = {},
     )
 }
