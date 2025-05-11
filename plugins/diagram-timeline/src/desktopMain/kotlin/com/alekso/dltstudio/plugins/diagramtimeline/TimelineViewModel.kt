@@ -78,8 +78,11 @@ class TimelineViewModel(
                 title = "Load filter",
                 visible = true,
                 operation = DialogOperation.OPEN,
-                fileCallback = { loadTimeLineFilters(it[0]) },
-                cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+                fileCallback = {
+                    closeFileDialog()
+                    loadTimeLineFilters(it[0])
+                },
+                cancelCallback = ::closeFileDialog
             )
         }
 
@@ -88,8 +91,11 @@ class TimelineViewModel(
                 title = "Save filter",
                 visible = true,
                 operation = DialogOperation.SAVE,
-                fileCallback = { saveTimeLineFilters(it[0]) },
-                cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+                fileCallback = {
+                    closeFileDialog()
+                    saveTimeLineFilters(it[0])
+                },
+                cancelCallback = ::closeFileDialog
             )
         }
 
