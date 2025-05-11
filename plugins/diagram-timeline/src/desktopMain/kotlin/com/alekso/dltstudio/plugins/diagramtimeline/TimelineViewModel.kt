@@ -15,6 +15,8 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.predefinedTimelineFilters
+import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
@@ -174,7 +176,20 @@ class TimelineViewModel(
         }
     }
 
-    fun saveTimeLineFilters(file: File) {
+    var fileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Save filter",
+            operation = DialogOperation.SAVE,
+            fileCallback = { saveTimeLineFilters(it[0]) },
+            cancelCallback = ::closeFileDialog
+        )
+    )
+
+    private fun closeFileDialog() {
+        fileDialogState = fileDialogState.copy(visible = false)
+    }
+
+    private fun saveTimeLineFilters(file: File) {
         viewModelScope.launch {
             TimeLineFilterManager().saveToFile(timelineFilters, file)
             timelineRepository.addNewRecentTimelineFilter(
@@ -186,7 +201,11 @@ class TimelineViewModel(
         }
     }
 
-    fun loadTimeLineFilters(file: File) {
+    fun onRecentFilterClicked(path: String) {
+        loadTimeLineFilters(File(path))
+    }
+
+    private fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
         viewModelScope.launch {
             TimeLineFilterManager().loadFromFile(file)?.let {
@@ -220,5 +239,25 @@ class TimelineViewModel(
 
     fun onLegendResized(diff: Float) {
         legendSize += diff
+    }
+
+    fun onLoadFilterClicked() {
+        fileDialogState = FileDialogState(
+            title = "Load filter",
+            visible = true,
+            operation = DialogOperation.OPEN,
+            fileCallback = { loadTimeLineFilters(it[0]) },
+            cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+        )
+    }
+
+    fun onSaveFilterClicked() {
+        fileDialogState = FileDialogState(
+            title = "Save filter",
+            visible = true,
+            operation = DialogOperation.SAVE,
+            fileCallback = { saveTimeLineFilters(it[0]) },
+            cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+        )
     }
 }

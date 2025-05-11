@@ -53,7 +53,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialog
@@ -64,7 +66,6 @@ import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineMinMaxValueVie
 import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelinePercentageView
 import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineSingleStateView
 import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineStateView
-import com.alekso.dltmessage.SampleData
 import java.awt.Cursor
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
@@ -92,6 +93,11 @@ fun TimeLinePanel(
     retrieveEntriesForFilter: (filter: TimelineFilter) -> TimeLineEntries<*>?,
     onLegendResized: (Float) -> Unit = { _ -> },
     legendSize: Float,
+    recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
+    onLoadFilterClicked: () -> Unit,
+    onSaveFilterClicked: () -> Unit,
+    onClearFilterClicked: () -> Unit,
+    onRecentFilterClicked: (String) -> Unit,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
@@ -147,6 +153,11 @@ fun TimeLinePanel(
             analyzeState = analyzeState,
             onAnalyzeClick = { onAnalyzeClicked(logMessages) },
             onTimelineFiltersClicked = { dialogState.value = true },
+            recentFiltersFiles = recentFiltersFiles,
+            onLoadFilterClicked = onLoadFilterClicked,
+            onSaveFilterClicked = onSaveFilterClicked,
+            onClearFilterClicked = onClearFilterClicked,
+            onRecentFilterClicked = onRecentFilterClicked,
         )
 
         if (dialogState.value) {
@@ -387,5 +398,10 @@ fun PreviewTimeline() {
         filtersDialogCallbacks = callbacks,
         retrieveEntriesForFilter = { i -> TimeLineStateEntries() },
         legendSize = 250f,
+        recentFiltersFiles = mutableStateListOf(),
+        onLoadFilterClicked = {},
+        onSaveFilterClicked = {},
+        onClearFilterClicked = {},
+        onRecentFilterClicked = {},
     )
 }

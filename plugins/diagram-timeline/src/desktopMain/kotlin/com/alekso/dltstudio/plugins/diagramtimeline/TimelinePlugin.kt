@@ -14,6 +14,7 @@ import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.diagramtimeline.db.DBFactory
 import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepositoryImpl
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -60,6 +61,8 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         val analyzeState by viewModel.analyzeState.collectAsState()
 
         CompositionLocalProvider(LocalFormatter provides formatter) {
+            FileDialog(viewModel.fileDialogState)
+
             TimeLinePanel(
                 modifier = modifier,
                 logMessages = messagesRepository.getMessages(),
@@ -79,6 +82,11 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 filtersDialogCallbacks = viewModel.timelineFiltersDialogCallbacks,
                 retrieveEntriesForFilter = viewModel::retrieveEntriesForFilter,
                 onLegendResized = viewModel::onLegendResized,
+                recentFiltersFiles = viewModel.recentTimelineFiltersFiles,
+                onLoadFilterClicked = viewModel::onLoadFilterClicked,
+                onSaveFilterClicked = viewModel::onSaveFilterClicked,
+                onClearFilterClicked = viewModel::clearTimeLineFilters,
+                onRecentFilterClicked = viewModel::onRecentFilterClicked,
             )
         }
     }
