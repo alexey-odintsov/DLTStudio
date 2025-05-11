@@ -177,8 +177,13 @@ class DLTParserV2() : DLTParser {
                 if (extendedHeader != null) {
                     val payloadSize =
                         standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
-                    i += payloadSize
-                    payload = parseBinaryPayload(stream, payloadSize)
+                    if (payloadSize <= 0) {
+                        Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
+                        i += 1
+                    } else {
+                        i += payloadSize
+                        payload = parseBinaryPayload(stream, payloadSize)
+                    }
                 }
                 BinaryDLTMessage(
                     timeStampUs = timeStampUs,
