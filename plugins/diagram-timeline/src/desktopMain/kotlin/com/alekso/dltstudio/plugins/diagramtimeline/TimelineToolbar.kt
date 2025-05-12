@@ -55,6 +55,7 @@ fun TimelineToolbar(
     zoomFitClick: () -> Unit,
     callbacks: ToolbarCallbacks,
     recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
+    currentFilterFile: RecentTimelineFilterFileEntry?,
 ) {
 
     Row(
@@ -144,7 +145,7 @@ fun TimelineToolbar(
             var selectedIndex by remember { mutableStateOf(0) }
             Box {
                 Text(
-                    recentFiltersFiles[selectedIndex].fileName,
+                    currentFilterFile?.fileName ?: "Not selected",
                     modifier = Modifier.padding(horizontal = 4.dp)
                         .clickable(onClick = { expanded = true })
                 )
@@ -176,13 +177,17 @@ fun PreviewTimelineToolbar() {
         TimelineToolbar(
             analyzeState = AnalyzeState.ANALYZING,
             callbacks = ToolbarCallbacks.Stub,
-            recentFiltersFiles = mutableStateListOf(),
+            recentFiltersFiles = mutableStateListOf(
+                RecentTimelineFilterFileEntry("timeline-filter.txt", "/path/to/file/"),
+                RecentTimelineFilterFileEntry("timeline-filter2.txt", "/path/to/file/"),
+                ),
             zoomFitClick = {},
             zoomOutClick = {},
             zoomInClick = {},
             onAnalyzeClick = {},
             leftClick = {},
             rightClick = {},
+            currentFilterFile = null
         )
         Divider()
     }

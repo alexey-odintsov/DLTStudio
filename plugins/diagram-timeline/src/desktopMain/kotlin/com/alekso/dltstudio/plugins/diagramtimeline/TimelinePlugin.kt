@@ -83,6 +83,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 onAnalyzeClicked = viewModel::onAnalyzeClicked,
                 filtersDialogCallbacks = viewModel.timelineFiltersDialogCallbacks,
                 retrieveEntriesForFilter = viewModel::retrieveEntriesForFilter,
+                currentFilterFile = viewModel.currentFilterFile.value,
                 onLegendResized = viewModel::onLegendResized,
                 recentFiltersFiles = viewModel.recentTimelineFiltersFiles,
                 toolbarCallbacks = viewModel.toolbarCallbacks,

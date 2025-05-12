@@ -95,6 +95,7 @@ fun TimeLinePanel(
     onLegendResized: (Float) -> Unit = { _ -> },
     legendSize: Float,
     recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
+    currentFilterFile: RecentTimelineFilterFileEntry?,
     toolbarCallbacks: ToolbarCallbacks,
     onCloseFiltersDialog: () -> Unit,
 ) {
@@ -152,6 +153,7 @@ fun TimeLinePanel(
             onAnalyzeClick = { onAnalyzeClicked(logMessages) },
             callbacks = toolbarCallbacks,
             recentFiltersFiles = recentFiltersFiles,
+            currentFilterFile = currentFilterFile,
         )
 
         if (filtersDialogState) {
@@ -396,5 +398,6 @@ fun PreviewTimeline() {
         toolbarCallbacks = ToolbarCallbacks.Stub,
         filtersDialogState = false,
         onCloseFiltersDialog = {},
+        currentFilterFile = null,
     )
 }

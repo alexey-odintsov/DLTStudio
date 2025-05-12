@@ -263,18 +263,17 @@ class TimelineViewModel(
         }
     }
 
+    val currentFilterFile = mutableStateOf<RecentTimelineFilterFileEntry?>(null)
+
     private fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
         viewModelScope.launch {
             TimeLineFilterManager().loadFromFile(file)?.let {
                 timelineFilters.addAll(it)
             }
-            timelineRepository.addNewRecentTimelineFilter(
-                RecentTimelineFilterFileEntry(
-                    file.name,
-                    file.absolutePath
-                )
-            )
+            val fileEntry = RecentTimelineFilterFileEntry(file.name, file.absolutePath)
+            timelineRepository.addNewRecentTimelineFilter(fileEntry)
+            currentFilterFile.value = fileEntry
         }
     }
 
