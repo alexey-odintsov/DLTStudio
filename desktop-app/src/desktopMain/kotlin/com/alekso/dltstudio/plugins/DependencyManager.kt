@@ -13,7 +13,6 @@ import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.manager.PluginManager
-import com.alekso.dltstudio.timeline.TimelineViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -62,17 +61,9 @@ object DependencyManager {
         )
     }
 
-    private val timelineViewModel by lazy {
-        TimelineViewModel(
-            onProgressChanged = onProgressUpdate,
-            preferencesRepository = preferencesRepository,
-        )
-    }
-
     private val mainViewModel = MainViewModel(
         dltParser = DLTParserV2(),
         messagesRepository = messagesRepository,
-        timelineHolder = provideTimelineViewModel(),
         pluginManager = providePluginsManager(),
         settingsRepository = settingsRepository,
         preferencesRepository = preferencesRepository,
@@ -86,10 +77,6 @@ object DependencyManager {
 
     fun provideMainViewModel(): MainViewModel {
         return mainViewModel
-    }
-
-    fun provideTimelineViewModel(): TimelineViewModel {
-        return timelineViewModel
     }
 
     fun providePluginsManager(): PluginManager {

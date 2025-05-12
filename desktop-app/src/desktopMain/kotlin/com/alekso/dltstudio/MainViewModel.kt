@@ -11,7 +11,6 @@ import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
-import com.alekso.dltstudio.db.preferences.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
@@ -21,9 +20,9 @@ import com.alekso.dltstudio.logs.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
-import com.alekso.dltstudio.logs.filtering.FilterCriteria
-import com.alekso.dltstudio.logs.filtering.FilterParameter
-import com.alekso.dltstudio.logs.filtering.checkTextCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterParameter
+import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
@@ -38,14 +37,12 @@ import com.alekso.dltstudio.model.toSettingsLogsEntity
 import com.alekso.dltstudio.model.toSettingsUI
 import com.alekso.dltstudio.model.toSettingsUIEntity
 import com.alekso.dltstudio.plugins.DependencyManager
-import com.alekso.dltstudio.plugins.TimelineHolder
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
-import com.alekso.dltstudio.timeline.TimelinePlugin
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -83,7 +80,6 @@ data class LogSelection(
 class MainViewModel(
     private val dltParser: DLTParser,
     private val messagesRepository: MessagesRepository,
-    private val timelineHolder: TimelineHolder, // We need it to pass Menu callbacks
     private val pluginManager: PluginManager,
     private val settingsRepository: SettingsRepositoryImpl,
     private val preferencesRepository: PreferencesRepository,
@@ -286,20 +282,8 @@ class MainViewModel(
             saveColorFilters(file)
         }
 
-        override fun onLoadTimelineFiltersFile(file: File) {
-            loadTimeLineFilters(file)
-        }
-
-        override fun onSaveTimelineFiltersFile(file: File) {
-            saveTimeLineFilters(file)
-        }
-
         override fun onClearColorFilters() {
             clearColorFilters()
-        }
-
-        override fun onClearTimelineFilters() {
-            clearTimeLineFilters()
         }
 
         override fun onSettingsClicked() {
@@ -311,34 +295,18 @@ class MainViewModel(
     val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>
         get() = _recentColorFiltersFiles
 
-    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
-    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
-        get() = _recentTimelineFiltersFiles
-
 
     init {
         val logsPlugin = LogsPlugin(
             viewModel = this,
             messagesRepository = DependencyManager.provideMessageRepository(),
         )
-        val timelinePlugin = TimelinePlugin(
-            viewModel = DependencyManager.provideTimelineViewModel(),
-            messagesRepository = DependencyManager.provideMessageRepository(),
-        )
         panels.add(logsPlugin)
-        panels.add(timelinePlugin)
 
         viewModelScope.launch {
             preferencesRepository.getRecentColorFilters().collectLatest {
                 _recentColorFiltersFiles.clear()
                 _recentColorFiltersFiles.addAll(it)
-            }
-        }
-
-        viewModelScope.launch {
-            preferencesRepository.getRecentTimelineFilters().collectLatest {
-                _recentTimelineFiltersFiles.clear()
-                _recentTimelineFiltersFiles.addAll(it)
             }
         }
 
@@ -419,18 +387,6 @@ class MainViewModel(
                 )
             )
         }
-    }
-
-    fun loadTimeLineFilters(file: File) {
-        timelineHolder.loadTimeLineFilters(file)
-    }
-
-    fun clearTimeLineFilters() {
-        timelineHolder.clearTimeLineFilters()
-    }
-
-    fun saveTimeLineFilters(file: File) {
-        timelineHolder.saveTimeLineFilters(file)
     }
 
     fun closeSettingsDialog() {

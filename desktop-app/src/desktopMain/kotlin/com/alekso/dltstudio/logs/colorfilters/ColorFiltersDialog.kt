@@ -21,9 +21,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.logs.CellStyle
-import com.alekso.dltstudio.logs.filtering.FilterCriteria
-import com.alekso.dltstudio.logs.filtering.FilterParameter
-import com.alekso.dltstudio.logs.filtering.TextCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterParameter
+import com.alekso.dltstudio.model.contract.filtering.TextCriteria
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
 import com.alekso.dltstudio.uicomponents.ImageButton

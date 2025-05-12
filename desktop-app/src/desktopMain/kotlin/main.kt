@@ -55,7 +55,6 @@ fun main() = application {
                 MainMenu(
                     mainViewModel.mainMenuCallbacks,
                     mainViewModel.recentColorFiltersFiles,
-                    mainViewModel.recentTimelineFiltersFiles,
                 )
                 MainWindow(mainViewModel)
             }
