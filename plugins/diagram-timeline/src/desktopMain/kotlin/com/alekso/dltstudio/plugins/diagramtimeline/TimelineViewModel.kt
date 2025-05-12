@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -263,7 +264,8 @@ class TimelineViewModel(
         }
     }
 
-    val currentFilterFile = mutableStateOf<RecentTimelineFilterFileEntry?>(null)
+    private val _currentFilterFile = mutableStateOf<RecentTimelineFilterFileEntry?>(null)
+    val currentFilterFile: State<RecentTimelineFilterFileEntry?> = _currentFilterFile
 
     private fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
@@ -273,12 +275,12 @@ class TimelineViewModel(
             }
             val fileEntry = RecentTimelineFilterFileEntry(file.name, file.absolutePath)
             timelineRepository.addNewRecentTimelineFilter(fileEntry)
-            currentFilterFile.value = fileEntry
+            _currentFilterFile.value = fileEntry
         }
     }
 
-    fun clearTimeLineFilters() {
-        currentFilterFile.value = null
+    private fun clearTimeLineFilters() {
+        _currentFilterFile.value = null
         timelineFilters.clear()
     }
 

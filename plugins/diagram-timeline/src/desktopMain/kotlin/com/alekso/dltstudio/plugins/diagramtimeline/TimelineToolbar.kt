@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
@@ -63,17 +63,9 @@ fun TimelineToolbar(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Tooltip(text = "Manage timeline filters") {
-            ImageButton(
-                modifier = Modifier.size(32.dp),
-                icon = Res.drawable.icon_color_filters,
-                title = "Timeline filters",
-                onClick = callbacks::onTimelineFiltersClicked
-            )
-        }
         Tooltip(text = "Start/Stop timeline analyzing") {
             ImageButton(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier.padding(start = 8.dp).size(32.dp),
                 icon = if (analyzeState == AnalyzeState.IDLE) {
                     Res.drawable.icon_run
                 } else {
@@ -127,25 +119,22 @@ fun TimelineToolbar(
             )
         }
 
-        CustomButton(onClick = callbacks::onLoadFilterClicked) {
-            Text("Load")
-        }
-
-        CustomButton(onClick = callbacks::onSaveFilterClicked) {
-            Text("Save")
-        }
-
-        CustomButton(onClick = callbacks::onClearFilterClicked) {
-            Text("Clear")
+        HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp))
+        Tooltip(text = "Manage timeline filters") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_color_filters,
+                title = "Timeline filters",
+                onClick = callbacks::onTimelineFiltersClicked
+            )
         }
 
         if (recentFiltersFiles.isNotEmpty()) {
-            var cmd by rememberSaveable { mutableStateOf("adb devices") }
             var expanded by remember { mutableStateOf(false) }
             var selectedIndex by remember { mutableStateOf(0) }
             Box {
                 Text(
-                    currentFilterFile?.fileName ?: "Not selected",
+                    currentFilterFile?.fileName ?: "No filters file selected",
                     modifier = Modifier.padding(horizontal = 4.dp)
                         .clickable(onClick = { expanded = true })
                 )
@@ -158,7 +147,6 @@ fun TimelineToolbar(
                         DropdownMenuItem(onClick = {
                             selectedIndex = index
                             expanded = false
-                            cmd = recentFiltersFiles[index].fileName
                             callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
                         }) {
                             Text(text = s.fileName, maxLines = 1, overflow = TextOverflow.Ellipsis)
@@ -166,6 +154,27 @@ fun TimelineToolbar(
                     }
                 }
             }
+        }
+
+        CustomButton(
+            modifier = Modifier.heightIn(max = 24.dp),
+            onClick = callbacks::onLoadFilterClicked
+        ) {
+            Text("Load")
+        }
+
+        CustomButton(
+            modifier = Modifier.heightIn(max = 24.dp),
+            onClick = callbacks::onSaveFilterClicked
+        ) {
+            Text("Save")
+        }
+
+        CustomButton(
+            modifier = Modifier.heightIn(max = 24.dp),
+            onClick = callbacks::onClearFilterClicked
+        ) {
+            Text("Clear")
         }
     }
 }
