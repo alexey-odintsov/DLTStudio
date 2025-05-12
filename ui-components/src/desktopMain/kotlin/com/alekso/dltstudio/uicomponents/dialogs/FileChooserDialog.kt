@@ -21,6 +21,7 @@ data class FileChooserDialogState(
     }
 }
 
+@Deprecated("Use FileDialog instead")
 @Composable
 fun FileChooserDialog(
     title: String,
