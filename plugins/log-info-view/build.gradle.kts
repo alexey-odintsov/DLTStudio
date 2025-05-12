@@ -21,6 +21,8 @@ kotlin {
             implementation(project(":plugins:contract"))
             implementation(project(":data-utils"))
             implementation(project(":dlt-message"))
+            implementation(project(":resources"))
+            implementation(compose.components.resources)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
