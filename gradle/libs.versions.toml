@@ -1,9 +1,9 @@
 [versions]
-compose-plugin = "1.7.1" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
+compose-plugin = "1.8.0" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
 junit = "4.13.2"
 kotlin = "2.0.0"
 coroutines = "1.8.1"
-androidx-room = "2.7.0-alpha05"
+androidx-room = "2.7.0"
 sqlite = "2.5.0-SNAPSHOT"
 ksp = "2.0.0-1.0.23"
 
@@ -12,6 +12,7 @@ kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotl
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 compose-splitpane = { group = "org.jetbrains.compose.components", name = "components-splitpane-desktop", version.ref = "compose-plugin" }
+material-icons = { group = "org.jetbrains.compose.material", name = "material-icons-core", version = "1.7.3" }
 #kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlin-serializaion = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.3" }

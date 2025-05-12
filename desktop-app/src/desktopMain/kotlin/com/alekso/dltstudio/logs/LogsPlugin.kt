@@ -1,30 +1,37 @@
 package com.alekso.dltstudio.logs
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.MainViewModel
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialog
-import com.alekso.dltstudio.logs.infopanel.VirtualDevicesDialog
-import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
+import dltstudio.resources.Res
+import dltstudio.resources.icon_upload
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 
 
 class LogsPlugin(
-    private val viewModel: LogsViewModel,
+    private val viewModel: MainViewModel,
+    private val messagesRepository: MessagesRepository,
 ) : PluginPanel {
     override fun getPanelName(): String = "Logs"
 
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
     override fun renderPanel(modifier: Modifier) {
-        println("Recompose LogsPlugin.renderPanel")
-
-        val clipboardManager = LocalClipboardManager.current
-
         if (viewModel.colorFiltersDialogState.value) {
             ColorFiltersDialog(
                 visible = viewModel.colorFiltersDialogState.value,
@@ -33,15 +40,7 @@ class LogsPlugin(
                 callbacks = viewModel.colorFiltersDialogCallbacks,
             )
         }
-        if (viewModel.devicePreviewsDialogState.value) {
-            VirtualDevicesDialog(
-                visible = viewModel.devicePreviewsDialogState.value,
-                onDialogClosed = { viewModel.devicePreviewsDialogState.value = false },
-                virtualDevices = viewModel.virtualDevices,
-                onVirtualDeviceUpdate = { device -> viewModel.onVirtualDeviceUpdate(device) },
-                onVirtualDeviceDelete = { device -> viewModel.onVirtualDeviceDelete(device) },
-            )
-        }
+
         if (viewModel.removeLogsDialogState.value.visible) {
             RemoveLogsDialog(
                 visible = viewModel.removeLogsDialogState.value.visible,
@@ -52,62 +51,56 @@ class LogsPlugin(
                 onFilterClicked = { f -> viewModel.removeMessagesByFilters(f) },
             )
         }
-        val searchState by viewModel.searchState.collectAsState()
 
-        LogsPanel(
-            modifier = modifier,
-            columnParams = viewModel.columnParams,
-            logMessages = viewModel.logMessages,
-            searchState = searchState,
-            searchAutoComplete = viewModel.searchAutocomplete,
-            logInsights = viewModel.logInsights,
-            virtualDevices = viewModel.virtualDevices,
-            searchResult = viewModel.searchResults,
-            searchIndexes = viewModel.searchIndexes,
-            colorFilters = viewModel.colorFilters,
-            logsToolbarState = viewModel.logsToolbarState,
-            logsToolbarCallbacks = viewModel.logsToolbarCallbacks,
-            vSplitterState = viewModel.vSplitterState,
-            hSplitterState = viewModel.hSplitterState,
-            logsListState = viewModel.logsListState,
-            logsListSelectedRow = viewModel.logsListSelectedRow.value,
-            searchListSelectedRow = viewModel.searchListSelectedRow.value,
-            searchListState = viewModel.searchListState,
-            onLogsRowSelected = { i, r ->
-                viewModel.onLogsRowSelected(i, r)
-            },
-            onSearchRowSelected = { i, r ->
-                viewModel.onSearchRowSelected(i, r)
-            },
-            onCommentUpdated = { logMessage, comment ->
-                viewModel.updateComment(
-                    logMessage, comment
+        if (messagesRepository.getMessages().isEmpty()) {
+            NoLogsStub()
+        } else {
+            LogsPanel(
+                modifier = modifier,
+                previewPanels = viewModel.previewPanels,
+                columnParams = viewModel.columnParams,
+                logMessages = messagesRepository.getMessages(),
+                searchState = viewModel.searchState.value,
+                searchAutoComplete = viewModel.searchAutocomplete,
+                searchResult = messagesRepository.getSearchResults(),
+                colorFilters = viewModel.colorFilters,
+                logsToolbarState = viewModel.logsToolbarState,
+                logsToolbarCallbacks = viewModel.logsToolbarCallbacks,
+                vSplitterState = viewModel.vSplitterState,
+                hSplitterState = viewModel.hSplitterState,
+                logsListState = viewModel.logsListState,
+                logSelection = viewModel.logSelection,
+                selectedMessage = messagesRepository.getSelectedMessage().value,
+                searchListState = viewModel.searchListState,
+                onLogsRowSelected = { i, r ->
+                    viewModel.onLogsRowSelected(i, r)
+                },
+                onSearchRowSelected = { i, r ->
+                    viewModel.onSearchRowSelected(i, r)
+                },
+                rowContextMenuCallbacks = viewModel.rowContextMenuCallbacks,
+                columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
+                onColumnResized = viewModel::onColumnResized,
+            )
+        }
+    }
+
+    @Composable
+    private fun NoLogsStub() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painterResource(Res.drawable.icon_upload),
+                    contentDescription = "Drag and Drop log file(s) here",
+                    modifier = Modifier.padding(6.dp).size(60.dp),
+                    colorFilter = ColorFilter.tint(Color.Gray),
                 )
-            },
-            rowContextMenuCallbacks = object : RowContextMenuCallbacks {
-                override fun onCopyClicked(text: AnnotatedString) {
-                    clipboardManager.setText(text)
-                }
-
-                override fun onMarkClicked(i: Int, message: LogMessage) {
-                    viewModel.markMessage(i, message)
-                }
-
-                override fun onRemoveClicked(
-                    context: LogRemoveContext, filter: String
-                ) {
-                    viewModel.removeMessages(context, filter)
-                }
-
-                override fun onRemoveDialogClicked(message: LogMessage) {
-                    viewModel.removeLogsDialogState.value = RemoveLogsDialogState(true, message)
-                }
-            },
-            columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
-            onShowVirtualDeviceClicked = {
-                viewModel.devicePreviewsDialogState.value = true
-            },
-            onColumnResized = viewModel::onColumnResized,
-        )
+                Text(text = "No logs are currently loaded.")
+                Text("To begin, drag and drop your log file(s) into this window or use menu File - Open.")
+            }
+        }
     }
 }

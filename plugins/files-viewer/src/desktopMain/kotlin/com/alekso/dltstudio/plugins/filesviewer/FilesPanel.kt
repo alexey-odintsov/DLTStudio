@@ -101,7 +101,7 @@ fun FilesPanel(
                     }
                     itemsIndexed(
                         items = files,
-                        key = { _, key -> key },
+                        key = { _, key -> key.serialNumber },
                         contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
                         FileItem(
                             Modifier.combinedClickable(

@@ -3,9 +3,11 @@ package com.alekso.dltstudio.plugins.manager
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.FormatterConsumer
-import com.alekso.dltstudio.plugins.contract.MessagesProvider
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
+import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.logger.Log
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.net.URI
 import java.net.URL
@@ -17,7 +19,7 @@ import java.util.jar.JarFile
 class PluginManager(
     val pluginsPath: String,
     private val formatter: Formatter,
-    private val messagesProvider: MessagesProvider,
+    private val messagesRepository: MessagesRepository,
     private val onProgressUpdate: (Float) -> Unit
 ) {
     private val predefinedPlugins = mutableListOf<DLTStudioPlugin>()
@@ -29,20 +31,34 @@ class PluginManager(
         }
     }
 
-    suspend fun loadPlugins() {
+    suspend fun loadPlugins() = coroutineScope {
+        Log.d("Loading plugins")
         val mergedPlugins = mutableListOf<DLTStudioPlugin>()
         mergedPlugins.addAll(predefinedPlugins)
         mergedPlugins.addAll(loadJarPlugins())
 
         mergedPlugins.forEach { plugin ->
-            plugin.init(
-                logs = messagesProvider.getMessages(),
-                onProgressUpdate = onProgressUpdate,
-            )
-            if (plugin is FormatterConsumer) {
-                plugin.initFormatter(formatter)
+            val pluginDir = File("$pluginsPath/files/${plugin.pluginDirectoryName()}")
+            try {
+                if (!pluginDir.exists()) {
+                    pluginDir.mkdirs()
+                }
+            } catch (e: Exception) {
+                Log.e("Can't create plugin directory: $e")
             }
-            plugins.add(plugin)
+            try {
+                plugin.init(
+                    messagesRepository = messagesRepository,
+                    onProgressUpdate = onProgressUpdate,
+                    pluginFilesPath = pluginDir.absolutePath
+                )
+                if (plugin is FormatterConsumer) {
+                    plugin.initFormatter(formatter)
+                }
+                plugins.add(plugin)
+            } catch (e: Exception) {
+                Log.e("Failed to load plugin ${e.stackTraceToString()}")
+            }
         }
     }
 
@@ -114,10 +130,13 @@ class PluginManager(
         return plugins.filter { it is PluginPanel }.map { it as PluginPanel }
     }
 
-    fun notifyLogsChanged() {
+    fun getPluginLogPreviews(): List<PluginLogPreview> {
+        return plugins.filter { it is PluginLogPreview }.map { it as PluginLogPreview }
+    }
+
+    suspend fun notifyLogsChanged() {
         plugins.forEach { plugin ->
             plugin.onLogsChanged()
         }
     }
-
 }

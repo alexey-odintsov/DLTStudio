@@ -19,11 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
@@ -37,7 +40,6 @@ fun LazyScrollable(
     modifier: Modifier,
     columnParams: SnapshotStateList<ColumnParams>,
     logMessages: SnapshotStateList<LogMessage>,
-    indexes: SnapshotStateList<Int>? = null,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
     onRowSelected: (Int, Int) -> Unit,
@@ -56,9 +58,29 @@ fun LazyScrollable(
         } else {
             Modifier.horizontalScroll(horizontalState).width(3000.dp)
         }
+        val focusManager = LocalFocusManager.current
 
         Box(modifier = Modifier.weight(1f)) {
-            LazyColumn(columnModifier, listState) {
+            LazyColumn(
+                columnModifier
+                    .onKeyEvent(onKeyEvent = { e ->
+                        if (e.type == KeyEventType.KeyDown) {
+                            return@onKeyEvent when (e.key) {
+                                Key.S, Key.DirectionDown -> {
+                                    focusManager.moveFocus(FocusDirection.Down)
+                                    true
+                                }
+                                Key.W, Key.DirectionUp -> {
+                                    focusManager.moveFocus(FocusDirection.Up)
+                                    true
+                                }
+                                else -> false
+                            }
+                        }
+                        false
+                    }),
+                listState
+            ) {
                 stickyHeader {
                     ColumnsContextMenu(
                         columnParams,
@@ -92,7 +114,7 @@ fun LazyScrollable(
                     val cellStyle =
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
-                    val index: Int = if (indexes != null) indexes[i] else i
+                    val index: Int = logMessage.num
                     val sTime: String =
                         LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
                     val sTimeOffset: String =
@@ -113,23 +135,28 @@ fun LazyScrollable(
                         rowContextMenuCallbacks = rowContextMenuCallbacks,
                     ) {
                         LogRow(
-                            modifier = Modifier.selectable(
-                                selected = i == selectedRow,
-                                onClick = { onRowSelected(i, index) }
-                            ).onKeyEvent { e ->
-                                if (e.type == KeyEventType.KeyDown) {
-                                    when (e.key) {
-                                        Key.Spacebar -> {
-                                            rowContextMenuCallbacks.onMarkClicked(i, logMessage)
-                                            true
-                                        }
-
-                                        else -> {
-                                            false
-                                        }
+                            modifier = Modifier
+                                .onFocusChanged { state ->
+                                    if (state.isFocused) {
+                                        onRowSelected(i, logMessage.num)
                                     }
-                                } else false
-                            },
+                                }
+                                .selectable(
+                                    selected = i == selectedRow,
+                                    onClick = { onRowSelected(i, logMessage.num) }
+                                )
+                                .onKeyEvent { e ->
+                                    if (e.type == KeyEventType.KeyDown) {
+                                        when (e.key) {
+                                            Key.Spacebar -> {
+                                                rowContextMenuCallbacks.onMarkClicked(i, logMessage)
+                                                true
+                                            }
+
+                                            else -> false
+                                        }
+                                    } else false
+                                },
                             columnParams = columnParams,
                             isSelected = (i == selectedRow),
                             index.toString(),

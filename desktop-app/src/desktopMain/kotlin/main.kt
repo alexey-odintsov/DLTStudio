@@ -56,7 +56,6 @@ fun main() = application {
                 AppMenu(
                     mainViewModel.menuItems,
                     mainViewModel.recentColorFiltersFiles,
-                    mainViewModel.recentTimelineFiltersFiles,
                 )
                 FileDialog(mainViewModel.fileDialogState)
                 MainWindow(mainViewModel)

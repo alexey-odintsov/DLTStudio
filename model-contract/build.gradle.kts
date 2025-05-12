@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    kotlin("plugin.serialization") version libs.versions.kotlin
 }
 
 kotlin {
@@ -9,6 +10,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":dlt-message"))
             implementation(libs.kotlin.datetime)
+            implementation(libs.kotlin.serializaion)
         }
     }
 }

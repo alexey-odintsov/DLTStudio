@@ -6,7 +6,14 @@ import java.util.concurrent.atomic.AtomicInteger
 
 data class LogMessage(
     val dltMessage: DLTMessage,
-    val key: String = "${counter.getAndIncrement()}",
+    /**
+     * Message number. Unique per session.
+     */
+    val num: Int = counter.getAndIncrement(),
+    /**
+     * Unique persistent key to identify message between sessions.
+     */
+    val key: String = "$num",
     val marked: Boolean = false,
     val comment: String? = null,
 ) {
@@ -22,6 +29,10 @@ data class LogMessage(
     companion object {
         @Volatile
         var counter = AtomicInteger(0)
+
+        fun resetCounter() {
+            counter.set(0)
+        }
 
         fun getMessageTypeIndicatorSymbol(messageTypeInfo: MessageTypeInfo?): Char {
             return when (messageTypeInfo) {
