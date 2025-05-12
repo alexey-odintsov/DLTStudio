@@ -52,12 +52,11 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     }
 
     override fun onLogsChanged() {
-        // viewModel.clearState() //todo: Clear state
+        viewModel.cleanup()
     }
 
     @Composable
     override fun renderPanel(modifier: Modifier) {
-        println("Recompose TimelinePlugin.renderPanel")
         val analyzeState by viewModel.analyzeState.collectAsState()
 
         CompositionLocalProvider(LocalFormatter provides formatter) {

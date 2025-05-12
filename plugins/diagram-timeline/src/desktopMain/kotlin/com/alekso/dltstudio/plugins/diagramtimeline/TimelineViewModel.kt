@@ -150,7 +150,7 @@ class TimelineViewModel(
         _analyzeState.value = AnalyzeState.IDLE
     }
 
-    private fun cleanup() {
+    fun cleanup() {
         timeStart = Long.MAX_VALUE
         timeEnd = Long.MIN_VALUE
         entriesMap.clear()
