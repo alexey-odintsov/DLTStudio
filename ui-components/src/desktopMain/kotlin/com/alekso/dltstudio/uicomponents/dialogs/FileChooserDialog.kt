@@ -7,7 +7,7 @@ import javax.swing.JFileChooser
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
 
-
+@Deprecated("Use FileDialogState instead")
 data class FileChooserDialogState(
     val visibility: Boolean = false,
     val dialogContext: DialogContext = DialogContext.UNKNOWN
