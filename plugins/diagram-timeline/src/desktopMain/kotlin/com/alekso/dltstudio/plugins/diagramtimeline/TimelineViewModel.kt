@@ -278,6 +278,7 @@ class TimelineViewModel(
     }
 
     fun clearTimeLineFilters() {
+        currentFilterFile.value = null
         timelineFilters.clear()
     }
 
