@@ -86,8 +86,22 @@ class MainViewModel(
     private val onProgressChanged: (Float) -> Unit,
     private val formatter: AppFormatter,
 ) {
+    var fileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Open DLT file(s)",
+            isMultiSelectionEnabled = true,
+            operation = DialogOperation.OPEN,
+            fileCallback = { onOpenDLTFiles(it) },
+            cancelCallback = ::closeFileDialog
+        )
+    )
+
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
+
+    private fun closeFileDialog() {
+        fileDialogState = fileDialogState.copy(visible = false)
+    }
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -102,7 +116,63 @@ class MainViewModel(
             }
         }
     }
-
+    val menuItems = mutableStateListOf<MainMenuItem>(
+        MainMenuItem(
+            "File",
+            children = mutableStateListOf(
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open DLT file(s)",
+                        isMultiSelectionEnabled = true,
+                        operation = DialogOperation.OPEN,
+                        fileCallback = { onOpenDLTFiles(it) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                AppChildMenuSeparator(),
+                ChildMenuItem("Settings") {
+                    settingsDialogState = true
+                },
+            )
+        ),
+        MainMenuItem(
+            "Color filters",
+            children = mutableStateListOf(
+//                Preferences.recentColorFilters().forEach {
+//                    ChildMenuItem("Open") {
+//                        callbacks.onLoadColorFiltersFile(File(it.absolutePath))
+//                    })
+//                }
+//                if (Preferences.recentColorFilters().isNotEmpty()) {
+//                    AppChildMenuSeparator()
+//                }
+                ChildMenuItem("Open") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Open Color filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.OPEN,
+                        fileCallback = { loadColorFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                ChildMenuItem("Save") {
+                    fileDialogState = FileDialogState(
+                        visible = true,
+                        title = "Save Color filter file",
+                        isMultiSelectionEnabled = false,
+                        operation = DialogOperation.SAVE,
+                        fileCallback = { saveColorFilters(it[0]) },
+                        cancelCallback = ::closeFileDialog,
+                    )
+                },
+                ChildMenuItem("Clear") {
+                    clearColorFilters()
+                },
+            )
+        ),
+    )
     val rowContextMenuCallbacks = object : RowContextMenuCallbacks {
         override fun onMarkClicked(i: Int, message: LogMessage) {
             messagesRepository.toggleMark(message.key)

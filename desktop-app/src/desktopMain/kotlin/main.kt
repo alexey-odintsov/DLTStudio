@@ -13,6 +13,7 @@ import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.settings.SettingsDialog
 import com.alekso.dltstudio.ui.MainWindow
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 import com.alekso.logger.Log
 
 
@@ -52,10 +53,11 @@ fun main() = application {
                     )
                 }
 
-                MainMenu(
-                    mainViewModel.mainMenuCallbacks,
+                AppMenu(
+                    mainViewModel.menuItems,
                     mainViewModel.recentColorFiltersFiles,
                 )
+                FileDialog(mainViewModel.fileDialogState)
                 MainWindow(mainViewModel)
             }
         }
