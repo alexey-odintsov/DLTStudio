@@ -285,11 +285,7 @@ class MainViewModel(
     private var parseJob: Job? = null
 
     val mainMenuCallbacks = object : MainMenuCallbacks {
-        override fun onSaveColorFiltersFile(file: File) {
-            saveColorFilters(file)
-        }
-
-        override fun onClearColorFilters() {
+        override fun onClearColorFiltersClicked() {
             clearColorFilters()
         }
 
@@ -314,6 +310,16 @@ class MainViewModel(
                 visible = true,
                 operation = DialogOperation.OPEN,
                 fileCallback = { loadColorFilters(it[0]) },
+                cancelCallback = ::closeFileDialog
+            )
+        }
+
+        override fun onSaveColorFilterClicked() {
+            fileDialogState = FileDialogState(
+                title = "Save filters",
+                visible = true,
+                operation = DialogOperation.SAVE,
+                fileCallback = { saveColorFilters(it[0]) },
                 cancelCallback = ::closeFileDialog
             )
         }

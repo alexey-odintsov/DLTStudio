@@ -13,7 +13,6 @@ data class FileChooserDialogState(
     val dialogContext: DialogContext = DialogContext.UNKNOWN
 ) {
     enum class DialogContext {
-        SAVE_FILTER_FILE,
         SAVE_FILE,
         UNKNOWN
     }
@@ -36,8 +35,7 @@ fun FileChooserDialog(
     fileChooser.selectedFile = File(fileName ?: "")
     fileChooser.currentDirectory = null
 
-    if (dialogContext == FileChooserDialogState.DialogContext.SAVE_FILTER_FILE ||
-        dialogContext == FileChooserDialogState.DialogContext.SAVE_FILE
+    if (dialogContext == FileChooserDialogState.DialogContext.SAVE_FILE
     ) {
         if (fileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             val file = fileChooser.selectedFile
