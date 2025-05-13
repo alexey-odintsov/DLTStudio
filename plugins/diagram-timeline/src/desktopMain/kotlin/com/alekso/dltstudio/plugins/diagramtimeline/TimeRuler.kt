@@ -21,7 +21,6 @@ import com.alekso.logger.Log
 import kotlinx.datetime.Clock
 
 private const val TIME_MARK_SIZE_PX = 100
-private const val DEBUG = true
 
 @Composable
 fun TimeRuler(
@@ -30,7 +29,8 @@ fun TimeRuler(
     scale: Float,
     totalSeconds: Int,
     timeStart: Long,
-    timeEnd: Long
+    timeEnd: Long,
+    debug: Boolean = false,
 ) {
 
 
@@ -40,7 +40,7 @@ fun TimeRuler(
         val secSizePx: Float = (size.width / totalSeconds) * scale
         val timeMarksCount = (size.width / TIME_MARK_SIZE_PX).toInt()
 
-        if (DEBUG) {
+        if (debug) {
             drawText(
                 textMeasurer,
                 text = "$totalSeconds seconds; Width: ${size.width}; Sec size: $secSizePx",
