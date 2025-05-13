@@ -323,6 +323,10 @@ class MainViewModel(
                 cancelCallback = ::closeFileDialog
             )
         }
+
+        override fun onRecentColorFilterClicked(file: File) {
+            loadColorFilters(file)
+        }
     }
 
     private val _recentColorFiltersFiles = mutableStateListOf<RecentColorFilterFileEntry>()

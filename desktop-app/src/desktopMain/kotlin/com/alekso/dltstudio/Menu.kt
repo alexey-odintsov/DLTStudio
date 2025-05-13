@@ -11,6 +11,7 @@ import androidx.compose.ui.window.MenuBar
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
 import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
+import java.io.File
 
 interface MainMenuCallbacks {
     fun onClearColorFiltersClicked()
@@ -18,6 +19,7 @@ interface MainMenuCallbacks {
     fun onOpenFileClicked()
     fun onOpenFiltersClicked()
     fun onSaveColorFilterClicked()
+    fun onRecentColorFilterClicked(file: File)
 }
 
 @Composable
@@ -60,7 +62,7 @@ fun FrameWindowScope.MainMenu(
         Menu("Color filters") {
             recentColorFiltersFiles.forEach {
                 Item(it.fileName, onClick = {
-//                    callbacks.onLoadColorFiltersFile(File(it.path))
+                    callbacks.onRecentColorFilterClicked(File(it.path))
                 })
             }
             if (recentColorFiltersFiles.isNotEmpty()) {
