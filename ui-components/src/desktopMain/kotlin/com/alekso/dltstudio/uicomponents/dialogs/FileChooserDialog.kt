@@ -13,7 +13,6 @@ data class FileChooserDialogState(
     val dialogContext: DialogContext = DialogContext.UNKNOWN
 ) {
     enum class DialogContext {
-        OPEN_DLT_FILE,
         OPEN_FILTER_FILE,
         SAVE_FILTER_FILE,
         SAVE_FILE,

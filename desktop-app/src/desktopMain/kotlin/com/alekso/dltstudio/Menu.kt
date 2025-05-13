@@ -14,11 +14,11 @@ import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import java.io.File
 
 interface MainMenuCallbacks {
-    fun onOpenDLTFiles(files: List<File>)
     fun onLoadColorFiltersFile(file: File)
     fun onSaveColorFiltersFile(file: File)
     fun onClearColorFilters()
     fun onSettingsClicked()
+    fun onOpenFileClicked()
 }
 
 @Composable
@@ -32,7 +32,6 @@ fun FrameWindowScope.MainMenu(
         FileChooserDialog(
             dialogContext = stateIOpenFileDialog.dialogContext,
             title = when (stateIOpenFileDialog.dialogContext) {
-                FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> "Open DLT file"
                 FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
                 FileChooserDialogState.DialogContext.UNKNOWN -> "Open file"
                 FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
@@ -40,12 +39,6 @@ fun FrameWindowScope.MainMenu(
             },
             onFileSelected = { file ->
                 when (stateIOpenFileDialog.dialogContext) {
-                    FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> {
-                        file?.let {
-                            callbacks.onOpenDLTFiles(listOf(it))
-                        }
-                    }
-
                     FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> {
                         file?.let {
                             callbacks.onLoadColorFiltersFile(it)
@@ -72,9 +65,7 @@ fun FrameWindowScope.MainMenu(
     MenuBar {
         Menu("File") {
             Item("Open", onClick = {
-                stateIOpenFileDialog = FileChooserDialogState(
-                    true, FileChooserDialogState.DialogContext.OPEN_DLT_FILE
-                )
+                callbacks.onOpenFileClicked()
             })
             Separator()
             Item("Settings", onClick = {
