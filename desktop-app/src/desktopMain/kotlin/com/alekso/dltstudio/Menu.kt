@@ -1,24 +1,19 @@
 package com.alekso.dltstudio
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialog
-import com.alekso.dltstudio.uicomponents.dialogs.FileChooserDialogState
 import java.io.File
 
 interface MainMenuCallbacks {
-    fun onOpenDLTFiles(files: List<File>)
-    fun onLoadColorFiltersFile(file: File)
-    fun onSaveColorFiltersFile(file: File)
-    fun onClearColorFilters()
+    fun onClearColorFiltersClicked()
     fun onSettingsClicked()
+    fun onOpenFileClicked()
+    fun onOpenFiltersClicked()
+    fun onSaveColorFilterClicked()
+    fun onRecentColorFilterClicked(file: File)
 }
 
 @Composable
@@ -26,55 +21,10 @@ fun FrameWindowScope.MainMenu(
     callbacks: MainMenuCallbacks,
     recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>,
 ) {
-    var stateIOpenFileDialog by remember { mutableStateOf(FileChooserDialogState()) }
-
-    if (stateIOpenFileDialog.visibility) {
-        FileChooserDialog(
-            dialogContext = stateIOpenFileDialog.dialogContext,
-            title = when (stateIOpenFileDialog.dialogContext) {
-                FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> "Open DLT file"
-                FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> "Open filters"
-                FileChooserDialogState.DialogContext.UNKNOWN -> "Open file"
-                FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> "Save filter"
-                FileChooserDialogState.DialogContext.SAVE_FILE -> "Save file"
-            },
-            onFileSelected = { file ->
-                when (stateIOpenFileDialog.dialogContext) {
-                    FileChooserDialogState.DialogContext.OPEN_DLT_FILE -> {
-                        file?.let {
-                            callbacks.onOpenDLTFiles(listOf(it))
-                        }
-                    }
-
-                    FileChooserDialogState.DialogContext.OPEN_FILTER_FILE -> {
-                        file?.let {
-                            callbacks.onLoadColorFiltersFile(it)
-                        }
-                    }
-
-                    FileChooserDialogState.DialogContext.SAVE_FILTER_FILE -> {
-                        file?.let {
-                            callbacks.onSaveColorFiltersFile(it)
-                        }
-                    }
-
-                    FileChooserDialogState.DialogContext.UNKNOWN -> {
-
-                    }
-
-                    else -> {}
-                }
-                stateIOpenFileDialog = stateIOpenFileDialog.copy(visibility = false)
-            },
-        )
-    }
-
     MenuBar {
         Menu("File") {
             Item("Open", onClick = {
-                stateIOpenFileDialog = FileChooserDialogState(
-                    true, FileChooserDialogState.DialogContext.OPEN_DLT_FILE
-                )
+                callbacks.onOpenFileClicked()
             })
             Separator()
             Item("Settings", onClick = {
@@ -84,7 +34,7 @@ fun FrameWindowScope.MainMenu(
         Menu("Color filters") {
             recentColorFiltersFiles.forEach {
                 Item(it.fileName, onClick = {
-                    callbacks.onLoadColorFiltersFile(File(it.path))
+                    callbacks.onRecentColorFilterClicked(File(it.path))
                 })
             }
             if (recentColorFiltersFiles.isNotEmpty()) {
@@ -92,17 +42,13 @@ fun FrameWindowScope.MainMenu(
             }
 
             Item("Open", onClick = {
-                stateIOpenFileDialog = FileChooserDialogState(
-                    true, FileChooserDialogState.DialogContext.OPEN_FILTER_FILE
-                )
+                callbacks.onOpenFiltersClicked()
             })
             Item("Save", onClick = {
-                stateIOpenFileDialog = FileChooserDialogState(
-                    true, FileChooserDialogState.DialogContext.SAVE_FILTER_FILE
-                )
+                callbacks.onSaveColorFilterClicked()
             })
             Item("Clear", onClick = {
-                callbacks.onClearColorFilters()
+                callbacks.onClearColorFiltersClicked()
             })
         }
     }

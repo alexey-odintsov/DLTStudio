@@ -43,6 +43,8 @@ import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
+import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
+import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
@@ -251,6 +253,19 @@ class MainViewModel(
         }
     }
 
+    var fileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Save file",
+            operation = DialogOperation.SAVE,
+            fileCallback = { saveColorFilters(it[0]) },
+            cancelCallback = ::closeFileDialog
+        )
+    )
+
+    private fun closeFileDialog() {
+        fileDialogState = fileDialogState.copy(visible = false)
+    }
+
     var settingsDialogState by mutableStateOf(false)
 
     val settingsUI: StateFlow<SettingsUI> =
@@ -270,24 +285,47 @@ class MainViewModel(
     private var parseJob: Job? = null
 
     val mainMenuCallbacks = object : MainMenuCallbacks {
-        override fun onOpenDLTFiles(files: List<File>) {
-            parseFile(files)
-        }
-
-        override fun onLoadColorFiltersFile(file: File) {
-            loadColorFilters(file)
-        }
-
-        override fun onSaveColorFiltersFile(file: File) {
-            saveColorFilters(file)
-        }
-
-        override fun onClearColorFilters() {
+        override fun onClearColorFiltersClicked() {
             clearColorFilters()
         }
 
         override fun onSettingsClicked() {
             settingsDialogState = true
+        }
+
+        override fun onOpenFileClicked() {
+            fileDialogState = FileDialogState(
+                title = "Open DLT file(s)",
+                visible = true,
+                isMultiSelectionEnabled = true,
+                operation = DialogOperation.OPEN,
+                fileCallback = { parseFile(it) },
+                cancelCallback = ::closeFileDialog
+            )
+        }
+
+        override fun onOpenFiltersClicked() {
+            fileDialogState = FileDialogState(
+                title = "Open filters",
+                visible = true,
+                operation = DialogOperation.OPEN,
+                fileCallback = { loadColorFilters(it[0]) },
+                cancelCallback = ::closeFileDialog
+            )
+        }
+
+        override fun onSaveColorFilterClicked() {
+            fileDialogState = FileDialogState(
+                title = "Save filters",
+                visible = true,
+                operation = DialogOperation.SAVE,
+                fileCallback = { saveColorFilters(it[0]) },
+                cancelCallback = ::closeFileDialog
+            )
+        }
+
+        override fun onRecentColorFilterClicked(file: File) {
+            loadColorFilters(file)
         }
     }
 
