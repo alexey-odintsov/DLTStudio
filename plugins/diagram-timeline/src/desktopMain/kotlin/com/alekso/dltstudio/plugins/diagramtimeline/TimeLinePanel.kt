@@ -98,6 +98,7 @@ fun TimeLinePanel(
     currentFilterFile: RecentTimelineFilterFileEntry?,
     toolbarCallbacks: ToolbarCallbacks,
     onCloseFiltersDialog: () -> Unit,
+    debug: Boolean = false,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
@@ -175,12 +176,14 @@ fun TimeLinePanel(
                 offsetSeconds = offsetSec
             )
 
-            Text(
-                "Time range: ${LocalFormatter.current.formatDateTime(timeStart)} .. ${
-                    LocalFormatter.current.formatDateTime(timeEnd)
-                }"
-            )
-            Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
+            if (debug) {
+                Text(
+                    "Time range: ${LocalFormatter.current.formatDateTime(timeStart)} .. ${
+                        LocalFormatter.current.formatDateTime(timeEnd)
+                    }"
+                )
+                Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
+            }
 
             Row {
                 Box(modifier = Modifier.width(legendSize.dp))
@@ -190,7 +193,8 @@ fun TimeLinePanel(
                     scale,
                     timeStart = timeStart,
                     timeEnd = timeEnd,
-                    totalSeconds = totalSeconds.toInt()
+                    totalSeconds = totalSeconds.toInt(),
+                    debug = debug,
                 )
             }
 
