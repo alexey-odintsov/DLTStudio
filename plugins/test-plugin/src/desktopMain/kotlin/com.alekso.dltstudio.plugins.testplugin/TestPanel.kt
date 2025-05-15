@@ -25,6 +25,9 @@ fun TestPanel(
     modifier: Modifier,
     entries: SnapshotStateMap<Key<*>, Entry<*>>,
     onAnaliseClicked: () -> Unit,
+    onDragged: (Float) -> Unit,
+    timeFrame: TimeFrame,
+    totalFrame: TimeFrame,
 ) {
     Column(modifier = modifier.padding(4.dp)) {
         Text("Test plugin")
@@ -36,9 +39,10 @@ fun TestPanel(
             LineGraph(
                 modifier = Modifier.fillMaxWidth().height(200.dp),
                 backgroundColor = Color.White,
-                totalTime = TimeFrame(0L, 480L),
-                timeFrame = TimeFrame(140L, 300L),
+                totalTime = totalFrame,
+                timeFrame = timeFrame,
                 entries = entries,
+                onDragged = onDragged,
             )
         }
     }
@@ -54,6 +58,9 @@ fun PreviewTestPanel() {
             Key("b") to Entry(160L, Color.Red),
             Key("b") to Entry(280L, Color.Blue),
         ),
-        onAnaliseClicked = {}
+        onAnaliseClicked = {},
+        onDragged = {},
+        timeFrame = TimeFrame(0L, 480L),
+        totalFrame = TimeFrame(140L, 300L),
     )
 }

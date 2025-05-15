@@ -31,6 +31,10 @@ class TestPlugin : DLTStudioPlugin, PluginPanel {
     override fun renderPanel(modifier: Modifier) {
         TestPanel(modifier = modifier,
             entries = viewModel.entries,
-            onAnaliseClicked = viewModel::onAnaliseClicked)
+            onAnaliseClicked = viewModel::onAnaliseClicked,
+            onDragged = viewModel::onDragged,
+            totalFrame = viewModel.totalTime,
+            timeFrame = viewModel.timeFrame,
+            )
     }
 }

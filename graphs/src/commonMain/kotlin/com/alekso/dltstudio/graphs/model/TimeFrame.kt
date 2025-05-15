@@ -6,4 +6,8 @@ data class TimeFrame(
 ) {
     val duration
         get() = timeEnd - timeStart
+
+    fun move(dx: Long): TimeFrame {
+        return copy(timeStart = timeStart + dx, timeEnd = timeEnd + dx)
+    }
 }

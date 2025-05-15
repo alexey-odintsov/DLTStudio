@@ -10,26 +10,40 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LineGraph(
     modifier: Modifier,
     backgroundColor: Color,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
-    entries: SnapshotStateMap<Key<*>, Entry<*>>
+    entries: SnapshotStateMap<Key<*>, Entry<*>>,
+    onDragged: (Float) -> Unit,
 ) {
-    Spacer(modifier = modifier.fillMaxSize().background(backgroundColor).clipToBounds().drawWithCache {
+    Spacer(
+        modifier = modifier.fillMaxSize().background(backgroundColor).clipToBounds()
+            .onPointerEvent(
+                PointerEventType.Move,
+                onEvent = { e ->
+                    val dragAmount =
+                        e.changes.first().position.x - e.changes.first().previousPosition.x
+                    onDragged(-dragAmount / 2f)
+                })
+            .drawWithCache {
         onDrawBehind {
             entries.keys.forEachIndexed { i, key ->
                 val entry = entries[key]
@@ -67,6 +81,7 @@ fun PreviewLineGraph() {
             totalTime = TimeFrame(0L, 480L),
             timeFrame = TimeFrame(140L, 300L),
             entries = entries,
+            onDragged = {},
         )
     }
 }
