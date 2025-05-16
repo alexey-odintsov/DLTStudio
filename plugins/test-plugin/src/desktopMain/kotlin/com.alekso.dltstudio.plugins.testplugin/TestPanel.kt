@@ -35,6 +35,8 @@ fun TestPanel(
             Text("Get events")
         }
 
+        val formatter = LocalFormatter.current
+        Text("${formatter.formatDateTime(timeFrame.timeStart)} .. ${formatter.formatDateTime(timeFrame.timeEnd)}")
         Column(Modifier.fillMaxSize().background(Color.LightGray)) {
             LineGraph(
                 modifier = Modifier.fillMaxWidth().height(200.dp),

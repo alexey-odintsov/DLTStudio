@@ -8,12 +8,18 @@ import androidx.compose.ui.graphics.Color
 import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
+import kotlinx.datetime.Clock
 
 class ViewModel {
     // State
     val entries = mutableStateMapOf<Key<*>, Entry<*>>()
-    val totalTime by mutableStateOf(TimeFrame(0L, 480L))
-    var timeFrame by mutableStateOf(TimeFrame(140L, 300L))
+    val totalTime by mutableStateOf(
+        TimeFrame(
+            Clock.System.now().toEpochMilliseconds() * 1000L,
+            Clock.System.now().toEpochMilliseconds() * 1000L + 2_000_000L
+        )
+    )
+    var timeFrame by mutableStateOf(TimeFrame(totalTime.timeStart, totalTime.timeEnd))
 
     // Public Interface
     fun onAnaliseClicked() {
@@ -24,9 +30,9 @@ class ViewModel {
     private fun extractEvents() {
         entries.putAll(
             mapOf(
-                Key("a") to Entry(200L, Color.Green),
-                Key("b") to Entry(160L, Color.Red),
-                Key("b") to Entry(280L, Color.Blue),
+                Key("a") to Entry(timeFrame.timeStart, Color.Green),
+                Key("b") to Entry(timeFrame.timeStart + 1000000, Color.Red),
+                Key("b") to Entry(timeFrame.timeStart + 2000000, Color.Blue),
             )
         )
     }

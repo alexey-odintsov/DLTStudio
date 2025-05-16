@@ -2,6 +2,7 @@ package com.alekso.dltstudio.graphs.model.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,8 +18,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.onPointerEvent
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
@@ -36,13 +36,23 @@ fun LineGraph(
 ) {
     Spacer(
         modifier = modifier.fillMaxSize().background(backgroundColor).clipToBounds()
-            .onPointerEvent(
-                PointerEventType.Move,
-                onEvent = { e ->
-                    val dragAmount =
-                        e.changes.first().position.x - e.changes.first().previousPosition.x
-                    onDragged(-dragAmount / 2f)
-                })
+            .pointerInput("divider") {
+                val usSize = size.width.toFloat() / timeFrame.duration
+                println("size: $size; timeFrame: ${timeFrame.duration} timeSize: $usSize")
+                detectDragGestures { change, dragAmount ->
+                    change.consume()
+                    val dragUs = -(dragAmount.x) / usSize
+                    println("drag ${dragAmount.x} = $dragUs")
+                    onDragged(dragUs)
+                }
+            }
+//            .onPointerEvent(
+//                PointerEventType.Move,
+//                onEvent = { e ->
+//                    val dragAmount =
+//                        e.changes.first().position.x - e.changes.first().previousPosition.x
+//                    onDragged(-dragAmount / 2f)
+//                })
             .drawWithCache {
         onDrawBehind {
             entries.keys.forEachIndexed { i, key ->
