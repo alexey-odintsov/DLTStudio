@@ -19,7 +19,7 @@ class ViewModel {
             Clock.System.now().toEpochMilliseconds() * 1000L + 2_000_000L
         )
     )
-    var timeFrame = mutableStateOf(TimeFrame(totalTime.timeStart, totalTime.timeEnd))
+    var timeFrame by mutableStateOf(TimeFrame(totalTime.timeStart, totalTime.timeEnd))
 
     // Public Interface
     fun onAnaliseClicked() {
@@ -30,19 +30,19 @@ class ViewModel {
     private fun extractEvents() {
         entries.putAll(
             mapOf(
-                Key("a") to Entry(timeFrame.value.timeStart, Color.Green),
-                Key("b") to Entry(timeFrame.value.timeStart + 1000000, Color.Red),
-                Key("b") to Entry(timeFrame.value.timeStart + 2000000, Color.Blue),
+                Key("a") to Entry(timeFrame.timeStart, Color.Green),
+                Key("b") to Entry(timeFrame.timeStart + 1000000, Color.Red),
+                Key("b") to Entry(timeFrame.timeStart + 2000000, Color.Blue),
             )
         )
     }
 
     fun onDragged(dx: Float) {
-        timeFrame.value = timeFrame.value.move(dx.toLong())
+        timeFrame = timeFrame.move(dx.toLong())
     }
 
     fun onZoom(zoomIn: Boolean) {
-        timeFrame.value = timeFrame.value.zoom(zoomIn)
+        timeFrame = timeFrame.zoom(zoomIn)
     }
 
 }
