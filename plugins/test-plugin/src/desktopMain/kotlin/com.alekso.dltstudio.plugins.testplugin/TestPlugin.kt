@@ -42,8 +42,9 @@ class TestPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 entries = viewModel.entries,
                 onAnaliseClicked = viewModel::onAnaliseClicked,
                 onDragged = viewModel::onDragged,
+                onZoom = viewModel::onZoom,
                 totalFrame = viewModel.totalTime,
-                timeFrame = viewModel.timeFrame,
+                timeFrame = viewModel.timeFrame.value,
             )
         }
     }

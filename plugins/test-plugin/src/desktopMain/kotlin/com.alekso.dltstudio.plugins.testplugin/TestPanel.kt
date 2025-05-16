@@ -3,6 +3,7 @@ package com.alekso.dltstudio.plugins.testplugin
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,11 +29,21 @@ fun TestPanel(
     onDragged: (Float) -> Unit,
     timeFrame: TimeFrame,
     totalFrame: TimeFrame,
+    onZoom: (Boolean) -> Unit,
 ) {
     Column(modifier = modifier.padding(4.dp)) {
         Text("Test plugin")
         Button(onClick = onAnaliseClicked) {
             Text("Get events")
+        }
+
+        Row {
+            Button(onClick = { onZoom(true) }) {
+                Text("+")
+            }
+            Button(onClick = { onZoom(false) }) {
+                Text("-")
+            }
         }
 
         val formatter = LocalFormatter.current
@@ -64,5 +75,6 @@ fun PreviewTestPanel() {
         onDragged = {},
         timeFrame = TimeFrame(0L, 480L),
         totalFrame = TimeFrame(140L, 300L),
+        onZoom = {},
     )
 }
