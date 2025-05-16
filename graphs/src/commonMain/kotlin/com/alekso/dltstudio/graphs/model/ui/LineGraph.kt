@@ -15,7 +15,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
@@ -29,7 +28,6 @@ import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
 
-@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun LineGraph(
     modifier: Modifier,
@@ -52,23 +50,16 @@ fun LineGraph(
                     onDragged(dragUs)
                 }
             }
-//            .onPointerEvent(
-//                PointerEventType.Move,
-//                onEvent = { e ->
-//                    val dragAmount =
-//                        e.changes.first().position.x - e.changes.first().previousPosition.x
-//                    onDragged(-dragAmount / 2f)
-//                })
             .drawWithCache {
-        onDrawBehind {
-            entries.keys.forEachIndexed { i, key ->
-                val entry = entries[key]
-                if (entry != null) {
-                    renderEvents(entry, timeFrame)
+                onDrawBehind {
+                    entries.keys.forEachIndexed { i, key ->
+                        val entry = entries[key]
+                        if (entry != null) {
+                            renderEvents(entry, timeFrame)
+                        }
+                    }
                 }
-            }
-        }
-    })
+            })
 }
 
 fun DrawScope.renderEvents(entry: Entry<*>, timeFrame: TimeFrame) {
