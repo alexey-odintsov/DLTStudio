@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -28,14 +29,22 @@ import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
 
+enum class GraphType {
+    Events,
+    Lines,
+    State,
+    Duration,
+}
+
 @Composable
-fun LineGraph(
+fun Graph(
     modifier: Modifier,
     backgroundColor: Color,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
     entries: SnapshotStateMap<Key<*>, Entry<*>>,
     onDragged: (Float) -> Unit,
+    type: GraphType,
 ) {
     var usSize by remember { mutableStateOf(1f) }
     Spacer(
@@ -52,25 +61,47 @@ fun LineGraph(
             }
             .drawWithCache {
                 onDrawBehind {
-                    entries.keys.forEachIndexed { i, key ->
-                        val entry = entries[key]
-                        if (entry != null) {
-                            renderEvents(entry, timeFrame)
-                        }
+                    when (type) {
+                        GraphType.Events -> renderEvents(entries, timeFrame)
+                        GraphType.Lines -> renderLines(entries, timeFrame)
+                        else -> {}
                     }
                 }
             })
 }
 
-fun DrawScope.renderEvents(entry: Entry<*>, timeFrame: TimeFrame) {
-    val x = ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
-    val y = 100f
+fun DrawScope.renderEvents(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame) {
+    entries.keys.forEachIndexed { i, key ->
+        val entry = entries[key]
+        if (entry != null) {
+            val x =
+                ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
+            val y = 100f
 
-    drawCircle(
-        color = entry.value as Color,
-        radius = 25f,
-        center = Offset(x, y)
-    )
+            drawCircle(
+                color = entry.value as Color,
+                radius = 15f,
+                center = Offset(x, y)
+            )
+        }
+    }
+}
+
+fun DrawScope.renderLines(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame) {
+    entries.keys.forEachIndexed { i, key ->
+        val entry = entries[key]
+        if (entry != null) {
+            val x =
+                ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
+            val y = 100f
+
+            drawCircle(
+                color = entry.value as Color,
+                radius = 5f,
+                center = Offset(x, y)
+            )
+        }
+    }
 }
 
 @Preview
@@ -82,13 +113,24 @@ fun PreviewLineGraph() {
         Key("b") to Entry(280L, Color.Blue),
     )
     Column(Modifier.fillMaxSize().background(Color.LightGray)) {
-        LineGraph(
+        Graph(
             modifier = Modifier.fillMaxWidth().height(200.dp),
             backgroundColor = Color.White,
             totalTime = TimeFrame(0L, 480L),
             timeFrame = TimeFrame(140L, 300L),
             entries = entries,
             onDragged = {},
+            type = GraphType.Events,
+        )
+        Spacer(Modifier.size(4.dp))
+        Graph(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            backgroundColor = Color.Gray,
+            totalTime = TimeFrame(0L, 480L),
+            timeFrame = TimeFrame(140L, 300L),
+            entries = entries,
+            onDragged = {},
+            type = GraphType.Lines,
         )
     }
 }

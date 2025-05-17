@@ -4,10 +4,12 @@ import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,7 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.model.ui.LineGraph
+import com.alekso.dltstudio.graphs.model.ui.Graph
+import com.alekso.dltstudio.graphs.model.ui.GraphType
 
 @Composable
 fun TestPanel(
@@ -47,15 +50,32 @@ fun TestPanel(
         }
 
         val formatter = LocalFormatter.current
-        Text("${formatter.formatDateTime(timeFrame.timeStart)} .. ${formatter.formatDateTime(timeFrame.timeEnd)}")
+        Text(
+            "${formatter.formatDateTime(timeFrame.timeStart)} .. ${
+                formatter.formatDateTime(
+                    timeFrame.timeEnd
+                )
+            }"
+        )
         Column(Modifier.fillMaxSize().background(Color.LightGray)) {
-            LineGraph(
+            Graph(
                 modifier = Modifier.fillMaxWidth().height(200.dp),
                 backgroundColor = Color.White,
                 totalTime = totalFrame,
                 timeFrame = timeFrame,
                 entries = entries,
                 onDragged = onDragged,
+                type = GraphType.Events,
+            )
+            Spacer(Modifier.size(4.dp))
+            Graph(
+                modifier = Modifier.fillMaxWidth().height(200.dp),
+                backgroundColor = Color.Gray,
+                totalTime = totalFrame,
+                timeFrame = timeFrame,
+                entries = entries,
+                onDragged = onDragged,
+                type = GraphType.Lines,
             )
         }
     }
