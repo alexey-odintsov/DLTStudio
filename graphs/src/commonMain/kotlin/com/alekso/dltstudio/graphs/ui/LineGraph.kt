@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.graphs.model.ui
+package com.alekso.dltstudio.graphs.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
