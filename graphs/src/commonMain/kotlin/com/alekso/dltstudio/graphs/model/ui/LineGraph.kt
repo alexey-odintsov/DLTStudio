@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
@@ -61,6 +62,16 @@ fun Graph(
             }
             .drawWithCache {
                 onDrawBehind {
+
+                    // center line
+                    drawLine(
+                        Color.LightGray,
+                        Offset(size.center.x, 0f),
+                        Offset(size.center.x, size.height),
+                        alpha = 0.5f
+                    )
+
+                    // draw entries
                     when (type) {
                         GraphType.Events -> renderEvents(entries, timeFrame)
                         GraphType.Lines -> renderLines(entries, timeFrame)
@@ -70,12 +81,15 @@ fun Graph(
             })
 }
 
+private fun DrawScope.calculateX(entry: Entry<*>, timeFrame: TimeFrame): Float {
+    return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
+}
+
 fun DrawScope.renderEvents(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame) {
     entries.keys.forEachIndexed { i, key ->
         val entry = entries[key]
         if (entry != null) {
-            val x =
-                ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
+            val x = calculateX(entry, timeFrame)
             val y = 100f
 
             drawCircle(
@@ -91,8 +105,7 @@ fun DrawScope.renderLines(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame) 
     entries.keys.forEachIndexed { i, key ->
         val entry = entries[key]
         if (entry != null) {
-            val x =
-                ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
+            val x = calculateX(entry, timeFrame)
             val y = 100f
 
             drawCircle(
