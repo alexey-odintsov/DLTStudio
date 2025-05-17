@@ -45,4 +45,8 @@ class ViewModel {
         timeFrame = timeFrame.zoom(zoomIn)
     }
 
+    fun onFit() {
+        timeFrame = totalTime.copy()
+    }
+
 }

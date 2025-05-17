@@ -33,6 +33,7 @@ fun TestPanel(
     timeFrame: TimeFrame,
     totalFrame: TimeFrame,
     onZoom: (Boolean) -> Unit,
+    onFit: () -> Unit,
 ) {
     Column(modifier = modifier.padding(4.dp)) {
         Text("Test plugin")
@@ -46,6 +47,9 @@ fun TestPanel(
             }
             Button(onClick = { onZoom(false) }) {
                 Text("-")
+            }
+            Button(onClick = { onFit() }) {
+                Text("Fit")
             }
         }
 
@@ -96,5 +100,6 @@ fun PreviewTestPanel() {
         timeFrame = TimeFrame(0L, 480L),
         totalFrame = TimeFrame(140L, 300L),
         onZoom = {},
+        onFit = {},
     )
 }
