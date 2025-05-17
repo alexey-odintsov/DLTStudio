@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.model.ui.Graph
-import com.alekso.dltstudio.graphs.model.ui.GraphType
+import com.alekso.dltstudio.graphs.ui.Graph
+import com.alekso.dltstudio.graphs.ui.GraphType
 
 @Composable
 fun TestPanel(
