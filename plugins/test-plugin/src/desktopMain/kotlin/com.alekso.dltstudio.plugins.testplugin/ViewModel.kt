@@ -83,8 +83,8 @@ class ViewModel {
                 CPUEvent(Message(timeFrame.timeStart + 1_500_000L, "cpu3: 8%"), 8f),
             ),
         )
-        entriesMap[Diagram("cpup", GraphType.Events)] = cpuEntries
-        entriesMap[Diagram("memt", GraphType.Lines)] = mutableStateMapOf()
+        entriesMap[Diagram("crashes", GraphType.Events)] = mutableStateMapOf()
+        entriesMap[Diagram("cpuc", GraphType.MinMax)] = cpuEntries
     }
 
 }

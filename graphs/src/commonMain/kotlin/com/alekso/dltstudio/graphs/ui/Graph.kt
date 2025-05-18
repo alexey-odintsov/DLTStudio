@@ -21,13 +21,17 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import com.alekso.dltstudio.graphs.model.Key
+import com.alekso.dltstudio.graphs.model.NumericalValue
+import com.alekso.dltstudio.graphs.model.PercentageValue
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
 
 enum class GraphType {
+    Percentage,
+    MinMax,
     Events,
-    Lines,
     State,
+    SingleState,
     Duration,
 }
 
@@ -72,7 +76,7 @@ fun Graph(
                     // draw entries
                     when (type) {
                         GraphType.Events -> renderEvents(entries, timeFrame)
-                        GraphType.Lines -> renderLines(entries, timeFrame)
+                        GraphType.Percentage, GraphType.MinMax -> renderLines(entries, timeFrame)
                         else -> {}
                     }
                 }
@@ -86,7 +90,7 @@ private fun DrawScope.calculateX(
     return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
 }
 
-fun DrawScope.renderEvents(
+private fun DrawScope.renderEvents(
     entriesMap: Map<out Key, List<out Value>>,
     timeFrame: TimeFrame
 ) {
@@ -94,7 +98,11 @@ fun DrawScope.renderEvents(
         val entries = entriesMap[key]
         entries?.forEach { entry ->
             val x = calculateX(entry, timeFrame)
-            val y = 100f
+            val y = when (entry) {
+                is PercentageValue -> entry.value
+                is NumericalValue -> entry.value.toFloat()
+                else -> 1f
+            }
 
             drawCircle(
                 color = Color.Red,
@@ -105,7 +113,7 @@ fun DrawScope.renderEvents(
     }
 }
 
-fun DrawScope.renderLines(entriesMap: Map<out Key, List<out Value>>, timeFrame: TimeFrame) {
+private fun DrawScope.renderLines(entriesMap: Map<out Key, List<out Value>>, timeFrame: TimeFrame) {
     entriesMap.keys.forEachIndexed { i, key ->
         val entries = entriesMap[key]
         entries?.forEach { entry ->
