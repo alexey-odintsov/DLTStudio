@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import com.alekso.dltstudio.graphs.model.Key
-import com.alekso.dltstudio.graphs.model.PercentageValue
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
 
@@ -121,12 +120,6 @@ fun DrawScope.renderLines(entriesMap: Map<out Key, List<out Value>>, timeFrame: 
         }
     }
 }
-
-data class Message(
-    val timestamp: Long,
-    val message: String,
-)
-
 
 
 //@Preview

@@ -10,9 +10,12 @@ import com.alekso.dltstudio.graphs.model.PercentageValue
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
 import com.alekso.dltstudio.graphs.ui.GraphType
-import com.alekso.dltstudio.graphs.ui.Message
-
 import kotlinx.datetime.Clock
+
+data class Message(
+    val timestamp: Long,
+    val message: String,
+)
 
 data class Diagram(
     val key: String,
