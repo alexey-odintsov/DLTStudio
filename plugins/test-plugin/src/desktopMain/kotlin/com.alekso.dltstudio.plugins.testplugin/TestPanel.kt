@@ -1,6 +1,5 @@
 package com.alekso.dltstudio.plugins.testplugin
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,21 +12,20 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
+import com.alekso.dltstudio.graphs.model.Value
 import com.alekso.dltstudio.graphs.ui.Graph
 import com.alekso.dltstudio.graphs.ui.GraphType
 
 @Composable
 fun TestPanel(
     modifier: Modifier,
-    entries: SnapshotStateMap<Key<*>, Entry<*>>,
+    entries: SnapshotStateMap<Diagram, SnapshotStateMap<out Key, List<out Value>>>,
     onAnaliseClicked: () -> Unit,
     onDragged: (Float) -> Unit,
     timeFrame: TimeFrame,
@@ -62,44 +60,37 @@ fun TestPanel(
             }"
         )
         Column(Modifier.fillMaxSize().background(Color.LightGray)) {
-            Graph(
-                modifier = Modifier.fillMaxWidth().height(200.dp),
-                backgroundColor = Color.White,
-                totalTime = totalFrame,
-                timeFrame = timeFrame,
-                entries = entries,
-                onDragged = onDragged,
-                type = GraphType.Events,
-            )
-            Spacer(Modifier.size(4.dp))
-            Graph(
-                modifier = Modifier.fillMaxWidth().height(200.dp),
-                backgroundColor = Color.Gray,
-                totalTime = totalFrame,
-                timeFrame = timeFrame,
-                entries = entries,
-                onDragged = onDragged,
-                type = GraphType.Lines,
-            )
+            entries.keys.forEach { diagram ->
+                Graph(
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    backgroundColor = Color.White,
+                    totalTime = totalFrame,
+                    timeFrame = timeFrame,
+                    entries = entries[diagram],
+                    onDragged = onDragged,
+                    type = diagram.graphType,
+                )
+                Spacer(Modifier.size(4.dp))
+            }
         }
     }
 }
 
-@Preview
-@Composable
-fun PreviewTestPanel() {
-    TestPanel(
-        modifier = Modifier.fillMaxSize(),
-        entries = mutableStateMapOf(
-            Key("a") to Entry(200L, Color.Green),
-            Key("b") to Entry(160L, Color.Red),
-            Key("b") to Entry(280L, Color.Blue),
-        ),
-        onAnaliseClicked = {},
-        onDragged = {},
-        timeFrame = TimeFrame(0L, 480L),
-        totalFrame = TimeFrame(140L, 300L),
-        onZoom = {},
-        onFit = {},
-    )
-}
+//@Preview
+//@Composable
+//fun PreviewTestPanel() {
+//    TestPanel(
+//        modifier = Modifier.fillMaxSize(),
+//        entries = mutableStateMapOf(
+//            Key("a") to Entry(200L, Color.Green),
+//            Key("b") to Entry(160L, Color.Red),
+//            Key("b") to Entry(280L, Color.Blue),
+//        ),
+//        onAnaliseClicked = {},
+//        onDragged = {},
+//        timeFrame = TimeFrame(0L, 480L),
+//        totalFrame = TimeFrame(140L, 300L),
+//        onZoom = {},
+//        onFit = {},
+//    )
+//}

@@ -1,17 +1,12 @@
 package com.alekso.dltstudio.graphs.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -25,10 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.graphs.model.Entry
 import com.alekso.dltstudio.graphs.model.Key
+import com.alekso.dltstudio.graphs.model.PercentageValue
 import com.alekso.dltstudio.graphs.model.TimeFrame
+import com.alekso.dltstudio.graphs.model.Value
 
 enum class GraphType {
     Events,
@@ -43,10 +38,14 @@ fun Graph(
     backgroundColor: Color,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
-    entries: SnapshotStateMap<Key<*>, Entry<*>>,
+    entries: SnapshotStateMap<out Key, List<out Value>>?,
     onDragged: (Float) -> Unit,
     type: GraphType,
 ) {
+    if (entries.isNullOrEmpty()) {
+        Text("No entries found")
+        return
+    }
     var usSize by remember { mutableStateOf(1f) }
     Spacer(
         modifier = modifier.fillMaxSize().background(backgroundColor).clipToBounds()
@@ -81,19 +80,25 @@ fun Graph(
             })
 }
 
-private fun DrawScope.calculateX(entry: Entry<*>, timeFrame: TimeFrame): Float {
+private fun DrawScope.calculateX(
+    entry: Value,
+    timeFrame: TimeFrame
+): Float {
     return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
 }
 
-fun DrawScope.renderEvents(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame) {
-    entries.keys.forEachIndexed { i, key ->
-        val entry = entries[key]
-        if (entry != null) {
+fun DrawScope.renderEvents(
+    entriesMap: Map<out Key, List<out Value>>,
+    timeFrame: TimeFrame
+) {
+    entriesMap.keys.forEachIndexed { i, key ->
+        val entries = entriesMap[key]
+        entries?.forEach { entry ->
             val x = calculateX(entry, timeFrame)
             val y = 100f
 
             drawCircle(
-                color = entry.value as Color,
+                color = Color.Red,
                 radius = 15f,
                 center = Offset(x, y)
             )
@@ -101,15 +106,15 @@ fun DrawScope.renderEvents(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame)
     }
 }
 
-fun DrawScope.renderLines(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame) {
-    entries.keys.forEachIndexed { i, key ->
-        val entry = entries[key]
-        if (entry != null) {
+fun DrawScope.renderLines(entriesMap: Map<out Key, List<out Value>>, timeFrame: TimeFrame) {
+    entriesMap.keys.forEachIndexed { i, key ->
+        val entries = entriesMap[key]
+        entries?.forEach { entry ->
             val x = calculateX(entry, timeFrame)
             val y = 100f
 
             drawCircle(
-                color = entry.value as Color,
+                color = Color.Green,
                 radius = 5f,
                 center = Offset(x, y)
             )
@@ -117,33 +122,44 @@ fun DrawScope.renderLines(entries: Map<Key<*>, Entry<*>>, timeFrame: TimeFrame) 
     }
 }
 
-@Preview
-@Composable
-fun PreviewLineGraph() {
-    val entries = mutableStateMapOf<Key<*>, Entry<*>>(
-        Key("a") to Entry(200L, Color.Green),
-        Key("b") to Entry(160L, Color.Red),
-        Key("b") to Entry(280L, Color.Blue),
-    )
-    Column(Modifier.fillMaxSize().background(Color.LightGray)) {
-        Graph(
-            modifier = Modifier.fillMaxWidth().height(200.dp),
-            backgroundColor = Color.White,
-            totalTime = TimeFrame(0L, 480L),
-            timeFrame = TimeFrame(140L, 300L),
-            entries = entries,
-            onDragged = {},
-            type = GraphType.Events,
-        )
-        Spacer(Modifier.size(4.dp))
-        Graph(
-            modifier = Modifier.fillMaxWidth().height(200.dp),
-            backgroundColor = Color.Gray,
-            totalTime = TimeFrame(0L, 480L),
-            timeFrame = TimeFrame(140L, 300L),
-            entries = entries,
-            onDragged = {},
-            type = GraphType.Lines,
-        )
-    }
-}
+data class Message(
+    val timestamp: Long,
+    val message: String,
+)
+
+
+
+//@Preview
+//@Composable
+//fun PreviewLineGraph() {
+//    val now = Clock.System.now().toEpochMilliseconds() * 1000L
+//    val key1 = CPUKey("cpu0")
+//    val key2 = CPUKey("cpu1")
+//    val key3 = CPUKey("cpu2")
+//    val entries = mutableStateMapOf(
+//        key1 to listOf(CPUEvent(Message(now, "cpu0: 40%"), 40f)),
+//        key2 to listOf(CPUEvent(Message(now + 1_000_000L, "cpu1: 12%"), 12f)),
+//        key3 to listOf(CPUEvent(Message(now + 2_000_000L, "cpu2: 43%"), 43f)),
+//    )
+//    Column(Modifier.fillMaxSize().background(Color.LightGray)) {
+//        Graph(
+//            modifier = Modifier.fillMaxWidth().height(200.dp),
+//            backgroundColor = Color.White,
+//            totalTime = TimeFrame(now, now + 2_000_000L),
+//            timeFrame = TimeFrame(now, now + 2_000_000L),
+//            entries = entries,
+//            onDragged = {},
+//            type = GraphType.Events,
+//        )
+//        Spacer(Modifier.size(4.dp))
+//        Graph(
+//            modifier = Modifier.fillMaxWidth().height(200.dp),
+//            backgroundColor = Color.Gray,
+//            totalTime = TimeFrame(0L, 480L),
+//            timeFrame = TimeFrame(140L, 300L),
+//            entries = entries,
+//            onDragged = {},
+//            type = GraphType.Lines,
+//        )
+//    }
+//}

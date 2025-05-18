@@ -1,6 +1,18 @@
 package com.alekso.dltstudio.graphs.model
 
-class Entry<T>(
-    val timestamp: Long,
-    val value: T
-)
+interface Key {
+    val key: String
+}
+
+interface Value {
+    val timestamp: Long
+}
+
+interface PercentageValue : Value {
+    val value: Float
+}
+
+interface NumericalValue : Value {
+    val value: Number
+}
+

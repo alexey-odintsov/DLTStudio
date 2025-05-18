@@ -39,7 +39,7 @@ class TestPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         CompositionLocalProvider(LocalFormatter provides formatter) {
             TestPanel(
                 modifier = modifier,
-                entries = viewModel.entries,
+                entries = viewModel.entriesMap,
                 onAnaliseClicked = viewModel::onAnaliseClicked,
                 onDragged = viewModel::onDragged,
                 onZoom = viewModel::onZoom,
