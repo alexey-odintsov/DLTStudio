@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,7 +23,6 @@ import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
 import com.alekso.dltstudio.graphs.ui.Graph
-import com.alekso.dltstudio.graphs.ui.GraphType
 
 @Composable
 fun TestPanel(
@@ -60,17 +62,26 @@ fun TestPanel(
             }"
         )
         Column(Modifier.fillMaxSize().background(Color.LightGray)) {
-            entries.keys.forEach { diagram ->
-                Graph(
-                    modifier = Modifier.fillMaxWidth().height(200.dp),
-                    backgroundColor = Color.White,
-                    totalTime = totalFrame,
-                    timeFrame = timeFrame,
-                    entries = entries[diagram],
-                    onDragged = onDragged,
-                    type = diagram.graphType,
-                )
-                Spacer(Modifier.size(4.dp))
+            val listState = rememberLazyListState()
+            LazyColumn(
+                Modifier.fillMaxSize(),
+                state = listState
+            ) {
+                itemsIndexed(
+                    items = entries.keys.toList(),
+                    key = { _, key -> key },
+                    contentType = { _, _ -> Diagram::class }) { i, diagram ->
+                    Graph(
+                        modifier = Modifier.fillMaxWidth().height(200.dp),
+                        backgroundColor = Color.White,
+                        totalTime = totalFrame,
+                        timeFrame = timeFrame,
+                        entries = entries[diagram],
+                        onDragged = onDragged,
+                        type = diagram.graphType,
+                    )
+                    Spacer(Modifier.size(4.dp))
+                }
             }
         }
     }

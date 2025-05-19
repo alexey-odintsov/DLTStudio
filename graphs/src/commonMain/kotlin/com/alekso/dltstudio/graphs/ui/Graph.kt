@@ -72,6 +72,9 @@ fun Graph(
                         alpha = 0.5f
                     )
 
+                    val seriesCount = entries.keys.size
+                    renderSeries(seriesCount)
+
                     // draw entries
                     when (type) {
                         GraphType.Events -> renderEvents(entries, timeFrame)
@@ -87,6 +90,16 @@ private fun DrawScope.calculateX(
     timeFrame: TimeFrame
 ): Float {
     return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
+}
+
+private fun DrawScope.renderSeries(
+    seriesCount: Int,
+) {
+    val seriesDistance = size.height / seriesCount
+    (0..<seriesCount).forEach { i ->
+        val y = seriesDistance * i
+        drawLine(Color.LightGray, Offset(0f, y), Offset(size.width, y))
+    }
 }
 
 private fun DrawScope.renderEvents(
