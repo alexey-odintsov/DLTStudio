@@ -6,13 +6,33 @@ interface Key {
 
 interface Value {
     val timestamp: Long
+    val data: Any?
 }
 
-interface PercentageValue : Value {
-    val value: Float
-}
+data class StringKey(
+    override val key: String
+) : Key
 
-interface NumericalValue : Value {
-    val value: Number
-}
+data class NumericalValue(
+    val value: Float,
+    override val timestamp: Long,
+    override val data: Any?
+) : Value
+
+data class EventValue(
+    override val timestamp: Long,
+    override val data: Any?
+) : Value
+
+data class SingleEventValue(
+    override val timestamp: Long,
+    override val data: Any?,
+    val state: String,
+) : Value
+
+data class DurationValue(
+    override val timestamp: Long,
+    override val data: Any?,
+    val timestamp2: Long
+) : Value
 

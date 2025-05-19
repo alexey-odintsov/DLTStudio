@@ -5,8 +5,11 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import com.alekso.dltstudio.graphs.model.EventValue
 import com.alekso.dltstudio.graphs.model.Key
-import com.alekso.dltstudio.graphs.model.PercentageValue
+import com.alekso.dltstudio.graphs.model.NumericalValue
+import com.alekso.dltstudio.graphs.model.SingleEventValue
+import com.alekso.dltstudio.graphs.model.StringKey
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
 import com.alekso.dltstudio.graphs.ui.GraphType
@@ -22,16 +25,6 @@ data class Diagram(
     val graphType: GraphType,
 )
 
-data class CPUEvent(
-    val message: Message,
-    override val value: Float,
-    override val timestamp: Long = message.timestamp,
-) : PercentageValue
-
-data class CPUKey(
-    val cpuName: String,
-    override val key: String = cpuName,
-) : Key
 
 class ViewModel {
     // State
@@ -62,29 +55,54 @@ class ViewModel {
 
     // Business logic
     private fun extractEvents() {
-        val key1 = CPUKey("cpu0")
-        val key2 = CPUKey("cpu1")
-        val key3 = CPUKey("cpu2")
         val cpuEntries = mutableStateMapOf<Key, List<out Value>>(
-            key1 to listOf(
-                CPUEvent(
-                    Message(timeFrame.timeStart + 1_000_000L, "cpu0: 40%"),
-                    40f
+            StringKey("cpu0") to listOf(
+                NumericalValue(
+                    timestamp = timeFrame.timeStart + 1_000_000L,
+                    data = Message(timeFrame.timeStart + 1_000_000L, "cpu0: 40%"),
+                    value = 40f
                 )
             ),
-            key2 to listOf(
-                CPUEvent(
-                    Message(timeFrame.timeStart + 1_200_000L, "cpu1: 25%"),
-                    25f
+            StringKey("cpu1") to listOf(
+                NumericalValue(
+                    timestamp = timeFrame.timeStart + 1_050_000L,
+                    data = Message(timeFrame.timeStart + 1_050_000L, "cpu1: 25%"),
+                    value = 25f
                 )
             ),
-            key3 to listOf(
-                CPUEvent(Message(timeFrame.timeStart + 600_000L, "cpu3: 5%"), 5f),
-                CPUEvent(Message(timeFrame.timeStart + 1_500_000L, "cpu3: 8%"), 8f),
+            StringKey("cpu2") to listOf(
+                NumericalValue(
+                    timestamp = timeFrame.timeStart + 900_000L,
+                    data = Message(timeFrame.timeStart + 900_000L, "cpu2: 14%"),
+                    value = 14f
+                ),
+                NumericalValue(
+                    timestamp = timeFrame.timeStart + 1_200_000L,
+                    data = Message(timeFrame.timeStart + 1_200_000L, "cpu2: 8%"),
+                    value = 8f
+                ),
             ),
         )
-        entriesMap[Diagram("crashes", GraphType.Events)] = mutableStateMapOf()
-        entriesMap[Diagram("cpuc", GraphType.MinMax)] = cpuEntries
+
+
+        val crashes = mutableStateMapOf<Key, List<out Value>>(
+            StringKey("crash") to listOf(
+                EventValue(timestamp = timeFrame.timeStart + 500_000L, data = "Crash1"),
+                EventValue(timestamp = timeFrame.timeStart + 1_250_000L, data = "Crash12"),
+            ),
+            StringKey("WTF") to listOf(
+                EventValue(timestamp = timeFrame.timeStart + 1_120_000L, data = "WTF1"),
+            ),
+        )
+        val userState = mutableStateMapOf<Key, List<out Value>>(
+            StringKey("u0") to listOf(
+                SingleEventValue(timestamp = timeFrame.timeStart + 1_000_000L, state = "RUNNING", data = ""),
+                SingleEventValue(timestamp = timeFrame.timeStart + 1_000_000L, state = "CLOSED", data = ""),
+            ),
+        )
+        entriesMap[Diagram("crashes", GraphType.Events)] = crashes
+        entriesMap[Diagram("cpuc", GraphType.Percentage)] = cpuEntries
+        entriesMap[Diagram("userState", GraphType.SingleState)] = userState
     }
 
 }

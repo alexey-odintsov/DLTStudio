@@ -22,7 +22,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import com.alekso.dltstudio.graphs.model.Key
 import com.alekso.dltstudio.graphs.model.NumericalValue
-import com.alekso.dltstudio.graphs.model.PercentageValue
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
 
@@ -99,8 +98,7 @@ private fun DrawScope.renderEvents(
         entries?.forEach { entry ->
             val x = calculateX(entry, timeFrame)
             val y = when (entry) {
-                is PercentageValue -> entry.value
-                is NumericalValue -> entry.value.toFloat()
+                is NumericalValue -> entry.value
                 else -> 1f
             }
 
