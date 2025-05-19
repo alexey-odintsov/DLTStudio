@@ -56,21 +56,21 @@ class ViewModel {
     // Business logic
     private fun extractEvents() {
         val cpuEntries = mutableStateMapOf<Key, List<out Value>>(
-            StringKey("cpu0") to listOf(
+            StringKey("app1") to listOf(
                 NumericalValue(
                     timestamp = timeFrame.timeStart + 1_000_000L,
                     data = Message(timeFrame.timeStart + 1_000_000L, "cpu0: 40%"),
                     value = 40f
                 )
             ),
-            StringKey("cpu1") to listOf(
+            StringKey("app2") to listOf(
                 NumericalValue(
                     timestamp = timeFrame.timeStart + 1_050_000L,
                     data = Message(timeFrame.timeStart + 1_050_000L, "cpu1: 25%"),
                     value = 25f
                 )
             ),
-            StringKey("cpu2") to listOf(
+            StringKey("service1") to listOf(
                 NumericalValue(
                     timestamp = timeFrame.timeStart + 900_000L,
                     data = Message(timeFrame.timeStart + 900_000L, "cpu2: 14%"),
@@ -86,12 +86,12 @@ class ViewModel {
 
 
         val crashes = mutableStateMapOf<Key, List<out Value>>(
-            StringKey("crash") to listOf(
-                EventValue(timestamp = timeFrame.timeStart + 500_000L, data = "Crash1"),
-                EventValue(timestamp = timeFrame.timeStart + 1_250_000L, data = "Crash12"),
+            StringKey("app1") to listOf(
+                EventValue(timestamp = timeFrame.timeStart + 500_000L, event = "Crash", data = "Crash1"),
+                EventValue(timestamp = timeFrame.timeStart + 1_250_000L, event = "WTF", data = "Crash12"),
             ),
-            StringKey("WTF") to listOf(
-                EventValue(timestamp = timeFrame.timeStart + 1_120_000L, data = "WTF1"),
+            StringKey("service1") to listOf(
+                EventValue(timestamp = timeFrame.timeStart + 1_120_000L, event = "ANR", data = "WTF1"),
             ),
         )
         val userState = mutableStateMapOf<Key, List<out Value>>(

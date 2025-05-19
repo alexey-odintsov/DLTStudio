@@ -21,7 +21,8 @@ data class NumericalValue(
 
 data class EventValue(
     override val timestamp: Long,
-    override val data: Any?
+    override val data: Any?,
+    val event: String,
 ) : Value
 
 data class SingleEventValue(
