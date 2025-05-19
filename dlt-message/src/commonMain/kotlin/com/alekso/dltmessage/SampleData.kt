@@ -45,6 +45,7 @@ object SampleData {
                     withTimestamp = timeStamp != null,
                     versionNumber = 1.toByte(),
                 ),
+                ecuId = ecuId,
                 messageCounter = 1U,
                 length = 1U
             ),
