@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
@@ -20,7 +19,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import com.alekso.dltstudio.graphs.model.Key
+import androidx.compose.ui.text.TextMeasurer
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.sp
+import com.alekso.dltstudio.graphs.model.ChartData
 import com.alekso.dltstudio.graphs.model.NumericalValue
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
@@ -40,15 +46,29 @@ fun Graph(
     backgroundColor: Color,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
-    entries: SnapshotStateMap<out Key, List<out Value>>?,
+    entries: ChartData?,
     onDragged: (Float) -> Unit,
     type: GraphType,
 ) {
-    if (entries.isNullOrEmpty()) {
+    if (entries == null || entries.isEmpty()) {
         Text("No entries found")
         return
     }
     var usSize by remember { mutableStateOf(1f) }
+    val textMeasurer = rememberTextMeasurer()
+    val labelsTextStyle = remember {
+        TextStyle(
+            color = Color.Black,
+            fontSize = 10.sp,
+            textAlign = TextAlign.End,
+            lineHeightStyle = LineHeightStyle(
+                LineHeightStyle.Alignment.Center,
+                LineHeightStyle.Trim.None
+            )
+        )
+    }
+
+
     Spacer(
         modifier = modifier.fillMaxSize().background(backgroundColor).clipToBounds()
             .onSizeChanged { size ->
@@ -72,7 +92,7 @@ fun Graph(
                         alpha = 0.5f
                     )
 
-                    val seriesCount = entries.keys.size
+                    val seriesCount = entries.getLabels().size
                     renderSeries(seriesCount)
 
                     // draw entries
@@ -81,6 +101,8 @@ fun Graph(
                         GraphType.Percentage, GraphType.MinMax -> renderLines(entries, timeFrame)
                         else -> {}
                     }
+
+                    renderLabels(entries.getLabels(), textMeasurer, labelsTextStyle)
                 }
             })
 }
@@ -102,12 +124,31 @@ private fun DrawScope.renderSeries(
     }
 }
 
+private fun DrawScope.renderLabels(
+    labels: List<String>,
+    textMeasurer: TextMeasurer,
+    labelsTextStyle: TextStyle,
+) {
+    val seriesDistance = size.height / labels.size
+    labels.forEachIndexed { i, label ->
+        val y = seriesDistance * i
+        val maxValueResult = textMeasurer.measure(
+            text = label, style = labelsTextStyle
+        )
+        drawText(
+            textMeasurer = textMeasurer,
+            text = label,
+            topLeft = Offset(0f, y),
+        )
+    }
+}
+
 private fun DrawScope.renderEvents(
-    entriesMap: Map<out Key, List<out Value>>,
+    entriesMap: ChartData,
     timeFrame: TimeFrame
 ) {
-    entriesMap.keys.forEachIndexed { i, key ->
-        val entries = entriesMap[key]
+    entriesMap.getKeys().forEachIndexed { i, key ->
+        val entries = entriesMap.getEntries(key)
         entries?.forEach { entry ->
             val x = calculateX(entry, timeFrame)
             val y = when (entry) {
@@ -124,9 +165,9 @@ private fun DrawScope.renderEvents(
     }
 }
 
-private fun DrawScope.renderLines(entriesMap: Map<out Key, List<out Value>>, timeFrame: TimeFrame) {
-    entriesMap.keys.forEachIndexed { i, key ->
-        val entries = entriesMap[key]
+private fun DrawScope.renderLines(entriesMap: ChartData, timeFrame: TimeFrame) {
+    entriesMap.getKeys().forEachIndexed { i, key ->
+        val entries = entriesMap.getEntries(key)
         entries?.forEach { entry ->
             val x = calculateX(entry, timeFrame)
             val y = 100f

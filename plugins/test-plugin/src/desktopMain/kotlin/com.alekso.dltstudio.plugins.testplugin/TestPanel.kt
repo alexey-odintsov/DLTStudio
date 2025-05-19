@@ -19,15 +19,14 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.graphs.model.Key
+import com.alekso.dltstudio.graphs.model.ChartData
 import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.model.Value
 import com.alekso.dltstudio.graphs.ui.Graph
 
 @Composable
 fun TestPanel(
     modifier: Modifier,
-    entries: SnapshotStateMap<Diagram, SnapshotStateMap<out Key, List<out Value>>>,
+    entries: SnapshotStateMap<Diagram, ChartData>,
     onAnaliseClicked: () -> Unit,
     onDragged: (Float) -> Unit,
     timeFrame: TimeFrame,
