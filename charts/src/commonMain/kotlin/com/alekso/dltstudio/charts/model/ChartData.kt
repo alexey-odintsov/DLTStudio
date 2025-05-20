@@ -1,50 +1,7 @@
 package com.alekso.dltstudio.charts.model
 
 import androidx.compose.runtime.Stable
-
-interface ChartKey {
-    val key: String
-}
-
-interface ChartEntry {
-    val timestamp: Long
-    val data: Any?
-}
-
-data class StringKey(
-    override val key: String
-) : ChartKey
-
-data class NumericalEntry(
-    val value: Float,
-    override val timestamp: Long,
-    override val data: Any?
-) : ChartEntry
-
-data class EventEntry(
-    override val timestamp: Long,
-    override val data: Any?,
-    val event: String,
-) : ChartEntry
-
-data class StateEntry(
-    override val timestamp: Long,
-    override val data: Any?,
-    val oldState: String,
-    val newState: String,
-) : ChartEntry
-
-data class SingleStateEntry(
-    override val timestamp: Long,
-    override val data: Any?,
-    val state: String,
-) : ChartEntry
-
-data class DurationEntry(
-    override val timestamp: Long,
-    override val data: Any?,
-    val timestamp2: Long
-) : ChartEntry
+import androidx.compose.runtime.mutableStateMapOf
 
 @Stable
 interface ChartData {
@@ -55,7 +12,7 @@ interface ChartData {
 }
 
 data class FloatChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<NumericalEntry>>,
+    val entriesMap: MutableMap<ChartKey, MutableList<NumericalEntry>> = mutableMapOf(),
 ) : ChartData {
     private var minValue = 0f
     private var maxValue = 0f
@@ -67,7 +24,7 @@ data class FloatChartData(
         if (value.value < minValue) {
             minValue = value.value
         }
-        val list = entriesMap[key] ?: mutableListOf<NumericalEntry>()
+        val list = entriesMap[key] ?: mutableListOf()
         list.add(value)
         entriesMap[key] = list
     }
@@ -93,14 +50,14 @@ data class FloatChartData(
 }
 
 data class EventsChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<EventEntry>>
+    val entriesMap: MutableMap<ChartKey, MutableList<EventEntry>> = mutableStateMapOf()
 ) : ChartData {
     private val _labels = mutableListOf<String>()
     fun addEntry(key: ChartKey, label: String, value: EventEntry) {
         if (!_labels.contains(label)) {
             _labels.add(label)
         }
-        val list = entriesMap[key] ?: mutableListOf<EventEntry>()
+        val list = entriesMap[key] ?: mutableListOf()
         list.add(value)
         entriesMap[key] = list
     }
@@ -120,18 +77,18 @@ data class EventsChartData(
     override fun getLabels(): List<String> {
         return _labels
     }
-
 }
 
-data class SingleStateChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<SingleStateEntry>>,
+data class StateChartData(
+    val entriesMap: MutableMap<ChartKey, MutableList<StateEntry>> = mutableMapOf(),
 ) : ChartData {
     private val _labels = mutableListOf<String>()
-    fun addEntry(key: ChartKey, label: String, value: SingleStateEntry) {
+
+    fun addEntry(key: ChartKey, label: String, value: StateEntry) {
         if (!_labels.contains(label)) {
             _labels.add(label)
         }
-        val list = entriesMap[key] ?: mutableListOf<SingleStateEntry>()
+        val list = entriesMap[key] ?: mutableListOf()
         list.add(value)
         entriesMap[key] = list
     }
@@ -151,5 +108,34 @@ data class SingleStateChartData(
     override fun getLabels(): List<String> {
         return _labels
     }
+}
 
+data class SingleStateChartData(
+    val entriesMap: MutableMap<ChartKey, MutableList<SingleStateEntry>> = mutableStateMapOf(),
+) : ChartData {
+    private val _labels = mutableListOf<String>()
+    fun addEntry(key: ChartKey, label: String, value: SingleStateEntry) {
+        if (!_labels.contains(label)) {
+            _labels.add(label)
+        }
+        val list = entriesMap[key] ?: mutableListOf()
+        list.add(value)
+        entriesMap[key] = list
+    }
+
+    override fun isEmpty(): Boolean {
+        return entriesMap.isEmpty()
+    }
+
+    override fun getKeys(): List<ChartKey> {
+        return entriesMap.keys.toList()
+    }
+
+    override fun getEntries(key: ChartKey): List<ChartEntry> {
+        return entriesMap[key]?.toList() ?: emptyList()
+    }
+
+    override fun getLabels(): List<String> {
+        return _labels
+    }
 }

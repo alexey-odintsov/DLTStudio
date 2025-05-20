@@ -60,7 +60,7 @@ class ViewModel {
     // Business logic
     private fun extractEvents() {
 
-        val cpuEntries = FloatChartData(mutableStateMapOf())
+        val cpuEntries = FloatChartData()
         cpuEntries.addEntry(
             StringKey("app1"),
                 NumericalEntry(
@@ -96,7 +96,7 @@ class ViewModel {
         )
 
 
-        val crashes = EventsChartData(mutableStateMapOf())
+        val crashes = EventsChartData()
         val app1Key = StringKey("app1")
         val service1Key = StringKey("service1")
         crashes.addEntry(
@@ -117,7 +117,7 @@ class ViewModel {
             service1Key, "ANR",
             EventEntry(timestamp = timeFrame.timeStart + 1_120_000L, event = "ANR", data = "WTF1")
         )
-        val userState = SingleStateChartData(mutableStateMapOf())
+        val userState = SingleStateChartData()
         val u0Key = StringKey("u0")
         userState.addEntry(
             u0Key, "RUNNING",

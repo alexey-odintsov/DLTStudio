@@ -23,28 +23,16 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.LineHeightStyle
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.FloatChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
-import com.alekso.dltstudio.charts.model.ChartEntry
-
-enum class ChartType {
-    Percentage,
-    MinMax,
-    Events,
-    State,
-    SingleState,
-    Duration,
-}
 
 @Composable
 fun Chart(
     modifier: Modifier,
-    backgroundColor: Color,
+    style: ChartStyle,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
     entries: ChartData?,
@@ -59,21 +47,9 @@ fun Chart(
     }
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
-    val labelsTextStyle = remember {
-        TextStyle(
-            color = Color.Black,
-            fontSize = 10.sp,
-            textAlign = TextAlign.End,
-            lineHeightStyle = LineHeightStyle(
-                LineHeightStyle.Alignment.Center,
-                LineHeightStyle.Trim.None
-            )
-        )
-    }
-
 
     Spacer(
-        modifier = modifier.fillMaxSize().background(backgroundColor).clipToBounds()
+        modifier = modifier.fillMaxSize().background(style.backgroundColor).clipToBounds()
             .onSizeChanged { size ->
                 usSize = size.width.toFloat() / timeFrame.duration
             }
@@ -114,7 +90,7 @@ fun Chart(
                             100f,
                             labelsCount,
                             textMeasurer,
-                            labelsTextStyle,
+                            style.labelTextStyle,
                             labelsPostfix,
                         )
 
@@ -123,14 +99,14 @@ fun Chart(
                             (entries as FloatChartData).getMaxValue(),
                             labelsCount,
                             textMeasurer,
-                            labelsTextStyle,
+                            style.labelTextStyle,
                             labelsPostfix,
                         )
 
                         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
                             entries.getLabels(),
                             textMeasurer,
-                            labelsTextStyle
+                            style.labelTextStyle
                         )
                     }
                 }

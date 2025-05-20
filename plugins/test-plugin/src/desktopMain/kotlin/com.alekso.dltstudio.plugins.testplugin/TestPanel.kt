@@ -15,13 +15,19 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
+import com.alekso.dltstudio.charts.ui.ChartStyle
 
 @Composable
 fun TestPanel(
@@ -62,6 +68,20 @@ fun TestPanel(
         )
         Column(Modifier.fillMaxSize().background(Color.LightGray)) {
             val listState = rememberLazyListState()
+            val chartStyle = remember {
+                ChartStyle(
+                    backgroundColor = Color.White,
+                    labelTextStyle = TextStyle(
+                        color = Color.Black,
+                        fontSize = 10.sp,
+                        textAlign = TextAlign.End,
+                        lineHeightStyle = LineHeightStyle(
+                            LineHeightStyle.Alignment.Center,
+                            LineHeightStyle.Trim.None
+                        )
+                    )
+                )
+            }
             LazyColumn(
                 Modifier.fillMaxSize(),
                 state = listState
@@ -72,7 +92,7 @@ fun TestPanel(
                     contentType = { _, _ -> ChartParameters::class }) { i, diagram ->
                     Chart(
                         modifier = Modifier.fillMaxWidth().height(200.dp),
-                        backgroundColor = Color.White,
+                        style = chartStyle,
                         totalTime = totalFrame,
                         timeFrame = timeFrame,
                         entries = entries[diagram],
