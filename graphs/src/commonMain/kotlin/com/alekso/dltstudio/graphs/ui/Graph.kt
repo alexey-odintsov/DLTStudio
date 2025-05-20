@@ -27,7 +27,8 @@ import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.graphs.model.ChartData
-import com.alekso.dltstudio.graphs.model.NumericalValue
+import com.alekso.dltstudio.graphs.model.EventsChartData
+import com.alekso.dltstudio.graphs.model.FloatChartData
 import com.alekso.dltstudio.graphs.model.TimeFrame
 import com.alekso.dltstudio.graphs.model.Value
 
@@ -84,7 +85,7 @@ fun Graph(
             .drawWithCache {
                 onDrawBehind {
 
-                    // center line
+                    // center line – zoom marker
                     drawLine(
                         Color.LightGray,
                         Offset(size.center.x, 0f),
@@ -92,17 +93,42 @@ fun Graph(
                         alpha = 0.5f
                     )
 
-                    val seriesCount = entries.getLabels().size
-                    renderSeries(seriesCount)
+                    val labelsSize = entries.getLabels().size
+                    renderSeries(if (labelsSize > 0) labelsSize else 10)
 
                     // draw entries
                     when (type) {
-                        GraphType.Events -> renderEvents(entries, timeFrame)
-                        GraphType.Percentage, GraphType.MinMax -> renderLines(entries, timeFrame)
+                        GraphType.Events -> renderEvents(entries as EventsChartData, timeFrame)
+                        GraphType.Percentage, GraphType.MinMax -> renderLines(
+                            entries as FloatChartData,
+                            timeFrame
+                        )
                         else -> {}
                     }
 
-                    renderLabels(entries.getLabels(), textMeasurer, labelsTextStyle)
+                    when (type) {
+                        GraphType.Percentage -> renderValuesLabels(
+                            0f,
+                            100f,
+                            10,
+                            textMeasurer,
+                            labelsTextStyle
+                        )
+
+                        GraphType.MinMax -> renderValuesLabels(
+                            (entries as FloatChartData).getMinValue(),
+                            (entries as FloatChartData).getMaxValue(),
+                            10,
+                            textMeasurer,
+                            labelsTextStyle
+                        )
+
+                        GraphType.Events, GraphType.State, GraphType.SingleState, GraphType.Duration -> renderLabels(
+                            entries.getLabels(),
+                            textMeasurer,
+                            labelsTextStyle
+                        )
+                    }
                 }
             })
 }
@@ -143,18 +169,42 @@ private fun DrawScope.renderLabels(
     }
 }
 
+private fun DrawScope.renderValuesLabels(
+    minValue: Float,
+    maxValue: Float,
+    seriesCount: Int,
+    textMeasurer: TextMeasurer,
+    labelsTextStyle: TextStyle,
+) {
+    val seriesDistance = size.height / seriesCount
+    val step = (maxValue - minValue) / seriesCount
+    repeat(seriesCount) { i ->
+        val y = seriesDistance * i
+        val maxValueResult = textMeasurer.measure(
+            text = "${(seriesCount - i) * step}", style = labelsTextStyle
+        )
+        drawText(
+            textMeasurer = textMeasurer,
+            text = "${(seriesCount - i) * step}",
+            topLeft = Offset(0f, y),
+        )
+    }
+}
+
+
 private fun DrawScope.renderEvents(
-    entriesMap: ChartData,
-    timeFrame: TimeFrame
+    entriesMap: EventsChartData,
+    timeFrame: TimeFrame,
 ) {
     entriesMap.getKeys().forEachIndexed { i, key ->
         val entries = entriesMap.getEntries(key)
-        entries?.forEach { entry ->
+        entries.forEach { entry ->
             val x = calculateX(entry, timeFrame)
-            val y = when (entry) {
-                is NumericalValue -> entry.value
-                else -> 1f
-            }
+            val y = calculateYForLabels(
+                entriesMap.getLabels(),
+                entriesMap.getLabels().indexOf(entry.event),
+                size.height
+            )
 
             drawCircle(
                 color = Color.Red,
@@ -165,12 +215,12 @@ private fun DrawScope.renderEvents(
     }
 }
 
-private fun DrawScope.renderLines(entriesMap: ChartData, timeFrame: TimeFrame) {
+private fun DrawScope.renderLines(entriesMap: FloatChartData, timeFrame: TimeFrame) {
     entriesMap.getKeys().forEachIndexed { i, key ->
         val entries = entriesMap.getEntries(key)
-        entries?.forEach { entry ->
+        entries.forEach { entry ->
             val x = calculateX(entry, timeFrame)
-            val y = 100f
+            val y = calculateYForValue(entry.value, entriesMap.getMaxValue(), size.height)
 
             drawCircle(
                 color = Color.Green,
@@ -181,6 +231,14 @@ private fun DrawScope.renderLines(entriesMap: ChartData, timeFrame: TimeFrame) {
     }
 }
 
+private fun calculateYForLabels(labels: List<String>, labelIndex: Int, height: Float): Float {
+    val itemHeight = height / (labels.size - 1)
+    return if (labels.size == 1) height / 2f else itemHeight * labelIndex
+}
+
+private fun calculateYForValue(value: Float, maxValue: Float, height: Float): Float {
+    return height - height * value / maxValue
+}
 
 //@Preview
 //@Composable

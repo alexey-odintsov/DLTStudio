@@ -55,10 +55,19 @@ interface ChartData {
 }
 
 data class FloatChartData(
-    val entriesMap: MutableMap<Key, MutableList<Value>>,
+    val entriesMap: MutableMap<Key, MutableList<NumericalValue>>,
 ) : ChartData {
-    fun addEntry(key: Key, value: Value) {
-        val list = entriesMap[key] ?: mutableListOf<Value>()
+    private var minValue = 0f
+    private var maxValue = 0f
+
+    fun addEntry(key: Key, value: NumericalValue) {
+        if (value.value > maxValue) {
+            maxValue = value.value
+        }
+        if (value.value < minValue) {
+            minValue = value.value
+        }
+        val list = entriesMap[key] ?: mutableListOf<NumericalValue>()
         list.add(value)
         entriesMap[key] = list
     }
@@ -71,13 +80,16 @@ data class FloatChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: Key): List<Value> {
+    override fun getEntries(key: Key): List<NumericalValue> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 
     override fun getLabels(): List<String> {
         return emptyList()
     }
+
+    fun getMaxValue() = maxValue
+    fun getMinValue() = minValue
 }
 
 data class EventsChartData(
@@ -101,7 +113,7 @@ data class EventsChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: Key): List<Value> {
+    override fun getEntries(key: Key): List<EventValue> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 
