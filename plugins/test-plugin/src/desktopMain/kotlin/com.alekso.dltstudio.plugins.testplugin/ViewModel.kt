@@ -22,6 +22,7 @@ data class Message(
 )
 
 data class ChartParameters(
+    val order: Int,
     val key: String,
     val chartType: ChartType,
     val labelsPostfix: String = "",
@@ -135,9 +136,9 @@ class ViewModel {
             ),
         )
 
-        entriesMap[ChartParameters("crashes", ChartType.Events)] = crashes
-        entriesMap[ChartParameters("cpuc", ChartType.Percentage, labelsPostfix = "%")] = cpuEntries
-        entriesMap[ChartParameters("userState", ChartType.SingleState)] = userState
+        entriesMap[ChartParameters(0, "crashes", ChartType.Events)] = crashes
+        entriesMap[ChartParameters(1, "cpuc", ChartType.Percentage, labelsPostfix = "%")] = cpuEntries
+        entriesMap[ChartParameters(2, "userState", ChartType.SingleState)] = userState
     }
 
 }

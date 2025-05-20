@@ -67,7 +67,7 @@ fun TestPanel(
                 state = listState
             ) {
                 itemsIndexed(
-                    items = entries.keys.toList(),
+                    items = entries.keys.toList().sortedBy { it.order },
                     key = { _, key -> key },
                     contentType = { _, _ -> ChartParameters::class }) { i, diagram ->
                     Chart(
