@@ -6,8 +6,8 @@ interface ChartEntry {
 }
 
 data class NumericalEntry(
-    val value: Float,
     override val timestamp: Long,
+    val value: Float,
     override val data: Any?
 ) : ChartEntry
 

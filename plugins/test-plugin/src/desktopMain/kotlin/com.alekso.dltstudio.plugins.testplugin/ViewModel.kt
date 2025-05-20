@@ -19,7 +19,7 @@ data class ChartParameters(
     val key: String,
     val chartType: ChartType,
     val labelsPostfix: String = "",
-    val labelsCount: Int = 10,
+    val labelsCount: Int = 11,
 )
 
 

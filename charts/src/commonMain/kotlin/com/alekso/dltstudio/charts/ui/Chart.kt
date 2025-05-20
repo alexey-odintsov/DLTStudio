@@ -1,14 +1,9 @@
 package com.alekso.dltstudio.charts.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,15 +23,11 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartEntry
-import com.alekso.dltstudio.charts.model.EventEntry
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.FloatChartData
-import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.charts.model.TimeFrame
-import kotlinx.datetime.Clock
 
 @Composable
 fun Chart(
@@ -47,7 +38,7 @@ fun Chart(
     entries: ChartData?,
     onDragged: (Float) -> Unit,
     type: ChartType,
-    labelsCount: Int = 10,
+    labelsCount: Int = 11,
     labelsPostfix: String = "",
 ) {
     if (entries == null || entries.isEmpty()) {
@@ -81,14 +72,23 @@ fun Chart(
                     )
 
                     val labelsSize = entries.getLabels().size
-                    renderSeries(if (labelsSize > 0) labelsSize else labelsCount)
+                    renderSeries(
+                        if (labelsSize > 0) labelsSize else labelsCount,
+                        style.seriesColor,
+                        style.verticalPadding.toPx()
+                    )
 
                     // draw entries
                     when (type) {
-                        ChartType.Events -> renderEvents(entries as EventsChartData, timeFrame)
+                        ChartType.Events -> renderEvents(
+                            entries as EventsChartData,
+                            timeFrame,
+                            style.verticalPadding.toPx()
+                        )
                         ChartType.Percentage, ChartType.MinMax -> renderLines(
                             entries as FloatChartData,
-                            timeFrame
+                            timeFrame,
+                            style.verticalPadding.toPx()
                         )
 
                         else -> {}
@@ -132,11 +132,13 @@ private fun DrawScope.calculateX(
 
 private fun DrawScope.renderSeries(
     seriesCount: Int,
+    lineColor: Color,
+    verticalPadding: Float,
 ) {
-    val seriesDistance = size.height / seriesCount
+    val seriesDistance = (size.height - 2 * verticalPadding) / (seriesCount - 1)
     (0..<seriesCount).forEach { i ->
-        val y = seriesDistance * i
-        drawLine(Color.LightGray, Offset(0f, y), Offset(size.width, y))
+        val y = verticalPadding + seriesDistance * i
+        drawLine(lineColor, Offset(0f, y), Offset(size.width, y))
     }
 }
 
@@ -167,10 +169,10 @@ private fun DrawScope.renderValuesLabels(
     labelsTextStyle: TextStyle,
     labelsPostfix: String,
 ) {
-    val seriesDistance = size.height / seriesCount
-    val step = (maxValue - minValue) / seriesCount
-    repeat(seriesCount) { i ->
-        val text = "${"%,.0f".format((seriesCount - i) * step)}$labelsPostfix"
+    val seriesDistance = size.height / (seriesCount )
+    val step = (maxValue - minValue) / (seriesCount - 1)
+    repeat(seriesCount + 1) { i ->
+        val text = "${"%,.0f".format((seriesCount - 1 - i) * step)}$labelsPostfix"
         val y = seriesDistance * i
         val maxValueResult = textMeasurer.measure(
             text = text, style = labelsTextStyle
@@ -187,6 +189,7 @@ private fun DrawScope.renderValuesLabels(
 private fun DrawScope.renderEvents(
     entriesMap: EventsChartData,
     timeFrame: TimeFrame,
+    verticalPadding: Float,
 ) {
     entriesMap.getKeys().forEachIndexed { i, key ->
         val entries = entriesMap.getEntries(key)
@@ -194,7 +197,7 @@ private fun DrawScope.renderEvents(
             val labels = entriesMap.getLabels()
             val labelIndex = labels.indexOf(entry.event)
             val x = calculateX(entry, timeFrame)
-            val y = calculateYForLabels(labels, labelIndex, size.height)
+            val y = calculateYForLabels(labels, labelIndex, size.height, verticalPadding)
 
             drawCircle(
                 color = getColor(labelIndex),
@@ -205,12 +208,16 @@ private fun DrawScope.renderEvents(
     }
 }
 
-private fun DrawScope.renderLines(entriesMap: FloatChartData, timeFrame: TimeFrame) {
+private fun DrawScope.renderLines(
+    entriesMap: FloatChartData,
+    timeFrame: TimeFrame,
+    verticalPadding: Float,
+) {
     entriesMap.getKeys().forEachIndexed { i, key ->
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
             val x = calculateX(entry, timeFrame)
-            val y = calculateYForValue(entry.value, entriesMap.getMaxValue(), size.height)
+            val y = calculateYForValue(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
 
             drawCircle(
                 color = getColor(i),
@@ -221,13 +228,19 @@ private fun DrawScope.renderLines(entriesMap: FloatChartData, timeFrame: TimeFra
     }
 }
 
-private fun calculateYForLabels(labels: List<String>, labelIndex: Int, height: Float): Float {
-    val itemHeight = height / (labels.size - 1)
-    return if (labels.size == 1) height / 2f else itemHeight * labelIndex
+private fun calculateYForLabels(
+    labels: List<String>,
+    labelIndex: Int,
+    height: Float,
+    verticalPadding: Float
+): Float {
+    val itemHeight = (height - 2 * verticalPadding) / (labels.size - 1)
+    return if (labels.size == 1) height / 2f else verticalPadding + itemHeight * labelIndex
 }
 
-private fun calculateYForValue(value: Float, maxValue: Float, height: Float): Float {
-    return height - height * value / maxValue
+private fun calculateYForValue(value: Float, maxValue: Float, height: Float, verticalPadding: Float): Float {
+    val itemHeight = (height - 2 * verticalPadding)
+    return verticalPadding + itemHeight - itemHeight * value / maxValue
 }
 
 val colors = listOf(
@@ -248,32 +261,4 @@ private fun getColor(index: Int): Color {
     // TODO: generate color or use colorPalette
     val i = if (index >= colors.size) colors.size % index else index
     return colors[i]
-}
-
-@Preview
-@Composable
-fun PreviewEventsGraph() {
-    val now = Clock.System.now().toEpochMilliseconds() * 1000L
-    val app1 = StringKey("app1")
-    val app2 = StringKey("app2")
-    val service1 = StringKey("service1")
-
-    val chartData = EventsChartData()
-    chartData.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
-    chartData.addEntry(app2, EventEntry(now + 1_500_000L, "ANR", ""))
-    chartData.addEntry(app2, EventEntry(now + 1_750_000L, "Crash", ""))
-    chartData.addEntry(service1, EventEntry(now + 800_000L, "WTF", ""))
-
-    Column(Modifier.fillMaxSize().background(Color.LightGray)) {
-        Chart(
-            modifier = Modifier.fillMaxWidth().height(200.dp),
-            style = ChartStyle.Default,
-            totalTime = TimeFrame(now, now + 2_000_000L),
-            timeFrame = TimeFrame(now, now + 2_000_000L),
-            entries = chartData,
-            onDragged = {},
-            type = ChartType.Events,
-        )
-        Spacer(Modifier.size(4.dp))
-    }
 }
