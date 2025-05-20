@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.graphs.ui
+package com.alekso.dltstudio.charts.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -26,11 +26,11 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.graphs.model.ChartData
-import com.alekso.dltstudio.graphs.model.EventsChartData
-import com.alekso.dltstudio.graphs.model.FloatChartData
-import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.model.ChartEntry
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.FloatChartData
+import com.alekso.dltstudio.charts.model.TimeFrame
+import com.alekso.dltstudio.charts.model.ChartEntry
 
 enum class ChartType {
     Percentage,

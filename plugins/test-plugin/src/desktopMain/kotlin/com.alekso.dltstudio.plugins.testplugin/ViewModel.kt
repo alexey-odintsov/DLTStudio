@@ -4,16 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.alekso.dltstudio.graphs.model.ChartData
-import com.alekso.dltstudio.graphs.model.EventEntry
-import com.alekso.dltstudio.graphs.model.EventsChartData
-import com.alekso.dltstudio.graphs.model.FloatChartData
-import com.alekso.dltstudio.graphs.model.NumericalEntry
-import com.alekso.dltstudio.graphs.model.SingleStateChartData
-import com.alekso.dltstudio.graphs.model.SingleStateEntry
-import com.alekso.dltstudio.graphs.model.StringKey
-import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.ui.ChartType
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.EventEntry
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.FloatChartData
+import com.alekso.dltstudio.charts.model.NumericalEntry
+import com.alekso.dltstudio.charts.model.SingleStateChartData
+import com.alekso.dltstudio.charts.model.SingleStateEntry
+import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.charts.model.TimeFrame
+import com.alekso.dltstudio.charts.ui.ChartType
 import kotlinx.datetime.Clock
 
 data class Message(

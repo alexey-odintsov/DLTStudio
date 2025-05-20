@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.graphs.model
+package com.alekso.dltstudio.charts.model
 
 import androidx.compose.runtime.Stable
 

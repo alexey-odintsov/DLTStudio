@@ -25,7 +25,7 @@ kotlin {
             implementation(project(":logger"))
             implementation(project(":ui-components"))
             implementation(project(":plugins:contract"))
-            implementation(project(":graphs"))
+            implementation(project(":charts"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)

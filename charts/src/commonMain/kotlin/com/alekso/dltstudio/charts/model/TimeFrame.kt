@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.graphs.model
+package com.alekso.dltstudio.charts.model
 
 data class TimeFrame(
     val timeStart: Long,

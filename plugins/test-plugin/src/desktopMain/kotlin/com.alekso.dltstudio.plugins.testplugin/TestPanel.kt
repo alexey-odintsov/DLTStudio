@@ -19,9 +19,9 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.graphs.model.ChartData
-import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.ui.Chart
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.TimeFrame
+import com.alekso.dltstudio.charts.ui.Chart
 
 @Composable
 fun TestPanel(
