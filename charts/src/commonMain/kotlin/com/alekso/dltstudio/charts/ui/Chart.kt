@@ -1,9 +1,14 @@
 package com.alekso.dltstudio.charts.ui
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -23,11 +28,15 @@ import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartEntry
+import com.alekso.dltstudio.charts.model.EventEntry
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.FloatChartData
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.charts.model.TimeFrame
+import kotlinx.datetime.Clock
 
 @Composable
 fun Chart(
@@ -53,7 +62,7 @@ fun Chart(
             .onSizeChanged { size ->
                 usSize = size.width.toFloat() / timeFrame.duration
             }
-            .pointerInput("graph-dragging") {
+            .pointerInput("chart-dragging") {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     val dragUs = -dragAmount.x / usSize
@@ -81,6 +90,7 @@ fun Chart(
                             entries as FloatChartData,
                             timeFrame
                         )
+
                         else -> {}
                     }
 
@@ -181,15 +191,13 @@ private fun DrawScope.renderEvents(
     entriesMap.getKeys().forEachIndexed { i, key ->
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
+            val labels = entriesMap.getLabels()
+            val labelIndex = labels.indexOf(entry.event)
             val x = calculateX(entry, timeFrame)
-            val y = calculateYForLabels(
-                entriesMap.getLabels(),
-                entriesMap.getLabels().indexOf(entry.event),
-                size.height
-            )
+            val y = calculateYForLabels(labels, labelIndex, size.height)
 
             drawCircle(
-                color = Color.Red,
+                color = getColor(labelIndex),
                 radius = 15f,
                 center = Offset(x, y)
             )
@@ -205,7 +213,7 @@ private fun DrawScope.renderLines(entriesMap: FloatChartData, timeFrame: TimeFra
             val y = calculateYForValue(entry.value, entriesMap.getMaxValue(), size.height)
 
             drawCircle(
-                color = Color.Green,
+                color = getColor(i),
                 radius = 5f,
                 center = Offset(x, y)
             )
@@ -222,37 +230,50 @@ private fun calculateYForValue(value: Float, maxValue: Float, height: Float): Fl
     return height - height * value / maxValue
 }
 
-//@Preview
-//@Composable
-//fun PreviewLineGraph() {
-//    val now = Clock.System.now().toEpochMilliseconds() * 1000L
-//    val key1 = CPUKey("cpu0")
-//    val key2 = CPUKey("cpu1")
-//    val key3 = CPUKey("cpu2")
-//    val entries = mutableStateMapOf(
-//        key1 to listOf(CPUEvent(Message(now, "cpu0: 40%"), 40f)),
-//        key2 to listOf(CPUEvent(Message(now + 1_000_000L, "cpu1: 12%"), 12f)),
-//        key3 to listOf(CPUEvent(Message(now + 2_000_000L, "cpu2: 43%"), 43f)),
-//    )
-//    Column(Modifier.fillMaxSize().background(Color.LightGray)) {
-//        Graph(
-//            modifier = Modifier.fillMaxWidth().height(200.dp),
-//            backgroundColor = Color.White,
-//            totalTime = TimeFrame(now, now + 2_000_000L),
-//            timeFrame = TimeFrame(now, now + 2_000_000L),
-//            entries = entries,
-//            onDragged = {},
-//            type = GraphType.Events,
-//        )
-//        Spacer(Modifier.size(4.dp))
-//        Graph(
-//            modifier = Modifier.fillMaxWidth().height(200.dp),
-//            backgroundColor = Color.Gray,
-//            totalTime = TimeFrame(0L, 480L),
-//            timeFrame = TimeFrame(140L, 300L),
-//            entries = entries,
-//            onDragged = {},
-//            type = GraphType.Lines,
-//        )
-//    }
-//}
+val colors = listOf(
+    Color.Blue,
+    Color.Red,
+    Color.Green,
+    Color.Yellow,
+    Color.White,
+    Color.Cyan,
+    Color.Magenta,
+    Color.LightGray,
+    Color.DarkGray,
+    Color.Gray,
+    Color.Black,
+)
+
+private fun getColor(index: Int): Color {
+    // TODO: generate color or use colorPalette
+    val i = if (index >= colors.size) colors.size % index else index
+    return colors[i]
+}
+
+@Preview
+@Composable
+fun PreviewEventsGraph() {
+    val now = Clock.System.now().toEpochMilliseconds() * 1000L
+    val app1 = StringKey("app1")
+    val app2 = StringKey("app2")
+    val service1 = StringKey("service1")
+
+    val chartData = EventsChartData()
+    chartData.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
+    chartData.addEntry(app2, EventEntry(now + 1_500_000L, "ANR", ""))
+    chartData.addEntry(app2, EventEntry(now + 1_750_000L, "Crash", ""))
+    chartData.addEntry(service1, EventEntry(now + 800_000L, "WTF", ""))
+
+    Column(Modifier.fillMaxSize().background(Color.LightGray)) {
+        Chart(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            style = ChartStyle.Default,
+            totalTime = TimeFrame(now, now + 2_000_000L),
+            timeFrame = TimeFrame(now, now + 2_000_000L),
+            entries = chartData,
+            onDragged = {},
+            type = ChartType.Events,
+        )
+        Spacer(Modifier.size(4.dp))
+    }
+}

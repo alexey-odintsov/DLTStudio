@@ -56,12 +56,10 @@ class EntriesParser {
         val service1Key = StringKey("service1")
         crashes.addEntry(
             app1Key,
-            "Crash",
             EventEntry(timestamp = timeFrame.timeStart + 500_000L, event = "Crash", data = "Crash1")
         )
         crashes.addEntry(
             app1Key,
-            "WTF",
             EventEntry(
                 timestamp = timeFrame.timeStart + 1_250_000L,
                 event = "WTF",
@@ -69,7 +67,7 @@ class EntriesParser {
             )
         )
         crashes.addEntry(
-            service1Key, "ANR",
+            service1Key,
             EventEntry(timestamp = timeFrame.timeStart + 1_120_000L, event = "ANR", data = "WTF1")
         )
         val userState = SingleStateChartData()

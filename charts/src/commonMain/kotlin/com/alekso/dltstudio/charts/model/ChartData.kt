@@ -53,9 +53,10 @@ data class EventsChartData(
     val entriesMap: MutableMap<ChartKey, MutableList<EventEntry>> = mutableStateMapOf()
 ) : ChartData {
     private val _labels = mutableListOf<String>()
-    fun addEntry(key: ChartKey, label: String, value: EventEntry) {
-        if (!_labels.contains(label)) {
-            _labels.add(label)
+
+    fun addEntry(key: ChartKey, value: EventEntry) {
+        if (!_labels.contains(value.event)) {
+            _labels.add(value.event)
         }
         val list = entriesMap[key] ?: mutableListOf()
         list.add(value)
@@ -131,7 +132,7 @@ data class SingleStateChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<ChartEntry> {
+    override fun getEntries(key: ChartKey): List<SingleStateEntry> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 

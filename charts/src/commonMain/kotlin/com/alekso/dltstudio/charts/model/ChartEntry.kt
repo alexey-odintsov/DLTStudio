@@ -13,25 +13,25 @@ data class NumericalEntry(
 
 data class DurationEntry(
     override val timestamp: Long,
-    override val data: Any?,
-    val timestamp2: Long
+    val timestamp2: Long,
+    override val data: Any?
 ) : ChartEntry
 
 data class EventEntry(
     override val timestamp: Long,
-    override val data: Any?,
     val event: String,
+    override val data: Any?,
 ) : ChartEntry
 
 data class StateEntry(
     override val timestamp: Long,
-    override val data: Any?,
     val oldState: String,
     val newState: String,
+    override val data: Any?,
 ) : ChartEntry
 
 data class SingleStateEntry(
     override val timestamp: Long,
-    override val data: Any?,
     val state: String,
+    override val data: Any?,
 ) : ChartEntry
