@@ -24,6 +24,8 @@ data class Message(
 data class Diagram(
     val key: String,
     val graphType: GraphType,
+    val labelsPostfix: String = "",
+    val labelsCount: Int = 10,
 )
 
 
@@ -134,7 +136,7 @@ class ViewModel {
         )
 
         entriesMap[Diagram("crashes", GraphType.Events)] = crashes
-        entriesMap[Diagram("cpuc", GraphType.Percentage)] = cpuEntries
+        entriesMap[Diagram("cpuc", GraphType.Percentage, labelsPostfix = "%")] = cpuEntries
         entriesMap[Diagram("userState", GraphType.SingleState)] = userState
     }
 

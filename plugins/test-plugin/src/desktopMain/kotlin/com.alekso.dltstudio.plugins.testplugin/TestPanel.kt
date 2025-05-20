@@ -78,6 +78,8 @@ fun TestPanel(
                         entries = entries[diagram],
                         onDragged = onDragged,
                         type = diagram.graphType,
+                        labelsPostfix = diagram.labelsPostfix,
+                        labelsCount = diagram.labelsCount,
                     )
                     Spacer(Modifier.size(4.dp))
                 }

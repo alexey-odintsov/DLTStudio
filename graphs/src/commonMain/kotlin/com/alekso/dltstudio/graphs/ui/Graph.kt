@@ -50,6 +50,8 @@ fun Graph(
     entries: ChartData?,
     onDragged: (Float) -> Unit,
     type: GraphType,
+    labelsCount: Int = 10,
+    labelsPostfix: String = "",
 ) {
     if (entries == null || entries.isEmpty()) {
         Text("No entries found")
@@ -94,7 +96,7 @@ fun Graph(
                     )
 
                     val labelsSize = entries.getLabels().size
-                    renderSeries(if (labelsSize > 0) labelsSize else 10)
+                    renderSeries(if (labelsSize > 0) labelsSize else labelsCount)
 
                     // draw entries
                     when (type) {
@@ -110,17 +112,19 @@ fun Graph(
                         GraphType.Percentage -> renderValuesLabels(
                             0f,
                             100f,
-                            10,
+                            labelsCount,
                             textMeasurer,
-                            labelsTextStyle
+                            labelsTextStyle,
+                            labelsPostfix,
                         )
 
                         GraphType.MinMax -> renderValuesLabels(
                             (entries as FloatChartData).getMinValue(),
                             (entries as FloatChartData).getMaxValue(),
-                            10,
+                            labelsCount,
                             textMeasurer,
-                            labelsTextStyle
+                            labelsTextStyle,
+                            labelsPostfix,
                         )
 
                         GraphType.Events, GraphType.State, GraphType.SingleState, GraphType.Duration -> renderLabels(
@@ -175,17 +179,19 @@ private fun DrawScope.renderValuesLabels(
     seriesCount: Int,
     textMeasurer: TextMeasurer,
     labelsTextStyle: TextStyle,
+    labelsPostfix: String,
 ) {
     val seriesDistance = size.height / seriesCount
     val step = (maxValue - minValue) / seriesCount
     repeat(seriesCount) { i ->
+        val text = "${"%,.0f".format((seriesCount - i) * step)}$labelsPostfix"
         val y = seriesDistance * i
         val maxValueResult = textMeasurer.measure(
-            text = "${(seriesCount - i) * step}", style = labelsTextStyle
+            text = text, style = labelsTextStyle
         )
         drawText(
             textMeasurer = textMeasurer,
-            text = "${(seriesCount - i) * step}",
+            text = text,
             topLeft = Offset(0f, y),
         )
     }
