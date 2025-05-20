@@ -5,15 +5,15 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.alekso.dltstudio.graphs.model.ChartData
-import com.alekso.dltstudio.graphs.model.EventValue
+import com.alekso.dltstudio.graphs.model.EventEntry
 import com.alekso.dltstudio.graphs.model.EventsChartData
 import com.alekso.dltstudio.graphs.model.FloatChartData
-import com.alekso.dltstudio.graphs.model.NumericalValue
+import com.alekso.dltstudio.graphs.model.NumericalEntry
 import com.alekso.dltstudio.graphs.model.SingleStateChartData
-import com.alekso.dltstudio.graphs.model.SingleStateValue
+import com.alekso.dltstudio.graphs.model.SingleStateEntry
 import com.alekso.dltstudio.graphs.model.StringKey
 import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.ui.GraphType
+import com.alekso.dltstudio.graphs.ui.ChartType
 import kotlinx.datetime.Clock
 
 data class Message(
@@ -21,9 +21,9 @@ data class Message(
     val message: String,
 )
 
-data class Diagram(
+data class ChartParameters(
     val key: String,
-    val graphType: GraphType,
+    val chartType: ChartType,
     val labelsPostfix: String = "",
     val labelsCount: Int = 10,
 )
@@ -31,7 +31,7 @@ data class Diagram(
 
 class ViewModel {
     // State
-    val entriesMap = mutableStateMapOf<Diagram, ChartData>()
+    val entriesMap = mutableStateMapOf<ChartParameters, ChartData>()
     val totalTime by mutableStateOf(
         TimeFrame(
             Clock.System.now().toEpochMilliseconds() * 1000L,
@@ -62,7 +62,7 @@ class ViewModel {
         val cpuEntries = FloatChartData(mutableStateMapOf())
         cpuEntries.addEntry(
             StringKey("app1"),
-                NumericalValue(
+                NumericalEntry(
                     timestamp = timeFrame.timeStart + 1_000_000L,
                     data = Message(timeFrame.timeStart + 1_000_000L, "cpu0: 40%"),
                     value = 40f
@@ -70,7 +70,7 @@ class ViewModel {
         )
         cpuEntries.addEntry(
             StringKey("app2"),
-                NumericalValue(
+                NumericalEntry(
                     timestamp = timeFrame.timeStart + 1_050_000L,
                     data = Message(timeFrame.timeStart + 1_050_000L, "cpu1: 25%"),
                     value = 25f
@@ -79,7 +79,7 @@ class ViewModel {
         val service1 = StringKey("service1")
         cpuEntries.addEntry(
             service1,
-                NumericalValue(
+                NumericalEntry(
                     timestamp = timeFrame.timeStart + 900_000L,
                     data = Message(timeFrame.timeStart + 900_000L, "cpu2: 14%"),
                     value = 14f
@@ -87,7 +87,7 @@ class ViewModel {
         )
         cpuEntries.addEntry(
             service1,
-            NumericalValue(
+            NumericalEntry(
                     timestamp = timeFrame.timeStart + 1_200_000L,
                     data = Message(timeFrame.timeStart + 1_200_000L, "cpu2: 8%"),
                     value = 8f
@@ -101,12 +101,12 @@ class ViewModel {
         crashes.addEntry(
             app1Key,
             "Crash",
-            EventValue(timestamp = timeFrame.timeStart + 500_000L, event = "Crash", data = "Crash1")
+            EventEntry(timestamp = timeFrame.timeStart + 500_000L, event = "Crash", data = "Crash1")
         )
         crashes.addEntry(
             app1Key,
             "WTF",
-            EventValue(
+            EventEntry(
                 timestamp = timeFrame.timeStart + 1_250_000L,
                 event = "WTF",
                 data = "Crash12"
@@ -114,13 +114,13 @@ class ViewModel {
         )
         crashes.addEntry(
             service1Key, "ANR",
-            EventValue(timestamp = timeFrame.timeStart + 1_120_000L, event = "ANR", data = "WTF1")
+            EventEntry(timestamp = timeFrame.timeStart + 1_120_000L, event = "ANR", data = "WTF1")
         )
         val userState = SingleStateChartData(mutableStateMapOf())
         val u0Key = StringKey("u0")
         userState.addEntry(
             u0Key, "RUNNING",
-            SingleStateValue(
+            SingleStateEntry(
                 timestamp = timeFrame.timeStart + 1_000_000L,
                 state = "RUNNING",
                 data = ""
@@ -128,16 +128,16 @@ class ViewModel {
         )
         userState.addEntry(
             u0Key, "CLOSED",
-            SingleStateValue(
+            SingleStateEntry(
                 timestamp = timeFrame.timeStart + 1_000_000L,
                 state = "CLOSED",
                 data = ""
             ),
         )
 
-        entriesMap[Diagram("crashes", GraphType.Events)] = crashes
-        entriesMap[Diagram("cpuc", GraphType.Percentage, labelsPostfix = "%")] = cpuEntries
-        entriesMap[Diagram("userState", GraphType.SingleState)] = userState
+        entriesMap[ChartParameters("crashes", ChartType.Events)] = crashes
+        entriesMap[ChartParameters("cpuc", ChartType.Percentage, labelsPostfix = "%")] = cpuEntries
+        entriesMap[ChartParameters("userState", ChartType.SingleState)] = userState
     }
 
 }

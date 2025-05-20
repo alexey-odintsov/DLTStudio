@@ -21,12 +21,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.graphs.model.ChartData
 import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.ui.Graph
+import com.alekso.dltstudio.graphs.ui.Chart
 
 @Composable
 fun TestPanel(
     modifier: Modifier,
-    entries: SnapshotStateMap<Diagram, ChartData>,
+    entries: SnapshotStateMap<ChartParameters, ChartData>,
     onAnaliseClicked: () -> Unit,
     onDragged: (Float) -> Unit,
     timeFrame: TimeFrame,
@@ -69,15 +69,15 @@ fun TestPanel(
                 itemsIndexed(
                     items = entries.keys.toList(),
                     key = { _, key -> key },
-                    contentType = { _, _ -> Diagram::class }) { i, diagram ->
-                    Graph(
+                    contentType = { _, _ -> ChartParameters::class }) { i, diagram ->
+                    Chart(
                         modifier = Modifier.fillMaxWidth().height(200.dp),
                         backgroundColor = Color.White,
                         totalTime = totalFrame,
                         timeFrame = timeFrame,
                         entries = entries[diagram],
                         onDragged = onDragged,
-                        type = diagram.graphType,
+                        type = diagram.chartType,
                         labelsPostfix = diagram.labelsPostfix,
                         labelsCount = diagram.labelsCount,
                     )

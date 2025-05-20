@@ -30,9 +30,9 @@ import com.alekso.dltstudio.graphs.model.ChartData
 import com.alekso.dltstudio.graphs.model.EventsChartData
 import com.alekso.dltstudio.graphs.model.FloatChartData
 import com.alekso.dltstudio.graphs.model.TimeFrame
-import com.alekso.dltstudio.graphs.model.Value
+import com.alekso.dltstudio.graphs.model.ChartEntry
 
-enum class GraphType {
+enum class ChartType {
     Percentage,
     MinMax,
     Events,
@@ -42,14 +42,14 @@ enum class GraphType {
 }
 
 @Composable
-fun Graph(
+fun Chart(
     modifier: Modifier,
     backgroundColor: Color,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
     entries: ChartData?,
     onDragged: (Float) -> Unit,
-    type: GraphType,
+    type: ChartType,
     labelsCount: Int = 10,
     labelsPostfix: String = "",
 ) {
@@ -100,8 +100,8 @@ fun Graph(
 
                     // draw entries
                     when (type) {
-                        GraphType.Events -> renderEvents(entries as EventsChartData, timeFrame)
-                        GraphType.Percentage, GraphType.MinMax -> renderLines(
+                        ChartType.Events -> renderEvents(entries as EventsChartData, timeFrame)
+                        ChartType.Percentage, ChartType.MinMax -> renderLines(
                             entries as FloatChartData,
                             timeFrame
                         )
@@ -109,7 +109,7 @@ fun Graph(
                     }
 
                     when (type) {
-                        GraphType.Percentage -> renderValuesLabels(
+                        ChartType.Percentage -> renderValuesLabels(
                             0f,
                             100f,
                             labelsCount,
@@ -118,7 +118,7 @@ fun Graph(
                             labelsPostfix,
                         )
 
-                        GraphType.MinMax -> renderValuesLabels(
+                        ChartType.MinMax -> renderValuesLabels(
                             (entries as FloatChartData).getMinValue(),
                             (entries as FloatChartData).getMaxValue(),
                             labelsCount,
@@ -127,7 +127,7 @@ fun Graph(
                             labelsPostfix,
                         )
 
-                        GraphType.Events, GraphType.State, GraphType.SingleState, GraphType.Duration -> renderLabels(
+                        ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
                             entries.getLabels(),
                             textMeasurer,
                             labelsTextStyle
@@ -138,7 +138,7 @@ fun Graph(
 }
 
 private fun DrawScope.calculateX(
-    entry: Value,
+    entry: ChartEntry,
     timeFrame: TimeFrame
 ): Float {
     return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
