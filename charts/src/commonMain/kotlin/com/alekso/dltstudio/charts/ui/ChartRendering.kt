@@ -1,11 +1,15 @@
 package com.alekso.dltstudio.charts.ui
 
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.FloatChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
@@ -29,16 +33,30 @@ internal fun DrawScope.renderLabels(
     labelsTextStyle: TextStyle,
     verticalPadding: Float,
 ) {
+
+    var maxWidth = 0
+    var maxHeight = 0
     labels.forEachIndexed { i, label ->
-        val y = calculateYForLabel(labels, i, size.height, verticalPadding)
         val maxValueResult = textMeasurer.measure(
             text = label, style = labelsTextStyle
         )
+        maxHeight = maxValueResult.size.height
+        if (maxValueResult.size.width > maxWidth) {
+            maxWidth = maxValueResult.size.width
+        }
+    }
+
+    labels.forEachIndexed { i, label ->
+        val y = calculateYForLabel(labels, i, size.height, verticalPadding)
         drawText(
             textMeasurer = textMeasurer,
             text = label,
-            style = labelsTextStyle,
-            topLeft = Offset(0f, y - maxValueResult.size.height / 2f),
+            style = labelsTextStyle.copy(textAlign = TextAlign.Start),
+            topLeft = Offset(3.dp.toPx(), y - maxHeight / 2f),
+            overflow = TextOverflow.Clip,
+            softWrap = true,
+            maxLines = 1,
+            size = Size(maxWidth.toFloat(), maxHeight.toFloat()),
         )
     }
 }
@@ -53,17 +71,33 @@ internal fun DrawScope.renderValuesLabels(
     verticalPadding: Float,
 ) {
     val step = (maxValue - minValue) / (seriesCount - 1)
+    var maxWidth = 0
+    var maxHeight = 0
+
     repeat(seriesCount + 1) { i ->
         val text = "${"%,.0f".format((seriesCount - i) * step)}$labelsPostfix"
-        val y = calculateYForValue(step * (seriesCount - i), maxValue, size.height, verticalPadding)
         val maxValueResult = textMeasurer.measure(
             text = text, style = labelsTextStyle
         )
+        maxHeight = maxValueResult.size.height
+        if (maxValueResult.size.width > maxWidth) {
+            maxWidth = maxValueResult.size.width
+        }
+    }
+
+    repeat(seriesCount + 1) { i ->
+        val text = "${"%,.0f".format((seriesCount - i) * step)}$labelsPostfix"
+        val y = calculateYForValue(step * (seriesCount - i), maxValue, size.height, verticalPadding)
+
         drawText(
             textMeasurer = textMeasurer,
             text = text,
             style = labelsTextStyle,
-            topLeft = Offset(0f, y - maxValueResult.size.height / 2f),
+            topLeft = Offset(3.dp.toPx(), y - maxHeight / 2f),
+            overflow = TextOverflow.Clip,
+            softWrap = true,
+            maxLines = 1,
+            size = Size(maxWidth.toFloat(), maxHeight.toFloat()),
         )
     }
 }

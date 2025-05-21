@@ -21,6 +21,7 @@ data class ChartStyle(
             seriesColor = Color.LightGray,
             labelTextStyle = TextStyle(
                 color = Color.Black,
+                background = Color.White.copy(alpha = 0.75f),
                 fontSize = 10.sp,
                 textAlign = TextAlign.End,
                 lineHeightStyle = LineHeightStyle(
@@ -35,6 +36,7 @@ data class ChartStyle(
             seriesColor = Color.LightGray,
             labelTextStyle = TextStyle(
                 color = Color.LightGray,
+                background = Color.Gray.copy(alpha = 0.75f),
                 fontSize = 10.sp,
                 textAlign = TextAlign.End,
                 lineHeightStyle = LineHeightStyle(
