@@ -11,7 +11,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.FloatChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 
 
@@ -20,9 +21,9 @@ internal fun DrawScope.renderSeries(
     lineColor: Color,
     verticalPadding: Float,
 ) {
-    val seriesDistance = (size.height - 2 * verticalPadding) / (seriesCount - 1)
+    println("renderSeries(seriesCount: $seriesCount; padding: $verticalPadding)")
     (0..<seriesCount).forEach { i ->
-        val y = verticalPadding + seriesDistance * i
+        val y = calculateY(i.toFloat(), (seriesCount - 1).toFloat(), size.height, verticalPadding)
         drawLine(lineColor, Offset(0f, y), Offset(size.width, y))
     }
 }
@@ -31,6 +32,7 @@ internal fun DrawScope.renderLabels(
     labels: List<String>,
     textMeasurer: TextMeasurer,
     labelsTextStyle: TextStyle,
+    labelsPostfix: String,
     verticalPadding: Float,
 ) {
 
@@ -38,7 +40,7 @@ internal fun DrawScope.renderLabels(
     var maxHeight = 0
     labels.forEachIndexed { i, label ->
         val maxValueResult = textMeasurer.measure(
-            text = label, style = labelsTextStyle
+            text = "$label$labelsPostfix", style = labelsTextStyle
         )
         maxHeight = maxValueResult.size.height
         if (maxValueResult.size.width > maxWidth) {
@@ -47,10 +49,10 @@ internal fun DrawScope.renderLabels(
     }
 
     labels.forEachIndexed { i, label ->
-        val y = calculateYForLabel(labels, i, size.height, verticalPadding)
+        val y = calculateY(i.toFloat(), (labels.size - 1).toFloat(), size.height, verticalPadding)
         drawText(
             textMeasurer = textMeasurer,
-            text = label,
+            text = "$label$labelsPostfix",
             style = labelsTextStyle.copy(textAlign = TextAlign.Start),
             topLeft = Offset(3.dp.toPx(), y - maxHeight / 2f),
             overflow = TextOverflow.Clip,
@@ -60,48 +62,6 @@ internal fun DrawScope.renderLabels(
         )
     }
 }
-
-internal fun DrawScope.renderValuesLabels(
-    minValue: Float,
-    maxValue: Float,
-    seriesCount: Int,
-    textMeasurer: TextMeasurer,
-    labelsTextStyle: TextStyle,
-    labelsPostfix: String,
-    verticalPadding: Float,
-) {
-    val step = (maxValue - minValue) / (seriesCount - 1)
-    var maxWidth = 0
-    var maxHeight = 0
-
-    repeat(seriesCount + 1) { i ->
-        val text = "${"%,.0f".format((seriesCount - i) * step)}$labelsPostfix"
-        val maxValueResult = textMeasurer.measure(
-            text = text, style = labelsTextStyle
-        )
-        maxHeight = maxValueResult.size.height
-        if (maxValueResult.size.width > maxWidth) {
-            maxWidth = maxValueResult.size.width
-        }
-    }
-
-    repeat(seriesCount + 1) { i ->
-        val text = "${"%,.0f".format((seriesCount - i) * step)}$labelsPostfix"
-        val y = calculateYForValue(step * (seriesCount - i), maxValue, size.height, verticalPadding)
-
-        drawText(
-            textMeasurer = textMeasurer,
-            text = text,
-            style = labelsTextStyle,
-            topLeft = Offset(3.dp.toPx(), y - maxHeight / 2f),
-            overflow = TextOverflow.Clip,
-            softWrap = true,
-            maxLines = 1,
-            size = Size(maxWidth.toFloat(), maxHeight.toFloat()),
-        )
-    }
-}
-
 
 internal fun DrawScope.renderEvents(
     entriesMap: EventsChartData,
@@ -114,19 +74,24 @@ internal fun DrawScope.renderEvents(
             val labels = entriesMap.getLabels()
             val labelIndex = labels.indexOf(entry.event)
             val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateYForLabel(labels, labelIndex, size.height, verticalPadding)
+            val y = calculateY(
+                labelIndex.toFloat(),
+                (labels.size - 1).toFloat(),
+                size.height,
+                verticalPadding
+            )
 
             drawCircle(
                 color = getColor(labelIndex),
-                radius = 15f,
+                radius = 10f,
                 center = Offset(x, y)
             )
         }
     }
 }
 
-internal fun DrawScope.renderLines(
-    entriesMap: FloatChartData,
+internal fun DrawScope.renderMinMaxLines(
+    entriesMap: MinMaxChartData,
     timeFrame: TimeFrame,
     verticalPadding: Float,
 ) {
@@ -134,7 +99,27 @@ internal fun DrawScope.renderLines(
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
             val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateYForValue(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
+            val y = calculateY(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
+
+            drawCircle(
+                color = getColor(i),
+                radius = 5f,
+                center = Offset(x, y)
+            )
+        }
+    }
+}
+
+internal fun DrawScope.renderPercentageLines(
+    entriesMap: PercentageChartData,
+    timeFrame: TimeFrame,
+    verticalPadding: Float,
+) {
+    entriesMap.getKeys().forEachIndexed { i, key ->
+        val entries = entriesMap.getEntries(key)
+        entries.forEach { entry ->
+            val x = calculateX(entry, timeFrame, size.width)
+            val y = calculateY(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
 
             drawCircle(
                 color = getColor(i),

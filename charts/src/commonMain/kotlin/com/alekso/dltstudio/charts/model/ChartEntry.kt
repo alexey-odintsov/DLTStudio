@@ -5,7 +5,13 @@ interface ChartEntry {
     val data: Any?
 }
 
-data class NumericalEntry(
+data class PercentageEntry(
+    override val timestamp: Long,
+    val value: Float,
+    override val data: Any?
+) : ChartEntry
+
+data class MinMaxEntry(
     override val timestamp: Long,
     val value: Float,
     override val data: Any?

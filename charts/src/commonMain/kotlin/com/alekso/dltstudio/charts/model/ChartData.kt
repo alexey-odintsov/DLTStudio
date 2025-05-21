@@ -11,13 +11,45 @@ interface ChartData {
     fun getLabels(): List<String>
 }
 
-data class FloatChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<NumericalEntry>> = mutableMapOf(),
+data class PercentageChartData(
+    val entriesMap: MutableMap<ChartKey, MutableList<PercentageEntry>> = mutableMapOf(),
+) : ChartData {
+    private var minValue = 0f
+    private var maxValue = 100f
+
+    fun addEntry(key: ChartKey, value: PercentageEntry) {
+        val list = entriesMap[key] ?: mutableListOf()
+        list.add(value)
+        entriesMap[key] = list
+    }
+
+    override fun isEmpty(): Boolean {
+        return entriesMap.isEmpty()
+    }
+
+    override fun getKeys(): List<ChartKey> {
+        return entriesMap.keys.toList()
+    }
+
+    override fun getEntries(key: ChartKey): List<PercentageEntry> {
+        return entriesMap[key]?.toList() ?: emptyList()
+    }
+
+    override fun getLabels(): List<String> {
+        return emptyList()
+    }
+
+    fun getMaxValue() = maxValue
+    fun getMinValue() = minValue
+}
+
+data class MinMaxChartData(
+    val entriesMap: MutableMap<ChartKey, MutableList<MinMaxEntry>> = mutableMapOf(),
 ) : ChartData {
     private var minValue = 0f
     private var maxValue = 0f
 
-    fun addEntry(key: ChartKey, value: NumericalEntry) {
+    fun addEntry(key: ChartKey, value: MinMaxEntry) {
         if (value.value > maxValue) {
             maxValue = value.value
         }
@@ -37,7 +69,7 @@ data class FloatChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<NumericalEntry> {
+    override fun getEntries(key: ChartKey): List<MinMaxEntry> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 

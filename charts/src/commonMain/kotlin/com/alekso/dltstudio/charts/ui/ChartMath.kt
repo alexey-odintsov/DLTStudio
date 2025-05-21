@@ -3,6 +3,17 @@ package com.alekso.dltstudio.charts.ui
 import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.TimeFrame
 
+internal fun getSteps(minValue: Float, maxValue: Float, seriesCount: Int): List<String> {
+    val result = mutableListOf<String>()
+
+    val step = (maxValue - minValue) / (seriesCount - 1)
+    repeat(seriesCount) { i ->
+        result.add("%,.0f".format(i * step))
+    }
+
+    return result
+}
+
 internal fun calculateX(
     entry: ChartEntry,
     timeFrame: TimeFrame,
@@ -11,22 +22,16 @@ internal fun calculateX(
     return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * width
 }
 
-internal fun calculateYForLabel(
-    labels: List<String>,
-    labelIndex: Int,
-    height: Float,
-    verticalPadding: Float
-): Float {
-    val itemHeight = (height - 2 * verticalPadding) / (labels.size - 1)
-    return if (labels.size == 1) height / 2f else verticalPadding + itemHeight * labelIndex
-}
-
-internal fun calculateYForValue(
+internal fun calculateY(
     value: Float,
     maxValue: Float,
     height: Float,
     verticalPadding: Float
 ): Float {
-    val itemHeight = (height - 2 * verticalPadding)
-    return verticalPadding + itemHeight - itemHeight * value / maxValue
+    if (maxValue == 0f) return height / 2f
+    val availableHeight = height - 2 * verticalPadding
+    val y = height - (value / maxValue) * availableHeight - verticalPadding
+
+    println("calculateY(value: $value; maxValue: $maxValue; height: $height; verticalPadding: $verticalPadding) = avail: $availableHeight; y: $y")
+    return y
 }

@@ -21,7 +21,8 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.FloatChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 
 @Composable
@@ -67,11 +68,22 @@ fun Chart(
                     )
 
                     val labelsSize = entries.getLabels().size
-                    renderSeries(
-                        if (labelsSize > 0) labelsSize else labelsCount,
-                        style.seriesColor,
-                        style.verticalPadding.toPx()
-                    )
+                    when (type) {
+                        ChartType.Percentage, ChartType.MinMax ->
+                            renderSeries(
+                                labelsCount,
+                                style.seriesColor,
+                                style.verticalPadding.toPx()
+                            )
+
+                        else ->
+                            renderSeries(
+                                if (labelsSize > 0) labelsSize else labelsCount,
+                                style.seriesColor,
+                                style.verticalPadding.toPx()
+                            )
+
+                    }
 
                     // draw entries
                     when (type) {
@@ -81,8 +93,14 @@ fun Chart(
                             style.verticalPadding.toPx()
                         )
 
-                        ChartType.Percentage, ChartType.MinMax -> renderLines(
-                            entries as FloatChartData,
+                        ChartType.Percentage -> renderPercentageLines(
+                            entries as PercentageChartData,
+                            timeFrame,
+                            style.verticalPadding.toPx()
+                        )
+
+                        ChartType.MinMax -> renderMinMaxLines(
+                            entries as MinMaxChartData,
                             timeFrame,
                             style.verticalPadding.toPx()
                         )
@@ -91,30 +109,33 @@ fun Chart(
                     }
 
                     when (type) {
-                        ChartType.Percentage -> renderValuesLabels(
-                            0f,
-                            100f,
-                            labelsCount,
-                            textMeasurer,
-                            style.labelTextStyle,
-                            labelsPostfix,
-                            style.verticalPadding.toPx(),
-                        )
+                        ChartType.Percentage ->
+                            renderLabels(
+                                getSteps(0f, 100f, labelsCount),
+                                textMeasurer,
+                                style.labelTextStyle,
+                                "%",
+                                style.verticalPadding.toPx(),
+                            )
 
-                        ChartType.MinMax -> renderValuesLabels(
-                            (entries as FloatChartData).getMinValue(),
-                            (entries as FloatChartData).getMaxValue(),
-                            labelsCount,
-                            textMeasurer,
-                            style.labelTextStyle,
-                            labelsPostfix,
-                            style.verticalPadding.toPx(),
-                        )
+                        ChartType.MinMax ->
+                            renderLabels(
+                                getSteps(
+                                    (entries as MinMaxChartData).getMinValue(),
+                                    (entries as MinMaxChartData).getMaxValue(),
+                                    labelsCount
+                                ),
+                                textMeasurer,
+                                style.labelTextStyle,
+                                labelsPostfix,
+                                style.verticalPadding.toPx(),
+                            )
 
                         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
                             entries.getLabels(),
                             textMeasurer,
                             style.labelTextStyle,
+                            labelsPostfix,
                             style.verticalPadding.toPx(),
                         )
                     }

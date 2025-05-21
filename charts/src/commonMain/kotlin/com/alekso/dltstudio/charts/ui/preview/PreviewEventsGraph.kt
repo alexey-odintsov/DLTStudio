@@ -31,9 +31,16 @@ fun PreviewEventsGraph() {
 
     val chartData = EventsChartData()
     chartData.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
-    chartData.addEntry(app2, EventEntry(now + 1_500_000L, "ANR", ""))
-    chartData.addEntry(app2, EventEntry(now + 1_750_000L, "Crash", ""))
-    chartData.addEntry(service1, EventEntry(now + 800_000L, "WTF", ""))
+    chartData.addEntry(app2, EventEntry(now + 1_000_000L, "ANR", ""))
+    chartData.addEntry(app2, EventEntry(now + 1_500_000L, "Crash", ""))
+    chartData.addEntry(service1, EventEntry(now + 2_000_000L, "WTF", ""))
+
+    val chartData2 = EventsChartData()
+    chartData2.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
+
+    val chartData3 = EventsChartData()
+    chartData3.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
+    chartData3.addEntry(app2, EventEntry(now + 1_500_000L, "WTF", ""))
 
     Column(Modifier.fillMaxSize().background(Color.LightGray)) {
         Chart(
@@ -46,5 +53,24 @@ fun PreviewEventsGraph() {
             type = ChartType.Events,
         )
         Spacer(Modifier.size(4.dp))
+        Chart(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            style = ChartStyle.Dark,
+            totalTime = TimeFrame(now, now + 2_000_000L),
+            timeFrame = TimeFrame(now, now + 2_000_000L),
+            entries = chartData2,
+            onDragged = {},
+            type = ChartType.Events,
+        )
+        Spacer(Modifier.size(4.dp))
+        Chart(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            style = ChartStyle.Dark,
+            totalTime = TimeFrame(now, now + 2_000_000L),
+            timeFrame = TimeFrame(now, now + 2_000_000L),
+            entries = chartData3,
+            onDragged = {},
+            type = ChartType.Events,
+        )
     }
 }
