@@ -161,7 +161,7 @@ private fun DrawScope.renderLabels(
             textMeasurer = textMeasurer,
             text = label,
             style = labelsTextStyle,
-            topLeft = Offset(0f, y),
+            topLeft = Offset(0f, y - maxValueResult.size.height / 2f),
         )
     }
 }
@@ -186,7 +186,7 @@ private fun DrawScope.renderValuesLabels(
             textMeasurer = textMeasurer,
             text = text,
             style = labelsTextStyle,
-            topLeft = Offset(0f, y),
+            topLeft = Offset(0f, y - maxValueResult.size.height / 2f),
         )
     }
 }
