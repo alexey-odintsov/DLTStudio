@@ -23,28 +23,15 @@ internal fun calculateX(
 }
 
 private var MAX_ITEM_HEIGHT_RATIO = 0.3f
-internal fun calculateYByValue(
-    value: Float,
-    maxValue: Float,
-    height: Float,
-    verticalPadding: Float
-): Float {
-    if (maxValue == 0f) return height / 2f
-    val availableHeight = height - 2 * verticalPadding
-    val y = height - (value / maxValue) * availableHeight - verticalPadding
 
-    println("calculateY(value: $value; maxValue: $maxValue; height: $height; verticalPadding: $verticalPadding) = avail: $availableHeight; y: $y")
-    return y
-}
-
-internal fun calculateYBySeries(
+internal fun calculateY(
     value: Float,
     maxValue: Float,
     seriesCount: Int,
     height: Float,
     verticalPadding: Float
 ): Float {
-    if (maxValue == 0f) return height / 2f
+    if (seriesCount == 1) return height / 2f
     val availableHeight = height - 2 * verticalPadding
 
     var itemHeight = availableHeight / (seriesCount - 1)
@@ -54,8 +41,9 @@ internal fun calculateYBySeries(
         itemHeight = availableHeight * MAX_ITEM_HEIGHT_RATIO
         additionalPadding = (availableHeight - ((seriesCount - 1) * itemHeight)) / 2f
     }
+    // TODO: additionalPadding is calculated wrong!
 
-    val y = height - (value / maxValue) * availableHeight - additionalPadding
+    val y = height - (value / maxValue) * availableHeight - verticalPadding
 
     println("calculateY(value: $value; maxValue: $maxValue; height: $height; verticalPadding: $verticalPadding) = avail: $availableHeight; y: $y")
     return y

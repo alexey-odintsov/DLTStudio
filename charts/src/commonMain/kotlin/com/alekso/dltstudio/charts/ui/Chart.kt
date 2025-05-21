@@ -67,18 +67,18 @@ fun Chart(
                         alpha = 0.5f
                     )
 
-                    val labelsSize = entries.getLabels().size
+                    val labelsSize = if (entries.getLabels().isNotEmpty()) entries.getLabels().size else labelsCount
                     when (type) {
                         ChartType.Percentage, ChartType.MinMax ->
                             renderSeriesByValue(
-                                labelsCount,
+                                labelsSize,
                                 style.seriesColor,
                                 style.verticalPadding.toPx()
                             )
 
                         else ->
                             renderSeries(
-                                if (labelsSize > 0) labelsSize else labelsCount,
+                                labelsSize,
                                 style.seriesColor,
                                 style.verticalPadding.toPx()
                             )
@@ -89,18 +89,21 @@ fun Chart(
                     when (type) {
                         ChartType.Events -> renderEvents(
                             entries as EventsChartData,
+                            labelsSize,
                             timeFrame,
                             style.verticalPadding.toPx()
                         )
 
                         ChartType.Percentage -> renderPercentageLines(
                             entries as PercentageChartData,
+                            labelsSize,
                             timeFrame,
                             style.verticalPadding.toPx()
                         )
 
                         ChartType.MinMax -> renderMinMaxLines(
                             entries as MinMaxChartData,
+                            labelsSize,
                             timeFrame,
                             style.verticalPadding.toPx()
                         )
@@ -111,12 +114,11 @@ fun Chart(
                     when (type) {
                         ChartType.Percentage ->
                             renderLabels(
-                                getSteps(0f, 100f, labelsCount),
+                                getSteps(0f, 100f, labelsSize),
                                 textMeasurer,
                                 style.labelTextStyle,
                                 "%",
                                 style.verticalPadding.toPx(),
-                                RenderType.ByValue,
                             )
 
                         ChartType.MinMax ->
@@ -124,13 +126,12 @@ fun Chart(
                                 getSteps(
                                     (entries as MinMaxChartData).getMinValue(),
                                     (entries as MinMaxChartData).getMaxValue(),
-                                    labelsCount
+                                    labelsSize
                                 ),
                                 textMeasurer,
                                 style.labelTextStyle,
                                 labelsPostfix,
                                 style.verticalPadding.toPx(),
-                                RenderType.ByValue,
                             )
 
                         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
@@ -139,7 +140,6 @@ fun Chart(
                             style.labelTextStyle,
                             labelsPostfix,
                             style.verticalPadding.toPx(),
-                            RenderType.BySeries,
                         )
                     }
                 }
