@@ -70,7 +70,7 @@ fun Chart(
                     val labelsSize = entries.getLabels().size
                     when (type) {
                         ChartType.Percentage, ChartType.MinMax ->
-                            renderSeries(
+                            renderSeriesByValue(
                                 labelsCount,
                                 style.seriesColor,
                                 style.verticalPadding.toPx()
@@ -116,6 +116,7 @@ fun Chart(
                                 style.labelTextStyle,
                                 "%",
                                 style.verticalPadding.toPx(),
+                                RenderType.ByValue,
                             )
 
                         ChartType.MinMax ->
@@ -129,6 +130,7 @@ fun Chart(
                                 style.labelTextStyle,
                                 labelsPostfix,
                                 style.verticalPadding.toPx(),
+                                RenderType.ByValue,
                             )
 
                         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
@@ -137,6 +139,7 @@ fun Chart(
                             style.labelTextStyle,
                             labelsPostfix,
                             style.verticalPadding.toPx(),
+                            RenderType.BySeries,
                         )
                     }
                 }

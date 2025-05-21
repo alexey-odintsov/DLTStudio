@@ -15,6 +15,22 @@ import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 
+enum class RenderType {
+    ByValue,
+    BySeries,
+}
+
+internal fun DrawScope.renderSeriesByValue(
+    seriesCount: Int,
+    lineColor: Color,
+    verticalPadding: Float,
+) {
+    println("renderSeries(seriesCount: $seriesCount; padding: $verticalPadding)")
+    (0..<seriesCount).forEach { i ->
+        val y = calculateYByValue(i.toFloat(), (seriesCount - 1).toFloat(), size.height, verticalPadding)
+        drawLine(lineColor, Offset(0f, y), Offset(size.width, y))
+    }
+}
 
 internal fun DrawScope.renderSeries(
     seriesCount: Int,
@@ -23,7 +39,7 @@ internal fun DrawScope.renderSeries(
 ) {
     println("renderSeries(seriesCount: $seriesCount; padding: $verticalPadding)")
     (0..<seriesCount).forEach { i ->
-        val y = calculateY(i.toFloat(), (seriesCount - 1).toFloat(), size.height, verticalPadding)
+        val y = calculateYBySeries(i.toFloat(), (seriesCount - 1).toFloat(), seriesCount, size.height, verticalPadding)
         drawLine(lineColor, Offset(0f, y), Offset(size.width, y))
     }
 }
@@ -34,6 +50,7 @@ internal fun DrawScope.renderLabels(
     labelsTextStyle: TextStyle,
     labelsPostfix: String,
     verticalPadding: Float,
+    renderType: RenderType,
 ) {
 
     var maxWidth = 0
@@ -49,7 +66,10 @@ internal fun DrawScope.renderLabels(
     }
 
     labels.forEachIndexed { i, label ->
-        val y = calculateY(i.toFloat(), (labels.size - 1).toFloat(), size.height, verticalPadding)
+        val y = when(renderType) {
+            RenderType.ByValue -> calculateYByValue(i.toFloat(), (labels.size - 1).toFloat(), size.height, verticalPadding)
+            RenderType.BySeries -> calculateYBySeries(i.toFloat(), (labels.size - 1).toFloat(), labels.size, size.height, verticalPadding)
+        }
         drawText(
             textMeasurer = textMeasurer,
             text = "$label$labelsPostfix",
@@ -74,9 +94,10 @@ internal fun DrawScope.renderEvents(
             val labels = entriesMap.getLabels()
             val labelIndex = labels.indexOf(entry.event)
             val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateY(
+            val y = calculateYBySeries(
                 labelIndex.toFloat(),
                 (labels.size - 1).toFloat(),
+                labels.size,
                 size.height,
                 verticalPadding
             )
@@ -99,7 +120,7 @@ internal fun DrawScope.renderMinMaxLines(
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
             val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateY(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
+            val y = calculateYByValue(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
 
             drawCircle(
                 color = getColor(i),
@@ -119,7 +140,7 @@ internal fun DrawScope.renderPercentageLines(
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
             val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateY(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
+            val y = calculateYByValue(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
 
             drawCircle(
                 color = getColor(i),
