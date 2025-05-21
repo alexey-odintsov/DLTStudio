@@ -102,6 +102,7 @@ fun Chart(
                             textMeasurer,
                             style.labelTextStyle,
                             labelsPostfix,
+                            style.verticalPadding.toPx(),
                         )
 
                         ChartType.MinMax -> renderValuesLabels(
@@ -111,23 +112,26 @@ fun Chart(
                             textMeasurer,
                             style.labelTextStyle,
                             labelsPostfix,
+                            style.verticalPadding.toPx(),
                         )
 
                         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
                             entries.getLabels(),
                             textMeasurer,
-                            style.labelTextStyle
+                            style.labelTextStyle,
+                            style.verticalPadding.toPx(),
                         )
                     }
                 }
             })
 }
 
-private fun DrawScope.calculateX(
+private fun calculateX(
     entry: ChartEntry,
-    timeFrame: TimeFrame
+    timeFrame: TimeFrame,
+    width: Float,
 ): Float {
-    return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * size.width
+    return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * width
 }
 
 private fun DrawScope.renderSeries(
@@ -146,16 +150,17 @@ private fun DrawScope.renderLabels(
     labels: List<String>,
     textMeasurer: TextMeasurer,
     labelsTextStyle: TextStyle,
+    verticalPadding: Float,
 ) {
-    val seriesDistance = size.height / labels.size
     labels.forEachIndexed { i, label ->
-        val y = seriesDistance * i
+        val y = calculateYForLabels(labels, i, size.height, verticalPadding)
         val maxValueResult = textMeasurer.measure(
             text = label, style = labelsTextStyle
         )
         drawText(
             textMeasurer = textMeasurer,
             text = label,
+            style = labelsTextStyle,
             topLeft = Offset(0f, y),
         )
     }
@@ -168,18 +173,19 @@ private fun DrawScope.renderValuesLabels(
     textMeasurer: TextMeasurer,
     labelsTextStyle: TextStyle,
     labelsPostfix: String,
+    verticalPadding: Float,
 ) {
-    val seriesDistance = size.height / (seriesCount )
     val step = (maxValue - minValue) / (seriesCount - 1)
     repeat(seriesCount + 1) { i ->
-        val text = "${"%,.0f".format((seriesCount - 1 - i) * step)}$labelsPostfix"
-        val y = seriesDistance * i
+        val text = "${"%,.0f".format((seriesCount - i) * step)}$labelsPostfix"
+        val y = calculateYForValue(step * (seriesCount - i), maxValue, size.height, verticalPadding)
         val maxValueResult = textMeasurer.measure(
             text = text, style = labelsTextStyle
         )
         drawText(
             textMeasurer = textMeasurer,
             text = text,
+            style = labelsTextStyle,
             topLeft = Offset(0f, y),
         )
     }
@@ -196,7 +202,7 @@ private fun DrawScope.renderEvents(
         entries.forEach { entry ->
             val labels = entriesMap.getLabels()
             val labelIndex = labels.indexOf(entry.event)
-            val x = calculateX(entry, timeFrame)
+            val x = calculateX(entry, timeFrame, size.width)
             val y = calculateYForLabels(labels, labelIndex, size.height, verticalPadding)
 
             drawCircle(
@@ -216,7 +222,7 @@ private fun DrawScope.renderLines(
     entriesMap.getKeys().forEachIndexed { i, key ->
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
-            val x = calculateX(entry, timeFrame)
+            val x = calculateX(entry, timeFrame, size.width)
             val y = calculateYForValue(entry.value, entriesMap.getMaxValue(), size.height, verticalPadding)
 
             drawCircle(

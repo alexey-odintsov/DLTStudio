@@ -29,5 +29,19 @@ data class ChartStyle(
                 )
             )
         )
+        val Dark = ChartStyle(
+            backgroundColor = Color.Gray,
+            verticalPadding = 6.dp,
+            seriesColor = Color.LightGray,
+            labelTextStyle = TextStyle(
+                color = Color.LightGray,
+                fontSize = 10.sp,
+                textAlign = TextAlign.End,
+                lineHeightStyle = LineHeightStyle(
+                    LineHeightStyle.Alignment.Center,
+                    LineHeightStyle.Trim.None
+                )
+            )
+        )
     }
 }

@@ -12,8 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.charts.model.EventEntry
-import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.FloatChartData
 import com.alekso.dltstudio.charts.model.NumericalEntry
 import com.alekso.dltstudio.charts.model.StringKey
@@ -48,5 +46,14 @@ fun PreviewPercentageGraph() {
             type = ChartType.Percentage,
         )
         Spacer(Modifier.size(4.dp))
+        Chart(
+            modifier = Modifier.fillMaxWidth().height(200.dp),
+            style = ChartStyle.Dark,
+            totalTime = TimeFrame(now, now + 2_000_000L),
+            timeFrame = TimeFrame(now, now + 2_000_000L),
+            entries = chartData,
+            onDragged = {},
+            type = ChartType.Percentage,
+        )
     }
 }
