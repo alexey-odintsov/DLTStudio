@@ -21,6 +21,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartKey
+import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
@@ -130,7 +131,13 @@ fun Chart(
                             highlightedKey = highlightedKey,
                         )
 
-                        else -> {}
+                        ChartType.Duration -> renderDurationLines(
+                            entries as DurationChartData,
+                            labelsSize,
+                            timeFrame,
+                            style = style,
+                            highlightedKey = highlightedKey,
+                        )
                     }
 
                     when (type) {

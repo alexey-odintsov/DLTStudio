@@ -175,3 +175,33 @@ data class SingleStateChartData(
         return _labels
     }
 }
+
+data class DurationChartData(
+    val entriesMap: MutableMap<ChartKey, MutableList<DurationEntry>> = mutableStateMapOf(),
+) : ChartData {
+    private val _labels = mutableListOf<String>()
+    fun addEntry(key: ChartKey, value: DurationEntry) {
+        if (!_labels.contains(key.key)) {
+            _labels.add(key.key)
+        }
+        val list = entriesMap[key] ?: mutableListOf()
+        list.add(value)
+        entriesMap[key] = list
+    }
+
+    override fun isEmpty(): Boolean {
+        return entriesMap.isEmpty()
+    }
+
+    override fun getKeys(): List<ChartKey> {
+        return entriesMap.keys.toList()
+    }
+
+    override fun getEntries(key: ChartKey): List<DurationEntry> {
+        return entriesMap[key]?.toList() ?: emptyList()
+    }
+
+    override fun getLabels(): List<String> {
+        return _labels
+    }
+}
