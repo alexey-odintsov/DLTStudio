@@ -83,7 +83,7 @@ class EntriesParser {
         val userState = SingleStateChartData()
         val u0Key = StringKey("u0")
         userState.addEntry(
-            u0Key, "RUNNING",
+            u0Key,
             SingleStateEntry(
                 timestamp = timeFrame.timeStart + 1_000_000L,
                 state = "RUNNING",
@@ -91,7 +91,7 @@ class EntriesParser {
             )
         )
         userState.addEntry(
-            u0Key, "CLOSED",
+            u0Key,
             SingleStateEntry(
                 timestamp = timeFrame.timeStart + 1_000_000L,
                 state = "CLOSED",
@@ -100,9 +100,8 @@ class EntriesParser {
         )
 
         entriesMap[ChartParameters(0, "crashes", ChartType.Events)] = crashes
-        entriesMap[ChartParameters(1, "cpuc", ChartType.Percentage, labelsPostfix = "%")] =
-            cpuEntries
-//        entriesMap[ChartParameters(2, "userState", ChartType.SingleState)] = userState
+        entriesMap[ChartParameters(1, "cpuc", ChartType.Percentage)] = cpuEntries
+        entriesMap[ChartParameters(2, "userState", ChartType.SingleState)] = userState
 
         return entriesMap
     }

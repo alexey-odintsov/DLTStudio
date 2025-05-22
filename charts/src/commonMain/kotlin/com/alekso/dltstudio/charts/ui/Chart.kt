@@ -24,6 +24,7 @@ import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 
@@ -115,6 +116,14 @@ fun Chart(
 
                         ChartType.State -> renderStateLines(
                             entries as StateChartData,
+                            labelsSize,
+                            timeFrame,
+                            style = style,
+                            highlightedKey = highlightedKey,
+                        )
+
+                        ChartType.SingleState -> renderSingleStateLines(
+                            entries as SingleStateChartData,
                             labelsSize,
                             timeFrame,
                             style = style,

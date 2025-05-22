@@ -15,6 +15,7 @@ import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 
@@ -223,6 +224,68 @@ internal fun DrawScope.renderStateLines(
                     pathEffect = dashPath,
                 )
             }
+        }
+    }
+}
+internal fun DrawScope.renderSingleStateLines(
+    entriesMap: SingleStateChartData,
+    labelsSize: Int,
+    timeFrame: TimeFrame,
+    style: ChartStyle,
+    highlightedKey: ChartKey?,
+) {
+    entriesMap.getKeys().forEachIndexed { keyIndex, key ->
+        val entries = entriesMap.getEntries(key)
+        val isHighlighted = highlightedKey != null && highlightedKey == key
+        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
+        val verticalPaddingPx = style.verticalPadding.toPx()
+
+        var oldLabelIndex = -1
+        entries.forEachIndexed entriesIteration@{ i, entry ->
+            val labels = entriesMap.getLabels()
+            val labelIndex = labels.indexOf(entry.state)
+            val x = calculateX(entry, timeFrame, size.width)
+            val y = calculateY(
+                labelIndex.toFloat(),
+                (labels.size - 1).toFloat(),
+                labelsSize,
+                size.height,
+                verticalPaddingPx,
+            )
+
+            if (i == 0) {
+                drawCircle(
+                    color = lineColor,
+                    radius = lineWidthPx,
+                    center = Offset(x, y)
+                )
+            } else {
+                val prev = entries[i - 1]
+                val prevX = calculateX(prev, timeFrame, size.width)
+                val prevY = calculateY(
+                    oldLabelIndex.toFloat(),
+                    (labels.size - 1).toFloat(),
+                    labelsSize,
+                    size.height,
+                    verticalPaddingPx,
+                )
+
+                drawLine(
+                    lineColor,
+                    Offset(prevX, prevY),
+                    Offset(x, prevY),
+                    strokeWidth = lineWidthPx,
+                )
+                drawLine(
+                    lineColor,
+                    Offset(x, prevY),
+                    Offset(x, y),
+                    strokeWidth = lineWidthPx,
+                    pathEffect = dashPath,
+                )
+            }
+            oldLabelIndex = labelIndex
         }
     }
 }

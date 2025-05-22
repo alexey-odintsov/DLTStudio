@@ -150,9 +150,9 @@ data class SingleStateChartData(
     val entriesMap: MutableMap<ChartKey, MutableList<SingleStateEntry>> = mutableStateMapOf(),
 ) : ChartData {
     private val _labels = mutableListOf<String>()
-    fun addEntry(key: ChartKey, label: String, value: SingleStateEntry) {
-        if (!_labels.contains(label)) {
-            _labels.add(label)
+    fun addEntry(key: ChartKey, value: SingleStateEntry) {
+        if (!_labels.contains(value.state)) {
+            _labels.add(value.state)
         }
         val list = entriesMap[key] ?: mutableListOf()
         list.add(value)
