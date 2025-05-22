@@ -82,6 +82,7 @@ fun TestPanel(
                         type = diagram.chartType,
                         labelsPostfix = diagram.labelsPostfix,
                         labelsCount = diagram.labelsCount,
+                        highlightedKey = null,
                     )
                     Spacer(Modifier.size(4.dp))
                 }

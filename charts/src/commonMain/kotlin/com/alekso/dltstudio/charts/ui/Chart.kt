@@ -20,6 +20,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
@@ -36,6 +37,7 @@ fun Chart(
     type: ChartType,
     labelsCount: Int = 11,
     labelsPostfix: String = "",
+    highlightedKey: ChartKey?,
 ) {
     if (entries == null || entries.isEmpty()) {
         Text("No entries found")
@@ -98,14 +100,16 @@ fun Chart(
                             entries as PercentageChartData,
                             labelsSize,
                             timeFrame,
-                            style.verticalPadding.toPx()
+                            style = style,
+                            highlightedKey = highlightedKey,
                         )
 
                         ChartType.MinMax -> renderMinMaxLines(
                             entries as MinMaxChartData,
                             labelsSize,
                             timeFrame,
-                            style.verticalPadding.toPx()
+                            style = style,
+                            highlightedKey = highlightedKey,
                         )
 
                         else -> {}

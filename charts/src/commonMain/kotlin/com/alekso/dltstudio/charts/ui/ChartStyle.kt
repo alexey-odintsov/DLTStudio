@@ -12,13 +12,17 @@ data class ChartStyle(
     val backgroundColor: Color,
     val verticalPadding: Dp,
     val seriesColor: Color,
+    val lineWidth: Dp,
     val labelTextStyle: TextStyle,
+    val highlightColor: Color,
 ) {
     companion object {
         val Default = ChartStyle(
             backgroundColor = Color.White,
             verticalPadding = 6.dp,
             seriesColor = Color.LightGray,
+            highlightColor = Color.Green,
+            lineWidth = 2.dp,
             labelTextStyle = TextStyle(
                 color = Color.Black,
                 background = Color.White.copy(alpha = 0.75f),
@@ -28,12 +32,14 @@ data class ChartStyle(
                     LineHeightStyle.Alignment.Center,
                     LineHeightStyle.Trim.None
                 )
-            )
+            ),
         )
         val Dark = ChartStyle(
             backgroundColor = Color.Gray,
             verticalPadding = 6.dp,
             seriesColor = Color.LightGray,
+            highlightColor = Color.Green,
+            lineWidth = 2.dp,
             labelTextStyle = TextStyle(
                 color = Color.LightGray,
                 background = Color.Gray.copy(alpha = 0.75f),

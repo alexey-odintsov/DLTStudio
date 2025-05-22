@@ -35,12 +35,12 @@ fun PreviewMinMaxGraph() {
     chartData.addEntry(app1, MinMaxEntry(now + 300_000L,200f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 400_000L,300f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 500_000L,400f, ""))
-    chartData.addEntry(app1, MinMaxEntry(now + 600_000L,500f, ""))
+    chartData.addEntry(app1, MinMaxEntry(now + 600_000L, 340f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 700_000L,600f, ""))
-    chartData.addEntry(app1, MinMaxEntry(now + 800_000L,700f, ""))
+    chartData.addEntry(app1, MinMaxEntry(now + 800_000L, 300f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 900_000L,800f, ""))
-    chartData.addEntry(app1, MinMaxEntry(now + 1_000_000L,900f, ""))
-    chartData.addEntry(app1, MinMaxEntry(now + 1_100_000L,1000f, ""))
+    chartData.addEntry(app1, MinMaxEntry(now + 1_000_000L, 400f, ""))
+    chartData.addEntry(app1, MinMaxEntry(now + 1_100_000L, 200f, ""))
     chartData.addEntry(app2, MinMaxEntry(now + 1_500_000L, 500f, ""))
     chartData.addEntry(app2, MinMaxEntry(now + 1_750_000L, 1000f, ""))
     chartData.addEntry(service1, MinMaxEntry(now + 800_000L, 200f, ""))
@@ -53,9 +53,10 @@ fun PreviewMinMaxGraph() {
             timeFrame = TimeFrame(now, now + 2_000_000L),
             entries = chartData,
             onDragged = {},
-            labelsCount = 2,
+            labelsCount = 4,
             labelsPostfix = " Mb",
             type = ChartType.MinMax,
+            highlightedKey = app2,
         )
         Spacer(Modifier.size(4.dp))
         Chart(
@@ -67,6 +68,7 @@ fun PreviewMinMaxGraph() {
             onDragged = {},
             labelsPostfix = " Mb",
             type = ChartType.MinMax,
+            highlightedKey = app2,
         )
     }
 }

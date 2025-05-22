@@ -10,6 +10,7 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
@@ -108,19 +109,51 @@ internal fun DrawScope.renderMinMaxLines(
     entriesMap: MinMaxChartData,
     labelsSize: Int,
     timeFrame: TimeFrame,
-    verticalPadding: Float,
+    style: ChartStyle,
+    highlightedKey: ChartKey?,
 ) {
-    entriesMap.getKeys().forEachIndexed { i, key ->
+    entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
-        entries.forEach { entry ->
-            val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateY(entry.value, entriesMap.getMaxValue(), labelsSize, size.height, verticalPadding)
+        val isHighlighted = highlightedKey != null && highlightedKey == key
+        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
+        val verticalPaddingPx = style.verticalPadding.toPx()
 
-            drawCircle(
-                color = getColor(i),
-                radius = 5f,
-                center = Offset(x, y)
+        entries.forEachIndexed entriesIteration@{ i, entry ->
+            val x = calculateX(entry, timeFrame, size.width)
+            val y = calculateY(
+                entry.value,
+                entriesMap.getMaxValue(),
+                labelsSize,
+                size.height,
+                verticalPaddingPx,
             )
+
+            if (i == 0 || entries.size == 1) {
+                drawCircle(
+                    color = lineColor,
+                    radius = lineWidthPx,
+                    center = Offset(x, y)
+                )
+                return@entriesIteration
+            } else {
+                val prev = entries[i - 1]
+                val prevX = calculateX(prev, timeFrame, size.width)
+                val prevY = calculateY(
+                    prev.value,
+                    entriesMap.getMaxValue(),
+                    labelsSize,
+                    size.height,
+                    verticalPaddingPx,
+                )
+
+                drawLine(
+                    lineColor,
+                    Offset(prevX, prevY),
+                    Offset(x, y),
+                    strokeWidth = lineWidthPx,
+                )
+            }
         }
     }
 }
@@ -129,19 +162,51 @@ internal fun DrawScope.renderPercentageLines(
     entriesMap: PercentageChartData,
     labelsSize: Int,
     timeFrame: TimeFrame,
-    verticalPadding: Float,
+    style: ChartStyle,
+    highlightedKey: ChartKey?,
 ) {
-    entriesMap.getKeys().forEachIndexed { i, key ->
+    entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
-        entries.forEach { entry ->
-            val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateY(entry.value, entriesMap.getMaxValue(), labelsSize, size.height, verticalPadding)
+        val isHighlighted = highlightedKey != null && highlightedKey == key
+        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
+        val verticalPaddingPx = style.verticalPadding.toPx()
 
-            drawCircle(
-                color = getColor(i),
-                radius = 5f,
-                center = Offset(x, y)
+        entries.forEachIndexed entriesIteration@{ i, entry ->
+            val x = calculateX(entry, timeFrame, size.width)
+            val y = calculateY(
+                entry.value,
+                entriesMap.getMaxValue(),
+                labelsSize,
+                size.height,
+                verticalPaddingPx,
             )
+
+            if (i == 0 || entries.size == 1) {
+                drawCircle(
+                    color = lineColor,
+                    radius = lineWidthPx,
+                    center = Offset(x, y)
+                )
+                return@entriesIteration
+            } else {
+                val prev = entries[i - 1]
+                val prevX = calculateX(prev, timeFrame, size.width)
+                val prevY = calculateY(
+                    prev.value,
+                    entriesMap.getMaxValue(),
+                    labelsSize,
+                    size.height,
+                    verticalPaddingPx,
+                )
+
+                drawLine(
+                    lineColor,
+                    Offset(prevX, prevY),
+                    Offset(x, y),
+                    strokeWidth = lineWidthPx,
+                )
+            }
         }
     }
 }
@@ -150,7 +215,7 @@ internal fun DrawScope.renderPercentageLines(
 val colors = listOf(
     Color.Blue,
     Color.Red,
-    Color.Green,
+//    Color.Green, // is used as highlight color
     Color.Yellow,
     Color.White,
     Color.Cyan,

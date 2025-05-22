@@ -51,6 +51,7 @@ fun PreviewEventsGraph() {
             entries = chartData,
             onDragged = {},
             type = ChartType.Events,
+            highlightedKey = null,
         )
         Spacer(Modifier.size(4.dp))
         Chart(
@@ -61,6 +62,7 @@ fun PreviewEventsGraph() {
             entries = chartData2,
             onDragged = {},
             type = ChartType.Events,
+            highlightedKey = null,
         )
         Spacer(Modifier.size(4.dp))
         Chart(
@@ -71,6 +73,7 @@ fun PreviewEventsGraph() {
             entries = chartData3,
             onDragged = {},
             type = ChartType.Events,
+            highlightedKey = null,
         )
     }
 }
