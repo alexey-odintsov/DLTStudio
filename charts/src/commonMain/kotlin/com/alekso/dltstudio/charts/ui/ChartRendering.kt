@@ -3,6 +3,7 @@ package com.alekso.dltstudio.charts.ui
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -14,6 +15,7 @@ import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 
 
@@ -152,6 +154,73 @@ internal fun DrawScope.renderMinMaxLines(
                     Offset(prevX, prevY),
                     Offset(x, y),
                     strokeWidth = lineWidthPx,
+                )
+            }
+        }
+    }
+}
+
+val dashPath = PathEffect.dashPathEffect(floatArrayOf(3f, 3f))
+
+internal fun DrawScope.renderStateLines(
+    entriesMap: StateChartData,
+    labelsSize: Int,
+    timeFrame: TimeFrame,
+    style: ChartStyle,
+    highlightedKey: ChartKey?,
+) {
+    entriesMap.getKeys().forEachIndexed { keyIndex, key ->
+        val entries = entriesMap.getEntries(key)
+        val isHighlighted = highlightedKey != null && highlightedKey == key
+        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
+        val verticalPaddingPx = style.verticalPadding.toPx()
+
+        entries.forEachIndexed entriesIteration@{ i, entry ->
+            val labels = entriesMap.getLabels()
+            val labelIndex = labels.indexOf(entry.newState)
+            val oldLabelIndex = labels.indexOf(entry.oldState)
+            val x = calculateX(entry, timeFrame, size.width)
+            val y = calculateY(
+                labelIndex.toFloat(),
+                (labels.size - 1).toFloat(),
+                labelsSize,
+                size.height,
+                verticalPaddingPx,
+            )
+            val prevY = calculateY(
+                oldLabelIndex.toFloat(),
+                (labels.size - 1).toFloat(),
+                labelsSize,
+                size.height,
+                verticalPaddingPx,
+            )
+
+            if (i == 0 || entries.size == 1) {
+                drawLine(
+                    lineColor,
+                    Offset(x, prevY),
+                    Offset(x, y),
+                    strokeWidth = lineWidthPx,
+                    pathEffect = dashPath,
+                )
+                return@entriesIteration
+            } else {
+                val prev = entries[i - 1]
+                val prevX = calculateX(prev, timeFrame, size.width)
+
+                drawLine(
+                    lineColor,
+                    Offset(prevX, prevY),
+                    Offset(x, prevY),
+                    strokeWidth = lineWidthPx,
+                )
+                drawLine(
+                    lineColor,
+                    Offset(x, prevY),
+                    Offset(x, y),
+                    strokeWidth = lineWidthPx,
+                    pathEffect = dashPath,
                 )
             }
         }

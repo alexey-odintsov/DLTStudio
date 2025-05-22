@@ -24,6 +24,7 @@ import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 
 @Composable
@@ -106,6 +107,14 @@ fun Chart(
 
                         ChartType.MinMax -> renderMinMaxLines(
                             entries as MinMaxChartData,
+                            labelsSize,
+                            timeFrame,
+                            style = style,
+                            highlightedKey = highlightedKey,
+                        )
+
+                        ChartType.State -> renderStateLines(
+                            entries as StateChartData,
                             labelsSize,
                             timeFrame,
                             style = style,
