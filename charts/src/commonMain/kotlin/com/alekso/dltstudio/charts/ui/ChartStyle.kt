@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 data class ChartStyle(
+    val isDark: Boolean,
     val backgroundColor: Color,
     val verticalPadding: Dp,
     val seriesColor: Color,
@@ -19,6 +20,7 @@ data class ChartStyle(
 ) {
     companion object {
         val Default = ChartStyle(
+            isDark = false,
             backgroundColor = Color.White,
             verticalPadding = 6.dp,
             seriesColor = Color.LightGray,
@@ -37,6 +39,7 @@ data class ChartStyle(
             ),
         )
         val Dark = ChartStyle(
+            isDark = true,
             backgroundColor = Color.Gray,
             verticalPadding = 6.dp,
             seriesColor = Color.LightGray,

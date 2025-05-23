@@ -130,8 +130,10 @@ internal fun DrawScope.renderLabelsForValue(
 internal fun DrawScope.renderEvents(
     entriesMap: EventsChartData,
     timeFrame: TimeFrame,
-    verticalPadding: Float,
+    style: ChartStyle,
 ) {
+    val verticalPadding = style.verticalPadding.toPx()
+
     entriesMap.getKeys().forEachIndexed { i, key ->
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
@@ -146,7 +148,7 @@ internal fun DrawScope.renderEvents(
             )
 
             drawCircle(
-                color = getColor(labelIndex),
+                color = ChartPalette.getColor(labelIndex, style.isDark),
                 radius = 10f,
                 center = Offset(x, y)
             )
@@ -164,7 +166,11 @@ internal fun DrawScope.renderMinMaxLines(
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
         val isHighlighted = highlightedKey != null && highlightedKey == key
-        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineColor =
+            if (isHighlighted) style.highlightColor else ChartPalette.getColor(
+                keyIndex,
+                style.isDark
+            )
         val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
         val verticalPaddingPx = style.verticalPadding.toPx()
 
@@ -218,7 +224,11 @@ internal fun DrawScope.renderStateLines(
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
         val isHighlighted = highlightedKey != null && highlightedKey == key
-        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineColor =
+            if (isHighlighted) style.highlightColor else ChartPalette.getColor(
+                keyIndex,
+                style.isDark
+            )
         val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
         val verticalPaddingPx = style.verticalPadding.toPx()
 
@@ -280,7 +290,11 @@ internal fun DrawScope.renderSingleStateLines(
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
         val isHighlighted = highlightedKey != null && highlightedKey == key
-        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineColor =
+            if (isHighlighted) style.highlightColor else ChartPalette.getColor(
+                keyIndex,
+                style.isDark
+            )
         val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
         val verticalPaddingPx = style.verticalPadding.toPx()
 
@@ -340,7 +354,11 @@ internal fun DrawScope.renderDurationLines(
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
         val isHighlighted = highlightedKey != null && highlightedKey == key
-        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineColor =
+            if (isHighlighted) style.highlightColor else ChartPalette.getColor(
+                keyIndex,
+                style.isDark
+            )
         val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
         val verticalPaddingPx = style.verticalPadding.toPx()
 
@@ -385,12 +403,17 @@ internal fun DrawScope.renderPercentageLines(
     style: ChartStyle,
     highlightedKey: ChartKey?,
 ) {
+    val verticalPaddingPx = style.verticalPadding.toPx()
+
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
         val isHighlighted = highlightedKey != null && highlightedKey == key
-        val lineColor = if (isHighlighted) style.highlightColor else getColor(keyIndex)
+        val lineColor =
+            if (isHighlighted) style.highlightColor else ChartPalette.getColor(
+                keyIndex,
+                style.isDark
+            )
         val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
-        val verticalPaddingPx = style.verticalPadding.toPx()
 
         entries.forEachIndexed entriesIteration@{ i, entry ->
             val x = calculateX(entry, timeFrame, size.width)
@@ -431,6 +454,3 @@ internal fun DrawScope.renderPercentageLines(
     }
 }
 
-private fun getColor(index: Int): Color {
-    return ChartPalette.getColor(index)
-}

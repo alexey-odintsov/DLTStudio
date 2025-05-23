@@ -95,7 +95,7 @@ fun Chart(
                         ChartType.Events -> renderEvents(
                             entries as EventsChartData,
                             timeFrame,
-                            style.verticalPadding.toPx()
+                            style,
                         )
 
                         ChartType.Percentage -> renderPercentageLines(
