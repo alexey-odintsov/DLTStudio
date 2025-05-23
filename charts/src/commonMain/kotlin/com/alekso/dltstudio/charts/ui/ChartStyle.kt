@@ -2,6 +2,7 @@ package com.alekso.dltstudio.charts.ui
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -27,6 +28,7 @@ data class ChartStyle(
                 color = Color.Black,
                 background = Color.White.copy(alpha = 0.75f),
                 fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace,
                 textAlign = TextAlign.Start,
                 lineHeightStyle = LineHeightStyle(
                     LineHeightStyle.Alignment.Center,
@@ -44,6 +46,7 @@ data class ChartStyle(
                 color = Color.LightGray,
                 background = Color.Gray.copy(alpha = 0.75f),
                 fontSize = 10.sp,
+                fontFamily = FontFamily.Monospace,
                 textAlign = TextAlign.End,
                 lineHeightStyle = LineHeightStyle(
                     LineHeightStyle.Alignment.Center,

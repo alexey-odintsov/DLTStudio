@@ -94,7 +94,6 @@ fun Chart(
                     when (type) {
                         ChartType.Events -> renderEvents(
                             entries as EventsChartData,
-                            labelsSize,
                             timeFrame,
                             style.verticalPadding.toPx()
                         )
@@ -117,7 +116,6 @@ fun Chart(
 
                         ChartType.State -> renderStateLines(
                             entries as StateChartData,
-                            labelsSize,
                             timeFrame,
                             style = style,
                             highlightedKey = highlightedKey,
@@ -125,7 +123,6 @@ fun Chart(
 
                         ChartType.SingleState -> renderSingleStateLines(
                             entries as SingleStateChartData,
-                            labelsSize,
                             timeFrame,
                             style = style,
                             highlightedKey = highlightedKey,
@@ -133,7 +130,6 @@ fun Chart(
 
                         ChartType.Duration -> renderDurationLines(
                             entries as DurationChartData,
-                            labelsSize,
                             timeFrame,
                             style = style,
                             highlightedKey = highlightedKey,
@@ -142,17 +138,16 @@ fun Chart(
 
                     when (type) {
                         ChartType.Percentage ->
-                            renderLabels(
+                            renderLabelsForValue(
                                 getSteps(0f, 100f, labelsSize),
                                 textMeasurer,
                                 style.labelTextStyle,
                                 "%",
                                 style.verticalPadding.toPx(),
-                                alignToRight = true,
                             )
 
                         ChartType.MinMax ->
-                            renderLabels(
+                            renderLabelsForValue(
                                 getSteps(
                                     (entries as MinMaxChartData).getMinValue(),
                                     (entries as MinMaxChartData).getMaxValue(),
@@ -162,7 +157,6 @@ fun Chart(
                                 style.labelTextStyle,
                                 labelsPostfix,
                                 style.verticalPadding.toPx(),
-                                alignToRight = true,
                             )
 
                         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
@@ -171,7 +165,6 @@ fun Chart(
                             style.labelTextStyle,
                             labelsPostfix,
                             style.verticalPadding.toPx(),
-                            alignToRight = false,
                         )
                     }
                 }

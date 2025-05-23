@@ -26,9 +26,14 @@ internal fun DrawScope.renderSeriesByValue(
     lineColor: Color,
     verticalPadding: Float,
 ) {
-    println("renderSeries(seriesCount: $seriesCount; padding: $verticalPadding)")
     (0..<seriesCount).forEach { i ->
-        val y = calculateY(i.toFloat(), (seriesCount - 1).toFloat(), seriesCount, size.height, verticalPadding)
+        val y = calculateYForValue(
+            i.toFloat(),
+            (seriesCount - 1).toFloat(),
+            seriesCount,
+            size.height,
+            verticalPadding
+        )
         drawLine(lineColor, Offset(0f, y), Offset(size.width, y))
     }
 }
@@ -38,9 +43,8 @@ internal fun DrawScope.renderSeries(
     lineColor: Color,
     verticalPadding: Float,
 ) {
-    println("renderSeries(seriesCount: $seriesCount; padding: $verticalPadding)")
     (0..<seriesCount).forEach { i ->
-        val y = calculateY(i.toFloat(), (seriesCount - 1).toFloat(), seriesCount, size.height, verticalPadding)
+        val y = calculateY(i, seriesCount, size.height, verticalPadding)
         drawLine(lineColor, Offset(0f, y), Offset(size.width, y))
     }
 }
@@ -51,10 +55,43 @@ internal fun DrawScope.renderLabels(
     labelsTextStyle: TextStyle,
     labelsPostfix: String,
     verticalPadding: Float,
-    alignToRight: Boolean,
 ) {
-    val style =
-        if (alignToRight) labelsTextStyle.copy(textAlign = TextAlign.End) else labelsTextStyle
+    var maxWidth = 0
+    var maxHeight = 0
+    labels.forEachIndexed { i, label ->
+        val maxValueResult =
+            textMeasurer.measure(text = "$label$labelsPostfix", style = labelsTextStyle)
+        maxHeight = maxValueResult.size.height
+        if (maxValueResult.size.width > maxWidth) {
+            maxWidth = maxValueResult.size.width
+        }
+    }
+
+    val labelSize = Size(maxWidth.toFloat(), maxHeight.toFloat())
+
+    labels.forEachIndexed { i, label ->
+        val y = calculateY(i, labels.size, size.height, verticalPadding)
+        drawText(
+            textMeasurer = textMeasurer,
+            text = "$label$labelsPostfix",
+            style = labelsTextStyle,
+            topLeft = Offset(3.dp.toPx(), y - maxHeight / 2f),
+            overflow = TextOverflow.Clip,
+            softWrap = true,
+            maxLines = 1,
+            size = labelSize,
+        )
+    }
+}
+
+internal fun DrawScope.renderLabelsForValue(
+    labels: List<String>,
+    textMeasurer: TextMeasurer,
+    labelsTextStyle: TextStyle,
+    labelsPostfix: String,
+    verticalPadding: Float,
+) {
+    val style = labelsTextStyle.copy(textAlign = TextAlign.End)
 
     var maxWidth = 0
     var maxHeight = 0
@@ -70,7 +107,13 @@ internal fun DrawScope.renderLabels(
     val labelSize = Size(maxWidth.toFloat(), maxHeight.toFloat())
 
     labels.forEachIndexed { i, label ->
-        val y = calculateY(i.toFloat(), (labels.size - 1).toFloat(), labels.size, size.height, verticalPadding)
+        val y = calculateYForValue(
+            i.toFloat(),
+            (labels.size - 1).toFloat(),
+            labels.size,
+            size.height,
+            verticalPadding
+        )
         drawText(
             textMeasurer = textMeasurer,
             text = "$label$labelsPostfix",
@@ -86,7 +129,6 @@ internal fun DrawScope.renderLabels(
 
 internal fun DrawScope.renderEvents(
     entriesMap: EventsChartData,
-    labelsSize: Int,
     timeFrame: TimeFrame,
     verticalPadding: Float,
 ) {
@@ -97,8 +139,7 @@ internal fun DrawScope.renderEvents(
             val labelIndex = labels.indexOf(entry.event)
             val x = calculateX(entry, timeFrame, size.width)
             val y = calculateY(
-                labelIndex.toFloat(),
-                (labels.size - 1).toFloat(),
+                labelIndex,
                 labels.size,
                 size.height,
                 verticalPadding
@@ -129,7 +170,7 @@ internal fun DrawScope.renderMinMaxLines(
 
         entries.forEachIndexed entriesIteration@{ i, entry ->
             val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateY(
+            val y = calculateYForValue(
                 entry.value,
                 entriesMap.getMaxValue(),
                 labelsSize,
@@ -147,7 +188,7 @@ internal fun DrawScope.renderMinMaxLines(
             } else {
                 val prev = entries[i - 1]
                 val prevX = calculateX(prev, timeFrame, size.width)
-                val prevY = calculateY(
+                val prevY = calculateYForValue(
                     prev.value,
                     entriesMap.getMaxValue(),
                     labelsSize,
@@ -170,7 +211,6 @@ val dashPath = PathEffect.dashPathEffect(floatArrayOf(3f, 3f))
 
 internal fun DrawScope.renderStateLines(
     entriesMap: StateChartData,
-    labelsSize: Int,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
@@ -188,16 +228,14 @@ internal fun DrawScope.renderStateLines(
             val oldLabelIndex = labels.indexOf(entry.oldState)
             val x = calculateX(entry, timeFrame, size.width)
             val y = calculateY(
-                labelIndex.toFloat(),
-                (labels.size - 1).toFloat(),
-                labelsSize,
+                labelIndex,
+                labels.size,
                 size.height,
                 verticalPaddingPx,
             )
             val prevY = calculateY(
-                oldLabelIndex.toFloat(),
-                (labels.size - 1).toFloat(),
-                labelsSize,
+                oldLabelIndex,
+                labels.size,
                 size.height,
                 verticalPaddingPx,
             )
@@ -235,7 +273,6 @@ internal fun DrawScope.renderStateLines(
 
 internal fun DrawScope.renderSingleStateLines(
     entriesMap: SingleStateChartData,
-    labelsSize: Int,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
@@ -253,9 +290,8 @@ internal fun DrawScope.renderSingleStateLines(
             val labelIndex = labels.indexOf(entry.state)
             val x = calculateX(entry, timeFrame, size.width)
             val y = calculateY(
-                labelIndex.toFloat(),
-                (labels.size - 1).toFloat(),
-                labelsSize,
+                labelIndex,
+                labels.size,
                 size.height,
                 verticalPaddingPx,
             )
@@ -270,9 +306,8 @@ internal fun DrawScope.renderSingleStateLines(
                 val prev = entries[i - 1]
                 val prevX = calculateX(prev, timeFrame, size.width)
                 val prevY = calculateY(
-                    oldLabelIndex.toFloat(),
-                    (labels.size - 1).toFloat(),
-                    labelsSize,
+                    oldLabelIndex,
+                    labels.size,
                     size.height,
                     verticalPaddingPx,
                 )
@@ -298,7 +333,6 @@ internal fun DrawScope.renderSingleStateLines(
 
 internal fun DrawScope.renderDurationLines(
     entriesMap: DurationChartData,
-    labelsSize: Int,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
@@ -316,9 +350,8 @@ internal fun DrawScope.renderDurationLines(
             val x1 = calculateX(entry, timeFrame, size.width)
             val x2 = calculateX(entry.copy(timestamp = entry.timestampEnd), timeFrame, size.width)
             val y = calculateY(
-                labelIndex.toFloat(),
-                (labels.size - 1).toFloat(),
-                labelsSize,
+                labelIndex,
+                labels.size,
                 size.height,
                 verticalPaddingPx,
             )
@@ -361,7 +394,7 @@ internal fun DrawScope.renderPercentageLines(
 
         entries.forEachIndexed entriesIteration@{ i, entry ->
             val x = calculateX(entry, timeFrame, size.width)
-            val y = calculateY(
+            val y = calculateYForValue(
                 entry.value,
                 entriesMap.getMaxValue(),
                 labelsSize,
@@ -379,7 +412,7 @@ internal fun DrawScope.renderPercentageLines(
             } else {
                 val prev = entries[i - 1]
                 val prevX = calculateX(prev, timeFrame, size.width)
-                val prevY = calculateY(
+                val prevY = calculateYForValue(
                     prev.value,
                     entriesMap.getMaxValue(),
                     labelsSize,

@@ -33,9 +33,9 @@ class EntriesParser {
         percentage.addEntry(key3, PercentageEntry(timestamp = timeFrame.timeStart + 1_800_000L, data = Message(timeFrame.timeStart + 1_200_000L, "cpu2: 8%"), value = 100f),)
 
         val event = EventsChartData()
-        event.addEntry(key1, EventEntry(timestamp = timeFrame.timeStart + 500_000L, event = "Crash", data = "Crash1"))
+        event.addEntry(key1, EventEntry(timestamp = timeFrame.timeStart + 500_000L, event = "CRASH", data = "Crash1"))
         event.addEntry(key2, EventEntry(timestamp = timeFrame.timeStart + 1_250_000L, event = "WTF", data = "Crash12"))
-        event.addEntry(key3, EventEntry(timestamp = timeFrame.timeStart + 1_120_000L, event = "ANR", data = "WTF1"))
+//        event.addEntry(key3, EventEntry(timestamp = timeFrame.timeStart + 1_120_000L, event = "ANR", data = "WTF1"))
 
         val singleState = SingleStateChartData()
         singleState.addEntry(key3, SingleStateEntry(timestamp = timeFrame.timeStart + 500_000L, state = "STARTING", data = ""))

@@ -22,9 +22,7 @@ internal fun calculateX(
     return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * width
 }
 
-private var MAX_ITEM_HEIGHT_RATIO = 0.3f
-
-internal fun calculateY(
+internal fun calculateYForValue(
     value: Float,
     maxValue: Float,
     seriesCount: Int,
@@ -33,18 +31,16 @@ internal fun calculateY(
 ): Float {
     if (seriesCount == 1) return height / 2f
     val availableHeight = height - 2 * verticalPadding
+    return height - (value / maxValue) * availableHeight - verticalPadding
+}
 
-    var itemHeight = availableHeight / (seriesCount - 1)
-    var additionalPadding = 0f
-
-    if (itemHeight > availableHeight * MAX_ITEM_HEIGHT_RATIO) {
-        itemHeight = availableHeight * MAX_ITEM_HEIGHT_RATIO
-        additionalPadding = (availableHeight - ((seriesCount - 1) * itemHeight)) / 2f
-    }
-    // TODO: additionalPadding is calculated wrong!
-
-    val y = height - (value / maxValue) * availableHeight - verticalPadding
-
-    println("calculateY(value: $value; maxValue: $maxValue; height: $height; verticalPadding: $verticalPadding) = avail: $availableHeight; y: $y")
-    return y
+internal fun calculateY(
+    index: Int,
+    seriesCount: Int,
+    height: Float,
+    verticalPadding: Float
+): Float {
+    if (seriesCount == 1) return height / 2f
+    val itemHeight = height / (seriesCount + 1).toFloat()
+    return height - itemHeight * (index + 1)
 }
