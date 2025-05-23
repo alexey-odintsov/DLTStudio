@@ -51,31 +51,35 @@ internal fun DrawScope.renderLabels(
     labelsTextStyle: TextStyle,
     labelsPostfix: String,
     verticalPadding: Float,
+    alignToRight: Boolean,
 ) {
+    val style =
+        if (alignToRight) labelsTextStyle.copy(textAlign = TextAlign.End) else labelsTextStyle
 
     var maxWidth = 0
     var maxHeight = 0
     labels.forEachIndexed { i, label ->
-        val maxValueResult = textMeasurer.measure(
-            text = "$label$labelsPostfix", style = labelsTextStyle
-        )
+        val maxValueResult =
+            textMeasurer.measure(text = "$label$labelsPostfix", style = labelsTextStyle)
         maxHeight = maxValueResult.size.height
         if (maxValueResult.size.width > maxWidth) {
             maxWidth = maxValueResult.size.width
         }
     }
 
+    val labelSize = Size(maxWidth.toFloat(), maxHeight.toFloat())
+
     labels.forEachIndexed { i, label ->
         val y = calculateY(i.toFloat(), (labels.size - 1).toFloat(), labels.size, size.height, verticalPadding)
         drawText(
             textMeasurer = textMeasurer,
             text = "$label$labelsPostfix",
-            style = labelsTextStyle.copy(textAlign = TextAlign.Start),
+            style = style,
             topLeft = Offset(3.dp.toPx(), y - maxHeight / 2f),
             overflow = TextOverflow.Clip,
             softWrap = true,
             maxLines = 1,
-            size = Size(maxWidth.toFloat(), maxHeight.toFloat()),
+            size = labelSize,
         )
     }
 }

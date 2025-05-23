@@ -148,6 +148,7 @@ fun Chart(
                                 style.labelTextStyle,
                                 "%",
                                 style.verticalPadding.toPx(),
+                                alignToRight = true,
                             )
 
                         ChartType.MinMax ->
@@ -161,6 +162,7 @@ fun Chart(
                                 style.labelTextStyle,
                                 labelsPostfix,
                                 style.verticalPadding.toPx(),
+                                alignToRight = true,
                             )
 
                         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
@@ -169,6 +171,7 @@ fun Chart(
                             style.labelTextStyle,
                             labelsPostfix,
                             style.verticalPadding.toPx(),
+                            alignToRight = false,
                         )
                     }
                 }

@@ -27,7 +27,7 @@ data class ChartStyle(
                 color = Color.Black,
                 background = Color.White.copy(alpha = 0.75f),
                 fontSize = 10.sp,
-                textAlign = TextAlign.End,
+                textAlign = TextAlign.Start,
                 lineHeightStyle = LineHeightStyle(
                     LineHeightStyle.Alignment.Center,
                     LineHeightStyle.Trim.None
