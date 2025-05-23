@@ -398,23 +398,6 @@ internal fun DrawScope.renderPercentageLines(
     }
 }
 
-
-val colors = listOf(
-    Color.Blue,
-    Color.Red,
-//    Color.Green, // is used as highlight color
-    Color.Yellow,
-    Color.White,
-    Color.Cyan,
-    Color.Magenta,
-    Color.LightGray,
-    Color.DarkGray,
-    Color.Gray,
-    Color.Black,
-)
-
 private fun getColor(index: Int): Color {
-    // TODO: generate color or use colorPalette
-    val i = if (index >= colors.size) colors.size % index else index
-    return colors[i]
+    return ChartPalette.getColor(index)
 }
