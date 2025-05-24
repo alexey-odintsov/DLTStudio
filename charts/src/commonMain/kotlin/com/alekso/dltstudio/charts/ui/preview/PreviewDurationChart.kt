@@ -27,13 +27,14 @@ fun PreviewDurationChart() {
     val now = Clock.System.now().toEpochMilliseconds() * 1000L
     val app1 = StringKey("app1")
     val app2 = StringKey("app2")
+    val app3 = StringKey("app3")
 
     val chartData = DurationChartData()
     chartData.addEntry(app1, DurationEntry(now + 500_000L, "start", end = null, ""))
     chartData.addEntry(app1, DurationEntry(now + 900_000L, null, end = "stop", ""))
-
-//    chartData.addEntry(app1, DurationEntry(now + 1_200_000L, now + 1_540_000L, ""))
-//    chartData.addEntry(app2, DurationEntry(now + 900_000L, now + 1_900_000L, ""))
+    chartData.addEntry(app1, DurationEntry(now + 1_000_000L, null, end = "stop", ""))
+    chartData.addEntry(app2, DurationEntry(now + 1_200_000L, begin = "start", end = null, ""))
+    chartData.addEntry(app3, DurationEntry(now + 900_000L, begin = null, end = "stop", ""))
 
     Column(Modifier.fillMaxSize().background(Color.LightGray)) {
         Chart(

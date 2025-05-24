@@ -13,6 +13,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.DurationEntry
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
@@ -142,9 +143,9 @@ internal fun DrawScope.renderEvents(
             val isHighlighted = highlightedKey != null && highlightedKey == key
             val labelIndex = labels.indexOf(entry.event)
             val color = if (isHighlighted) style.highlightColor else ChartPalette.getColor(
-                    keyIndex,
-                    style.isDark
-                )
+                keyIndex,
+                style.isDark
+            )
             val x = calculateX(entry, timeFrame, size.width)
             val y = calculateY(
                 labelIndex,
@@ -368,33 +369,43 @@ internal fun DrawScope.renderDurationLines(
         val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
         val verticalPaddingPx = style.verticalPadding.toPx()
 
+        var prev: DurationEntry? = null
         entries.forEachIndexed entriesIteration@{ i, entry ->
-            val prev = if (i > 0) entries[i - 1] else null
 
-            if (prev != null && prev.begin != null) {
-                val labels = entriesMap.getLabels()
-                val labelIndex = labels.indexOf(key.key)
-                val x1 = calculateX(entry, timeFrame, size.width)
-                val x2 = calculateX(prev, timeFrame, size.width)
-                val y = calculateY(
-                    labelIndex,
-                    labels.size,
-                    size.height,
-                    verticalPaddingPx,
+            val labels = entriesMap.getLabels()
+            val labelIndex = labels.indexOf(key.key)
+            val x1 = calculateX(entry, timeFrame, size.width)
+            val x2 = if (prev != null) calculateX(prev, timeFrame, size.width) else null
+            val y = calculateY(
+                labelIndex,
+                labels.size,
+                size.height,
+                verticalPaddingPx,
+            )
+
+            if (entry.begin != null) {
+                drawLine(
+                    lineColor,
+                    Offset(x1 - 3.dp.toPx(), y - 3.dp.toPx()),
+                    Offset(x1, y),
+                    strokeWidth = lineWidthPx,
                 )
-
-                drawCircle(
-                    color = lineColor,
-                    radius = 2.dp.toPx(),
-                    center = Offset(x1, y)
+                drawLine(
+                    lineColor,
+                    Offset(x1, y),
+                    Offset(x1 - 3.dp.toPx(), y + 3.dp.toPx()),
+                    strokeWidth = lineWidthPx,
                 )
-
-                drawCircle(
-                    color = lineColor,
-                    radius = 2.dp.toPx(),
-                    center = Offset(x2, y)
+            } else if (entry.end != null) {
+                drawLine(
+                    lineColor,
+                    Offset(x1, y - 3.dp.toPx()),
+                    Offset(x1, y + 3.dp.toPx()),
+                    strokeWidth = lineWidthPx,
                 )
+            }
 
+            if (x2 != null) {
                 drawLine(
                     lineColor,
                     Offset(x1, y),
@@ -402,6 +413,7 @@ internal fun DrawScope.renderDurationLines(
                     strokeWidth = lineWidthPx,
                 )
             }
+            prev = entry
         }
     }
 }
