@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
@@ -82,6 +83,7 @@ private const val MOVE_TIMELINE_STEP_PX = 10
 fun TimeLinePanel(
     modifier: Modifier,
     timeFrame: TimeFrame,
+    listState: LazyListState,
     analyzeState: AnalyzeState,
     timelineFilters: SnapshotStateList<TimelineFilter>,
     filtersDialogState: Boolean,
@@ -168,7 +170,6 @@ fun TimeLinePanel(
                 )
             }
 
-            val state = rememberLazyListState()
             val panels = mutableStateListOf<@Composable () -> Unit>()
             val viewModifier = remember { Modifier.height(200.dp).weight(1f) }
 
@@ -269,7 +270,7 @@ fun TimeLinePanel(
                         eventType = PointerEventType.Move,
                         onEvent = { event ->
                             cursorPosition = event.changes[0].position
-                        }), state
+                        }), listState
                 ) {
                     items(panels.size) { i ->
                         if (i > 0) {
@@ -281,7 +282,7 @@ fun TimeLinePanel(
                 VerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
                     adapter = rememberScrollbarAdapter(
-                        scrollState = state
+                        scrollState = listState
                     )
                 )
                 val textMeasurer = rememberTextMeasurer()
@@ -353,6 +354,7 @@ fun PreviewTimeline() {
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
         analyzeState = AnalyzeState.IDLE,
+        listState = rememberLazyListState(),
         timelineFilters = mutableStateListOf(),
         timeFrame = TimeFrame(20000L,300000L),
         entriesMap = mutableStateMapOf(),

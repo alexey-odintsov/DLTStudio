@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -61,6 +62,7 @@ class TimelineViewModel(
 
     private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
+    val listState = LazyListState(0, 0)
 
     val timelineFilters = mutableStateListOf(*predefinedTimelineFilters.toTypedArray())
 
