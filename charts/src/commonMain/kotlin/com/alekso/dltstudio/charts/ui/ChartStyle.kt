@@ -25,7 +25,7 @@ data class ChartStyle(
             verticalPadding = 6.dp,
             seriesColor = Color.LightGray,
             highlightColor = Color.Green,
-            lineWidth = 1.2.dp,
+            lineWidth = 0.7.dp,
             labelTextStyle = TextStyle(
                 color = Color.Black,
                 background = Color.White.copy(alpha = 0.75f),
@@ -44,7 +44,7 @@ data class ChartStyle(
             verticalPadding = 6.dp,
             seriesColor = Color.LightGray,
             highlightColor = Color.Green,
-            lineWidth = 1.2.dp,
+            lineWidth = 0.7.dp,
             labelTextStyle = TextStyle(
                 color = Color.LightGray,
                 background = Color.Gray.copy(alpha = 0.75f),

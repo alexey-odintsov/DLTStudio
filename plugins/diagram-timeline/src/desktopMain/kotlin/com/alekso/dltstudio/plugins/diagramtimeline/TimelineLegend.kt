@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,7 +36,7 @@ import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.MinMaxEntry
 import com.alekso.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.uicomponents.ColorPalette
+import com.alekso.dltstudio.charts.ui.ChartPalette
 import kotlinx.datetime.Clock
 
 @Composable
@@ -73,7 +74,7 @@ fun TimelineLegend(
                             Box(
                                 modifier = Modifier.width(30.dp).height(6.dp).padding(end = 4.dp)
                                     .align(Alignment.CenterVertically)
-                                    .background(ColorPalette.getColor(i))
+                                    .background(ChartPalette.getColor(i))
                             )
                             Text(
                                 modifier = Modifier,
@@ -102,24 +103,29 @@ fun PreviewTimeLineLegend() {
     val ts = Clock.System.now().toEpochMilliseconds() * 1000L
 
     val entries = EventsChartData()
-    entries.addEntry(
-        StringKey("app1"),
-        EventEntry(
-            ts,
-            "ANR",
-            null
-        )
-    )
+    entries.addEntry(StringKey("app1"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("app2"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("app3"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("mysuperservice1: 12345"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("mysuperservice2: 12345"), EventEntry(ts, "ANR", null))
 
     val minMax = MinMaxChartData()
     minMax.addEntry(
         StringKey("app1"),
         MinMaxEntry(ts, 100f, null)
     )
+    minMax.addEntry(
+        StringKey("app2"),
+        MinMaxEntry(ts, 100f, null)
+    )
+    minMax.addEntry(
+        StringKey("mysuperservice: 12345"),
+        MinMaxEntry(ts, 100f, null)
+    )
 
     Column(Modifier.fillMaxWidth()) {
         TimelineLegend(
-            modifier = Modifier.width(200.dp).background(Color.Gray),
+            modifier = Modifier.size(200.dp, 100.dp).background(Color.Gray),
             title = "Crashes",
             entries = entries,
             updateHighlightedKey = {},
@@ -128,7 +134,7 @@ fun PreviewTimeLineLegend() {
         Spacer(Modifier.height(4.dp))
 
         TimelineLegend(
-            modifier = Modifier.width(250.dp).background(Color.LightGray),
+            modifier = Modifier.size(250.dp, 200.dp).background(Color.LightGray),
             title = "Memory usage",
             entries = minMax,
             updateHighlightedKey = {},
