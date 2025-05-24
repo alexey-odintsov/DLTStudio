@@ -96,6 +96,7 @@ fun Chart(
                             entries as EventsChartData,
                             timeFrame,
                             style,
+                            highlightedKey = highlightedKey,
                         )
 
                         ChartType.Percentage -> renderPercentageLines(

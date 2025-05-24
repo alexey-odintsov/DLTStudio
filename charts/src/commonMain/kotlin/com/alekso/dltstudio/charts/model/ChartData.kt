@@ -12,7 +12,7 @@ interface ChartData {
 }
 
 data class PercentageChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<PercentageEntry>> = mutableMapOf(),
+    private val entriesMap: MutableMap<ChartKey, MutableList<PercentageEntry>> = mutableMapOf(),
 ) : ChartData {
     private var minValue = 0f
     private var maxValue = 100f
@@ -44,7 +44,7 @@ data class PercentageChartData(
 }
 
 data class MinMaxChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<MinMaxEntry>> = mutableMapOf(),
+    private val entriesMap: MutableMap<ChartKey, MutableList<MinMaxEntry>> = mutableMapOf(),
 ) : ChartData {
     private var minValue = 0f
     private var maxValue = 0f
@@ -82,7 +82,7 @@ data class MinMaxChartData(
 }
 
 data class EventsChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<EventEntry>> = mutableStateMapOf()
+    private val entriesMap: MutableMap<ChartKey, MutableList<EventEntry>> = mutableStateMapOf()
 ) : ChartData {
     private val _labels = mutableListOf<String>()
 
@@ -113,7 +113,7 @@ data class EventsChartData(
 }
 
 data class StateChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<StateEntry>> = mutableMapOf(),
+    private val entriesMap: MutableMap<ChartKey, MutableList<StateEntry>> = mutableMapOf(),
 ) : ChartData {
     private val _labels = mutableListOf<String>()
 
@@ -147,7 +147,7 @@ data class StateChartData(
 }
 
 data class SingleStateChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<SingleStateEntry>> = mutableStateMapOf(),
+    private val entriesMap: MutableMap<ChartKey, MutableList<SingleStateEntry>> = mutableStateMapOf(),
 ) : ChartData {
     private val _labels = mutableListOf<String>()
     fun addEntry(key: ChartKey, value: SingleStateEntry) {
@@ -177,7 +177,7 @@ data class SingleStateChartData(
 }
 
 data class DurationChartData(
-    val entriesMap: MutableMap<ChartKey, MutableList<DurationEntry>> = mutableStateMapOf(),
+    private val entriesMap: MutableMap<ChartKey, MutableList<DurationEntry>> = mutableStateMapOf(),
 ) : ChartData {
     private val _labels = mutableListOf<String>()
     fun addEntry(key: ChartKey, value: DurationEntry) {

@@ -131,14 +131,20 @@ internal fun DrawScope.renderEvents(
     entriesMap: EventsChartData,
     timeFrame: TimeFrame,
     style: ChartStyle,
+    highlightedKey: ChartKey?,
 ) {
     val verticalPadding = style.verticalPadding.toPx()
 
-    entriesMap.getKeys().forEachIndexed { i, key ->
+    entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         val entries = entriesMap.getEntries(key)
         entries.forEach { entry ->
             val labels = entriesMap.getLabels()
+            val isHighlighted = highlightedKey != null && highlightedKey == key
             val labelIndex = labels.indexOf(entry.event)
+            val color = if (isHighlighted) style.highlightColor else ChartPalette.getColor(
+                    keyIndex,
+                    style.isDark
+                )
             val x = calculateX(entry, timeFrame, size.width)
             val y = calculateY(
                 labelIndex,
@@ -148,7 +154,7 @@ internal fun DrawScope.renderEvents(
             )
 
             drawCircle(
-                color = ChartPalette.getColor(labelIndex, style.isDark),
+                color = color,
                 radius = 10f,
                 center = Offset(x, y)
             )
