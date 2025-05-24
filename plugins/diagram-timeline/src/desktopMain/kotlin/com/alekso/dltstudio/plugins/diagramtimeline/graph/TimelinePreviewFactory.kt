@@ -9,18 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineDurationEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineDurationEntry
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEvent
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEventEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEventEntry
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineFloatEntry
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineMinMaxEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLinePercentageEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineSingleStateEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineSingleStateEntry
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineStateEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineStateEntry
 
 private val timeFrame = TimeFrame(0L, 5_000_000L)
 

@@ -86,7 +86,7 @@ interface EntriesExtractor<T : ChartData> {
                         )
                     }
                 }
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 // ignore
             }
         }
