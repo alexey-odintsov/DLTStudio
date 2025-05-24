@@ -56,7 +56,8 @@ class EntriesParser {
         minmax.addEntry(key3, MinMaxEntry(timestamp = timeFrame.timeStart + 1_900_000L, value = 34573f, data = ""))
 
         val duration = DurationChartData()
-        duration.addEntry(key1, DurationEntry(timestamp = timeFrame.timeStart + 1_000_000L, timestampEnd = timeFrame.timeStart + 1_300_000L, data = ""))
+        duration.addEntry(key1, DurationEntry(timestamp = timeFrame.timeStart + 1_000_000L, begin = "start", end = null, data = ""))
+        duration.addEntry(key1, DurationEntry(timestamp = timeFrame.timeStart + 1_400_000L, begin = null, end = "stop", data = ""))
 
         entriesMap[ChartParameters(0, "crashes", ChartType.Events)] = event
         entriesMap[ChartParameters(1, "cpuc", ChartType.Percentage)] = percentage

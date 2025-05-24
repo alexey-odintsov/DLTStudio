@@ -19,7 +19,8 @@ data class MinMaxEntry(
 
 data class DurationEntry(
     override val timestamp: Long,
-    val timestampEnd: Long,
+    val begin: String?,
+    val end: String?,
     override val data: Any?
 ) : ChartEntry
 

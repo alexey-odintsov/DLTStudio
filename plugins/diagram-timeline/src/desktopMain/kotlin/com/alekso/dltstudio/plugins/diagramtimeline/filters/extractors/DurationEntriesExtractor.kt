@@ -2,6 +2,8 @@ package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.DurationEntry
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
@@ -23,10 +25,10 @@ class DurationEntriesExtractor : EntriesExtractor<DurationChartData> {
                 val end: String? = matches.groups[Param.END.value]?.value
 
                 // TODO: To build Duration entries from different begin and end value
-//                data.addEntry(StringKey(key), DurationEntry(message.timeStampUs))
-//                list.add(
-//                    TimeLineDurationEntry(message.timeStampUs, key, Pair(begin, end))
-//                )
+                data.addEntry(
+                    StringKey(key),
+                    DurationEntry(message.timeStampUs, begin = begin, end = end, data = null)
+                )
             }
 
             ExtractionType.GroupsManyEntries -> throw UnsupportedOperationException()

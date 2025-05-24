@@ -155,7 +155,7 @@ internal fun DrawScope.renderEvents(
 
             drawCircle(
                 color = color,
-                radius = 10f,
+                radius = 2.dp.toPx(),
                 center = Offset(x, y)
             )
         }
@@ -369,35 +369,39 @@ internal fun DrawScope.renderDurationLines(
         val verticalPaddingPx = style.verticalPadding.toPx()
 
         entries.forEachIndexed entriesIteration@{ i, entry ->
-            val labels = entriesMap.getLabels()
-            val labelIndex = labels.indexOf(key.key)
-            val x1 = calculateX(entry, timeFrame, size.width)
-            val x2 = calculateX(entry.copy(timestamp = entry.timestampEnd), timeFrame, size.width)
-            val y = calculateY(
-                labelIndex,
-                labels.size,
-                size.height,
-                verticalPaddingPx,
-            )
+            val prev = if (i > 0) entries[i - 1] else null
 
-            drawCircle(
-                color = lineColor,
-                radius = lineWidthPx,
-                center = Offset(x1, y)
-            )
+            if (prev != null && prev.begin != null) {
+                val labels = entriesMap.getLabels()
+                val labelIndex = labels.indexOf(key.key)
+                val x1 = calculateX(entry, timeFrame, size.width)
+                val x2 = calculateX(prev, timeFrame, size.width)
+                val y = calculateY(
+                    labelIndex,
+                    labels.size,
+                    size.height,
+                    verticalPaddingPx,
+                )
 
-            drawCircle(
-                color = lineColor,
-                radius = lineWidthPx,
-                center = Offset(x2, y)
-            )
+                drawCircle(
+                    color = lineColor,
+                    radius = 2.dp.toPx(),
+                    center = Offset(x1, y)
+                )
 
-            drawLine(
-                lineColor,
-                Offset(x1, y),
-                Offset(x2, y),
-                strokeWidth = lineWidthPx,
-            )
+                drawCircle(
+                    color = lineColor,
+                    radius = 2.dp.toPx(),
+                    center = Offset(x2, y)
+                )
+
+                drawLine(
+                    lineColor,
+                    Offset(x1, y),
+                    Offset(x2, y),
+                    strokeWidth = lineWidthPx,
+                )
+            }
         }
     }
 }

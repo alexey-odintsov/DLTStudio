@@ -29,9 +29,11 @@ fun PreviewDurationChart() {
     val app2 = StringKey("app2")
 
     val chartData = DurationChartData()
-    chartData.addEntry(app1, DurationEntry(now + 500_000L, now + 1_000_000L, ""))
-    chartData.addEntry(app1, DurationEntry(now + 1_200_000L, now + 1_540_000L, ""))
-    chartData.addEntry(app2, DurationEntry(now + 900_000L, now + 1_900_000L, ""))
+    chartData.addEntry(app1, DurationEntry(now + 500_000L, "start", end = null, ""))
+    chartData.addEntry(app1, DurationEntry(now + 900_000L, null, end = "stop", ""))
+
+//    chartData.addEntry(app1, DurationEntry(now + 1_200_000L, now + 1_540_000L, ""))
+//    chartData.addEntry(app2, DurationEntry(now + 900_000L, now + 1_900_000L, ""))
 
     Column(Modifier.fillMaxSize().background(Color.LightGray)) {
         Chart(
