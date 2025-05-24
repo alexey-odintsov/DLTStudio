@@ -26,6 +26,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartKey
+import com.alekso.dltstudio.charts.model.EventEntry
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.uicomponents.ColorPalette
 import kotlinx.datetime.Clock
 
@@ -33,12 +38,12 @@ import kotlinx.datetime.Clock
 fun TimelineLegend(
     modifier: Modifier,
     title: String,
-    entries: TimeLineEntries<*>? = null,
-    updateHighlightedKey: (String?) -> Unit,
-    highlightedKey: String? = null,
+    entries: ChartData? = null,
+    updateHighlightedKey: (ChartKey?) -> Unit,
+    highlightedKey: ChartKey? = null,
 ) {
     val state = rememberLazyListState()
-    val map = entries?.map
+    val keys = entries?.getKeys()
 
     Box(modifier = modifier.padding(start = 4.dp, end = 4.dp)) {
         Column(Modifier.fillMaxSize()) {
@@ -49,13 +54,12 @@ fun TimelineLegend(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            if (!map.isNullOrEmpty()) {
+            if (keys.isNullOrEmpty()) {
                 val horizontalState = rememberScrollState()
                 LazyColumn(Modifier.horizontalScroll(horizontalState).wrapContentWidth(Alignment.Start), state) {
-                    val keys = map.keys.toList()
 
-                    items(keys.size) { i ->
-                        val key = keys[i]
+                    items(keys?.size ?: 0) { i ->
+                        val key = keys?.get(i)
                         Row(
                             Modifier.selectable(
                                 selected = highlightedKey == key,
@@ -68,7 +72,7 @@ fun TimelineLegend(
                             )
                             Text(
                                 modifier = Modifier,
-                                text = key,
+                                text = key?.key ?: "",
                                 overflow = TextOverflow.Ellipsis,
                                 maxLines = 1,
                                 fontWeight = FontWeight(if (highlightedKey == key) 600 else 400)
@@ -92,29 +96,15 @@ fun TimelineLegend(
 fun PreviewTimeLineLegend() {
     val ts = Clock.System.now().toEpochMilliseconds() * 1000L
 
-    val entries = TimeLineEventEntries()
+    val entries = EventsChartData()
     entries.addEntry(
-        TimeLineEventEntry(
+        StringKey("CRASH"),
+        EventEntry(
             ts,
             "my test app long long name (pid: 99982)",
             TimeLineEvent("CRASH", null)
         )
     )
-    entries.addEntry(
-        TimeLineEventEntry(
-            ts,
-            "Second app (pid: 23455)",
-            TimeLineEvent("ANR", null)
-        )
-    )
-    entries.addEntry(
-        TimeLineEventEntry(
-            ts,
-            "System app (pid: 0)",
-            TimeLineEvent("WTF", null)
-        )
-    )
-
 
     Column(Modifier.background(Color.Gray)) {
         TimelineLegend(

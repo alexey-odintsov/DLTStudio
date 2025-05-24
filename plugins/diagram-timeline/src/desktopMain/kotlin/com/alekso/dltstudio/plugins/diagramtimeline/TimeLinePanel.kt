@@ -54,18 +54,23 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltmessage.SampleData
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartKey
+import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.SingleStateChartData
+import com.alekso.dltstudio.charts.model.StateChartData
+import com.alekso.dltstudio.charts.model.TimeFrame
+import com.alekso.dltstudio.charts.ui.Chart
+import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialog
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
-import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineDurationView
-import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineEventView
-import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineMinMaxValueView
-import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelinePercentageView
-import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineSingleStateView
-import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelineStateView
 import java.awt.Cursor
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
@@ -76,22 +81,17 @@ private const val MOVE_TIMELINE_STEP_PX = 10
 @Composable
 fun TimeLinePanel(
     modifier: Modifier,
-    logMessages: SnapshotStateList<LogMessage>,
-    offsetSec: Float,
+    timeFrame: TimeFrame,
     offsetUpdate: (Float) -> Unit,
-    scale: Float,
     scaleUpdate: (Float) -> Unit,
     analyzeState: AnalyzeState,
-    totalSeconds: Float,
     timelineFilters: SnapshotStateList<TimelineFilter>,
-    timeStart: Long,
-    timeEnd: Long,
     filtersDialogState: Boolean,
-    entriesMap: SnapshotStateMap<String, TimeLineEntries<*>>,
-    onAnalyzeClicked: (SnapshotStateList<LogMessage>) -> Unit,
-    highlightedKeysMap: SnapshotStateMap<String, String?>,
+    entriesMap: SnapshotStateMap<String, ChartData>,
+    onAnalyzeClicked: () -> Unit,
+    highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
     filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
-    retrieveEntriesForFilter: (filter: TimelineFilter) -> TimeLineEntries<*>?,
+    retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData?,
     onLegendResized: (Float) -> Unit = { _ -> },
     legendSize: Float,
     recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
@@ -103,34 +103,30 @@ fun TimeLinePanel(
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
 
-    val dragCallback = { pe: PointerEvent, width: Int ->
-        if (logMessages.isNotEmpty()) {
-            val secSize: Float = width / (totalSeconds)
-            val dragAmount = pe.changes.first().position.x - pe.changes.first().previousPosition.x
-            offsetUpdate(offsetSec + (dragAmount / secSize / scale))
-        }
+    val dragCallback = { dx: Float ->
+            offsetUpdate(dx)
     }
 
     Column(modifier = modifier.onKeyEvent { e ->
         if (e.type == KeyEventType.KeyDown) {
             when (e.key) {
                 Key.A -> {
-                    offsetUpdate(offsetSec + MOVE_TIMELINE_STEP_PX / secSizePx)
+                    offsetUpdate(1000f)
                     true
                 }
 
                 Key.D -> {
-                    offsetUpdate(offsetSec - MOVE_TIMELINE_STEP_PX / secSizePx)
+                    offsetUpdate(-1000f)
                     true
                 }
 
                 Key.W -> {
-                    scaleUpdate(scale + 1f)
+                    scaleUpdate(1f)
                     true
                 }
 
                 Key.S -> {
-                    scaleUpdate(scale - 1f)
+                    scaleUpdate(-1f)
                     true
                 }
 
@@ -142,16 +138,16 @@ fun TimeLinePanel(
     }) {
 
         TimelineToolbar(
-            leftClick = { offsetUpdate(offsetSec + MOVE_TIMELINE_STEP_PX / secSizePx) },
-            rightClick = { offsetUpdate(offsetSec - MOVE_TIMELINE_STEP_PX / secSizePx) },
-            zoomInClick = { scaleUpdate(scale + 1f) },
-            zoomOutClick = { scaleUpdate(scale - 1f) },
+            leftClick = { offsetUpdate(-1000f) },
+            rightClick = { offsetUpdate(1000f) },
+            zoomInClick = { scaleUpdate(1f) },
+            zoomOutClick = { scaleUpdate(-1f) },
             zoomFitClick = {
                 scaleUpdate(1f)
                 offsetUpdate(0f)
             },
             analyzeState = analyzeState,
-            onAnalyzeClick = { onAnalyzeClicked(logMessages) },
+            onAnalyzeClick = onAnalyzeClicked,
             callbacks = toolbarCallbacks,
             recentFiltersFiles = recentFiltersFiles,
             currentFilterFile = currentFilterFile,
@@ -168,32 +164,22 @@ fun TimeLinePanel(
 
         Divider()
 
-        if (logMessages.isNotEmpty()) {
-            val timeFrame = TimeFrame(
-                timestampStart = timeStart,
-                timestampEnd = timeEnd,
-                scale = scale,
-                offsetSeconds = offsetSec
-            )
 
-            if (debug) {
-                Text(
-                    "Time range: ${LocalFormatter.current.formatDateTime(timeStart)} .. ${
-                        LocalFormatter.current.formatDateTime(timeEnd)
-                    }"
-                )
-                Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
-            }
+//            if (debug) {
+//                Text(
+//                    "Time range: ${LocalFormatter.current.formatDateTime(timeStart)} .. ${
+//                        LocalFormatter.current.formatDateTime(timeEnd)
+//                    }"
+//                )
+//                Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
+//            }
 
             Row {
                 Box(modifier = Modifier.width(legendSize.dp))
                 TimeRuler(
                     Modifier.fillMaxWidth(1f),
-                    offsetSec,
-                    scale,
-                    timeStart = timeStart,
-                    timeEnd = timeEnd,
-                    totalSeconds = totalSeconds.toInt(),
+                    timeTotal = TimeFrame(0, 1000),
+                    timeFrame = timeFrame,
                     debug = debug,
                 )
             }
@@ -218,74 +204,75 @@ fun TimeLinePanel(
                             LegendResizer(Modifier.height(200.dp), key = "$index", onResized = onLegendResized)
                             when (timelineFilter.diagramType) {
                                 DiagramType.Percentage -> {
-                                    TimelinePercentageView(
-                                        modifier = viewModifier
-                                            .onPointerEvent(
-                                                PointerEventType.Move,
-                                                onEvent = { dragCallback(it, size.width) }),
-                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLinePercentageEntries?,
+                                    Chart(
+                                        modifier = viewModifier,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as PercentageChartData?,
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
+                                        onDragged = dragCallback,
+                                        totalTime = timeFrame,
                                         timeFrame = timeFrame,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
+                                        type = ChartType.Percentage,
                                     )
                                 }
 
                                 DiagramType.MinMaxValue -> {
-                                    TimelineMinMaxValueView(
-                                        modifier = viewModifier
-                                            .onPointerEvent(
-                                                PointerEventType.Move,
-                                                onEvent = { dragCallback(it, size.width) }),
-                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineMinMaxEntries?,
+                                    Chart(
+                                        modifier = viewModifier,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as MinMaxChartData?,
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
+                                        onDragged = dragCallback,
+                                        totalTime = timeFrame,
                                         timeFrame = timeFrame,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
+                                        type = ChartType.MinMax,
                                     )
                                 }
 
                                 DiagramType.State -> {
-                                    TimelineStateView(
-                                        modifier = viewModifier
-                                            .onPointerEvent(
-                                                PointerEventType.Move,
-                                                onEvent = { dragCallback(it, size.width) }),
-                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineStateEntries?,
+                                    Chart(
+                                        modifier = viewModifier,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as StateChartData?,
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
+                                        onDragged = dragCallback,
+                                        totalTime = timeFrame,
                                         timeFrame = timeFrame,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
+                                        type = ChartType.State,
                                     )
                                 }
 
                                 DiagramType.SingleState -> {
-                                    TimelineSingleStateView(
-                                        modifier = viewModifier
-                                            .onPointerEvent(
-                                                PointerEventType.Move,
-                                                onEvent = { dragCallback(it, size.width) }),
-                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineSingleStateEntries?,
+                                    Chart(
+                                        modifier = viewModifier,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as SingleStateChartData?,
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
+                                        onDragged = dragCallback,
+                                        totalTime = timeFrame,
                                         timeFrame = timeFrame,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
+                                        type = ChartType.SingleState,
                                     )
                                 }
 
                                 DiagramType.Duration -> {
-                                    TimelineDurationView(
-                                        modifier = viewModifier
-                                            .onPointerEvent(
-                                                PointerEventType.Move,
-                                                onEvent = { dragCallback(it, size.width) }),
-                                        entries = retrieveEntriesForFilter(timelineFilter) as TimeLineDurationEntries?,
+                                    Chart(
+                                        modifier = viewModifier,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as DurationChartData?,
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
+                                        onDragged = dragCallback,
+                                        totalTime = timeFrame,
                                         timeFrame = timeFrame,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key]
+                                        type = ChartType.Duration,
                                     )
                                 }
 
-                                DiagramType.Events -> TimelineEventView(
-                                    modifier = viewModifier
-                                        .onPointerEvent(
-                                            PointerEventType.Move,
-                                            onEvent = { dragCallback(it, size.width) }),
-                                    entries = retrieveEntriesForFilter(timelineFilter) as TimeLineEventEntries?,
-                                    timeFrame = timeFrame,
-                                    highlightedKey = highlightedKeysMap[timelineFilter.key]
-                                )
+                                DiagramType.Events ->
+                                    Chart(
+                                        modifier = viewModifier,
+                                        entries = retrieveEntriesForFilter(timelineFilter) as EventsChartData?,
+                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
+                                        onDragged = dragCallback,
+                                        totalTime = timeFrame,
+                                        timeFrame = timeFrame,
+                                        type = ChartType.Events,
+                                    )
                             }
                         }
                     }
@@ -317,38 +304,37 @@ fun TimeLinePanel(
                 val formatter = LocalFormatter.current
                 Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
                     if (cursorPosition.x < legendSize.dp.toPx()) return@Canvas
-                    secSizePx = ((size.width - legendSize.dp.toPx()) * scale) / totalSeconds
-
-                    val doesMarkerFit =
-                        (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
-
-                    drawLine(
-                        Color(0xFFFFFFc0),
-                        Offset(cursorPosition.x, 0f),
-                        Offset(cursorPosition.x, size.height)
-                    )
-                    val cursorOffsetSec: Float = ((cursorPosition.x - legendSize.dp.toPx()) / secSizePx) - offsetSec
-                    val cursorTimestamp: Long =
-                        (1000000L * cursorOffsetSec).toLong() + timeStart
-
-                    drawText(
-                        size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
-                        textMeasurer = textMeasurer,
-                        text = "${formatter.formatTime(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
-                        topLeft = Offset(
-                            if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
-                            4.dp.toPx()
-                        ),
-                        style = TextStyle(
-                            color = Color.Yellow,
-                            fontSize = 10.sp,
-                            background = Color(0x80808080),
-                            textAlign = if (doesMarkerFit) TextAlign.Left else TextAlign.Right
-                        ), overflow = TextOverflow.Ellipsis
-                    )
+//                    secSizePx = ((size.width - legendSize.dp.toPx()) * scale) / totalSeconds
+//
+//                    val doesMarkerFit =
+//                        (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
+//
+//                    drawLine(
+//                        Color(0xFFFFFFc0),
+//                        Offset(cursorPosition.x, 0f),
+//                        Offset(cursorPosition.x, size.height)
+//                    )
+//                    val cursorOffsetSec: Float = ((cursorPosition.x - legendSize.dp.toPx()) / secSizePx) - offsetSec
+//                    val cursorTimestamp: Long =
+//                        (1000000L * cursorOffsetSec).toLong() + timeStart
+//
+//                    drawText(
+//                        size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
+//                        textMeasurer = textMeasurer,
+//                        text = "${formatter.formatTime(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
+//                        topLeft = Offset(
+//                            if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
+//                            4.dp.toPx()
+//                        ),
+//                        style = TextStyle(
+//                            color = Color.Yellow,
+//                            fontSize = 10.sp,
+//                            background = Color(0x80808080),
+//                            textAlign = if (doesMarkerFit) TextAlign.Left else TextAlign.Right
+//                        ), overflow = TextOverflow.Ellipsis
+//                    )
                 }
             }
-        }
     }
 }
 
@@ -382,21 +368,16 @@ fun PreviewTimeline() {
     }
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
-        logMessages = list,
-        offsetSec = 0f,
         offsetUpdate = {},
-        scale = 1f,
         scaleUpdate = { f -> },
         analyzeState = AnalyzeState.IDLE,
-        totalSeconds = 2000f,
         timelineFilters = mutableStateListOf(),
-        timeStart = 20000L,
-        timeEnd = 300000L,
+        timeFrame = TimeFrame(20000L,300000L),
         entriesMap = mutableStateMapOf(),
         onAnalyzeClicked = {},
         highlightedKeysMap = mutableStateMapOf(),
         filtersDialogCallbacks = callbacks,
-        retrieveEntriesForFilter = { i -> TimeLineStateEntries() },
+        retrieveEntriesForFilter = { i -> EventsChartData() },
         legendSize = 250f,
         recentFiltersFiles = mutableStateListOf(),
         toolbarCallbacks = ToolbarCallbacks.Stub,

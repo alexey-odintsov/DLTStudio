@@ -1,17 +1,17 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
 import com.alekso.dltmessage.DLTMessage
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.SingleStateChartData
+import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineDurationEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEntry
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEventEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineMinMaxEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLinePercentageEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineSingleStateEntries
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineStateEntries
 
-interface EntriesExtractor {
+
+interface EntriesExtractor<T : ChartData> {
     enum class ExtractionType(val description: String) {
         NamedGroupsOneEntry("One entry per line, key and value are extracted from string: '<key:X> <value:y>'"),
         NamedGroupsManyEntries("Many entries per line, keys are fixed and values are extracted from string: '<key1:value1> <key2:value2>'"),
@@ -37,7 +37,8 @@ interface EntriesExtractor {
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
-    ): List<TimeLineEntry<*>>
+        data: T,
+    )
 
     companion object {
         fun analyzeEntriesRegex(
@@ -45,44 +46,44 @@ interface EntriesExtractor {
             diagramType: DiagramType,
             extractorType: ExtractionType,
             regex: Regex,
-            entries: TimeLineEntries<*>
+            entries: ChartData
         ) {
             try {
                 when (diagramType) {
                     DiagramType.Percentage -> {
                         PercentageEntriesExtractor().extractEntry(
-                            message, regex, extractorType
-                        ).forEach { e -> (entries as TimeLinePercentageEntries).addEntry(e) }
+                            message, regex, extractorType, entries as PercentageChartData
+                        )
                     }
 
                     DiagramType.MinMaxValue -> {
                         MinMaxEntriesExtractor().extractEntry(
-                            message, regex, extractorType
-                        ).forEach { e -> (entries as TimeLineMinMaxEntries).addEntry(e) }
+                            message, regex, extractorType, entries as MinMaxChartData
+                        )
                     }
 
                     DiagramType.State -> {
                         StateEntriesExtractor().extractEntry(
-                            message, regex, extractorType
-                        ).forEach { e -> (entries as TimeLineStateEntries).addEntry(e) }
+                            message, regex, extractorType, entries as StateChartData
+                        )
                     }
 
                     DiagramType.SingleState -> {
                         SingleStateEntriesExtractor().extractEntry(
-                            message, regex, extractorType
-                        ).forEach { e -> (entries as TimeLineSingleStateEntries).addEntry(e) }
+                            message, regex, extractorType, entries as SingleStateChartData
+                        )
                     }
 
                     DiagramType.Duration -> {
                         DurationEntriesExtractor().extractEntry(
-                            message, regex, extractorType
-                        ).forEach { e -> (entries as TimeLineDurationEntries).addEntry(e) }
+                            message, regex, extractorType, entries as DurationChartData
+                        )
                     }
 
                     DiagramType.Events -> {
                         EventEntriesExtractor().extractEntry(
-                            message, regex, extractorType
-                        ).forEach { e -> (entries as TimeLineEventEntries).addEntry(e) }
+                            message, regex, extractorType, entries as EventsChartData
+                        )
                     }
                 }
             } catch (e: Exception) {

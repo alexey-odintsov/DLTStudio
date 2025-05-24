@@ -7,7 +7,17 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartKey
+import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.SingleStateChartData
+import com.alekso.dltstudio.charts.model.StateChartData
+import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
@@ -51,17 +61,17 @@ interface ToolbarCallbacks {
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit,
     private val timelineRepository: TimelineRepository,
+    private val messagesRepository: MessagesRepository,
 ) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
     private var analyzeJob: Job? = null
 
-    var offset = mutableStateOf(0f)
-    var scale = mutableStateOf(1f)
-    val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset.value = newOffset }
+    var timeFrame by mutableStateOf(TimeFrame(0L, 1L))
+    val offsetUpdateCallback: (Float) -> Unit = { dx -> timeFrame = timeFrame.move(dx.toLong()) }
     val scaleUpdateCallback: (Float) -> Unit =
-        { newScale -> scale.value = if (newScale > 0f) newScale else 1f }
+        { f -> timeFrame = timeFrame.zoom(f > 0f) }
 
     val filtersDialogState = mutableStateOf(false)
 
@@ -110,19 +120,13 @@ class TimelineViewModel(
 
     }
 
-    var entriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
-    var highlightedKeysMap = mutableStateMapOf<String, String?>()
+    var entriesMap = mutableStateMapOf<String, ChartData>()
+    var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
 
-    private var _analyzeState = MutableStateFlow<AnalyzeState>(AnalyzeState.IDLE)
+    private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
 
-    val timelineFilters =
-        mutableStateListOf<TimelineFilter>(*predefinedTimelineFilters.toTypedArray())
-
-    var timeStart = Long.MAX_VALUE
-    var timeEnd = Long.MIN_VALUE
-    val totalSeconds: Int
-        get() = if (timeEnd > 0 && timeStart > 0) ((timeEnd - timeStart) / 1000000).toInt() else 0
+    val timelineFilters = mutableStateListOf(*predefinedTimelineFilters.toTypedArray())
 
     private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
     val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
@@ -138,9 +142,9 @@ class TimelineViewModel(
         }
     }
 
-    fun onAnalyzeClicked(logMessages: SnapshotStateList<LogMessage>) {
+    fun onAnalyzeClicked() {
         when (_analyzeState.value) {
-            AnalyzeState.IDLE -> startAnalyzing(logMessages)
+            AnalyzeState.IDLE -> startAnalyzing(messagesRepository.getMessages())
             AnalyzeState.ANALYZING -> stopAnalyzing()
         }
     }
@@ -151,8 +155,6 @@ class TimelineViewModel(
     }
 
     fun cleanup() {
-        timeStart = Long.MAX_VALUE
-        timeEnd = Long.MIN_VALUE
         entriesMap.clear()
         highlightedKeysMap.clear()
     }
@@ -163,16 +165,16 @@ class TimelineViewModel(
         analyzeJob = viewModelScope.launch(IO) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
-                val _userEntries = mutableStateMapOf<String, TimeLineEntries<*>>()
-                var _timeStart = Long.MAX_VALUE
-                var _timeEnd = Long.MIN_VALUE
+                val entries = mutableStateMapOf<String, ChartData>()
+                var timeStart = Long.MAX_VALUE
+                var timeEnd = Long.MIN_VALUE
 
                 Log.d("Start Timeline building .. ${dltMessages.size} messages")
 
                 val regexps = mutableListOf<Regex?>()
                 // prefill timeline data holders
                 timelineFilters.forEachIndexed { index, timelineFilter ->
-                    _userEntries[timelineFilter.key] = timelineFilter.diagramType.createEntries()
+                    entries[timelineFilter.key] = timelineFilter.diagramType.createEntries()
                     highlightedKeysMap[timelineFilter.key] = null
 
                     // precompile regex in advance
@@ -182,11 +184,11 @@ class TimelineViewModel(
                 forEachWithProgress(dltMessages, onProgressChanged) { _, message ->
                     // timeStamps
                     val ts = message.dltMessage.timeStampUs
-                    if (ts > _timeEnd) {
-                        _timeEnd = ts
+                    if (ts > timeEnd) {
+                        timeEnd = ts
                     }
-                    if (ts < _timeStart) {
-                        _timeStart = ts
+                    if (ts < timeStart) {
+                        timeStart = ts
                     }
 
                     timelineFilters.forEachIndexed { i, timelineFilter ->
@@ -200,7 +202,7 @@ class TimelineViewModel(
                                 timelineFilter.diagramType,
                                 timelineFilter.extractorType,
                                 regexps[i]!!,
-                                _userEntries[timelineFilter.key]!!
+                                entries[timelineFilter.key]!!
                             )
                         }
                     }
@@ -209,9 +211,8 @@ class TimelineViewModel(
                 withContext(Main) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     entriesMap.clear()
-                    entriesMap.putAll(_userEntries)
-                    timeStart = _timeStart
-                    timeEnd = _timeEnd
+                    entriesMap.putAll(entries)
+                    timeFrame = TimeFrame(timeStart, timeEnd)
                     _analyzeState.value = AnalyzeState.IDLE
                 }
             }
@@ -284,14 +285,14 @@ class TimelineViewModel(
         timelineFilters.clear()
     }
 
-    fun retrieveEntriesForFilter(filter: TimelineFilter): TimeLineEntries<*>? {
+    fun retrieveEntriesForFilter(filter: TimelineFilter): ChartData? {
         return when (filter.diagramType) {
-            DiagramType.Percentage -> entriesMap[filter.key] as? TimeLinePercentageEntries
-            DiagramType.MinMaxValue -> entriesMap[filter.key] as? TimeLineMinMaxEntries
-            DiagramType.State -> entriesMap[filter.key] as? TimeLineStateEntries
-            DiagramType.SingleState -> entriesMap[filter.key] as? TimeLineSingleStateEntries
-            DiagramType.Duration -> entriesMap[filter.key] as? TimeLineDurationEntries
-            DiagramType.Events -> entriesMap[filter.key] as? TimeLineEventEntries
+            DiagramType.Percentage -> entriesMap[filter.key] as? PercentageChartData
+            DiagramType.MinMaxValue -> entriesMap[filter.key] as? MinMaxChartData
+            DiagramType.State -> entriesMap[filter.key] as? StateChartData
+            DiagramType.SingleState -> entriesMap[filter.key] as? SingleStateChartData
+            DiagramType.Duration -> entriesMap[filter.key] as? DurationChartData
+            DiagramType.Events -> entriesMap[filter.key] as? EventsChartData
         }
     }
 

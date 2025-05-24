@@ -44,7 +44,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         )
 
         this.messagesRepository = messagesRepository
-        viewModel = TimelineViewModel(onProgressUpdate, timelineRepository)
+        viewModel = TimelineViewModel(onProgressUpdate, timelineRepository, messagesRepository)
     }
 
     override fun initFormatter(formatter: Formatter) {
@@ -66,16 +66,11 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
 
             TimeLinePanel(
                 modifier = modifier,
-                logMessages = messagesRepository.getMessages(),
-                offsetSec = viewModel.offset.value,
-                scale = viewModel.scale.value,
+                timeFrame = viewModel.timeFrame,
                 offsetUpdate = viewModel.offsetUpdateCallback,
                 scaleUpdate = viewModel.scaleUpdateCallback,
                 analyzeState = analyzeState,
-                totalSeconds = viewModel.totalSeconds.toFloat(),
                 timelineFilters = viewModel.timelineFilters,
-                timeStart = viewModel.timeStart,
-                timeEnd = viewModel.timeEnd,
                 entriesMap = viewModel.entriesMap,
                 highlightedKeysMap = viewModel.highlightedKeysMap,
                 legendSize = viewModel.legendSize,

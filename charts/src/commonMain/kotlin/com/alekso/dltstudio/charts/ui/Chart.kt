@@ -32,7 +32,7 @@ import com.alekso.dltstudio.charts.model.TimeFrame
 @Composable
 fun Chart(
     modifier: Modifier,
-    style: ChartStyle,
+    style: ChartStyle = ChartStyle.Default,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
     entries: ChartData?,
