@@ -3,7 +3,6 @@ package com.alekso.dltstudio.plugins.diagramtimeline
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,10 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Text
@@ -37,6 +34,7 @@ import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.MinMaxEntry
 import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.charts.ui.ChartPalette
+import com.alekso.dltstudio.uicomponents.Tooltip
 import kotlinx.datetime.Clock
 
 @Composable
@@ -61,8 +59,7 @@ fun TimelineLegend(
                 overflow = TextOverflow.Ellipsis
             )
             if (keysCount > 0) {
-                val horizontalState = rememberScrollState()
-                LazyColumn(Modifier.horizontalScroll(horizontalState).wrapContentWidth(Alignment.Start), state) {
+                LazyColumn(Modifier, state) {
 
                     items(keysCount) { i ->
                         val key = keys?.get(i)
@@ -76,13 +73,15 @@ fun TimelineLegend(
                                     .align(Alignment.CenterVertically)
                                     .background(ChartPalette.getColor(i))
                             )
-                            Text(
-                                modifier = Modifier,
-                                text = key?.key ?: "",
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                                fontWeight = FontWeight(if (highlightedKey == key) 600 else 400)
-                            )
+                            Tooltip(text = key?.key ?: "") {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = key?.key ?: "",
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                    fontWeight = FontWeight(if (highlightedKey == key) 600 else 400)
+                                )
+                            }
                         }
                     }
                 }
