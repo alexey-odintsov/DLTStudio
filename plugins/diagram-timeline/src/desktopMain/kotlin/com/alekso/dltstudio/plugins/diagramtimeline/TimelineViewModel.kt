@@ -1,13 +1,23 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
-import androidx.compose.runtime.State
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartKey
+import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.SingleStateChartData
+import com.alekso.dltstudio.charts.model.StateChartData
+import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
@@ -32,44 +42,49 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-interface ToolbarCallbacks {
-    fun onTimelineFiltersClicked()
-    fun onLoadFilterClicked()
-    fun onSaveFilterClicked()
-    fun onClearFilterClicked()
-    fun onRecentFilterClicked(path: String)
-
-    object Stub : ToolbarCallbacks {
-        override fun onTimelineFiltersClicked() = Unit
-        override fun onLoadFilterClicked() = Unit
-        override fun onSaveFilterClicked() = Unit
-        override fun onClearFilterClicked() = Unit
-        override fun onRecentFilterClicked(path: String) = Unit
-    }
-}
 
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit,
     private val timelineRepository: TimelineRepository,
+    private val messagesRepository: MessagesRepository,
 ) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
-
     private var analyzeJob: Job? = null
 
-    var offset = mutableStateOf(0f)
-    var scale = mutableStateOf(1f)
-    val offsetUpdateCallback: (Float) -> Unit = { newOffset -> offset.value = newOffset }
-    val scaleUpdateCallback: (Float) -> Unit =
-        { newScale -> scale.value = if (newScale > 0f) newScale else 1f }
+    var timeFrame by mutableStateOf(TimeFrame(0L, 1L))
+    var timeTotal by mutableStateOf(TimeFrame(0L, 1L))
+
 
     val filtersDialogState = mutableStateOf(false)
+    var entriesMap = mutableStateMapOf<String, ChartData>()
+    var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
+
+    private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
+    val analyzeState: StateFlow<AnalyzeState> = _analyzeState
+    val listState = LazyListState(0, 0)
+
+    val timelineFilters = mutableStateListOf(*predefinedTimelineFilters.toTypedArray())
+
+    var recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
+    var currentFilterFile by mutableStateOf<RecentTimelineFilterFileEntry?>(null)
+
+    var fileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Save filter",
+            operation = DialogOperation.SAVE,
+            fileCallback = { saveTimeLineFilters(it[0]) },
+            cancelCallback = ::closeFileDialog
+        )
+    )
 
     fun onCloseFiltersDialogClicked() {
         filtersDialogState.value = false
     }
 
     val toolbarCallbacks = object : ToolbarCallbacks {
+        override fun onAnalyzeClicked() = startAnalyzing()
+
         override fun onTimelineFiltersClicked() {
             filtersDialogState.value = true
         }
@@ -108,39 +123,45 @@ class TimelineViewModel(
             loadTimeLineFilters(File(path))
         }
 
+        override fun onLeftClicked() {
+            timeFrame = timeFrame.move(-100000)
+        }
+
+        override fun onRightClicked() {
+            timeFrame = timeFrame.move(100000)
+        }
+
+        override fun onZoomInClicked() {
+            timeFrame = timeFrame.zoom(true)
+        }
+
+        override fun onZoomOutClicked() {
+            timeFrame = timeFrame.zoom(false)
+        }
+
+        override fun onZoomFitClicked() {
+            timeFrame = TimeFrame(timeTotal.timeStart, timeTotal.timeEnd)
+        }
+
+        override fun onDragTimeline(dx: Float) {
+            timeFrame = timeFrame.move(dx.toLong())
+        }
+
     }
-
-    var entriesMap = mutableStateMapOf<String, TimeLineEntries<*>>()
-    var highlightedKeysMap = mutableStateMapOf<String, String?>()
-
-    private var _analyzeState = MutableStateFlow<AnalyzeState>(AnalyzeState.IDLE)
-    val analyzeState: StateFlow<AnalyzeState> = _analyzeState
-
-    val timelineFilters =
-        mutableStateListOf<TimelineFilter>(*predefinedTimelineFilters.toTypedArray())
-
-    var timeStart = Long.MAX_VALUE
-    var timeEnd = Long.MIN_VALUE
-    val totalSeconds: Int
-        get() = if (timeEnd > 0 && timeStart > 0) ((timeEnd - timeStart) / 1000000).toInt() else 0
-
-    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
-    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
-        get() = _recentTimelineFiltersFiles
 
 
     init {
         viewModelScope.launch {
             timelineRepository.getRecentTimelineFilters().collectLatest {
-                _recentTimelineFiltersFiles.clear()
-                _recentTimelineFiltersFiles.addAll(it)
+                recentTimelineFiltersFiles.clear()
+                recentTimelineFiltersFiles.addAll(it)
             }
         }
     }
 
-    fun onAnalyzeClicked(logMessages: SnapshotStateList<LogMessage>) {
+    private fun startAnalyzing() {
         when (_analyzeState.value) {
-            AnalyzeState.IDLE -> startAnalyzing(logMessages)
+            AnalyzeState.IDLE -> startAnalyzing(messagesRepository.getMessages())
             AnalyzeState.ANALYZING -> stopAnalyzing()
         }
     }
@@ -151,8 +172,6 @@ class TimelineViewModel(
     }
 
     fun cleanup() {
-        timeStart = Long.MAX_VALUE
-        timeEnd = Long.MIN_VALUE
         entriesMap.clear()
         highlightedKeysMap.clear()
     }
@@ -163,16 +182,16 @@ class TimelineViewModel(
         analyzeJob = viewModelScope.launch(IO) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
-                val _userEntries = mutableStateMapOf<String, TimeLineEntries<*>>()
-                var _timeStart = Long.MAX_VALUE
-                var _timeEnd = Long.MIN_VALUE
+                val entries = mutableStateMapOf<String, ChartData>()
+                var timeStart = Long.MAX_VALUE
+                var timeEnd = Long.MIN_VALUE
 
                 Log.d("Start Timeline building .. ${dltMessages.size} messages")
 
                 val regexps = mutableListOf<Regex?>()
                 // prefill timeline data holders
                 timelineFilters.forEachIndexed { index, timelineFilter ->
-                    _userEntries[timelineFilter.key] = timelineFilter.diagramType.createEntries()
+                    entries[timelineFilter.key] = timelineFilter.diagramType.createEntries()
                     highlightedKeysMap[timelineFilter.key] = null
 
                     // precompile regex in advance
@@ -182,11 +201,11 @@ class TimelineViewModel(
                 forEachWithProgress(dltMessages, onProgressChanged) { _, message ->
                     // timeStamps
                     val ts = message.dltMessage.timeStampUs
-                    if (ts > _timeEnd) {
-                        _timeEnd = ts
+                    if (ts > timeEnd) {
+                        timeEnd = ts
                     }
-                    if (ts < _timeStart) {
-                        _timeStart = ts
+                    if (ts < timeStart) {
+                        timeStart = ts
                     }
 
                     timelineFilters.forEachIndexed { i, timelineFilter ->
@@ -200,7 +219,7 @@ class TimelineViewModel(
                                 timelineFilter.diagramType,
                                 timelineFilter.extractorType,
                                 regexps[i]!!,
-                                _userEntries[timelineFilter.key]!!
+                                entries[timelineFilter.key]!!
                             )
                         }
                     }
@@ -209,9 +228,9 @@ class TimelineViewModel(
                 withContext(Main) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     entriesMap.clear()
-                    entriesMap.putAll(_userEntries)
-                    timeStart = _timeStart
-                    timeEnd = _timeEnd
+                    entriesMap.putAll(entries)
+                    timeFrame = TimeFrame(timeStart, timeEnd)
+                    timeTotal = TimeFrame(timeStart, timeEnd)
                     _analyzeState.value = AnalyzeState.IDLE
                 }
             }
@@ -239,14 +258,6 @@ class TimelineViewModel(
         }
     }
 
-    var fileDialogState by mutableStateOf(
-        FileDialogState(
-            title = "Save filter",
-            operation = DialogOperation.SAVE,
-            fileCallback = { saveTimeLineFilters(it[0]) },
-            cancelCallback = ::closeFileDialog
-        )
-    )
 
     private fun closeFileDialog() {
         fileDialogState = fileDialogState.copy(visible = false)
@@ -264,8 +275,6 @@ class TimelineViewModel(
         }
     }
 
-    private val _currentFilterFile = mutableStateOf<RecentTimelineFilterFileEntry?>(null)
-    val currentFilterFile: State<RecentTimelineFilterFileEntry?> = _currentFilterFile
 
     private fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
@@ -275,23 +284,23 @@ class TimelineViewModel(
             }
             val fileEntry = RecentTimelineFilterFileEntry(file.name, file.absolutePath)
             timelineRepository.addNewRecentTimelineFilter(fileEntry)
-            _currentFilterFile.value = fileEntry
+            currentFilterFile = fileEntry
         }
     }
 
     private fun clearTimeLineFilters() {
-        _currentFilterFile.value = null
+        currentFilterFile = null
         timelineFilters.clear()
     }
 
-    fun retrieveEntriesForFilter(filter: TimelineFilter): TimeLineEntries<*>? {
+    fun retrieveEntriesForFilter(filter: TimelineFilter): ChartData? {
         return when (filter.diagramType) {
-            DiagramType.Percentage -> entriesMap[filter.key] as? TimeLinePercentageEntries
-            DiagramType.MinMaxValue -> entriesMap[filter.key] as? TimeLineMinMaxEntries
-            DiagramType.State -> entriesMap[filter.key] as? TimeLineStateEntries
-            DiagramType.SingleState -> entriesMap[filter.key] as? TimeLineSingleStateEntries
-            DiagramType.Duration -> entriesMap[filter.key] as? TimeLineDurationEntries
-            DiagramType.Events -> entriesMap[filter.key] as? TimeLineEventEntries
+            DiagramType.Percentage -> entriesMap[filter.key] as? PercentageChartData
+            DiagramType.MinMaxValue -> entriesMap[filter.key] as? MinMaxChartData
+            DiagramType.State -> entriesMap[filter.key] as? StateChartData
+            DiagramType.SingleState -> entriesMap[filter.key] as? SingleStateChartData
+            DiagramType.Duration -> entriesMap[filter.key] as? DurationChartData
+            DiagramType.Events -> entriesMap[filter.key] as? EventsChartData
         }
     }
 

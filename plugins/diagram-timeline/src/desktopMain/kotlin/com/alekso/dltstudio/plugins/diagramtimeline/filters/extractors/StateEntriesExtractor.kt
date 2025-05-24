@@ -1,19 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
 import com.alekso.dltmessage.DLTMessage
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineStateEntry
+import com.alekso.dltstudio.charts.model.StateChartData
+import com.alekso.dltstudio.charts.model.StateEntry
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
-import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.*
+import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
+import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class StateEntriesExtractor : EntriesExtractor {
+class StateEntriesExtractor : EntriesExtractor<StateChartData> {
 
     override fun extractEntry(
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
-    ): List<TimeLineStateEntry> {
+        data: StateChartData,
+    ) {
         val matches = regex.find(message.payloadText())!!
-        val list = mutableListOf<TimeLineStateEntry>()
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -22,12 +25,9 @@ class StateEntriesExtractor : EntriesExtractor {
                 val oldValue: String? = matches.groups[Param.OLD_VALUE.value]?.value
 
                 if (value != null && oldValue != null) {
-                    list.add(
-                        TimeLineStateEntry(
-                            message.timeStampUs,
-                            key,
-                            Pair(value, oldValue)
-                        )
+                    data.addEntry(
+                        StringKey(key),
+                        StateEntry(message.timeStampUs, oldValue, value, null)
                     )
                 }
             }
@@ -40,15 +40,14 @@ class StateEntriesExtractor : EntriesExtractor {
                     val value = matches.groups[INDEX_VALUE + 1]?.value
                     val oldValue = matches.groups[INDEX_OLD_VALUE + 1]?.value
                     if (key != null && value != null && oldValue != null) {
-                        list.add(
-                            TimeLineStateEntry(message.timeStampUs, key, Pair(value, oldValue))
+                        data.addEntry(
+                            StringKey(key),
+                            StateEntry(message.timeStampUs, oldValue, value, null)
                         )
                     }
                 }
             }
         }
-
-        return list
     }
 
     companion object {

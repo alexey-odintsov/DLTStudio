@@ -1,20 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
 import com.alekso.dltmessage.DLTMessage
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEvent
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEventEntry
+import com.alekso.dltstudio.charts.model.EventEntry
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
-import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.*
+import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
+import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class EventEntriesExtractor : EntriesExtractor {
+class EventEntriesExtractor : EntriesExtractor<EventsChartData> {
 
     override fun extractEntry(
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
-    ): List<TimeLineEventEntry> {
+        data: EventsChartData
+    ) {
         val matches = regex.find(message.payloadText())!!
-        val list = mutableListOf<TimeLineEventEntry>()
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -23,21 +25,13 @@ class EventEntriesExtractor : EntriesExtractor {
                 val info: String? = matches.groups[Param.INFO.value]?.value
 
                 if (value != null) {
-                    list.add(
-                        TimeLineEventEntry(
-                            message.timeStampUs,
-                            key,
-                            TimeLineEvent(value, info)
-                        )
-                    )
+                    data.addEntry(StringKey(key), EventEntry(message.timeStampUs, value, info))
                 }
             }
 
             ExtractionType.GroupsManyEntries -> throw UnsupportedOperationException()
             ExtractionType.NamedGroupsManyEntries -> throw UnsupportedOperationException()
         }
-
-        return list
     }
 
 }

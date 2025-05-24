@@ -1,6 +1,9 @@
 package com.alekso.dltstudio.plugins.diagramtimiline.extractors
 
 import com.alekso.dltmessage.SampleData
+import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.PercentageEntry
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineFloatEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
@@ -19,18 +22,20 @@ class PercentageEntriesExtractorTest {
         )
         val pattern = """(?<g1>\d+)%\s(?<g2>\d+)%\s(?<g3>\d+)%"""
 
-        val expected = listOf<TimeLineEntry<*>>(
-            TimeLineFloatEntry(1234567890L, "g1", 12f),
-            TimeLineFloatEntry(1234567890L, "g2", 67f),
-            TimeLineFloatEntry(1234567890L, "g3", 89f),
-        ).toSet()
+        val chartData = PercentageChartData()
+        chartData.addEntry(StringKey("g1"), PercentageEntry(1234567890L, 12f, null))
+        chartData.addEntry(StringKey("g2"), PercentageEntry(1234567890L, 67f, null))
+        chartData.addEntry(StringKey("g3"), PercentageEntry(1234567890L, 89f, null))
+        val expected = chartData.getKeys().toSet()
 
-        val actual = extractor.extractEntry(
+        val actual = PercentageChartData()
+        extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EntriesExtractor.ExtractionType.NamedGroupsManyEntries
-        ).toSet()
-        assertEquals(expected, actual)
+            EntriesExtractor.ExtractionType.NamedGroupsManyEntries,
+            actual
+        )
+        assertEquals(expected, actual.getKeys().toSet())
     }
 
     @Test
@@ -47,7 +52,8 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EntriesExtractor.ExtractionType.NamedGroupsOneEntry
+            EntriesExtractor.ExtractionType.NamedGroupsOneEntry,
+            (entries as PercentageChartData)
         ).toSet()
         assertEquals(expected, actual)
     }
@@ -68,7 +74,8 @@ class PercentageEntriesExtractorTest {
         val actual = extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            EntriesExtractor.ExtractionType.GroupsManyEntries
+            EntriesExtractor.ExtractionType.GroupsManyEntries,
+            (entries as PercentageChartData)
         ).toSet()
         assertEquals(expected, actual)
     }
