@@ -1,6 +1,5 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -57,6 +56,25 @@ class TimelineViewModel(
 
 
     val filtersDialogState = mutableStateOf(false)
+    var entriesMap = mutableStateMapOf<String, ChartData>()
+    var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
+
+    private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
+    val analyzeState: StateFlow<AnalyzeState> = _analyzeState
+
+    val timelineFilters = mutableStateListOf(*predefinedTimelineFilters.toTypedArray())
+
+    var recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
+    var currentFilterFile by mutableStateOf<RecentTimelineFilterFileEntry?>(null)
+
+    var fileDialogState by mutableStateOf(
+        FileDialogState(
+            title = "Save filter",
+            operation = DialogOperation.SAVE,
+            fileCallback = { saveTimeLineFilters(it[0]) },
+            cancelCallback = ::closeFileDialog
+        )
+    )
 
     fun onCloseFiltersDialogClicked() {
         filtersDialogState.value = false
@@ -129,24 +147,12 @@ class TimelineViewModel(
 
     }
 
-    var entriesMap = mutableStateMapOf<String, ChartData>()
-    var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
-
-    private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
-    val analyzeState: StateFlow<AnalyzeState> = _analyzeState
-
-    val timelineFilters = mutableStateListOf(*predefinedTimelineFilters.toTypedArray())
-
-    private val _recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
-    val recentTimelineFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>
-        get() = _recentTimelineFiltersFiles
-
 
     init {
         viewModelScope.launch {
             timelineRepository.getRecentTimelineFilters().collectLatest {
-                _recentTimelineFiltersFiles.clear()
-                _recentTimelineFiltersFiles.addAll(it)
+                recentTimelineFiltersFiles.clear()
+                recentTimelineFiltersFiles.addAll(it)
             }
         }
     }
@@ -250,14 +256,6 @@ class TimelineViewModel(
         }
     }
 
-    var fileDialogState by mutableStateOf(
-        FileDialogState(
-            title = "Save filter",
-            operation = DialogOperation.SAVE,
-            fileCallback = { saveTimeLineFilters(it[0]) },
-            cancelCallback = ::closeFileDialog
-        )
-    )
 
     private fun closeFileDialog() {
         fileDialogState = fileDialogState.copy(visible = false)
@@ -275,8 +273,6 @@ class TimelineViewModel(
         }
     }
 
-    private val _currentFilterFile = mutableStateOf<RecentTimelineFilterFileEntry?>(null)
-    val currentFilterFile: State<RecentTimelineFilterFileEntry?> = _currentFilterFile
 
     private fun loadTimeLineFilters(file: File) {
         timelineFilters.clear()
@@ -286,12 +282,12 @@ class TimelineViewModel(
             }
             val fileEntry = RecentTimelineFilterFileEntry(file.name, file.absolutePath)
             timelineRepository.addNewRecentTimelineFilter(fileEntry)
-            _currentFilterFile.value = fileEntry
+            currentFilterFile = fileEntry
         }
     }
 
     private fun clearTimeLineFilters() {
-        _currentFilterFile.value = null
+        currentFilterFile = null
         timelineFilters.clear()
     }
 
