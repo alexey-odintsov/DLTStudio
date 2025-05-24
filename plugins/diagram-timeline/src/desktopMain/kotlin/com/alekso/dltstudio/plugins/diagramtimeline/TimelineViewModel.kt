@@ -42,21 +42,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 
-interface ToolbarCallbacks {
-    fun onTimelineFiltersClicked()
-    fun onLoadFilterClicked()
-    fun onSaveFilterClicked()
-    fun onClearFilterClicked()
-    fun onRecentFilterClicked(path: String)
-
-    object Stub : ToolbarCallbacks {
-        override fun onTimelineFiltersClicked() = Unit
-        override fun onLoadFilterClicked() = Unit
-        override fun onSaveFilterClicked() = Unit
-        override fun onClearFilterClicked() = Unit
-        override fun onRecentFilterClicked(path: String) = Unit
-    }
-}
 
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit,
@@ -65,13 +50,11 @@ class TimelineViewModel(
 ) {
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
-
     private var analyzeJob: Job? = null
 
     var timeFrame by mutableStateOf(TimeFrame(0L, 1L))
-    val offsetUpdateCallback: (Float) -> Unit = { dx -> timeFrame = timeFrame.move(dx.toLong()) }
-    val scaleUpdateCallback: (Float) -> Unit =
-        { f -> timeFrame = timeFrame.zoom(f > 0f) }
+    var timeTotal by mutableStateOf(TimeFrame(0L, 1L))
+
 
     val filtersDialogState = mutableStateOf(false)
 
@@ -80,6 +63,8 @@ class TimelineViewModel(
     }
 
     val toolbarCallbacks = object : ToolbarCallbacks {
+        override fun onAnalyzeClicked() = startAnalyzing()
+
         override fun onTimelineFiltersClicked() {
             filtersDialogState.value = true
         }
@@ -118,6 +103,30 @@ class TimelineViewModel(
             loadTimeLineFilters(File(path))
         }
 
+        override fun onLeftClicked() {
+            timeFrame = timeFrame.move(-100000)
+        }
+
+        override fun onRightClicked() {
+            timeFrame = timeFrame.move(100000)
+        }
+
+        override fun onZoomInClicked() {
+            timeFrame = timeFrame.zoom(true)
+        }
+
+        override fun onZoomOutClicked() {
+            timeFrame = timeFrame.zoom(false)
+        }
+
+        override fun onZoomFitClicked() {
+            timeFrame = TimeFrame(timeTotal.timeStart, timeTotal.timeEnd)
+        }
+
+        override fun onDragTimeline(dx: Float) {
+            timeFrame = timeFrame.move(dx.toLong())
+        }
+
     }
 
     var entriesMap = mutableStateMapOf<String, ChartData>()
@@ -142,7 +151,7 @@ class TimelineViewModel(
         }
     }
 
-    fun onAnalyzeClicked() {
+    private fun startAnalyzing() {
         when (_analyzeState.value) {
             AnalyzeState.IDLE -> startAnalyzing(messagesRepository.getMessages())
             AnalyzeState.ANALYZING -> stopAnalyzing()
@@ -213,6 +222,7 @@ class TimelineViewModel(
                     entriesMap.clear()
                     entriesMap.putAll(entries)
                     timeFrame = TimeFrame(timeStart, timeEnd)
+                    timeTotal = TimeFrame(timeStart, timeEnd)
                     _analyzeState.value = AnalyzeState.IDLE
                 }
             }

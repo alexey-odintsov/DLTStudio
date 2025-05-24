@@ -82,13 +82,10 @@ private const val MOVE_TIMELINE_STEP_PX = 10
 fun TimeLinePanel(
     modifier: Modifier,
     timeFrame: TimeFrame,
-    offsetUpdate: (Float) -> Unit,
-    scaleUpdate: (Float) -> Unit,
     analyzeState: AnalyzeState,
     timelineFilters: SnapshotStateList<TimelineFilter>,
     filtersDialogState: Boolean,
     entriesMap: SnapshotStateMap<String, ChartData>,
-    onAnalyzeClicked: () -> Unit,
     highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
     filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData?,
@@ -103,30 +100,26 @@ fun TimeLinePanel(
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
     var secSizePx by remember { mutableStateOf(1f) }
 
-    val dragCallback = { dx: Float ->
-            offsetUpdate(dx)
-    }
-
     Column(modifier = modifier.onKeyEvent { e ->
         if (e.type == KeyEventType.KeyDown) {
             when (e.key) {
                 Key.A -> {
-                    offsetUpdate(1000f)
+                    toolbarCallbacks::onRightClicked
                     true
                 }
 
                 Key.D -> {
-                    offsetUpdate(-1000f)
+                    toolbarCallbacks::onLeftClicked
                     true
                 }
 
                 Key.W -> {
-                    scaleUpdate(1f)
+                    toolbarCallbacks::onZoomInClicked
                     true
                 }
 
                 Key.S -> {
-                    scaleUpdate(-1f)
+                    toolbarCallbacks::onZoomOutClicked
                     true
                 }
 
@@ -138,16 +131,7 @@ fun TimeLinePanel(
     }) {
 
         TimelineToolbar(
-            leftClick = { offsetUpdate(-1000f) },
-            rightClick = { offsetUpdate(1000f) },
-            zoomInClick = { scaleUpdate(1f) },
-            zoomOutClick = { scaleUpdate(-1f) },
-            zoomFitClick = {
-                scaleUpdate(1f)
-                offsetUpdate(0f)
-            },
             analyzeState = analyzeState,
-            onAnalyzeClick = onAnalyzeClicked,
             callbacks = toolbarCallbacks,
             recentFiltersFiles = recentFiltersFiles,
             currentFilterFile = currentFilterFile,
@@ -208,7 +192,7 @@ fun TimeLinePanel(
                                         modifier = viewModifier,
                                         entries = retrieveEntriesForFilter(timelineFilter) as PercentageChartData?,
                                         highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = dragCallback,
+                                        onDragged = toolbarCallbacks::onDragTimeline,
                                         totalTime = timeFrame,
                                         timeFrame = timeFrame,
                                         type = ChartType.Percentage,
@@ -220,7 +204,7 @@ fun TimeLinePanel(
                                         modifier = viewModifier,
                                         entries = retrieveEntriesForFilter(timelineFilter) as MinMaxChartData?,
                                         highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = dragCallback,
+                                        onDragged = toolbarCallbacks::onDragTimeline,
                                         totalTime = timeFrame,
                                         timeFrame = timeFrame,
                                         type = ChartType.MinMax,
@@ -232,7 +216,7 @@ fun TimeLinePanel(
                                         modifier = viewModifier,
                                         entries = retrieveEntriesForFilter(timelineFilter) as StateChartData?,
                                         highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = dragCallback,
+                                        onDragged = toolbarCallbacks::onDragTimeline,
                                         totalTime = timeFrame,
                                         timeFrame = timeFrame,
                                         type = ChartType.State,
@@ -244,7 +228,7 @@ fun TimeLinePanel(
                                         modifier = viewModifier,
                                         entries = retrieveEntriesForFilter(timelineFilter) as SingleStateChartData?,
                                         highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = dragCallback,
+                                        onDragged = toolbarCallbacks::onDragTimeline,
                                         totalTime = timeFrame,
                                         timeFrame = timeFrame,
                                         type = ChartType.SingleState,
@@ -256,7 +240,7 @@ fun TimeLinePanel(
                                         modifier = viewModifier,
                                         entries = retrieveEntriesForFilter(timelineFilter) as DurationChartData?,
                                         highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = dragCallback,
+                                        onDragged = toolbarCallbacks::onDragTimeline,
                                         totalTime = timeFrame,
                                         timeFrame = timeFrame,
                                         type = ChartType.Duration,
@@ -268,7 +252,7 @@ fun TimeLinePanel(
                                         modifier = viewModifier,
                                         entries = retrieveEntriesForFilter(timelineFilter) as EventsChartData?,
                                         highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = dragCallback,
+                                        onDragged = toolbarCallbacks::onDragTimeline,
                                         totalTime = timeFrame,
                                         timeFrame = timeFrame,
                                         type = ChartType.Events,
@@ -368,13 +352,10 @@ fun PreviewTimeline() {
     }
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
-        offsetUpdate = {},
-        scaleUpdate = { f -> },
         analyzeState = AnalyzeState.IDLE,
         timelineFilters = mutableStateListOf(),
         timeFrame = TimeFrame(20000L,300000L),
         entriesMap = mutableStateMapOf(),
-        onAnalyzeClicked = {},
         highlightedKeysMap = mutableStateMapOf(),
         filtersDialogCallbacks = callbacks,
         retrieveEntriesForFilter = { i -> EventsChartData() },
