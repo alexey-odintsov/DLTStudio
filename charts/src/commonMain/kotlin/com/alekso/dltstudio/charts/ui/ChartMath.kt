@@ -14,7 +14,7 @@ internal fun getSteps(minValue: Float, maxValue: Float, seriesCount: Int): List<
     return result
 }
 
-internal fun calculateX(
+fun calculateX(
     entry: ChartEntry,
     timeFrame: TimeFrame,
     width: Float,

@@ -66,6 +66,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
 
             TimeLinePanel(
                 modifier = modifier,
+                timeTotal = viewModel.timeTotal,
                 timeFrame = viewModel.timeFrame,
                 listState = viewModel.listState,
                 analyzeState = analyzeState,

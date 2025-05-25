@@ -33,6 +33,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -44,8 +45,13 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartKey
@@ -63,12 +69,12 @@ import java.awt.Cursor
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
 private val TIME_MARKER_HEIGHT_DP = 12.dp
-private const val MOVE_TIMELINE_STEP_PX = 10
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun TimeLinePanel(
     modifier: Modifier,
+    timeTotal: TimeFrame,
     timeFrame: TimeFrame,
     listState: LazyListState,
     analyzeState: AnalyzeState,
@@ -151,7 +157,7 @@ fun TimeLinePanel(
                 Box(modifier = Modifier.width(legendSize.dp))
                 TimeRuler(
                     Modifier.fillMaxWidth(1f),
-                    timeTotal = TimeFrame(0, 1000),
+                    timeTotal = timeTotal,
                     timeFrame = timeFrame,
                     debug = debug,
                 )
@@ -221,35 +227,34 @@ fun TimeLinePanel(
                 val formatter = LocalFormatter.current
                 Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
                     if (cursorPosition.x < legendSize.dp.toPx()) return@Canvas
-//                    secSizePx = ((size.width - legendSize.dp.toPx()) * scale) / totalSeconds
-//
-//                    val doesMarkerFit =
-//                        (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
-//
-//                    drawLine(
-//                        Color(0xFFFFFFc0),
-//                        Offset(cursorPosition.x, 0f),
-//                        Offset(cursorPosition.x, size.height)
-//                    )
-//                    val cursorOffsetSec: Float = ((cursorPosition.x - legendSize.dp.toPx()) / secSizePx) - offsetSec
-//                    val cursorTimestamp: Long =
-//                        (1000000L * cursorOffsetSec).toLong() + timeStart
-//
-//                    drawText(
-//                        size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
-//                        textMeasurer = textMeasurer,
-//                        text = "${formatter.formatTime(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
-//                        topLeft = Offset(
-//                            if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
-//                            4.dp.toPx()
-//                        ),
-//                        style = TextStyle(
-//                            color = Color.Yellow,
-//                            fontSize = 10.sp,
-//                            background = Color(0x80808080),
-//                            textAlign = if (doesMarkerFit) TextAlign.Left else TextAlign.Right
-//                        ), overflow = TextOverflow.Ellipsis
-//                    )
+                    secSizePx = ((size.width - legendSize.dp.toPx()) * 1f) / timeFrame.durationSec
+
+                    val doesMarkerFit =
+                        (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
+
+                    drawLine(
+                        Color(0xFFFFFFc0),
+                        Offset(cursorPosition.x, 0f),
+                        Offset(cursorPosition.x, size.height)
+                    )
+                    val cursorOffsetSec: Float = ((cursorPosition.x - legendSize.dp.toPx()) / secSizePx) - timeFrame.durationSec
+                    val cursorTimestamp: Long = (1000000L * cursorOffsetSec).toLong() + timeFrame.timeStart
+
+                    drawText(
+                        size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
+                        textMeasurer = textMeasurer,
+                        text = "${formatter.formatTime(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
+                        topLeft = Offset(
+                            if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
+                            4.dp.toPx()
+                        ),
+                        style = TextStyle(
+                            color = Color.Yellow,
+                            fontSize = 10.sp,
+                            background = Color(0x80808080),
+                            textAlign = if (doesMarkerFit) TextAlign.Left else TextAlign.Right
+                        ), overflow = TextOverflow.Ellipsis
+                    )
                 }
             }
     }
@@ -288,6 +293,7 @@ fun PreviewTimeline() {
         analyzeState = AnalyzeState.IDLE,
         listState = rememberLazyListState(),
         timelineFilters = mutableStateListOf(),
+        timeTotal = TimeFrame(20000L,300000L),
         timeFrame = TimeFrame(20000L,300000L),
         entriesMap = mutableStateMapOf(),
         highlightedKeysMap = mutableStateMapOf(),
