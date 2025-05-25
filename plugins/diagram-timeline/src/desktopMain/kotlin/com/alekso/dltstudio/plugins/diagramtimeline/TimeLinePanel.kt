@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -34,35 +33,23 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
-import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartKey
-import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.MinMaxChartData
-import com.alekso.dltstudio.charts.model.PercentageChartData
-import com.alekso.dltstudio.charts.model.SingleStateChartData
-import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
 import com.alekso.dltstudio.charts.ui.ChartType
@@ -141,7 +128,7 @@ fun TimeLinePanel(
 
         if (filtersDialogState) {
             TimelineFiltersDialog(
-                visible = filtersDialogState,
+                visible = true,
                 onDialogClosed = onCloseFiltersDialog,
                 timelineFilters = timelineFilters,
                 callbacks = filtersDialogCallbacks,
@@ -187,78 +174,23 @@ fun TimeLinePanel(
                                 highlightedKey = highlightedKeysMap[timelineFilter.key]
                             )
                             LegendResizer(Modifier.height(200.dp), key = "$index", onResized = onLegendResized)
-                            when (timelineFilter.diagramType) {
-                                DiagramType.Percentage -> {
-                                    Chart(
-                                        modifier = viewModifier,
-                                        entries = retrieveEntriesForFilter(timelineFilter) as PercentageChartData?,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = toolbarCallbacks::onDragTimeline,
-                                        totalTime = timeFrame,
-                                        timeFrame = timeFrame,
-                                        type = ChartType.Percentage,
-                                    )
-                                }
-
-                                DiagramType.MinMaxValue -> {
-                                    Chart(
-                                        modifier = viewModifier,
-                                        entries = retrieveEntriesForFilter(timelineFilter) as MinMaxChartData?,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = toolbarCallbacks::onDragTimeline,
-                                        totalTime = timeFrame,
-                                        timeFrame = timeFrame,
-                                        type = ChartType.MinMax,
-                                    )
-                                }
-
-                                DiagramType.State -> {
-                                    Chart(
-                                        modifier = viewModifier,
-                                        entries = retrieveEntriesForFilter(timelineFilter) as StateChartData?,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = toolbarCallbacks::onDragTimeline,
-                                        totalTime = timeFrame,
-                                        timeFrame = timeFrame,
-                                        type = ChartType.State,
-                                    )
-                                }
-
-                                DiagramType.SingleState -> {
-                                    Chart(
-                                        modifier = viewModifier,
-                                        entries = retrieveEntriesForFilter(timelineFilter) as SingleStateChartData?,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = toolbarCallbacks::onDragTimeline,
-                                        totalTime = timeFrame,
-                                        timeFrame = timeFrame,
-                                        type = ChartType.SingleState,
-                                    )
-                                }
-
-                                DiagramType.Duration -> {
-                                    Chart(
-                                        modifier = viewModifier,
-                                        entries = retrieveEntriesForFilter(timelineFilter) as DurationChartData?,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = toolbarCallbacks::onDragTimeline,
-                                        totalTime = timeFrame,
-                                        timeFrame = timeFrame,
-                                        type = ChartType.Duration,
-                                    )
-                                }
-
-                                DiagramType.Events ->
-                                    Chart(
-                                        modifier = viewModifier,
-                                        entries = retrieveEntriesForFilter(timelineFilter) as EventsChartData?,
-                                        highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                        onDragged = toolbarCallbacks::onDragTimeline,
-                                        totalTime = timeFrame,
-                                        timeFrame = timeFrame,
-                                        type = ChartType.Events,
-                                    )
+                            val chartType = when (timelineFilter.diagramType) {
+                                DiagramType.Percentage -> ChartType.Percentage
+                                DiagramType.MinMaxValue -> ChartType.MinMax
+                                DiagramType.State -> ChartType.State
+                                DiagramType.SingleState -> ChartType.SingleState
+                                DiagramType.Duration -> ChartType.Duration
+                                DiagramType.Events -> ChartType.Events
                             }
+                            Chart(
+                                modifier = viewModifier,
+                                entries = retrieveEntriesForFilter(timelineFilter),
+                                highlightedKey = highlightedKeysMap[timelineFilter.key],
+                                onDragged = toolbarCallbacks::onDragTimeline,
+                                totalTime = timeFrame,
+                                timeFrame = timeFrame,
+                                type = chartType,
+                            )
                         }
                     }
                 }
