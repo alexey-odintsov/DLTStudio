@@ -28,7 +28,7 @@ fun TimeRuler(
     modifier: Modifier = Modifier,
     timeTotal: TimeFrame,
     timeFrame: TimeFrame,
-    debug: Boolean = true,
+    debug: Boolean = false,
 ) {
     val textMeasurer = rememberTextMeasurer()
     val formatter = LocalFormatter.current
