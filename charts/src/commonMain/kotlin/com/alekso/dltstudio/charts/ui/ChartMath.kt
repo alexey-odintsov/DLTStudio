@@ -1,6 +1,5 @@
 package com.alekso.dltstudio.charts.ui
 
-import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.TimeFrame
 
 internal fun getSteps(minValue: Float, maxValue: Float, seriesCount: Int): List<String> {
@@ -15,11 +14,11 @@ internal fun getSteps(minValue: Float, maxValue: Float, seriesCount: Int): List<
 }
 
 fun calculateX(
-    entry: ChartEntry,
+    timestamp: Long,
     timeFrame: TimeFrame,
     width: Float,
 ): Float {
-    return ((entry.timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * width
+    return ((timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * width
 }
 
 internal fun calculateYForValue(

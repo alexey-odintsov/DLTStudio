@@ -146,7 +146,7 @@ internal fun DrawScope.renderEvents(
                 keyIndex,
                 style.isDark
             )
-            val x = calculateX(entry, timeFrame, size.width)
+            val x = calculateX(entry.timestamp, timeFrame, size.width)
             val y = calculateY(
                 labelIndex,
                 labels.size,
@@ -182,7 +182,7 @@ internal fun DrawScope.renderMinMaxLines(
         val verticalPaddingPx = style.verticalPadding.toPx()
 
         entries.forEachIndexed entriesIteration@{ i, entry ->
-            val x = calculateX(entry, timeFrame, size.width)
+            val x = calculateX(entry.timestamp, timeFrame, size.width)
             val y = calculateYForValue(
                 entry.value,
                 entriesMap.getMaxValue(),
@@ -200,7 +200,7 @@ internal fun DrawScope.renderMinMaxLines(
                 return@entriesIteration
             } else {
                 val prev = entries[i - 1]
-                val prevX = calculateX(prev, timeFrame, size.width)
+                val prevX = calculateX(prev.timestamp, timeFrame, size.width)
                 val prevY = calculateYForValue(
                     prev.value,
                     entriesMap.getMaxValue(),
@@ -243,7 +243,7 @@ internal fun DrawScope.renderStateLines(
             val labels = entriesMap.getLabels()
             val labelIndex = labels.indexOf(entry.newState)
             val oldLabelIndex = labels.indexOf(entry.oldState)
-            val x = calculateX(entry, timeFrame, size.width)
+            val x = calculateX(entry.timestamp, timeFrame, size.width)
             val y = calculateY(
                 labelIndex,
                 labels.size,
@@ -268,7 +268,7 @@ internal fun DrawScope.renderStateLines(
                 return@entriesIteration
             } else {
                 val prev = entries[i - 1]
-                val prevX = calculateX(prev, timeFrame, size.width)
+                val prevX = calculateX(prev.timestamp, timeFrame, size.width)
 
                 drawLine(
                     lineColor,
@@ -309,7 +309,7 @@ internal fun DrawScope.renderSingleStateLines(
         entries.forEachIndexed entriesIteration@{ i, entry ->
             val labels = entriesMap.getLabels()
             val labelIndex = labels.indexOf(entry.state)
-            val x = calculateX(entry, timeFrame, size.width)
+            val x = calculateX(entry.timestamp, timeFrame, size.width)
             val y = calculateY(
                 labelIndex,
                 labels.size,
@@ -325,7 +325,7 @@ internal fun DrawScope.renderSingleStateLines(
                 )
             } else {
                 val prev = entries[i - 1]
-                val prevX = calculateX(prev, timeFrame, size.width)
+                val prevX = calculateX(prev.timestamp, timeFrame, size.width)
                 val prevY = calculateY(
                     oldLabelIndex,
                     labels.size,
@@ -374,8 +374,8 @@ internal fun DrawScope.renderDurationLines(
 
             val labels = entriesMap.getLabels()
             val labelIndex = labels.indexOf(key.key)
-            val x1 = calculateX(entry, timeFrame, size.width)
-            val x2 = if (prev != null) calculateX(prev, timeFrame, size.width) else null
+            val x1 = calculateX(entry.timestamp, timeFrame, size.width)
+            val x2 = if (prev != null) calculateX(prev.timestamp, timeFrame, size.width) else null
             val y = calculateY(
                 labelIndex,
                 labels.size,
@@ -438,7 +438,7 @@ internal fun DrawScope.renderPercentageLines(
         val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
 
         entries.forEachIndexed entriesIteration@{ i, entry ->
-            val x = calculateX(entry, timeFrame, size.width)
+            val x = calculateX(entry.timestamp, timeFrame, size.width)
             val y = calculateYForValue(
                 entry.value,
                 entriesMap.getMaxValue(),
@@ -456,7 +456,7 @@ internal fun DrawScope.renderPercentageLines(
                 return@entriesIteration
             } else {
                 val prev = entries[i - 1]
-                val prevX = calculateX(prev, timeFrame, size.width)
+                val prevX = calculateX(prev.timestamp, timeFrame, size.width)
                 val prevY = calculateYForValue(
                     prev.value,
                     entriesMap.getMaxValue(),

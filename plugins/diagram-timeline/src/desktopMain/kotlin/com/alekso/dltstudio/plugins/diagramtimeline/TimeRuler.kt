@@ -17,7 +17,6 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.charts.model.EventEntry
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.calculateX
 import kotlinx.datetime.Clock
@@ -46,9 +45,7 @@ fun TimeRuler(
 
         for (i in 0..timeTotal.durationSec) {
             val lineTime = timeTotal.timeStart + 1_000_000 * i
-            val lineEntry =
-                EventEntry(lineTime, formatter.formatDateTime(lineTime), null)
-            val x = calculateX(lineEntry, timeFrame, size.width)
+            val x = calculateX(lineTime, timeFrame, size.width)
             drawLine(
                 Color.Gray,
                 Offset(x, size.height / 2 + if (i % 10 == 0) 0 else 20),
@@ -56,7 +53,7 @@ fun TimeRuler(
             )
             if (i % 10 == 0) {
                 val measuredText = textMeasurer.measure(
-                    text = formatter.formatTime(lineEntry.timestamp),
+                    text = formatter.formatTime(lineTime),
                     style = TextStyle(color = Color.Gray, fontSize = 10.sp)
                 )
 
