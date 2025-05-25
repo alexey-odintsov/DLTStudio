@@ -19,7 +19,6 @@ kotlin {
             implementation(project(":plugins:dlt-detailed-view"))
             implementation(project(":plugins:log-info-view"))
             implementation(project(":plugins:log-insights"))
-            implementation(project(":plugins:test-plugin"))
         }
 
         desktopMain.dependencies {

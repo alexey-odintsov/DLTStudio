@@ -8,7 +8,6 @@ import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 
 class TestPlugin : DLTStudioPlugin, PluginPanel {
-
     override fun pluginName(): String = "TestPlugin"
     override fun pluginDirectoryName(): String = "test-plugin"
     override fun pluginVersion(): String = "1.0.0"
