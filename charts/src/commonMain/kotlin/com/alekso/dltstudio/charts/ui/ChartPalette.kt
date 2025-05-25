@@ -1,6 +1,23 @@
 package com.alekso.dltstudio.charts.ui
 
+import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlin.random.Random
 import kotlin.random.nextInt
 
@@ -11,9 +28,8 @@ object ChartPalette {
     // TODO: Check colors with Preview
     val lightPalette = mutableListOf(
         Color(0xFFFF0000),
-        Color(0xFF00FF00),
+//        Color(0xFF00FF00), // green - selection
         Color(0xFF0000FF),
-        Color(0xFFFFFF00),
         Color(0xFFFF00FF),
         Color(0xFF00FFFF),
         Color(0xFF800000),
@@ -26,24 +42,22 @@ object ChartPalette {
         Color(0xFF808080),
         Color(0xFF9999FF),
         Color(0xFF993366),
-        Color(0xFFFFFFCC),
-        Color(0xFFCCFFFF),
+        Color(0xFFaadddd),
         Color(0xFF660066),
         Color(0xFFFF8080),
         Color(0xFF0066CC),
         Color(0xFFCCCCFF),
         Color(0xFF000080),
-        Color(0xFFFF00FF),
         Color(0xFFFFFF00),
         Color(0xFF00FFFF),
         Color(0xFF800080),
         Color(0xFF800000),
         Color(0xFF008080),
-        Color(0xFF0000FF),
+        Color(0xFF0340FF),
         Color(0xFF00CCFF),
-        Color(0xFFCCFFFF),
+        Color(0xFFCC3F6F),
         Color(0xFFCCFFCC),
-        Color(0xFFFFFF99),
+        Color(0xFF6F5F99),
         Color(0xFF99CCFF),
         Color(0xFFFF99CC),
         Color(0xFFCC99FF),
@@ -246,5 +260,39 @@ object ChartPalette {
             )
         } while (color in colors)// || color in excludedColors)
         return color
+    }
+}
+
+@Preview
+@Composable
+fun PreviewDefaultChartPalette() {
+    Column(Modifier.fillMaxSize().background(ChartStyle.Default.backgroundColor)) {
+        ChartPalette.lightPalette.forEachIndexed { i, c ->
+            PreviewColor(c)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewDarkChartPalette() {
+    Column(Modifier.fillMaxSize().background(ChartStyle.Dark.backgroundColor)) {
+        ChartPalette.darkPalette.forEachIndexed { i, c ->
+            PreviewColor(c)
+        }
+    }
+}
+
+@OptIn(ExperimentalStdlibApi::class)
+@Composable
+fun PreviewColor(color: Color) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Box(Modifier.padding(2.dp).size(50.dp, 2.dp).background(color))
+        Text(
+            modifier = Modifier.padding(vertical = 2.dp).width(100.dp),
+            text = color.toArgb().toHexString(),
+            fontFamily = FontFamily.Monospace,
+            fontSize = 10.sp
+        )
     }
 }
