@@ -25,7 +25,6 @@ object ChartPalette {
     val light = mutableListOf<Color>()
     val dark = mutableListOf<Color>()
 
-    // TODO: Check colors with Preview
     val lightPalette = mutableListOf(
         Color(0xFFFF0000),
 //        Color(0xFF00FF00), // green - selection
@@ -126,7 +125,6 @@ object ChartPalette {
         Color(0xFFFF00FF)
     )
 
-    // TODO: Check colors with Preview
     val darkPalette = listOf(
         Color(0xFFB71C1C),
         Color(0xFF880E4F),
