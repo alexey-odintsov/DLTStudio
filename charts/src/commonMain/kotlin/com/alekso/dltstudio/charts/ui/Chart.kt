@@ -2,6 +2,7 @@ package com.alekso.dltstudio.charts.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -10,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
@@ -43,7 +45,12 @@ fun Chart(
     highlightedKey: ChartKey?,
 ) {
     if (entries == null || entries.isEmpty()) {
-        Text("No entries found")
+        Box(
+            modifier.background(style.backgroundColor).fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text("No entries found")
+        }
         return
     }
     var usSize by remember { mutableStateOf(1f) }
