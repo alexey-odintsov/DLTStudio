@@ -16,6 +16,7 @@ data class ChartStyle(
     val seriesColor: Color,
     val lineWidth: Dp,
     val labelTextStyle: TextStyle,
+    val messageTextStyle : TextStyle,
     val highlightColor: Color,
 ) {
     companion object {
@@ -35,8 +36,11 @@ data class ChartStyle(
                 lineHeightStyle = LineHeightStyle(
                     LineHeightStyle.Alignment.Center,
                     LineHeightStyle.Trim.None
-                )
+                ),
             ),
+            messageTextStyle = TextStyle(
+                color = Color.Gray,
+            )
         )
         val Dark = ChartStyle(
             isDark = true,
@@ -55,6 +59,9 @@ data class ChartStyle(
                     LineHeightStyle.Alignment.Center,
                     LineHeightStyle.Trim.None
                 )
+            ),
+            messageTextStyle = TextStyle(
+                color = Color.LightGray,
             )
         )
     }

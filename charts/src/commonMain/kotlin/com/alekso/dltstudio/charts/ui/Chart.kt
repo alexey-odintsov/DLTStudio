@@ -68,7 +68,8 @@ fun Chart(
                     )
 
                     if (entries == null || entries.isEmpty()) {
-                        val messageLayout = textMeasurer.measure("No entries found")
+                        val messageLayout =
+                            textMeasurer.measure("No entries found", style = style.messageTextStyle)
                         val textSize = messageLayout.size
                         drawText(
                             messageLayout,
