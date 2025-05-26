@@ -1,12 +1,13 @@
 package com.alekso.dltstudio.plugins.diagramtimiline.extractors
 
 import com.alekso.dltmessage.SampleData
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineDurationEntry
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEntry
+import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.DurationEntriesExtractor
-import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
+import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class DurationEntriesExtractorTest {
 
@@ -20,25 +21,26 @@ class DurationEntriesExtractorTest {
         val dltMessage2 = SampleData.create(
             timeStampUs = 1234567895L, payloadText = "TestAppActivity.onStop"
         )
+
         val pattern = """(?<key>.*)\.((?<begin>onStart)|(?<end>onStop))"""
 
-        val expected = listOf<TimeLineEntry<*>>(
-            TimeLineDurationEntry(1234567890L, "TestAppActivity", Pair("onStart", null)),
-            TimeLineDurationEntry(1234567895L, "TestAppActivity", Pair(null, "onStop")),
-        ).toSet()
+        val key1 = StringKey("TestAppActivity")
 
-        val actual1 = extractor.extractEntry(
+        val actualChartData = DurationChartData()
+        extractor.extractEntry(
             dltMessage,
             pattern.toRegex(),
-            ExtractionType.NamedGroupsOneEntry
+            EntriesExtractor.ExtractionType.NamedGroupsOneEntry,
+            actualChartData
         )
-        val actual2 = extractor.extractEntry(
+        extractor.extractEntry(
             dltMessage2,
             pattern.toRegex(),
-            ExtractionType.NamedGroupsOneEntry
+            EntriesExtractor.ExtractionType.NamedGroupsOneEntry,
+            actualChartData
         )
-        val actual = (actual1 + actual2).toSet()
-        assertEquals(expected, actual)
+        assertEquals(setOf(key1), actualChartData.getKeys().toSet())
+        assertTrue(actualChartData.getEntries(key1)[0].begin == "onStart")
+        assertTrue(actualChartData.getEntries(key1)[1].end == "onStop")
     }
-
 }
