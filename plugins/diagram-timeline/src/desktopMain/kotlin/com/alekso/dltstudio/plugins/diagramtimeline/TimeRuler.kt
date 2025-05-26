@@ -51,16 +51,13 @@ fun TimeRuler(
                 Offset(x, size.height / 2 + if (i % 10 == 0) 0 else 20),
                 Offset(x, size.height + if (i % 10 == 0) 0 else 20),
             )
-            if (i % 10 == 0) {
+            if (i % 10 == 0 || i == timeTotal.durationSec) {
                 val measuredText = textMeasurer.measure(
                     text = formatter.formatTime(lineTime),
                     style = TextStyle(color = Color.Gray, fontSize = 10.sp)
                 )
 
-                drawText(
-                    measuredText,
-                    topLeft = Offset(x, 30f),
-                )
+                drawText(measuredText, topLeft = Offset(x, 30f))
             }
         }
     }
