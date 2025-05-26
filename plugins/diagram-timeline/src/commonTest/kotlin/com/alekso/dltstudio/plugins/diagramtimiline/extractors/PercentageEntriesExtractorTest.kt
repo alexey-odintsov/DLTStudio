@@ -6,8 +6,8 @@ import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.PercentageEntriesExtractor
 import org.junit.Test
-import kotlin.test.DefaultAsserter.assertTrue
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class PercentageEntriesExtractorTest {
 
@@ -30,9 +30,9 @@ class PercentageEntriesExtractorTest {
             actualChartData
         )
         assertEquals(setOf(key1, key2, key3), actualChartData.getKeys().toSet())
-        assertTrue("", actualChartData.getEntries(key1)[0].value == 12f)
-        assertTrue("", actualChartData.getEntries(key2)[0].value == 67f)
-        assertTrue("", actualChartData.getEntries(key3)[0].value == 89f)
+        assertTrue(actualChartData.getEntries(key1)[0].value == 12f)
+        assertTrue(actualChartData.getEntries(key2)[0].value == 67f)
+        assertTrue(actualChartData.getEntries(key3)[0].value == 89f)
     }
 
     @Test
@@ -50,7 +50,7 @@ class PercentageEntriesExtractorTest {
             actualChartData
         )
         assertEquals(setOf(key), actualChartData.getKeys().toSet())
-        assertTrue("", actualChartData.getEntries(key)[0].value == 5.18f)
+        assertTrue(actualChartData.getEntries(key)[0].value == 5.18f)
     }
 
     @Test
@@ -70,9 +70,9 @@ class PercentageEntriesExtractorTest {
             actualChartData
         )
         assertEquals(setOf(key1, key2, key3), actualChartData.getKeys().toSet())
-        assertTrue("", actualChartData.getEntries(key1)[0].value == 12f)
-        assertTrue("", actualChartData.getEntries(key2)[0].value == 34f)
-        assertTrue("", actualChartData.getEntries(key3)[0].value == 66f)
+        assertTrue(actualChartData.getEntries(key1)[0].value == 12f)
+        assertTrue(actualChartData.getEntries(key2)[0].value == 34f)
+        assertTrue(actualChartData.getEntries(key3)[0].value == 66f)
     }
 
 }
