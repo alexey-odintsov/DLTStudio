@@ -52,7 +52,7 @@ class StateEntriesExtractor : EntriesExtractor<StateChartData> {
 
     companion object {
         const val INDEX_KEY = 0
-        const val INDEX_VALUE = 1
-        const val INDEX_OLD_VALUE = 2
+        const val INDEX_VALUE = 2
+        const val INDEX_OLD_VALUE = 1
     }
 }
