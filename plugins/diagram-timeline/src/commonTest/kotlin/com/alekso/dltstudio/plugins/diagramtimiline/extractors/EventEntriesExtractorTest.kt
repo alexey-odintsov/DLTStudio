@@ -1,13 +1,13 @@
 package com.alekso.dltstudio.plugins.diagramtimiline.extractors
 
 import com.alekso.dltmessage.SampleData
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEntry
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEvent
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineEventEntry
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EventEntriesExtractor
 import org.junit.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class EventEntriesExtractorTest {
 
@@ -19,23 +19,18 @@ class EventEntriesExtractorTest {
             timeStampUs = 1234567890L,
             payloadText = "Crash (JAVA_CRASH) detected. Filename: /data/system/dropbox/system_app_crash@1705410604456.txt. Process: com.myapp (PID: 8275). Exception: java.lang.AbstractMethodError.. Crash ID: JAVA:fc4dc801f9b4bf581e24224e8ed117c2617e083c"
         )
-        val pattern =
-            """Crash \((?<value>.*)\) detected.*Process:\s(?<key>.*). Exception: (?<info>.*) Crash ID:"""
 
-        val expected = listOf<TimeLineEntry<*>>(
-            TimeLineEventEntry(
-                1234567890L,
-                "com.myapp (PID: 8275)",
-                TimeLineEvent("JAVA_CRASH", "java.lang.AbstractMethodError..")
-            )
-        ).toSet()
+        val key1 = StringKey("com.myapp (PID: 8275)")
 
-        val actual = extractor.extractEntry(
+        val actualChartData = EventsChartData()
+        extractor.extractEntry(
             dltMessage,
-            pattern.toRegex(),
-            EntriesExtractor.ExtractionType.NamedGroupsOneEntry
-        ).toSet()
-        assertEquals(expected, actual)
+            """Crash \((?<value>.*)\) detected.*Process:\s(?<key>.*). Exception: (?<info>.*) Crash ID:""".toRegex(),
+            EntriesExtractor.ExtractionType.NamedGroupsOneEntry,
+            actualChartData
+        )
+        assertEquals(setOf(key1), actualChartData.getKeys().toSet())
+        assertTrue(actualChartData.getEntries(key1)[0].event == "JAVA_CRASH")
     }
 
 }
