@@ -2,16 +2,13 @@ package com.alekso.dltstudio.charts.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
@@ -20,6 +17,7 @@ import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartKey
@@ -44,15 +42,6 @@ fun Chart(
     labelsPostfix: String = "",
     highlightedKey: ChartKey?,
 ) {
-    if (entries == null || entries.isEmpty()) {
-        Box(
-            modifier.background(style.backgroundColor).fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("No entries found")
-        }
-        return
-    }
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
 
@@ -70,7 +59,6 @@ fun Chart(
             }
             .drawWithCache {
                 onDrawBehind {
-
                     // center line – zoom marker
                     drawLine(
                         Color.LightGray,
@@ -78,6 +66,19 @@ fun Chart(
                         Offset(size.center.x, size.height),
                         alpha = 0.5f
                     )
+
+                    if (entries == null || entries.isEmpty()) {
+                        val messageLayout = textMeasurer.measure("No entries found")
+                        val textSize = messageLayout.size
+                        drawText(
+                            messageLayout,
+                            topLeft = Offset(
+                                x = size.width / 2 - textSize.width / 2,
+                                y = size.height / 2 - textSize.height / 2
+                            )
+                        )
+                        return@onDrawBehind
+                    }
 
                     val labelsSize = if (entries.getLabels().isNotEmpty()) entries.getLabels().size else labelsCount
                     when (type) {
