@@ -15,9 +15,10 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartKey
@@ -59,125 +60,145 @@ fun Chart(
             }
             .drawWithCache {
                 onDrawBehind {
-                    // center line – zoom marker
-                    drawLine(
-                        Color.LightGray,
-                        Offset(size.center.x, 0f),
-                        Offset(size.center.x, size.height),
-                        alpha = 0.5f
-                    )
-
+                    renderCenterLine()
                     if (entries == null || entries.isEmpty()) {
-                        val messageLayout =
-                            textMeasurer.measure("No entries found", style = style.messageTextStyle)
-                        val textSize = messageLayout.size
-                        drawText(
-                            messageLayout,
-                            topLeft = Offset(
-                                x = size.width / 2 - textSize.width / 2,
-                                y = size.height / 2 - textSize.height / 2
-                            )
-                        )
+                        renderEmptyMessage(textMeasurer, style)
                         return@onDrawBehind
                     }
-
                     val labelsSize = if (entries.getLabels().isNotEmpty()) entries.getLabels().size else labelsCount
-                    when (type) {
-                        ChartType.Percentage, ChartType.MinMax ->
-                            renderSeriesByValue(
-                                labelsSize,
-                                style.seriesColor,
-                                style.verticalPadding.toPx()
-                            )
-
-                        else ->
-                            renderSeries(
-                                labelsSize,
-                                style.seriesColor,
-                                style.verticalPadding.toPx()
-                            )
-
-                    }
-
-                    // draw entries
-                    when (type) {
-                        ChartType.Events -> renderEvents(
-                            entries as EventsChartData,
-                            timeFrame,
-                            style,
-                            highlightedKey = highlightedKey,
-                        )
-
-                        ChartType.Percentage -> renderPercentageLines(
-                            entries as PercentageChartData,
-                            labelsSize,
-                            timeFrame,
-                            style = style,
-                            highlightedKey = highlightedKey,
-                        )
-
-                        ChartType.MinMax -> renderMinMaxLines(
-                            entries as MinMaxChartData,
-                            labelsSize,
-                            timeFrame,
-                            style = style,
-                            highlightedKey = highlightedKey,
-                        )
-
-                        ChartType.State -> renderStateLines(
-                            entries as StateChartData,
-                            timeFrame,
-                            style = style,
-                            highlightedKey = highlightedKey,
-                        )
-
-                        ChartType.SingleState -> renderSingleStateLines(
-                            entries as SingleStateChartData,
-                            timeFrame,
-                            style = style,
-                            highlightedKey = highlightedKey,
-                        )
-
-                        ChartType.Duration -> renderDurationLines(
-                            entries as DurationChartData,
-                            timeFrame,
-                            style = style,
-                            highlightedKey = highlightedKey,
-                        )
-                    }
-
-                    when (type) {
-                        ChartType.Percentage ->
-                            renderLabelsForValue(
-                                getSteps(0f, 100f, labelsSize),
-                                textMeasurer,
-                                style.labelTextStyle,
-                                "%",
-                                style.verticalPadding.toPx(),
-                            )
-
-                        ChartType.MinMax ->
-                            renderLabelsForValue(
-                                getSteps(
-                                    (entries as MinMaxChartData).getMinValue(),
-                                    (entries as MinMaxChartData).getMaxValue(),
-                                    labelsSize
-                                ),
-                                textMeasurer,
-                                style.labelTextStyle,
-                                labelsPostfix,
-                                style.verticalPadding.toPx(),
-                            )
-
-                        ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
-                            entries.getLabels(),
-                            textMeasurer,
-                            style.labelTextStyle,
-                            labelsPostfix,
-                            style.verticalPadding.toPx(),
-                        )
-                    }
+                    renderSeries(type, labelsSize, style)
+                    renderEntries(type, entries, timeFrame, style, highlightedKey, labelsSize)
+                    renderLabels(type, labelsSize, textMeasurer, style, entries, labelsPostfix)
                 }
             }
     )
 }
+
+private fun DrawScope.renderLabels(
+    type: ChartType,
+    labelsSize: Int,
+    textMeasurer: TextMeasurer,
+    style: ChartStyle,
+    entries: ChartData,
+    labelsPostfix: String
+) {
+    when (type) {
+        ChartType.Percentage ->
+            renderLabelsForValue(
+                getSteps(0f, 100f, labelsSize),
+                textMeasurer,
+                style.labelTextStyle,
+                "%",
+                style.verticalPadding.toPx(),
+            )
+
+        ChartType.MinMax ->
+            renderLabelsForValue(
+                getSteps(
+                    (entries as MinMaxChartData).getMinValue(),
+                    (entries as MinMaxChartData).getMaxValue(),
+                    labelsSize
+                ),
+                textMeasurer,
+                style.labelTextStyle,
+                labelsPostfix,
+                style.verticalPadding.toPx(),
+            )
+
+        ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
+            entries.getLabels(),
+            textMeasurer,
+            style.labelTextStyle,
+            labelsPostfix,
+            style.verticalPadding.toPx(),
+        )
+    }
+}
+
+private fun DrawScope.renderCenterLine() {
+    drawLine(
+        Color.LightGray,
+        Offset(size.center.x, 0f),
+        Offset(size.center.x, size.height),
+        alpha = 0.5f
+    )
+}
+
+private fun DrawScope.renderEntries(
+    type: ChartType,
+    entries: ChartData,
+    timeFrame: TimeFrame,
+    style: ChartStyle,
+    highlightedKey: ChartKey?,
+    labelsSize: Int
+) {
+    when (type) {
+        ChartType.Events -> renderEvents(
+            entries as EventsChartData,
+            timeFrame,
+            style,
+            highlightedKey = highlightedKey,
+        )
+
+        ChartType.Percentage -> renderPercentageLines(
+            entries as PercentageChartData,
+            labelsSize,
+            timeFrame,
+            style = style,
+            highlightedKey = highlightedKey,
+        )
+
+        ChartType.MinMax -> renderMinMaxLines(
+            entries as MinMaxChartData,
+            labelsSize,
+            timeFrame,
+            style = style,
+            highlightedKey = highlightedKey,
+        )
+
+        ChartType.State -> renderStateLines(
+            entries as StateChartData,
+            timeFrame,
+            style = style,
+            highlightedKey = highlightedKey,
+        )
+
+        ChartType.SingleState -> renderSingleStateLines(
+            entries as SingleStateChartData,
+            timeFrame,
+            style = style,
+            highlightedKey = highlightedKey,
+        )
+
+        ChartType.Duration -> renderDurationLines(
+            entries as DurationChartData,
+            timeFrame,
+            style = style,
+            highlightedKey = highlightedKey,
+        )
+    }
+}
+
+private fun DrawScope.renderSeries(
+    type: ChartType,
+    labelsSize: Int,
+    style: ChartStyle
+) {
+    when (type) {
+        ChartType.Percentage, ChartType.MinMax ->
+            renderSeriesByValue(
+                labelsSize,
+                style.seriesColor,
+                style.verticalPadding.toPx()
+            )
+
+        else ->
+            renderSeries(
+                labelsSize,
+                style.seriesColor,
+                style.verticalPadding.toPx()
+            )
+
+    }
+}
+

@@ -476,3 +476,18 @@ internal fun DrawScope.renderPercentageLines(
     }
 }
 
+internal fun DrawScope.renderEmptyMessage(
+    textMeasurer: TextMeasurer,
+    style: ChartStyle
+) {
+    val messageLayout =
+        textMeasurer.measure("No entries found", style = style.messageTextStyle)
+    val textSize = messageLayout.size
+    drawText(
+        messageLayout,
+        topLeft = Offset(
+            x = size.width / 2 - textSize.width / 2,
+            y = size.height / 2 - textSize.height / 2
+        )
+    )
+}
