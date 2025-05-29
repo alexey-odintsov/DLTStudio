@@ -17,70 +17,48 @@ import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.logger.Log
+import com.alekso.dltstudio.charts.model.TimeFrame
+import com.alekso.dltstudio.charts.ui.calculateX
 import kotlinx.datetime.Clock
 
-private const val TIME_MARK_SIZE_PX = 100
 
 @Composable
 fun TimeRuler(
     modifier: Modifier = Modifier,
-    offsetSec: Float,
-    scale: Float,
-    totalSeconds: Int,
-    timeStart: Long,
-    timeEnd: Long,
+    timeTotal: TimeFrame,
+    timeFrame: TimeFrame,
     debug: Boolean = false,
 ) {
-
-
     val textMeasurer = rememberTextMeasurer()
     val formatter = LocalFormatter.current
     Canvas(modifier = modifier.height(40.dp).clipToBounds()) {
-        val secSizePx: Float = (size.width / totalSeconds) * scale
-        val timeMarksCount = (size.width / TIME_MARK_SIZE_PX).toInt()
+        val secSizePx: Float = (size.width / timeFrame.durationSec)
 
         if (debug) {
             drawText(
                 textMeasurer,
-                text = "$totalSeconds seconds; Width: ${size.width}; Sec size: $secSizePx",
+                text = "${timeFrame.durationSec} seconds; Width: ${size.width}; Sec size: $secSizePx",
                 topLeft = Offset(3.dp.toPx(), 0f),
                 style = TextStyle(color = Color.LightGray, fontSize = 10.sp)
             )
         }
 
-        if (secSizePx < Float.POSITIVE_INFINITY && timeMarksCount > 0) {
-            for (i in 0..totalSeconds step timeMarksCount) {
-                try {
-                    drawText(
-                        textMeasurer,
-                        text = formatter.formatTime(timeStart + i * 1000000),
-                        topLeft = Offset(
-                            offsetSec * secSizePx + i * secSizePx,
-                            30f
-                        ),
-                        style = TextStyle(color = Color.Gray, fontSize = 10.sp)
-                    )
-                } catch (e: Exception) {
-                    Log.e("Can't render $i x: ${offsetSec * secSizePx + i * secSizePx}")
-                }
-            }
-
-        }
-
-        // seconds lines
-        for (i in 0..totalSeconds) {
+        for (i in 0..timeTotal.durationSec) {
+            val lineTime = timeTotal.timeStart + 1_000_000 * i
+            val x = calculateX(lineTime, timeFrame, size.width)
             drawLine(
                 Color.Gray,
-                Offset(
-                    offsetSec * secSizePx + i * secSizePx,
-                    size.height / 2 + if (i % 10 == 0) 0 else 20
-                ),
-                Offset(
-                    offsetSec * secSizePx + i * secSizePx,
-                    size.height + if (i % 10 == 0) 0 else 20
-                ),
+                Offset(x, size.height / 2 + if (i % 10 == 0) 0 else 20),
+                Offset(x, size.height + if (i % 10 == 0) 0 else 20),
             )
+            if (i % 10 == 0 || i == timeTotal.durationSec) {
+                val measuredText = textMeasurer.measure(
+                    text = formatter.formatTime(lineTime),
+                    style = TextStyle(color = Color.Gray, fontSize = 10.sp)
+                )
+
+                drawText(measuredText, topLeft = Offset(x, 30f))
+            }
         }
     }
 }
@@ -90,24 +68,34 @@ fun TimeRuler(
 @Composable
 fun PreviewTimeRuler() {
     val ts = Clock.System.now().toEpochMilliseconds() * 1000L
-    val te = ts + 7000000L
-    val totalSeconds = (te - ts).toInt() / 1000000
+    val totalTime = TimeFrame(ts, ts + 100_000_000L)
+    var timeFrame = TimeFrame(totalTime.timeStart, totalTime.timeEnd)
+    val formatter = LocalFormatter.current
 
     Column {
-        Text(text = "start: ${LocalFormatter.current.formatDateTime(ts)} (${ts})")
-        Text(text = "end: ${LocalFormatter.current.formatDateTime(te)} (${te})")
-        Text(text = "seconds: $totalSeconds")
-        Divider()
+        for (i in 1..5) {
+            timeFrame = if (i == 1) timeFrame else timeFrame.zoom(true)
 
-        for (i in 1..15) {
+            Text(
+                text = "Total: ${totalTime.durationSec}sec; ${formatter.formatDateTime(totalTime.timeStart)} - ${
+                    formatter.formatDateTime(
+                        totalTime.timeEnd
+                    )
+                }"
+            )
+            Text(
+                text = "Frame: ${timeFrame.durationSec}sec; ${formatter.formatDateTime(timeFrame.timeStart)} - ${
+                    formatter.formatDateTime(
+                        timeFrame.timeEnd
+                    )
+                }"
+            )
+            Divider()
 
             TimeRuler(
                 modifier = Modifier.fillMaxWidth(),
-                offsetSec = 0f,
-                scale = 2 * i.toFloat(),
-                timeStart = ts,
-                timeEnd = te,
-                totalSeconds = totalSeconds,
+                timeTotal = totalTime,
+                timeFrame = timeFrame,
             )
         }
     }

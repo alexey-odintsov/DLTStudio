@@ -1,20 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
 import com.alekso.dltmessage.DLTMessage
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineSingleStateEntry
+import com.alekso.dltstudio.charts.model.SingleStateChartData
+import com.alekso.dltstudio.charts.model.SingleStateEntry
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class SingleStateEntriesExtractor : EntriesExtractor {
+class SingleStateEntriesExtractor : EntriesExtractor<SingleStateChartData> {
 
     override fun extractEntry(
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
-    ): List<TimeLineSingleStateEntry> {
+        data: SingleStateChartData
+    ) {
         val matches = regex.find(message.payloadText())!!
-        val list = mutableListOf<TimeLineSingleStateEntry>()
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -22,9 +24,7 @@ class SingleStateEntriesExtractor : EntriesExtractor {
                 val value: String? = matches.groups[Param.VALUE.value]?.value
 
                 if (value != null) {
-                    list.add(
-                        TimeLineSingleStateEntry(message.timeStampUs, key, value)
-                    )
+                    data.addEntry(StringKey(key), SingleStateEntry(message.timeStampUs, value, ""))
                 }
             }
 
@@ -35,15 +35,11 @@ class SingleStateEntriesExtractor : EntriesExtractor {
                     val key = matches.groups[INDEX_KEY + 1]?.value
                     val value = matches.groups[INDEX_VALUE + 1]?.value
                     if (key != null && value != null) {
-                        list.add(
-                            TimeLineSingleStateEntry(message.timeStampUs, key, value)
-                        )
+                        data.addEntry(StringKey(key), SingleStateEntry(message.timeStampUs, value, ""))
                     }
                 }
             }
         }
-
-        return list
     }
 
     companion object {
