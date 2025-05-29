@@ -21,6 +21,14 @@ fun calculateX(
     return ((timestamp - timeFrame.timeStart) / timeFrame.duration.toFloat()) * width
 }
 
+fun calculateTimestamp(
+    x: Float,
+    timeFrame: TimeFrame,
+    width: Float,
+): Long {
+    return (x / width * timeFrame.duration).toLong() + timeFrame.timeStart
+}
+
 internal fun calculateYForValue(
     value: Float,
     maxValue: Float,

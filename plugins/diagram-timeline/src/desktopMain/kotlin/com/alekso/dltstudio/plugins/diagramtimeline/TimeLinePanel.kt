@@ -59,6 +59,7 @@ import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
 import com.alekso.dltstudio.charts.ui.ChartType
+import com.alekso.dltstudio.charts.ui.calculateTimestamp
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
@@ -93,7 +94,6 @@ fun TimeLinePanel(
     debug: Boolean = false,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
-    var secSizePx by remember { mutableStateOf(1f) }
 
     Column(modifier = modifier.onKeyEvent { e ->
         if (e.type == KeyEventType.KeyDown) {
@@ -124,7 +124,6 @@ fun TimeLinePanel(
             }
         } else false
     }) {
-
         TimelineToolbar(
             analyzeState = analyzeState,
             callbacks = toolbarCallbacks,
@@ -142,121 +141,115 @@ fun TimeLinePanel(
         }
 
         Divider()
+        Row {
+            Box(modifier = Modifier.width(legendSize.dp))
+            TimeRuler(
+                Modifier.fillMaxWidth(1f),
+                timeTotal = timeTotal,
+                timeFrame = timeFrame,
+                debug = debug,
+            )
+        }
 
+        val panels = mutableStateListOf<@Composable () -> Unit>()
+        val viewModifier = remember { Modifier.height(200.dp).weight(1f) }
 
-//            if (debug) {
-//                Text(
-//                    "Time range: ${LocalFormatter.current.formatDateTime(timeStart)} .. ${
-//                        LocalFormatter.current.formatDateTime(timeEnd)
-//                    }"
-//                )
-//                Text("Offset: ${"%.2f".format(offsetSec)}; scale: ${"%.2f".format(scale)}")
-//            }
-
-            Row {
-                Box(modifier = Modifier.width(legendSize.dp))
-                TimeRuler(
-                    Modifier.fillMaxWidth(1f),
-                    timeTotal = timeTotal,
-                    timeFrame = timeFrame,
-                    debug = debug,
-                )
-            }
-
-            val panels = mutableStateListOf<@Composable () -> Unit>()
-            val viewModifier = remember { Modifier.height(200.dp).weight(1f) }
-
-            timelineFilters.forEachIndexed { index, timelineFilter ->
-                if (timelineFilter.enabled) {
-                    panels.add {
-                        Row {
-                            TimelineLegend(
-                                modifier = Modifier.width(legendSize.dp).height(200.dp),
-                                title = timelineFilter.name,
-                                entries = entriesMap[timelineFilter.key],
-                                { key ->
-                                    highlightedKeysMap[timelineFilter.key] = key
-                                },
-                                highlightedKey = highlightedKeysMap[timelineFilter.key]
-                            )
-                            LegendResizer(Modifier.height(200.dp), key = "$index", onResized = onLegendResized)
-                            val chartType = when (timelineFilter.diagramType) {
-                                DiagramType.Percentage -> ChartType.Percentage
-                                DiagramType.MinMaxValue -> ChartType.MinMax
-                                DiagramType.State -> ChartType.State
-                                DiagramType.SingleState -> ChartType.SingleState
-                                DiagramType.Duration -> ChartType.Duration
-                                DiagramType.Events -> ChartType.Events
-                            }
-                            Chart(
-                                modifier = viewModifier,
-                                entries = retrieveEntriesForFilter(timelineFilter),
-                                highlightedKey = highlightedKeysMap[timelineFilter.key],
-                                onDragged = toolbarCallbacks::onDragTimeline,
-                                totalTime = timeFrame,
-                                timeFrame = timeFrame,
-                                type = chartType,
-                            )
+        timelineFilters.forEachIndexed { index, timelineFilter ->
+            if (timelineFilter.enabled) {
+                panels.add {
+                    Row {
+                        TimelineLegend(
+                            modifier = Modifier.width(legendSize.dp).height(200.dp),
+                            title = timelineFilter.name,
+                            entries = entriesMap[timelineFilter.key],
+                            { key ->
+                                highlightedKeysMap[timelineFilter.key] = key
+                            },
+                            highlightedKey = highlightedKeysMap[timelineFilter.key]
+                        )
+                        LegendResizer(
+                            Modifier.height(200.dp),
+                            key = "$index",
+                            onResized = onLegendResized
+                        )
+                        val chartType = when (timelineFilter.diagramType) {
+                            DiagramType.Percentage -> ChartType.Percentage
+                            DiagramType.MinMaxValue -> ChartType.MinMax
+                            DiagramType.State -> ChartType.State
+                            DiagramType.SingleState -> ChartType.SingleState
+                            DiagramType.Duration -> ChartType.Duration
+                            DiagramType.Events -> ChartType.Events
                         }
+                        Chart(
+                            modifier = viewModifier,
+                            entries = retrieveEntriesForFilter(timelineFilter),
+                            highlightedKey = highlightedKeysMap[timelineFilter.key],
+                            onDragged = toolbarCallbacks::onDragTimeline,
+                            totalTime = timeFrame,
+                            timeFrame = timeFrame,
+                            type = chartType,
+                        )
                     }
                 }
             }
+        }
 
-            Box(modifier = Modifier.weight(1f)) {
-                LazyColumn(
-                    Modifier.onPointerEvent(
-                        eventType = PointerEventType.Move,
-                        onEvent = { event ->
-                            cursorPosition = event.changes[0].position
-                        }), listState
-                ) {
-                    items(panels.size) { i ->
-                        if (i > 0) {
-                            Divider(Modifier.padding(2.dp))
-                        }
-                        panels[i].invoke()
+        Box(modifier = Modifier.weight(1f)) {
+            LazyColumn(
+                Modifier.onPointerEvent(
+                    eventType = PointerEventType.Move,
+                    onEvent = { event ->
+                        cursorPosition = event.changes[0].position
+                    }),
+                listState
+            ) {
+                items(panels.size) { i ->
+                    if (i > 0) {
+                        Divider(Modifier.padding(2.dp))
                     }
-                }
-                VerticalScrollbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(
-                        scrollState = listState
-                    )
-                )
-                val textMeasurer = rememberTextMeasurer()
-                val formatter = LocalFormatter.current
-                Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
-                    if (cursorPosition.x < legendSize.dp.toPx()) return@Canvas
-                    secSizePx = ((size.width - legendSize.dp.toPx()) * 1f) / timeFrame.durationSec
-
-                    val doesMarkerFit =
-                        (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
-
-                    drawLine(
-                        Color(0xFFFFFFc0),
-                        Offset(cursorPosition.x, 0f),
-                        Offset(cursorPosition.x, size.height)
-                    )
-                    val cursorOffsetSec: Float = ((cursorPosition.x - legendSize.dp.toPx()) / secSizePx) - timeFrame.durationSec
-                    val cursorTimestamp: Long = (1000000L * cursorOffsetSec).toLong() + timeFrame.timeStart
-
-                    drawText(
-                        size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
-                        textMeasurer = textMeasurer,
-                        text = "${formatter.formatTime(cursorTimestamp)} (${"%+.2f".format(cursorOffsetSec)})",
-                        topLeft = Offset(
-                            if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
-                            4.dp.toPx()
-                        ),
-                        style = TextStyle(
-                            color = Color.Yellow,
-                            fontSize = 10.sp,
-                            background = Color(0x80808080),
-                            textAlign = if (doesMarkerFit) TextAlign.Left else TextAlign.Right
-                        ), overflow = TextOverflow.Ellipsis
-                    )
+                    panels[i].invoke()
                 }
             }
+            VerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = listState
+                )
+            )
+            val textMeasurer = rememberTextMeasurer()
+            val formatter = LocalFormatter.current
+            Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
+                if (cursorPosition.x < legendSize.dp.toPx()) return@Canvas
+
+                val doesMarkerFit = (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
+
+                drawLine(
+                    Color(0xff8080ff),
+                    Offset(cursorPosition.x, 0f),
+                    Offset(cursorPosition.x, size.height)
+                )
+                val cursorTimestamp = calculateTimestamp(
+                    cursorPosition.x - legendSize.dp.toPx(),
+                    timeFrame,
+                    size.width - legendSize.dp.toPx()
+                )
+                drawText(
+                    size = Size(TIME_MARKER_WIDTH_DP.toPx(), TIME_MARKER_HEIGHT_DP.toPx()),
+                    textMeasurer = textMeasurer,
+                    text = formatter.formatTime(cursorTimestamp),
+                    topLeft = Offset(
+                        if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
+                        4.dp.toPx()
+                    ),
+                    style = TextStyle(
+                        color = Color.Yellow,
+                        fontSize = 10.sp,
+                        background = Color(0x80808080),
+                        textAlign = if (doesMarkerFit) TextAlign.Left else TextAlign.Right
+                    ), overflow = TextOverflow.Ellipsis
+                )
+            }
+        }
     }
 }
 
@@ -293,8 +286,8 @@ fun PreviewTimeline() {
         analyzeState = AnalyzeState.IDLE,
         listState = rememberLazyListState(),
         timelineFilters = mutableStateListOf(),
-        timeTotal = TimeFrame(20000L,300000L),
-        timeFrame = TimeFrame(20000L,300000L),
+        timeTotal = TimeFrame(20000L, 300000L),
+        timeFrame = TimeFrame(20000L, 300000L),
         entriesMap = mutableStateMapOf(),
         highlightedKeysMap = mutableStateMapOf(),
         filtersDialogCallbacks = callbacks,
