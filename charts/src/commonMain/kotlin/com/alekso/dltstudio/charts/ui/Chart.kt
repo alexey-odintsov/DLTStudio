@@ -37,11 +37,11 @@ fun Chart(
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
     entries: ChartData?,
-    onDragged: (Float) -> Unit,
+    onDragged: ((Float) -> Unit)? = null,
     type: ChartType,
     labelsCount: Int = 11,
     labelsPostfix: String = "",
-    highlightedKey: ChartKey?,
+    highlightedKey: ChartKey? = null,
 ) {
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
@@ -55,7 +55,7 @@ fun Chart(
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     val dragUs = -dragAmount.x / usSize
-                    onDragged(dragUs)
+                    onDragged?.invoke(dragUs)
                 }
             }
             .drawWithCache {

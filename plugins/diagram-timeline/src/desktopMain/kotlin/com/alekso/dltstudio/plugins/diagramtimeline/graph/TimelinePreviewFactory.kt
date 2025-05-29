@@ -7,7 +7,23 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.DurationEntry
+import com.alekso.dltstudio.charts.model.EventEntry
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.MinMaxEntry
+import com.alekso.dltstudio.charts.model.PercentageChartData
+import com.alekso.dltstudio.charts.model.PercentageEntry
+import com.alekso.dltstudio.charts.model.SingleStateChartData
+import com.alekso.dltstudio.charts.model.SingleStateEntry
+import com.alekso.dltstudio.charts.model.StateChartData
+import com.alekso.dltstudio.charts.model.StateEntry
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.charts.model.TimeFrame
+import com.alekso.dltstudio.charts.ui.Chart
+import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 
 private val timeFrame = TimeFrame(0L, 5_000_000L)
@@ -15,99 +31,83 @@ private val timeFrame = TimeFrame(0L, 5_000_000L)
 object TimelinePreviewFactory {
     @Composable
     fun getPreview(diagramType: DiagramType, modifier: Modifier) {
-//        when (diagramType) {
-//            DiagramType.Percentage -> {
-//                TimelinePercentageView(
-//                    modifier = modifier,
-//                    entries = TimeLinePercentageEntries().also {
-//                        it.addEntry(TimeLineFloatEntry(1_000_000L, "a", 20f))
-//                        it.addEntry(TimeLineFloatEntry(2_000_000L, "a", 42f))
-//                        it.addEntry(TimeLineFloatEntry(3_000_000L, "a", 25f))
-//                        it.addEntry(TimeLineFloatEntry(4_000_000L, "a", 79f))
-//                        it.addEntry(TimeLineFloatEntry(5_000_000L, "a", 59f))
-//                    },
-//                    timeFrame = timeFrame,
-//                    highlightedKey = null
-//                )
-//            }
-//
-//            DiagramType.MinMaxValue -> {
-//                TimelineMinMaxValueView(
-//                    modifier = modifier,
-//                    entries = TimeLineMinMaxEntries().also {
-//                        it.addEntry(TimeLineFloatEntry(500_000L, "a", 48f))
-//                        it.addEntry(TimeLineFloatEntry(1_500_000L, "a", 68f))
-//                        it.addEntry(TimeLineFloatEntry(2_500_000L, "a", 55f))
-//                        it.addEntry(TimeLineFloatEntry(3_500_000L, "a", 92f))
-//                        it.addEntry(TimeLineFloatEntry(4_500_000L, "a", 96f))
-//
-//                        it.addEntry(TimeLineFloatEntry(1_000_000L, "b", 15f))
-//                        it.addEntry(TimeLineFloatEntry(2_000_000L, "b", 20f))
-//                        it.addEntry(TimeLineFloatEntry(3_000_000L, "b", 45f))
-//                        it.addEntry(TimeLineFloatEntry(4_000_000L, "b", 55f))
-//                    },
-//                    timeFrame = timeFrame,
-//                    highlightedKey = null,
-//                    seriesCount = 8,
-//                )
-//            }
-//
-//            DiagramType.State -> {
-//                TimelineStateView(
-//                    modifier = modifier,
-//                    entries = TimeLineStateEntries().also {
-//                        it.addEntry(TimeLineStateEntry(1_000_000L, "a", Pair("a", "b")))
-//                        it.addEntry(TimeLineStateEntry(2_000_000L, "a", Pair("b", "c")))
-//                        it.addEntry(TimeLineStateEntry(3_000_000L, "a", Pair("c", "a")))
-//                        it.addEntry(TimeLineStateEntry(4_000_000L, "a", Pair("a", "b")))
-//                    },
-//                    timeFrame = timeFrame,
-//                    highlightedKey = null
-//                )
-//            }
-//
-//            DiagramType.SingleState -> {
-//                TimelineSingleStateView(
-//                    modifier = modifier,
-//                    entries = TimeLineSingleStateEntries().also {
-//                        it.addEntry(TimeLineSingleStateEntry(1_500_000L, "a", "DRIVING"))
-//                        it.addEntry(TimeLineSingleStateEntry(2_000_000L, "a", "STOPPED"))
-//                        it.addEntry(TimeLineSingleStateEntry(3_000_000L, "a", "PARKED"))
-//                        it.addEntry(TimeLineSingleStateEntry(4_000_000L, "a", "OFF"))
-//                    },
-//                    timeFrame = timeFrame,
-//                    highlightedKey = null
-//                )
-//            }
-//
-//            DiagramType.Duration -> {
-//                TimelineDurationView(
-//                    modifier = modifier,
-//                    entries = TimeLineDurationEntries().also {
-//                        it.addEntry(TimeLineDurationEntry(2_000_000L, "onCreate", Pair("begin", null)))
-//                        it.addEntry(TimeLineDurationEntry(3_000_000L, "onCreate", Pair(null, "end")))
-//                        it.addEntry(TimeLineDurationEntry(3_000_000L, "onStart", Pair("begin", null)))
-//                        it.addEntry(TimeLineDurationEntry(4_000_000L, "onStart", Pair(null, "end")))
-//                    },
-//                    timeFrame = timeFrame,
-//                    highlightedKey = null
-//                )
-//            }
-//
-//            DiagramType.Events -> {
-//                TimelineEventView(
-//                    modifier = modifier,
-//                    entries = TimeLineEventEntries().also {
-//                        it.addEntry(TimeLineEventEntry(2_000_000L, "app1", TimeLineEvent("CRASH", null)))
-//                        it.addEntry(TimeLineEventEntry(3_000_000L, "app2", TimeLineEvent("CRASH", null)))
-//                        it.addEntry(TimeLineEventEntry(4_000_000L, "app1", TimeLineEvent("ANR", null)))
-//                        it.addEntry(TimeLineEventEntry(2_500_000L, "service1", TimeLineEvent("WTF", null)))
-//                    },
-//                    timeFrame = timeFrame,
-//                    highlightedKey = null
-//                )
-//            }
-//        }
+        var chartData: ChartData?
+        var chartType: ChartType?
+        val key1 = StringKey("app1")
+        val key2 = StringKey("app2")
+        val key3 = StringKey("app3")
+
+        when (diagramType) {
+            DiagramType.Percentage -> {
+                chartType = ChartType.Percentage
+                chartData = PercentageChartData()
+                chartData.addEntry(key1, PercentageEntry(1_000_000L, 20f))
+                chartData.addEntry(key1, PercentageEntry(2_000_000L, 42f))
+                chartData.addEntry(key1, PercentageEntry(3_000_000L, 25f))
+                chartData.addEntry(key1, PercentageEntry(4_000_000L, 79f))
+                chartData.addEntry(key1, PercentageEntry(5_000_000L, 59f))
+                chartData.addEntry(key2, PercentageEntry(1_500_000L, 75f))
+                chartData.addEntry(key2, PercentageEntry(2_500_000L, 70f))
+                chartData.addEntry(key2, PercentageEntry(4_500_000L, 41f))
+            }
+
+            DiagramType.MinMaxValue -> {
+                chartType = ChartType.MinMax
+                chartData = MinMaxChartData()
+                chartData.addEntry(key1, MinMaxEntry(1_000_000L, 480f))
+                chartData.addEntry(key1, MinMaxEntry(2_000_000L, 680f))
+                chartData.addEntry(key1, MinMaxEntry(3_000_000L, 550f))
+                chartData.addEntry(key1, MinMaxEntry(4_000_000L, 920f))
+                chartData.addEntry(key1, MinMaxEntry(5_000_000L, 960f))
+                chartData.addEntry(key2, MinMaxEntry(1_000_000L, 150f))
+                chartData.addEntry(key2, MinMaxEntry(2_000_000L, 200f))
+                chartData.addEntry(key2, MinMaxEntry(3_000_000L, 450f))
+                chartData.addEntry(key2, MinMaxEntry(4_000_000L, 550f))
+            }
+
+            DiagramType.State -> {
+                chartType = ChartType.State
+                chartData = StateChartData()
+                chartData.addEntry(key1, StateEntry(1_000_000L, "a", "b"))
+                chartData.addEntry(key1, StateEntry(2_000_000L, "b", "c"))
+                chartData.addEntry(key1, StateEntry(3_000_000L, "c", "a"))
+                chartData.addEntry(key1, StateEntry(4_000_000L, "a", "b"))
+            }
+
+            DiagramType.SingleState -> {
+                chartType = ChartType.SingleState
+                chartData = SingleStateChartData()
+                chartData.addEntry(key1, SingleStateEntry(1_000_000L, "DRIVING"))
+                chartData.addEntry(key1, SingleStateEntry(2_000_000L, "STOPPED"))
+                chartData.addEntry(key1, SingleStateEntry(3_000_000L, "PARKED"))
+                chartData.addEntry(key1, SingleStateEntry(4_000_000L, "OFF"))
+            }
+
+            DiagramType.Duration -> {
+                chartType = ChartType.Duration
+                chartData = DurationChartData()
+                chartData.addEntry(key1, DurationEntry(1_000_000L, begin = "begin", end = null))
+                chartData.addEntry(key1, DurationEntry(2_000_000L, begin = null, end = "end"))
+                chartData.addEntry(key2, DurationEntry(3_000_000L, begin = "begin", end = null))
+                chartData.addEntry(key2, DurationEntry(4_000_000L, begin = null, end = "end"))
+            }
+
+            DiagramType.Events -> {
+                chartType = ChartType.Events
+                chartData = EventsChartData()
+                chartData.addEntry(key1, EventEntry(1_000_000L, "CRASH"))
+                chartData.addEntry(key2, EventEntry(2_000_000L, "CRASH"))
+                chartData.addEntry(key1, EventEntry(3_000_000L, "ANR"))
+                chartData.addEntry(key3, EventEntry(4_000_000L, "WTF"))
+            }
+        }
+        Chart(
+            modifier = modifier,
+            entries = chartData,
+            totalTime = timeFrame,
+            timeFrame = timeFrame,
+            type = chartType,
+        )
     }
 }
 
