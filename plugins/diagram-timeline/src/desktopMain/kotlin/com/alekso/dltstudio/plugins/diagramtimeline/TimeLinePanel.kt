@@ -91,7 +91,6 @@ fun TimeLinePanel(
     currentFilterFile: RecentTimelineFilterFileEntry?,
     toolbarCallbacks: ToolbarCallbacks,
     onCloseFiltersDialog: () -> Unit,
-    debug: Boolean = false,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
 
@@ -99,22 +98,22 @@ fun TimeLinePanel(
         if (e.type == KeyEventType.KeyDown) {
             when (e.key) {
                 Key.A -> {
-                    toolbarCallbacks::onRightClicked
+                    toolbarCallbacks.onRightClicked()
                     true
                 }
 
                 Key.D -> {
-                    toolbarCallbacks::onLeftClicked
+                    toolbarCallbacks.onLeftClicked()
                     true
                 }
 
                 Key.W -> {
-                    toolbarCallbacks::onZoomInClicked
+                    toolbarCallbacks.onZoomInClicked()
                     true
                 }
 
                 Key.S -> {
-                    toolbarCallbacks::onZoomOutClicked
+                    toolbarCallbacks.onZoomOutClicked()
                     true
                 }
 
@@ -147,7 +146,6 @@ fun TimeLinePanel(
                 Modifier.fillMaxWidth(1f),
                 timeTotal = timeTotal,
                 timeFrame = timeFrame,
-                debug = debug,
             )
         }
 
