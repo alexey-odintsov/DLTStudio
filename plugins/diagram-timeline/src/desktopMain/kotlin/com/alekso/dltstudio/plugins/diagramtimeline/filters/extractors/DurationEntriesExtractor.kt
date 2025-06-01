@@ -24,7 +24,6 @@ class DurationEntriesExtractor : EntriesExtractor<DurationChartData> {
                 val begin: String? = matches.groups[Param.BEGIN.value]?.value
                 val end: String? = matches.groups[Param.END.value]?.value
 
-                // TODO: To build Duration entries from different begin and end value
                 data.addEntry(
                     StringKey(key),
                     DurationEntry(message.timeStampUs, begin = begin, end = end, data = null)
