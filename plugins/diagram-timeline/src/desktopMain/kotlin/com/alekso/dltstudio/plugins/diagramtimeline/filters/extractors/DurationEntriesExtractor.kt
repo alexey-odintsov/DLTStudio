@@ -1,20 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
 import com.alekso.dltmessage.DLTMessage
-import com.alekso.dltstudio.plugins.diagramtimeline.TimeLineDurationEntry
+import com.alekso.dltstudio.charts.model.DurationChartData
+import com.alekso.dltstudio.charts.model.DurationEntry
+import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class DurationEntriesExtractor : EntriesExtractor {
+class DurationEntriesExtractor : EntriesExtractor<DurationChartData> {
 
     override fun extractEntry(
         message: DLTMessage,
         regex: Regex,
         extractionType: ExtractionType,
-    ): List<TimeLineDurationEntry> {
+        data: DurationChartData,
+    ) {
         val matches = regex.find(message.payloadText())!!
-        val list = mutableListOf<TimeLineDurationEntry>()
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -22,15 +24,14 @@ class DurationEntriesExtractor : EntriesExtractor {
                 val begin: String? = matches.groups[Param.BEGIN.value]?.value
                 val end: String? = matches.groups[Param.END.value]?.value
 
-                list.add(
-                    TimeLineDurationEntry(message.timeStampUs, key, Pair(begin, end))
+                data.addEntry(
+                    StringKey(key),
+                    DurationEntry(message.timeStampUs, begin = begin, end = end, data = null)
                 )
             }
 
             ExtractionType.GroupsManyEntries -> throw UnsupportedOperationException()
             ExtractionType.NamedGroupsManyEntries -> throw UnsupportedOperationException()
         }
-
-        return list
     }
 }

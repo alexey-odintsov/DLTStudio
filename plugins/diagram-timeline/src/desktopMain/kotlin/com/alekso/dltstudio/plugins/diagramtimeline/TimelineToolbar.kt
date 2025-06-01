@@ -44,15 +44,41 @@ import dltstudio.resources.icon_stop
 import dltstudio.resources.icon_zoom_in
 import dltstudio.resources.icon_zoom_out
 
+interface ToolbarCallbacks {
+    fun onAnalyzeClicked()
+    fun onTimelineFiltersClicked()
+    fun onLoadFilterClicked()
+    fun onSaveFilterClicked()
+    fun onClearFilterClicked()
+    fun onRecentFilterClicked(path: String)
+    fun onLeftClicked()
+    fun onRightClicked()
+    fun onZoomInClicked()
+    fun onZoomOutClicked()
+    fun onZoomFitClicked()
+    fun onDragTimeline(dx: Float)
+
+
+    object Stub : ToolbarCallbacks {
+        override fun onAnalyzeClicked() = Unit
+        override fun onTimelineFiltersClicked() = Unit
+        override fun onLoadFilterClicked() = Unit
+        override fun onSaveFilterClicked() = Unit
+        override fun onClearFilterClicked() = Unit
+        override fun onRecentFilterClicked(path: String) = Unit
+        override fun onLeftClicked() = Unit
+        override fun onRightClicked() = Unit
+        override fun onZoomInClicked() = Unit
+        override fun onZoomOutClicked() = Unit
+        override fun onZoomFitClicked() = Unit
+        override fun onDragTimeline(dx: Float) = Unit
+    }
+}
+
+
 @Composable
 fun TimelineToolbar(
     analyzeState: AnalyzeState,
-    onAnalyzeClick: () -> Unit,
-    leftClick: () -> Unit,
-    rightClick: () -> Unit,
-    zoomInClick: () -> Unit,
-    zoomOutClick: () -> Unit,
-    zoomFitClick: () -> Unit,
     callbacks: ToolbarCallbacks,
     recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
     currentFilterFile: RecentTimelineFilterFileEntry?,
@@ -72,7 +98,7 @@ fun TimelineToolbar(
                     Res.drawable.icon_stop
                 },
                 title = "Analyze timeline",
-                onClick = onAnalyzeClick
+                onClick = callbacks::onAnalyzeClicked
             )
         }
         HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp))
@@ -82,7 +108,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_left,
                 title = "Move left",
-                onClick = leftClick
+                onClick = callbacks::onLeftClicked
             )
         }
         Tooltip(text = "Move offset to the right") {
@@ -90,7 +116,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_right,
                 title = "Move right",
-                onClick = rightClick
+                onClick = callbacks::onRightClicked
             )
         }
 
@@ -99,7 +125,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_zoom_in,
                 title = "Zoom in",
-                onClick = zoomInClick
+                onClick = callbacks::onZoomInClicked
             )
         }
         Tooltip(text = "Zoom out") {
@@ -107,7 +133,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_zoom_out,
                 title = "Zoom out",
-                onClick = zoomOutClick
+                onClick = callbacks::onZoomOutClicked
             )
         }
         Tooltip(text = "Fit timeline") {
@@ -115,7 +141,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_fit,
                 title = "Fit timeline",
-                onClick = zoomFitClick
+                onClick = callbacks::onZoomFitClicked
             )
         }
 
@@ -131,7 +157,6 @@ fun TimelineToolbar(
 
         if (recentFiltersFiles.isNotEmpty()) {
             var expanded by remember { mutableStateOf(false) }
-            var selectedIndex by remember { mutableStateOf(0) }
             Box {
                 Text(
                     currentFilterFile?.fileName ?: "No filters file selected",
@@ -145,7 +170,6 @@ fun TimelineToolbar(
                 ) {
                     recentFiltersFiles.forEachIndexed { index, s ->
                         DropdownMenuItem(onClick = {
-                            selectedIndex = index
                             expanded = false
                             callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
                         }) {
@@ -157,22 +181,19 @@ fun TimelineToolbar(
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp),
-            onClick = callbacks::onLoadFilterClicked
+            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onLoadFilterClicked
         ) {
             Text("Load")
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp),
-            onClick = callbacks::onSaveFilterClicked
+            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onSaveFilterClicked
         ) {
             Text("Save")
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp),
-            onClick = callbacks::onClearFilterClicked
+            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onClearFilterClicked
         ) {
             Text("Clear")
         }
@@ -189,13 +210,7 @@ fun PreviewTimelineToolbar() {
             recentFiltersFiles = mutableStateListOf(
                 RecentTimelineFilterFileEntry("timeline-filter.txt", "/path/to/file/"),
                 RecentTimelineFilterFileEntry("timeline-filter2.txt", "/path/to/file/"),
-                ),
-            zoomFitClick = {},
-            zoomOutClick = {},
-            zoomInClick = {},
-            onAnalyzeClick = {},
-            leftClick = {},
-            rightClick = {},
+            ),
             currentFilterFile = null
         )
         Divider()

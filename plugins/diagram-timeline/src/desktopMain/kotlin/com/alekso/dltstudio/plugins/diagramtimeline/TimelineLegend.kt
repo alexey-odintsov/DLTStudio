@@ -3,19 +3,19 @@ package com.alekso.dltstudio.plugins.diagramtimeline
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Text
@@ -26,19 +26,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.uicomponents.ColorPalette
+import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartKey
+import com.alekso.dltstudio.charts.model.EventEntry
+import com.alekso.dltstudio.charts.model.EventsChartData
+import com.alekso.dltstudio.charts.model.MinMaxChartData
+import com.alekso.dltstudio.charts.model.MinMaxEntry
+import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.charts.ui.ChartPalette
+import com.alekso.dltstudio.uicomponents.Tooltip
 import kotlinx.datetime.Clock
 
 @Composable
 fun TimelineLegend(
     modifier: Modifier,
     title: String,
-    entries: TimeLineEntries<*>? = null,
-    updateHighlightedKey: (String?) -> Unit,
-    highlightedKey: String? = null,
+    entries: ChartData? = null,
+    updateHighlightedKey: (ChartKey?) -> Unit,
+    highlightedKey: ChartKey? = null,
 ) {
     val state = rememberLazyListState()
-    val map = entries?.map
+    val keys = entries?.getKeys()
+    val keysCount = keys?.size ?: 0
 
     Box(modifier = modifier.padding(start = 4.dp, end = 4.dp)) {
         Column(Modifier.fillMaxSize()) {
@@ -49,13 +58,11 @@ fun TimelineLegend(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            if (!map.isNullOrEmpty()) {
-                val horizontalState = rememberScrollState()
-                LazyColumn(Modifier.horizontalScroll(horizontalState).wrapContentWidth(Alignment.Start), state) {
-                    val keys = map.keys.toList()
+            if (keysCount > 0) {
+                LazyColumn(Modifier, state) {
 
-                    items(keys.size) { i ->
-                        val key = keys[i]
+                    items(keysCount) { i ->
+                        val key = keys?.get(i)
                         Row(
                             Modifier.selectable(
                                 selected = highlightedKey == key,
@@ -64,15 +71,17 @@ fun TimelineLegend(
                             Box(
                                 modifier = Modifier.width(30.dp).height(6.dp).padding(end = 4.dp)
                                     .align(Alignment.CenterVertically)
-                                    .background(ColorPalette.getColor(i))
+                                    .background(ChartPalette.getColor(i))
                             )
-                            Text(
-                                modifier = Modifier,
-                                text = key,
-                                overflow = TextOverflow.Ellipsis,
-                                maxLines = 1,
-                                fontWeight = FontWeight(if (highlightedKey == key) 600 else 400)
-                            )
+                            Tooltip(text = key?.key ?: "") {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = key?.key ?: "",
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                    fontWeight = FontWeight(if (highlightedKey == key) 600 else 400)
+                                )
+                            }
                         }
                     }
                 }
@@ -92,35 +101,41 @@ fun TimelineLegend(
 fun PreviewTimeLineLegend() {
     val ts = Clock.System.now().toEpochMilliseconds() * 1000L
 
-    val entries = TimeLineEventEntries()
-    entries.addEntry(
-        TimeLineEventEntry(
-            ts,
-            "my test app long long name (pid: 99982)",
-            TimeLineEvent("CRASH", null)
-        )
+    val entries = EventsChartData()
+    entries.addEntry(StringKey("app1"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("app2"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("app3"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("mysuperservice1: 12345"), EventEntry(ts, "ANR", null))
+    entries.addEntry(StringKey("mysuperservice2: 12345"), EventEntry(ts, "ANR", null))
+
+    val minMax = MinMaxChartData()
+    minMax.addEntry(
+        StringKey("app1"),
+        MinMaxEntry(ts, 100f, null)
     )
-    entries.addEntry(
-        TimeLineEventEntry(
-            ts,
-            "Second app (pid: 23455)",
-            TimeLineEvent("ANR", null)
-        )
+    minMax.addEntry(
+        StringKey("app2"),
+        MinMaxEntry(ts, 100f, null)
     )
-    entries.addEntry(
-        TimeLineEventEntry(
-            ts,
-            "System app (pid: 0)",
-            TimeLineEvent("WTF", null)
-        )
+    minMax.addEntry(
+        StringKey("mysuperservice: 12345"),
+        MinMaxEntry(ts, 100f, null)
     )
 
-
-    Column(Modifier.background(Color.Gray)) {
+    Column(Modifier.fillMaxWidth()) {
         TimelineLegend(
-            modifier = Modifier.width(200.dp),
-            title = "Very long test title with more than one line text",
+            modifier = Modifier.size(200.dp, 100.dp).background(Color.Gray),
+            title = "Crashes",
             entries = entries,
+            updateHighlightedKey = {},
+            highlightedKey = null
+        )
+        Spacer(Modifier.height(4.dp))
+
+        TimelineLegend(
+            modifier = Modifier.size(250.dp, 200.dp).background(Color.LightGray),
+            title = "Memory usage",
+            entries = minMax,
             updateHighlightedKey = {},
             highlightedKey = null
         )
