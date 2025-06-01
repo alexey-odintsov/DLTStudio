@@ -15,12 +15,19 @@ data class TimeFrame(
         return copy(timeStart = timeStart + dx, timeEnd = timeEnd + dx)
     }
 
-    fun zoom(zoomIn: Boolean): TimeFrame {
-        val factor = 10
-        return if (zoomIn) {
-            copy(timeStart = timeStart + duration / factor, timeEnd = timeEnd - duration / factor)
-        } else {
-            copy(timeStart = timeStart - duration / factor, timeEnd = timeEnd + duration / factor)
-        }
+    fun zoom(zoomIn: Boolean, factor: Double = 0.1): TimeFrame {
+        val center = (timeStart + timeEnd) / 2
+        val scale = if (zoomIn) 1 - factor else 1 + factor
+        val halfNewDuration = (duration * scale / 2).toLong()
+        return if (zoomIn && halfNewDuration <= 500) {
+            TimeFrame(
+                timeStart = center - 500,
+                timeEnd = center + 500
+            )
+        } else TimeFrame(
+            timeStart = center - halfNewDuration,
+            timeEnd = center + halfNewDuration
+        )
     }
+
 }
