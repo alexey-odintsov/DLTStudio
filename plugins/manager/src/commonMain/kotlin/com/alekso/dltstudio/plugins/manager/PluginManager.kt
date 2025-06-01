@@ -56,7 +56,7 @@ class PluginManager(
                     plugin.initFormatter(formatter)
                 }
                 plugins.add(plugin)
-            } catch (e: Exception) {
+            } catch (e: Throwable) {
                 Log.e("Failed to load plugin ${e.stackTraceToString()}")
             }
         }
