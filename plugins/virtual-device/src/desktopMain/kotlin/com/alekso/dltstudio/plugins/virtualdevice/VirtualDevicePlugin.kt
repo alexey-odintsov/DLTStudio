@@ -20,6 +20,9 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
     override fun pluginDirectoryName(): String = "virtual-device"
     override fun pluginVersion(): String = "0.0.1"
     override fun pluginClassName(): String = VirtualDevicePlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Allows creating virtual screens and preview elements from selected logs. To show previews the a log message should contains Rect information."
     override fun getPanelName(): String = "Virtual device"
 
     override fun init(

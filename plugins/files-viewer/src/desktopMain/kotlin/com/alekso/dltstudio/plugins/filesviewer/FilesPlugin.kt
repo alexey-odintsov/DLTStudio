@@ -22,6 +22,9 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     override fun pluginDirectoryName(): String = "files-plugin"
     override fun pluginVersion(): String = "1.0.0"
     override fun pluginClassName(): String = FilesPlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Extracts/Previews files from FLST/FLDA messages"
     override fun getPanelName(): String = "Files"
 
     override fun init(

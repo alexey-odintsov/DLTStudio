@@ -12,6 +12,9 @@ class DLTDetailedViewPlugin : DLTStudioPlugin, PluginLogPreview {
     override fun pluginDirectoryName(): String = "dlt-detailed-view"
     override fun pluginVersion(): String = "0.0.1"
     override fun pluginClassName(): String = DLTDetailedViewPlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Shows detailed information about selected DLT message."
     override fun getPanelName(): String = "DLT Details"
 
     override fun init(
