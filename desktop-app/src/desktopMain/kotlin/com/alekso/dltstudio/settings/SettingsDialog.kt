@@ -17,9 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltmessage.PayloadStorageType
+import com.alekso.dltstudio.model.PluginState
 import com.alekso.dltstudio.model.SettingsLogs
+import com.alekso.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.model.SettingsUI
+import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.uicomponents.TabsPanel
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.SplitPaneState
 
 interface SettingsDialogCallbacks {
     fun onSettingsUIUpdate(settings: SettingsUI)
@@ -33,6 +38,18 @@ interface SettingsDialogCallbacks {
     }
 }
 
+interface SettingsPluginsCallbacks {
+    fun onPluginClicked(plugin: DLTStudioPlugin)
+    fun onUpdatePluginState(pluginState: PluginState)
+
+    companion object {
+        val Stub = object : SettingsPluginsCallbacks {
+            override fun onPluginClicked(plugin: DLTStudioPlugin) = Unit
+            override fun onUpdatePluginState(pluginState: PluginState) = Unit
+        }
+    }
+}
+
 @Composable
 fun SettingsDialog(
     visible: Boolean,
@@ -40,23 +57,36 @@ fun SettingsDialog(
     settingsUI: SettingsUI,
     settingsLogs: SettingsLogs,
     callbacks: SettingsDialogCallbacks,
+    pluginsCallbacks: SettingsPluginsCallbacks,
+    settingsPlugins: SettingsPlugins,
 ) {
     DialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Settings",
-        state = rememberDialogState(width = 500.dp, height = 500.dp)
+        state = rememberDialogState(width = 800.dp, height = 600.dp)
     ) {
-        SettingsPanel(callbacks, settingsUI, settingsLogs)
+        SettingsPanel(
+            callbacks, settingsUI, settingsLogs,
+            pluginsCallbacks,
+            settingsPlugins
+        )
     }
 }
 
+@OptIn(ExperimentalSplitPaneApi::class)
 @Composable
 fun SettingsPanel(
     callbacks: SettingsDialogCallbacks,
     settingsUI: SettingsUI,
     settingsLogs: SettingsLogs,
+    pluginsCallbacks: SettingsPluginsCallbacks,
+    settingsPlugins: SettingsPlugins,
 ) {
     val tabs = mutableStateListOf("Appearance", "Logs", "Plugins")
+
+    @OptIn(ExperimentalSplitPaneApi::class)
+    val vSplitterState = SplitPaneState(0.8f, true)
+
     var tabIndex by remember { mutableStateOf(0) }
     Row(modifier = Modifier.padding(4.dp)) {
         Column(Modifier.width(140.dp)) {
@@ -66,7 +96,7 @@ fun SettingsPanel(
             when (tabIndex) {
                 0 -> AppearancePanel(callbacks, settingsUI)
                 1 -> LogsPanel(callbacks, settingsLogs)
-                2 -> PluginsPanel(callbacks)
+                2 -> PluginsPanel(settingsPlugins, pluginsCallbacks, vSplitterState)
                 else -> Unit
             }
         }
@@ -79,6 +109,8 @@ fun PreviewSettingsDialog() {
     SettingsPanel(
         callbacks = SettingsDialogCallbacks.Stub,
         settingsUI = SettingsUI(12, FontFamily.Serif),
-        settingsLogs = SettingsLogs(backendType = PayloadStorageType.Binary)
+        settingsLogs = SettingsLogs(backendType = PayloadStorageType.Binary),
+        pluginsCallbacks = SettingsPluginsCallbacks.Stub,
+        settingsPlugins = SettingsPlugins(pluginsState = emptyList()),
     )
 }

@@ -20,4 +20,10 @@ interface SettingsDao {
     @Query("SELECT * FROM SettingsLogsEntity LIMIT 1")
     fun getSettingsLogsFlow(): Flow<SettingsLogsEntity?>
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateSettingsPlugins(item: PluginStateEntity)
+
+    @Query("SELECT * FROM PluginStateEntity")
+    fun getPluginsStatesFlow(): Flow<List<PluginStateEntity>>
+
 }
