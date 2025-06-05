@@ -28,7 +28,7 @@ kotlin {
             implementation(project(":charts"))
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(libs.kotlin.datetime)
             implementation(libs.kotlin.serializaion)

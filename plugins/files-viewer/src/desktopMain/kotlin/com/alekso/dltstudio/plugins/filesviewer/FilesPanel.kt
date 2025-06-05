@@ -18,7 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
@@ -33,7 +33,6 @@ import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FilesPanel(
     analyzeState: FilesState,

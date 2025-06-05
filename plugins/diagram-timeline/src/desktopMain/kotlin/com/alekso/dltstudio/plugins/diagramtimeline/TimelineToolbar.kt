@@ -8,15 +8,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -169,12 +169,12 @@ fun TimelineToolbar(
                     modifier = Modifier.width(200.dp)
                 ) {
                     recentFiltersFiles.forEachIndexed { index, s ->
-                        DropdownMenuItem(onClick = {
+                        DropdownMenuItem(
+                            text = { s.fileName },
+                            onClick = {
                             expanded = false
                             callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
-                        }) {
-                            Text(text = s.fileName, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        }
+                        })
                     }
                 }
             }
@@ -213,6 +213,6 @@ fun PreviewTimelineToolbar() {
             ),
             currentFilterFile = null
         )
-        Divider()
+        HorizontalDivider(Modifier.fillMaxWidth().height(1.dp))
     }
 }

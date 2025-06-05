@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,7 +29,6 @@ import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun PluginsPanel(callbacks: SettingsDialogCallbacks) {
     val pluginManager = remember { DependencyManager.providePluginsManager() }
