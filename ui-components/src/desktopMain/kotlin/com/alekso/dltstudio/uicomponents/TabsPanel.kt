@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,7 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TabsPanel(
     tabIndex: Int,
@@ -81,5 +79,6 @@ fun PreviewHorizontalTabs() {
 @Preview
 @Composable
 fun PreviewVerticalTabs() {
+
     TabsPanel(1, mutableStateListOf("Logs", "CPU", "Memory"), { i -> }, vertical = true)
 }

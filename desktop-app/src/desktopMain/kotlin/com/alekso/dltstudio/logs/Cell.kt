@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -50,7 +51,7 @@ fun Cell(
 ) {
     val color = if (cellStyle != null) {
         cellStyle.textColor ?: Color.Unspecified
-    } else Color.Unspecified
+    } else MaterialTheme.colorScheme.primary
 
     if (content != null) {
         Box(modifier = modifier) {
@@ -80,7 +81,7 @@ fun Cell(
                     fontWeight = FontWeight(400),
                     softWrap = true,
                     text = text,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.onPrimary,
                 )
             }
         } else {

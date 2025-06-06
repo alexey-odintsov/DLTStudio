@@ -20,7 +20,8 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.AppTheme
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 
 @Composable
 fun StatusBar(modifier: Modifier = Modifier, progress: Float, statusText: String) {
@@ -66,7 +67,7 @@ fun PreviewStatusBarInProgress() {
     val text = "/user/test/file.dlt"
     Box(Modifier.fillMaxSize().background(Color.Black)) {
         Column {
-            AppTheme(darkTheme = false) {
+            ThemeManager.CustomTheme(SystemTheme(false)) {
                 Column {
                     StatusBar(modifier, 0f, text)
                     StatusBar(modifier, 0.15f, text)
@@ -76,7 +77,7 @@ fun PreviewStatusBarInProgress() {
                     StatusBar(Modifier, 1f, text)
                 }
             }
-            AppTheme(darkTheme = true) {
+            ThemeManager.CustomTheme(SystemTheme(true)) {
                 Column {
                     StatusBar(modifier, 0f, text)
                     StatusBar(modifier, 0.15f, text)

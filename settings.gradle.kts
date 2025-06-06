@@ -19,6 +19,7 @@ dependencyResolutionManagement {
 }
 
 include(":resources")
+include(":app-theme")
 include(":desktop-app")
 include(":data-utils")
 include(":dlt-message")

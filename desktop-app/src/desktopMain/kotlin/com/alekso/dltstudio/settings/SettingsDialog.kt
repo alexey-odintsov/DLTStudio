@@ -17,9 +17,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltmessage.PayloadStorageType
-import com.alekso.dltstudio.AppTheme
 import com.alekso.dltstudio.model.SettingsLogs
 import com.alekso.dltstudio.model.SettingsUI
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.TabsPanel
 
 interface SettingsDialogCallbacks {
@@ -47,7 +47,7 @@ fun SettingsDialog(
         title = "Settings",
         state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
-        AppTheme {
+        ThemeManager.AppTheme {
             SettingsPanel(callbacks, settingsUI, settingsLogs)
         }
     }
