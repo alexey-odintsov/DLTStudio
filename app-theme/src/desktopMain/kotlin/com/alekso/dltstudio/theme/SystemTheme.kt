@@ -23,8 +23,8 @@ class SystemTheme(
     override fun colors(): Colors {
         return if (isDark)
             Colors(
-                logRow = Color.Black,
-                onLogRow = Color.White,
+                logRow = Color(0xff3b3b3d),
+                onLogRow = Color(0xffc3c3c3),
             )
         else
             Colors(
