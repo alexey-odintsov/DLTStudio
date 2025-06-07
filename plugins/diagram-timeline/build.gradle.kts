@@ -19,6 +19,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
+            implementation(project(":app-theme"))
             implementation(project(":logger"))
             implementation(project(":ui-components"))
             implementation(project(":plugins:contract"))

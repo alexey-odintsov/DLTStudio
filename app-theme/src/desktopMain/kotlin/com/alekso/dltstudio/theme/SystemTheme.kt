@@ -14,8 +14,12 @@ import androidx.compose.ui.unit.sp
  * Default app theme that automatically applies dark mode based on the system settings.
  */
 class SystemTheme(
-    val isDark: Boolean
+    private val isDark: Boolean
 ) : Theme {
+    override fun isDark(): Boolean {
+        return isDark
+    }
+
     override fun colorScheme(): ColorScheme {
         return if (isDark) darkColorScheme() else lightColorScheme()
     }

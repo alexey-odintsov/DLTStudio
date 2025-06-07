@@ -6,6 +6,8 @@ import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 
 interface Theme {
+    fun isDark(): Boolean
+
     fun colorScheme(): ColorScheme
 
     fun colors(): Colors
