@@ -84,24 +84,148 @@ fun PreviewColors(isDark: Boolean) {
         Column {
             Text(if (isDark) "Dark" else "Light")
             Text(
-                text = "onPrimary",
+                text = "onPrimary/primary",
                 color = MaterialTheme.colorScheme.onPrimary,
+                maxLines = 1,
                 modifier = Modifier.background(color = MaterialTheme.colorScheme.primary)
             )
             Text(
-                text = "inversePrimary",
-                color = MaterialTheme.colorScheme.inversePrimary,
-                modifier = Modifier.background(color = MaterialTheme.colorScheme.primary)
-            )
-            Text(
-                text = "onPrimaryContainer",
+                text = "onPrimaryContainer/primaryContainer",
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
+                maxLines = 1,
                 modifier = Modifier.background(color = MaterialTheme.colorScheme.primaryContainer)
             )
             Text(
-                text = "onSurface",
+                text = "inversePrimary/primary",
+                color = MaterialTheme.colorScheme.inversePrimary,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.primary)
+            )
+            Text(
+                text = "onSecondary/secondary",
+                color = MaterialTheme.colorScheme.onSecondary,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.secondary)
+            )
+            Text(
+                text = "onSecondaryContainer/secondaryContainer",
+                color = MaterialTheme.colorScheme.onSecondaryContainer,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.secondaryContainer)
+            )
+            Text(
+                text = "onTertiary/tertiary",
+                color = MaterialTheme.colorScheme.onTertiary,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.tertiary)
+            )
+            Text(
+                text = "onTertiaryContainer/tertiaryContainer",
+                color = MaterialTheme.colorScheme.onTertiaryContainer,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.tertiaryContainer)
+            )
+            Text(
+                text = "onBackground/background",
+                color = MaterialTheme.colorScheme.onBackground,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
+            )
+            Text(
+                text = "onSurface/surface",
                 color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
                 modifier = Modifier.background(color = MaterialTheme.colorScheme.surface)
+            )
+            Text(
+                text = "onSurfaceVariant/surfaceVariant",
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceVariant)
+            )
+            Text(
+                text = "surfaceTint/surfaceVariant",
+                color = MaterialTheme.colorScheme.surfaceTint,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceVariant)
+            )
+            Text(
+                text = "inverseOnSurface/inverseSurface",
+                color = MaterialTheme.colorScheme.inverseOnSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.inverseSurface)
+            )
+            Text(
+                text = "onError/error",
+                color = MaterialTheme.colorScheme.onError,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.error)
+            )
+            Text(
+                text = "onErrorContainer/errorContainer",
+                color = MaterialTheme.colorScheme.onErrorContainer,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.errorContainer)
+            )
+            Text(
+                text = "outline/background",
+                color = MaterialTheme.colorScheme.outline,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
+            )
+            Text(
+                text = "outlineVariant/background",
+                color = MaterialTheme.colorScheme.outlineVariant,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.background)
+            )
+            Text(
+                text = "onPrimary/scrim",
+                color = MaterialTheme.colorScheme.onPrimary,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.scrim)
+            )
+            Text(
+                text = "onSurface/surfaceBright",
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceBright)
+            )
+            Text(
+                text = "onSurface/surfaceDim",
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceDim)
+            )
+            Text(
+                text = "onSurface/surfaceContainer",
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer)
+            )
+            Text(
+                text = "onSurface/surfaceContainerHigh",
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainerHigh)
+            )
+            Text(
+                text = "onSurface/surfaceContainerHighest",
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+            )
+            Text(
+                text = "onSurface/surfaceContainerLow",
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainerLow)
+            )
+            Text(
+                text = "onSurface/surfaceContainerLowest",
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainerLowest)
             )
         }
     }

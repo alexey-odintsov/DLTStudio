@@ -16,6 +16,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
+            implementation(project(":app-theme"))
             implementation(project(":logger"))
             implementation(compose.runtime)
             implementation(compose.foundation)
