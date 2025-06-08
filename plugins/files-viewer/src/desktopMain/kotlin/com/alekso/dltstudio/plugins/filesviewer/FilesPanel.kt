@@ -29,6 +29,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.theme.AppTheme
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
@@ -132,7 +135,7 @@ fun FileItem(
     Row(
         modifier.background(Color(0xFFEEEEEE))
             .padding(bottom = 1.dp)
-            .background(Color.White)
+            .background(AppTheme.colors.logRow)
             .height(IntrinsicSize.Max)
     ) {
         TableTextCell(
@@ -166,23 +169,25 @@ fun FileItem(
 @Preview
 @Composable
 fun PreviewFilesPanel() {
-    Box(Modifier.background(Color.Gray)) {
-        FilesPanel(
-            FilesState.IDLE,
-            mutableStateListOf(
-                FileEntry(
-                    name = "test_file.txt",
-                    size = 143,
-                    creationDate = "24 Jul 2039 14:46:18"
+    ThemeManager.CustomTheme(SystemTheme(true)) {
+        Box(Modifier.background(Color.Gray)) {
+            FilesPanel(
+                FilesState.IDLE,
+                mutableStateListOf(
+                    FileEntry(
+                        name = "test_file.txt",
+                        size = 143,
+                        creationDate = "24 Jul 2039 14:46:18"
+                    ),
+                    FileEntry(name = "App crash.txt", size = 512),
+                    FileEntry(name = "anr.gz", size = 123456789L),
+                    FileEntry(name = "some screenshot.png", size = 456643),
                 ),
-                FileEntry(name = "App crash.txt", size = 512),
-                FileEntry(name = "anr.gz", size = 123456789L),
-                FileEntry(name = "some screenshot.png", size = 456643),
-            ),
-            mutableStateOf<PreviewState?>(null),
-            {},
-            {},
-            {},
-        )
+                mutableStateOf<PreviewState?>(null),
+                {},
+                {},
+                {},
+            )
+        }
     }
 }
