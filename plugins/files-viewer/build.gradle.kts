@@ -17,6 +17,7 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":logger"))
+            implementation(project(":app-theme"))
             implementation(project(":dlt-message"))
             implementation(project(":model-contract"))
             implementation(project(":ui-components"))

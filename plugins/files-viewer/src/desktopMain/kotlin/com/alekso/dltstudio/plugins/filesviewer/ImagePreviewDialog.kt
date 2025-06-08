@@ -10,12 +10,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
-
-data class ImagePreviewDialogState(
-    val showDialog: Boolean = false,
-    val fileEntry: FileEntry? = null,
-    val imageBitmap: ImageBitmap,
-)
+import com.alekso.dltstudio.theme.ThemeManager
 
 @Composable
 fun ImagePreviewDialog(
@@ -30,9 +25,11 @@ fun ImagePreviewDialog(
         title = fileEntry.name,
         state = DialogState(width = 600.dp, height = 520.dp)
     ) {
-        Column(Modifier.fillMaxSize()) {
-            Text(fileEntry.name)
-            Image(bitmap = imageBitmap, contentDescription = "")
+        ThemeManager.AppTheme {
+            Column(Modifier.fillMaxSize()) {
+                Text(fileEntry.name)
+                Image(bitmap = imageBitmap, contentDescription = "")
+            }
         }
     }
 }
