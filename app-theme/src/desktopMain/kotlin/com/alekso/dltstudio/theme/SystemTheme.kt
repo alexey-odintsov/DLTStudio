@@ -49,7 +49,11 @@ class SystemTheme(
     override fun typography(): Typography {
         return MaterialTheme.typography.copy(
             bodyLarge = MaterialTheme.typography.bodyLarge.copy(
-                fontSize = 14.sp // Text, Badge, Tab
+                fontSize = 14.sp, // Text, Badge, Tab
+                lineHeight = 16.sp,
+            ),
+            bodyMedium = MaterialTheme.typography.bodyMedium.copy(
+                lineHeight = 14.sp,
             )
         )
     }
