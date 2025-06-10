@@ -48,7 +48,8 @@ fun CustomDropDown(
         ) {
             Text(
                 items[selectedIndex],
-                modifier = Modifier.weight(1f).padding(horizontal = 4.dp)
+                modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
+                maxLines = 1
             )
             Icon(
                 Icons.Default.ArrowDropDown,
