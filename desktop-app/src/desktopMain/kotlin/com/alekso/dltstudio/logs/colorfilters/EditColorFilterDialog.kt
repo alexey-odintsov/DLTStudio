@@ -12,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -147,7 +148,7 @@ fun EditColorFilterPanel(
             }
         }
         Row {
-            val items = mutableListOf("Any")
+            val items = mutableStateListOf("Any")
             items.addAll(MessageType.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filter.filters[FilterParameter.MessageType]?.value }
@@ -167,7 +168,7 @@ fun EditColorFilterPanel(
         }
 
         Row {
-            val items = mutableListOf("Any")
+            val items = mutableStateListOf("Any")
             items.addAll(MessageTypeInfo.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filter.filters[FilterParameter.MessageTypeInfo]?.value }
@@ -234,7 +235,7 @@ fun EditColorFilterPanel(
                     payload = it
                 }
             )
-            val items = mutableListOf<String>()
+            val items = mutableStateListOf<String>()
             items.addAll(TextCriteria.entries.map { it.name })
             var initialSelection = items.indexOfFirst { it == payloadCriteria?.name }
             if (initialSelection == -1) initialSelection = 0

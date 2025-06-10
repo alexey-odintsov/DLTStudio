@@ -1,5 +1,7 @@
 package com.alekso.dltstudio.theme
 
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -8,6 +10,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 /**
@@ -16,6 +19,11 @@ import androidx.compose.ui.unit.sp
 class SystemTheme(
     private val isDark: Boolean
 ) : Theme {
+
+    init {
+        //ButtonDefaults.shape = RoundedCornerShape(2.dp)
+    }
+
     override fun isDark(): Boolean {
         return isDark
     }
@@ -48,6 +56,14 @@ class SystemTheme(
 
     @Composable
     override fun shapes(): Shapes {
-        return MaterialTheme.shapes
+        return MaterialTheme.shapes.copy(
+            extraLarge = RoundedCornerShape(2.dp),
+            medium = RoundedCornerShape(2.dp),
+            small = RoundedCornerShape(2.dp),
+            extraSmall = RoundedCornerShape(2.dp),
+
+            // MaterialTheme.shapes.medium.copy()
+        )
     }
+
 }

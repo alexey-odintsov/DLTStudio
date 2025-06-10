@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -50,7 +51,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
             )
 
             Row(modifier = paragraph, verticalAlignment = Alignment.CenterVertically) {
-                val items = mutableListOf<String>()
+                val items = mutableStateListOf<String>()
                 items.addAll(EntriesExtractor.ExtractionType.entries.map { it.name })
                 var initialSelection =
                     items.indexOfFirst { it == viewModel.filter.extractorType.name }

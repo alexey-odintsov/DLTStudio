@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.Chip
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -48,6 +49,7 @@ const val LOGS_LINE_HEIGHT = LOGS_FONT_SIZE + 2
 /**
  * Applies a theme on top of MaterialTheme
  */
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ThemeApplier(
     theme: Theme,
@@ -69,9 +71,11 @@ internal fun ThemeApplier(
             hoverColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.50f)
         )
 
-        Surface {
+        Surface(tonalElevation = 5.dp) {
             CompositionLocalProvider(
                 LocalScrollbarStyle provides scrollbar,
+                // disable 48dp padding (minimumInteractiveComponentSize)
+                LocalMinimumInteractiveComponentEnforcement provides false,
                 content = content
             )
         }

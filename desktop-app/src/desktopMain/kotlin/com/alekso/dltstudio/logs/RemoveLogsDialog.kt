@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -102,7 +103,7 @@ fun RemoveLogsDialogPanel(
     ) {
 
         Row {
-            val items = mutableListOf("Any")
+            val items = mutableStateListOf("Any")
             items.addAll(MessageType.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filters[FilterParameter.MessageType]?.value }
@@ -122,7 +123,7 @@ fun RemoveLogsDialogPanel(
         }
 
         Row {
-            val items = mutableListOf("Any")
+            val items = mutableStateListOf("Any")
             items.addAll(MessageTypeInfo.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filters[FilterParameter.MessageTypeInfo]?.value }
@@ -181,7 +182,7 @@ fun RemoveLogsDialogPanel(
             )
         }
 
-        val items = mutableListOf<String>()
+        val items = mutableStateListOf<String>()
         items.addAll(TextCriteria.entries.map { it.name })
         var initialSelection = items.indexOfFirst { it == payloadCriteria?.name }
         if (initialSelection == -1) initialSelection = 0
