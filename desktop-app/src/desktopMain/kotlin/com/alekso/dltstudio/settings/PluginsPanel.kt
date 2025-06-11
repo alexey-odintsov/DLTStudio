@@ -175,6 +175,7 @@ fun PluginItem(
             modifier = Modifier.width(60.dp).padding(2.dp),
             isHeader = isHeader,
         )
+        /**
         TableDivider()
         TableTextCell(
             text = state,
@@ -191,6 +192,7 @@ fun PluginItem(
                 }
             }
         }
+        */
     }
 }
 
