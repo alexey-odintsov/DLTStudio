@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,86 +54,87 @@ fun PluginsPanel(
     callbacks: SettingsPluginsCallbacks,
     vSplitterState: SplitPaneState
 ) {
-    val pluginManager = remember { DependencyManager.providePluginsManager() }
-    val plugins = DependencyManager.providePluginsManager().plugins
-    val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
+    Column {
+        val pluginManager = remember { DependencyManager.providePluginsManager() }
+        val plugins = DependencyManager.providePluginsManager().plugins
+        val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
 
-    Text(
-        text = "Plugins",
-        fontWeight = FontWeight.Bold,
-        modifier = paddingModifier.padding(bottom = 10.dp)
-    )
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = paddingModifier.padding(bottom = 10.dp)
-    ) {
-        Text("Plugins path:")
         Text(
-            modifier = Modifier.padding(start = 4.dp).background(Color.White),
-            text = pluginManager.pluginsPath,
-            fontSize = 12.sp,
-            fontFamily = FontFamily.Monospace
+            text = "Plugins",
+            fontWeight = FontWeight.Bold,
+            modifier = paddingModifier.padding(bottom = 10.dp)
         )
-    }
-    VerticalSplitPane(splitPaneState = vSplitterState) {
-        first(50.dp) {
-            Text("Registered plugins:")
-            val listState = rememberLazyListState()
-            LazyColumn(
-                Modifier.fillMaxSize(), state = listState
-            ) {
-                stickyHeader {
-                    PluginItem(
-                        index = "#",
-                        name = "Name",
-                        version = "Version",
-                        isHeader = true,
-                        state = "State"
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = paddingModifier.padding(bottom = 10.dp)
+        ) {
+            Text("Plugins path:")
+            Text(
+                modifier = Modifier.padding(start = 4.dp).background(Color.White),
+                text = pluginManager.pluginsPath,
+                fontSize = 12.sp,
+                fontFamily = FontFamily.Monospace
+            )
+        }
+        VerticalSplitPane(splitPaneState = vSplitterState) {
+            first(50.dp) {
+                Text("Registered plugins:")
+                val listState = rememberLazyListState()
+                LazyColumn(
+                    Modifier.fillMaxSize(), state = listState
+                ) {
+                    stickyHeader {
+                        PluginItem(
+                            index = "#",
+                            name = "Name",
+                            version = "Version",
+                            isHeader = true,
+                            state = "State"
+                        )
+                    }
+                    itemsIndexed(
+                        items = plugins,
+                        key = { _, key -> key },
+                        contentType = { _, _ -> DLTStudioPlugin::class }) { i, plugin ->
+                        val isEnabled = settingsPlugins.isEnabled(plugin.pluginClassName())
+                        PluginItem(
+                            index = i.toString(),
+                            name = plugin.pluginName(),
+                            version = plugin.pluginVersion(),
+                            state = if (isEnabled) "enabled" else "disabled",
+                            isRowSelected = settingsPlugins.selectedPlugin == plugin.pluginClassName(),
+                            isEnabled = isEnabled,
+                            onClick = { callbacks.onPluginClicked(plugin) },
+                            onPluginStateChanged = { enabled ->
+                                callbacks.onUpdatePluginState(
+                                    PluginState(plugin.pluginClassName(), enabled)
+                                )
+                            },
+                        )
+                    }
+                }
+            }
+            second(20.dp) {
+                PluginInfoPanel(settingsPlugins, plugins)
+            }
+            splitter {
+                visiblePart {
+                    Box(
+                        Modifier.height(1.dp).fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background)
                     )
                 }
-                itemsIndexed(
-                    items = plugins,
-                    key = { _, key -> key },
-                    contentType = { _, _ -> DLTStudioPlugin::class }) { i, plugin ->
-                    val isEnabled = settingsPlugins.isEnabled(plugin.pluginClassName())
-                    PluginItem(
-                        index = i.toString(),
-                        name = plugin.pluginName(),
-                        version = plugin.pluginVersion(),
-                        state = if (isEnabled) "enabled" else "disabled",
-                        isRowSelected = settingsPlugins.selectedPlugin == plugin.pluginClassName(),
-                        isEnabled = isEnabled,
-                        onClick = { callbacks.onPluginClicked(plugin) },
-                        onPluginStateChanged = { enabled ->
-                            callbacks.onUpdatePluginState(
-                                PluginState(plugin.pluginClassName(), enabled)
-                            )
-                        },
+                handle {
+                    Box(
+                        Modifier.markAsHandle()
+                            .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
+                            .background(SolidColor(Color.Gray), alpha = 0.50f).height(2.dp)
+                            .fillMaxWidth()
                     )
                 }
             }
         }
-        second(20.dp) {
-            PluginInfoPanel(settingsPlugins, plugins)
-        }
-        splitter {
-            visiblePart {
-                Box(
-                    Modifier.height(1.dp).fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.background)
-                )
-            }
-            handle {
-                Box(
-                    Modifier.markAsHandle()
-                        .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
-                        .background(SolidColor(Color.Gray), alpha = 0.50f).height(2.dp)
-                        .fillMaxWidth()
-                )
-            }
-        }
     }
-    Spacer(Modifier.height(6.dp))
 }
 
 @Composable
@@ -227,14 +227,29 @@ fun PluginItem(
 @Preview
 @Composable
 fun PreviewPluginsPanel() {
-    ThemeManager.CustomTheme(SystemTheme(true)) {
-        Column(Modifier.fillMaxSize()) {
-            PluginsPanel(
-                SettingsPlugins(
-                    selectedPlugin = "VirtualDevicePlugin",
-                    pluginsState = listOf(PluginState("VirtualDevicePlugin", true)),
-                ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
-            )
+    val selectedPlugin = "VirtualDevicePlugin"
+    val pluginsState = listOf(PluginState(selectedPlugin, true))
+
+    Column(Modifier.fillMaxSize()) {
+        Column(Modifier.weight(1f)) {
+            ThemeManager.CustomTheme(SystemTheme(false)) {
+                PluginsPanel(
+                    SettingsPlugins(
+                        selectedPlugin = selectedPlugin,
+                        pluginsState = pluginsState,
+                    ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
+                )
+            }
+        }
+        Column(Modifier.weight(1f)) {
+            ThemeManager.CustomTheme(SystemTheme(true)) {
+                PluginsPanel(
+                    SettingsPlugins(
+                        selectedPlugin = selectedPlugin,
+                        pluginsState = pluginsState,
+                    ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
+                )
+            }
         }
     }
 }
