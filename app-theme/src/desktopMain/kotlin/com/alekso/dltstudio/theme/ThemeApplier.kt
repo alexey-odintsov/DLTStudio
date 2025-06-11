@@ -1,9 +1,13 @@
 package com.alekso.dltstudio.theme
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.DarkDefaultContextMenuRepresentation
+import androidx.compose.foundation.LightDefaultContextMenuRepresentation
+import androidx.compose.foundation.LocalContextMenuRepresentation
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.ScrollbarStyle
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -71,11 +75,18 @@ internal fun ThemeApplier(
             hoverColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.50f)
         )
 
+        val contextMenuRepresentation = if (isSystemInDarkTheme()) {
+            DarkDefaultContextMenuRepresentation
+        } else {
+            LightDefaultContextMenuRepresentation
+        }
+
         Surface(tonalElevation = 5.dp) {
             CompositionLocalProvider(
                 LocalScrollbarStyle provides scrollbar,
                 // disable 48dp padding (minimumInteractiveComponentSize)
                 LocalMinimumInteractiveComponentEnforcement provides false,
+                LocalContextMenuRepresentation provides contextMenuRepresentation,
                 content = content
             )
         }

@@ -1,6 +1,5 @@
 package com.alekso.dltstudio.logs
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
@@ -34,7 +33,6 @@ import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
