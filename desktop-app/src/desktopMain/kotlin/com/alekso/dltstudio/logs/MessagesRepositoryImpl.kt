@@ -123,6 +123,9 @@ class MessagesRepositoryImpl : MessagesRepository {
             val currentMark = logMessages[index].marked
             val updatedMessage = logMessages[index].copy(marked = !currentMark)
             logMessages[index] = updatedMessage
+            if (selectedMessage.value?.key == key) {
+                selectedMessage.value = updatedMessage
+            }
             val searchIndex = searchResults.indexOfFirst { it.key == key }
             if (searchIndex > -1) {
                 searchResults[searchIndex] = updatedMessage
