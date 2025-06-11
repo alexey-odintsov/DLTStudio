@@ -12,6 +12,7 @@ import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
+import com.alekso.dltstudio.db.settings.PluginStateEntity
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPlugin
@@ -20,29 +21,35 @@ import com.alekso.dltstudio.logs.RowContextMenuCallbacks
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
-import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
-import com.alekso.dltstudio.model.contract.filtering.FilterParameter
-import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
 import com.alekso.dltstudio.model.Column
 import com.alekso.dltstudio.model.ColumnParams
+import com.alekso.dltstudio.model.PluginState
 import com.alekso.dltstudio.model.SettingsLogs
+import com.alekso.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.LogMessage
+import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
+import com.alekso.dltstudio.model.contract.filtering.FilterParameter
+import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria
+import com.alekso.dltstudio.model.toPluginState
+import com.alekso.dltstudio.model.toPluginStateEntity
 import com.alekso.dltstudio.model.toSettingsLogs
 import com.alekso.dltstudio.model.toSettingsLogsEntity
 import com.alekso.dltstudio.model.toSettingsUI
 import com.alekso.dltstudio.model.toSettingsUIEntity
 import com.alekso.dltstudio.plugins.DependencyManager
+import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.settings.SettingsDialogCallbacks
+import com.alekso.dltstudio.settings.SettingsPluginsCallbacks
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.logger.Log
@@ -51,9 +58,12 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -101,6 +111,18 @@ class MainViewModel(
         override fun onSettingsLogsUpdate(settings: SettingsLogs) {
             viewModelScope.launch(IO) {
                 settingsRepository.updateSettingsLogs(settings.toSettingsLogsEntity())
+            }
+        }
+    }
+
+    val settingsPluginsCallbacks: SettingsPluginsCallbacks = object : SettingsPluginsCallbacks {
+        override fun onPluginClicked(plugin: DLTStudioPlugin) {
+            selectedPlugin.value = plugin.pluginClassName()
+        }
+
+        override fun onUpdatePluginState(pluginState: PluginState) {
+            viewModelScope.launch(IO) {
+                settingsRepository.updatePluginState(pluginState.toPluginStateEntity())
             }
         }
     }
@@ -281,6 +303,26 @@ class MainViewModel(
             started = SharingStarted.Lazily,
             initialValue = SettingsLogs.Default
         )
+
+    private val pluginState: StateFlow<List<PluginStateEntity>> =
+        settingsRepository.getPluginsStatesFlow()
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = emptyList()
+            )
+
+    var selectedPlugin: MutableStateFlow<String?> = MutableStateFlow(null)
+
+    var settingsPlugins: Flow<SettingsPlugins> =
+        pluginState.combineTransform(selectedPlugin) { list, pluginClassName ->
+            emit(
+                SettingsPlugins(
+                    selectedPlugin = pluginClassName,
+                    pluginsState = list.map { it.toPluginState() },
+                )
+            )
+        }
 
     private var parseJob: Job? = null
 

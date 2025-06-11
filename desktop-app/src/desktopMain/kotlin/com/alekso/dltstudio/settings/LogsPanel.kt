@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -21,15 +22,16 @@ import com.alekso.dltstudio.uicomponents.CustomDropDown
 @Composable
 fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
     var backendType = settingsLogs.backendType
+    val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             text = "Logs",
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 10.dp)
+            modifier = paddingModifier.padding(bottom = 10.dp)
         )
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = paddingModifier) {
             Text("Payload storage type:", Modifier.width(150.dp))
             CustomDropDown(
                 modifier = Modifier.width(200.dp).padding(horizontal = 4.dp),
@@ -41,22 +43,28 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
             )
         }
         Text(
-            "Storage type defines how app stores DLT messages payload in memory.",
+            modifier = paddingModifier,
+            text = "Storage type defines how app stores DLT messages payload in memory.",
             fontSize = 12.sp,
         )
         Text(
-            "Binary – payload is stored in bytes, compact size, fast files loading but requires more time to search/analysis",
+            modifier = paddingModifier,
+            text = "Binary – payload is stored in bytes, compact size, fast files loading but requires more time to search/analysis",
             fontSize = 12.sp,
         )
         Text(
-            "Plain – payload is stored as Text, compact size, fast search/analysis but slow files loading.",
+            modifier = paddingModifier,
+            text = "Plain – payload is stored as Text, compact size, fast search/analysis but slow files loading.",
             fontSize = 12.sp,
         )
         Text(
-            "Structured – payload is stored as object, normal files loading and normal time for search/analysis.",
+            modifier = paddingModifier,
+            text = "Structured – payload is stored as object, normal files loading and normal time for search/analysis.",
             fontSize = 12.sp,
         )
-        CustomButton(onClick = {
+        CustomButton(
+            modifier = paddingModifier,
+            onClick = {
             callbacks.onSettingsLogsUpdate(SettingsLogs(backendType))
         }) {
             Text("Apply")

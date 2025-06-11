@@ -8,6 +8,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
+import com.alekso.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
@@ -38,6 +39,8 @@ fun main() = application {
             val mainViewModel = remember { DependencyManager.provideMainViewModel() }
             val settingsUI = mainViewModel.settingsUI.collectAsState()
             val settingsLogs = mainViewModel.settingsLogs.collectAsState()
+            val settingsPlugins =
+                mainViewModel.settingsPlugins.collectAsState(SettingsPlugins.Initial)
             CompositionLocalProvider(
                 LocalFormatter provides DependencyManager.provideFormatter(),
                 LocalSettingsUI provides settingsUI.value,
@@ -50,6 +53,8 @@ fun main() = application {
                         settingsUI = LocalSettingsUI.current,
                         settingsLogs = settingsLogs.value,
                         callbacks = mainViewModel.settingsCallbacks,
+                        pluginsCallbacks = mainViewModel.settingsPluginsCallbacks,
+                        settingsPlugins = settingsPlugins.value,
                     )
                 }
 

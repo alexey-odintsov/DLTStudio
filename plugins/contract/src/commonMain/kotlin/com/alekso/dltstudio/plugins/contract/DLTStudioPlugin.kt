@@ -24,6 +24,12 @@ interface DLTStudioPlugin {
      */
     fun pluginClassName(): String
 
+    fun author(): String
+
+    fun pluginLink(): String?
+
+    fun description(): String
+
     /**
      * Method that initializes plugin with necessary dependencies
      * @param messagesRepository – repository to work with logs

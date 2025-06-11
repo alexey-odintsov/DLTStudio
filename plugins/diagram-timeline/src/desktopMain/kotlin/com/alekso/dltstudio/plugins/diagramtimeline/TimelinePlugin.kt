@@ -32,6 +32,9 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     override fun pluginDirectoryName(): String = "diagram-timeline"
     override fun pluginVersion(): String = "0.9.0"
     override fun pluginClassName(): String = TimelinePlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Builds custom charts on timeline. All charts are fully customizable and can be exported/imported as files."
 
     override fun init(
         messagesRepository: MessagesRepository,

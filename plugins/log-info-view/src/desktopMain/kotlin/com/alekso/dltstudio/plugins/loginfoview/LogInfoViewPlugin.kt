@@ -22,6 +22,9 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview, FormatterConsumer {
     override fun pluginDirectoryName(): String = "log-info-view"
     override fun pluginVersion(): String = "0.0.1"
     override fun pluginClassName(): String = LogInfoViewPlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Shows selected log message in easy to read format. Allows message commenting."
     override fun getPanelName(): String = "Info view"
 
     override fun init(

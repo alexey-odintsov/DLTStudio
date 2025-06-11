@@ -14,6 +14,9 @@ class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview {
     override fun pluginDirectoryName(): String = "log-insights"
     override fun pluginVersion(): String = "0.0.1"
     override fun pluginClassName(): String = LogInsightsPlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Translates selected message to a readable format based on transformation database."
     override fun getPanelName(): String = "Insights"
 
     override fun init(
