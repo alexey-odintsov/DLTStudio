@@ -89,7 +89,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun selectMessage(key: Int) {
-        val message = logMessages.first { it.num == key }
+        val message = logMessages.first { it.id == key }
         selectedMessage.value = message
     }
 
@@ -117,16 +117,16 @@ class MessagesRepositoryImpl : MessagesRepository {
         }
     }
 
-    override fun toggleMark(key: String) {
-        val index = logMessages.indexOfFirst { it.key == key }
+    override fun toggleMark(id: Int) {
+        val index = logMessages.indexOfFirst { it.id == id }
         if (index > -1) {
             val currentMark = logMessages[index].marked
             val updatedMessage = logMessages[index].copy(marked = !currentMark)
             logMessages[index] = updatedMessage
-            if (selectedMessage.value?.key == key) {
+            if (selectedMessage.value?.id == id) {
                 selectedMessage.value = updatedMessage
             }
-            val searchIndex = searchResults.indexOfFirst { it.key == key }
+            val searchIndex = searchResults.indexOfFirst { it.id == id }
             if (searchIndex > -1) {
                 searchResults[searchIndex] = updatedMessage
             }

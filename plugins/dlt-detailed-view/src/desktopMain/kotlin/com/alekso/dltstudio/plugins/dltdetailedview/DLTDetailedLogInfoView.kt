@@ -34,7 +34,7 @@ fun DLTDetailedInfoView(
 
                 TableTextCell(
                     mergedColModifier,
-                    text = "DLT Message #${logMessage.num}:",
+                    text = "DLT Message #${logMessage.id}:",
                     isHeader = true
                 )
                 Row {

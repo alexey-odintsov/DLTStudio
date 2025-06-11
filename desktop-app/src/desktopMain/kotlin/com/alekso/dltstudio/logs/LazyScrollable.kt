@@ -34,7 +34,6 @@ import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
@@ -114,7 +113,7 @@ fun LazyScrollable(
                     val cellStyle =
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
-                    val index: Int = logMessage.num
+                    val index: Int = logMessage.id
                     val sTime: String =
                         LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
                     val sTimeOffset: String =
@@ -138,12 +137,12 @@ fun LazyScrollable(
                             modifier = Modifier
                                 .onFocusChanged { state ->
                                     if (state.isFocused) {
-                                        onRowSelected(i, logMessage.num)
+                                        onRowSelected(i, logMessage.id)
                                     }
                                 }
                                 .selectable(
                                     selected = i == selectedRow,
-                                    onClick = { onRowSelected(i, logMessage.num) }
+                                    onClick = { onRowSelected(i, logMessage.id) }
                                 )
                                 .onKeyEvent { e ->
                                     if (e.type == KeyEventType.KeyDown) {

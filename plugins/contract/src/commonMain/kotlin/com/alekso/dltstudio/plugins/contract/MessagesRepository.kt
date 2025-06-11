@@ -20,9 +20,9 @@ interface MessagesRepository {
 
     /**
      * Toggle bookmark
-     * @param key - key of the message to toggle
+     * @param id - id of the message to toggle
      */
-    fun toggleMark(key: String)
+    fun toggleMark(id: Int)
 
     /**
      * Remove messages and search results by a predicate

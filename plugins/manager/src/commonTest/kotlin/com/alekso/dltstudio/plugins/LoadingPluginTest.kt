@@ -23,7 +23,7 @@ class PluginTest {
             override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
             override fun getSelectedMessage(): State<LogMessage?> = mutableStateOf(null)
             override fun updateLogComment(key: String, comment: String?) = Unit
-            override fun toggleMark(key: String) = Unit
+            override fun toggleMark(id: Int) = Unit
             override suspend fun removeMessages(
                 progress: (Float) -> Unit,
                 predicate: (LogMessage) -> Boolean
