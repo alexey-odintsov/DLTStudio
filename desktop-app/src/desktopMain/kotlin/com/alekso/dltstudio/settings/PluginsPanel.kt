@@ -34,7 +34,7 @@ import com.alekso.dltstudio.model.PluginState
 import com.alekso.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.uicomponents.CustomCheckbox
+import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -72,19 +72,25 @@ fun PluginsPanel(
             ) {
                 stickyHeader {
                     PluginItem(
-                        index = "#", name = "Name", version = "Version", isHeader = true
+                        index = "#",
+                        name = "Name",
+                        version = "Version",
+                        isHeader = true,
+                        state = "State"
                     )
                 }
                 itemsIndexed(
                     items = plugins,
                     key = { _, key -> key },
                     contentType = { _, _ -> DLTStudioPlugin::class }) { i, plugin ->
+                    val isEnabled = settingsPlugins.isEnabled(plugin.pluginClassName())
                     PluginItem(
                         index = i.toString(),
                         name = plugin.pluginName(),
                         version = plugin.pluginVersion(),
+                        state = if (isEnabled) "enabled" else "disabled",
                         isRowSelected = settingsPlugins.selectedPlugin == plugin.pluginClassName(),
-                        isEnabled = settingsPlugins.isEnabled(plugin.pluginClassName()),
+                        isEnabled = isEnabled,
                         onClick = { callbacks.onPluginClicked(plugin) },
                         onPluginStateChanged = { enabled ->
                             callbacks.onUpdatePluginState(
@@ -140,6 +146,7 @@ fun PluginItem(
     index: String,
     name: String,
     version: String,
+    state: String,
     isHeader: Boolean = false,
     isEnabled: Boolean = false,
     isRowSelected: Boolean = false,
@@ -169,14 +176,19 @@ fun PluginItem(
             isHeader = isHeader,
         )
         TableDivider()
-        Box(modifier = Modifier.width(20.dp).padding(2.dp)) {
+        TableTextCell(
+            text = state,
+            modifier = Modifier.width(60.dp).padding(2.dp),
+            isHeader = isHeader,
+        )
+        TableDivider()
+        Box(modifier = Modifier.width(100.dp).padding(horizontal = 2.dp)) {
             if (!isHeader) {
-                CustomCheckbox(
-                    checked = isEnabled,
-                    modifier = Modifier.padding(horizontal = 8.dp),
-                    onCheckedChange = { enabled ->
-                        onPluginStateChanged?.invoke(enabled)
-                    })
+                CustomButton(
+                    onClick = { onPluginStateChanged?.invoke(!isEnabled) },
+                ) {
+                    Text(text = if (isEnabled) "Disable" else "Enable")
+                }
             }
         }
     }
@@ -186,7 +198,7 @@ fun PluginItem(
 @Preview
 @Composable
 fun PreviewPluginsPanel() {
-    Column {
+    Column(Modifier.background(MaterialTheme.colors.background)) {
         PluginsPanel(
             SettingsPlugins(pluginsState = emptyList()),
             SettingsPluginsCallbacks.Stub,
