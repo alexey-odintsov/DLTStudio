@@ -102,15 +102,15 @@ class MessagesRepositoryImpl : MessagesRepository {
         return selectedMessage
     }
 
-    override fun updateLogComment(key: String, comment: String?) {
-        val index = logMessages.indexOfFirst { it.key == key }
+    override fun updateLogComment(id: Int, comment: String?) {
+        val index = logMessages.indexOfFirst { it.id == id }
         if (index > -1) {
             val updatedMessage = logMessages[index].copy(comment = comment)
             logMessages[index] = updatedMessage
-            if (selectedMessage.value?.key == key) {
+            if (selectedMessage.value?.id == id) {
                 selectedMessage.value = updatedMessage
             }
-            val searchIndex = searchResults.indexOfFirst { it.key == key }
+            val searchIndex = searchResults.indexOfFirst { it.id == id }
             if (searchIndex > -1) {
                 searchResults[searchIndex] = updatedMessage
             }

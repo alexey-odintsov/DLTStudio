@@ -13,10 +13,10 @@ interface MessagesRepository {
 
     /**
      * Sets comment for a message
-     * @param key - ket of the message
+     * @param id - id of the message
      * @param comment - comment to set. null to remove comment.
      */
-    fun updateLogComment(key: String, comment: String?)
+    fun updateLogComment(id: Int, comment: String?)
 
     /**
      * Toggle bookmark

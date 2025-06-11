@@ -1,6 +1,5 @@
 package com.alekso.dltstudio.logs
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
@@ -106,7 +105,7 @@ fun LazyScrollable(
                 }
                 itemsIndexed(
                     items = logMessages,
-                    key = { _, log -> log.key },
+                    key = { _, log -> log.id },
                     contentType = { _, _ -> LogMessage::class }) { i, logMessage ->
 
                     val dltMessage = logMessage.dltMessage
