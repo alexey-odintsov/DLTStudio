@@ -40,7 +40,7 @@ fun LogInsightsView(
             logMessage.dltMessage.let {
                 Header(
                     modifier = paddingModifier,
-                    text = "DLT Message #${logMessage.num}:"
+                    text = "DLT Message #${logMessage.id}:"
                 )
 
                 if (!insights.isNullOrEmpty()) {
