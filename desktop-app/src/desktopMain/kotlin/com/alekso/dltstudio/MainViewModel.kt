@@ -129,7 +129,7 @@ class MainViewModel(
 
     val rowContextMenuCallbacks = object : RowContextMenuCallbacks {
         override fun onMarkClicked(i: Int, message: LogMessage) {
-            messagesRepository.toggleMark(message.key)
+            messagesRepository.toggleMark(message.id)
         }
 
         override fun onRemoveClicked(
@@ -588,23 +588,23 @@ class MainViewModel(
         logSelection = logSelection.copy(logsIndex = listIndex)
     }
 
-    fun onSearchRowSelected(listIndex: Int, key: Int) {
+    fun onSearchRowSelected(listIndex: Int, id: Int) {
         viewModelScope.launch(Main) {
-            selectSearchRow(listIndex, key)
+            selectSearchRow(listIndex, id)
         }
     }
 
-    private suspend fun selectSearchRow(listIndex: Int, key: Int) {
+    private suspend fun selectSearchRow(listIndex: Int, id: Int) {
         if (logSelection.searchIndex == listIndex) { // simulate second click
             try {
-                val index = messagesRepository.getMessages().indexOfFirst { it.num == key }
-                selectLogRow(index, key)
+                val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
+                selectLogRow(index, id)
                 logsListState.scrollToItem(index)
             } catch (e: Exception) {
-                Log.e("Failed to select $listIndex-$key: $e")
+                Log.e("Failed to select $listIndex-$id: $e")
             }
         } else {
-            messagesRepository.selectMessage(key)
+            messagesRepository.selectMessage(id)
             logSelection = logSelection.copy(searchIndex = listIndex)
         }
     }

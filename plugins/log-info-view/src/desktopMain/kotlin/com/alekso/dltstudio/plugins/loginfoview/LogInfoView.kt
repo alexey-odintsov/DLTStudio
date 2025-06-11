@@ -57,7 +57,7 @@ fun LogInfoView(
                 val scrollState = rememberScrollState()
                 Column(Modifier.verticalScroll(scrollState)) {
                     Header(
-                        modifier = paddingModifier, text = "Message #${logMessage.num}:"
+                        modifier = paddingModifier, text = "Message #${logMessage.id}:"
                     )
                     TextSection(
                         "${LocalFormatter.current.formatDateTime(it.timeStampUs)} " + "${it.standardHeader.ecuId} " + "${it.extendedHeader?.applicationId} " + "${it.extendedHeader?.contextId} "

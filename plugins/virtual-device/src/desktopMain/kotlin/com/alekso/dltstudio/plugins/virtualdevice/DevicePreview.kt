@@ -38,7 +38,7 @@ fun DevicePreviewView(
     Column(modifier) {
         logMessage?.dltMessage?.let { message ->
             Header(
-                modifier = paddingModifier, text = "Device Preview for #${logMessage.num}:"
+                modifier = paddingModifier, text = "Device Preview for #${logMessage.id}:"
             )
             deviceViews = DeviceView.parse(message.payloadText())
             if (deviceViews.isNullOrEmpty()) {
