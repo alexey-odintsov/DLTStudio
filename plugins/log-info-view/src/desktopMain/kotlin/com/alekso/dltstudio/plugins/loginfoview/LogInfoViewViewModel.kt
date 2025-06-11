@@ -16,7 +16,7 @@ class LogInfoViewViewModel(
 
     fun onCommentUpdated(logMessage: LogMessage, comment: String?) {
         viewModelScope.launch(IO) {
-            messagesRepository.updateLogComment(logMessage.key, comment)
+            messagesRepository.updateLogComment(logMessage.id, comment)
         }
     }
 }
