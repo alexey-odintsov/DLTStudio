@@ -39,6 +39,8 @@ import com.alekso.dltstudio.model.PluginState
 import com.alekso.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -118,7 +120,8 @@ fun PluginsPanel(
         splitter {
             visiblePart {
                 Box(
-                    Modifier.height(1.dp).fillMaxWidth().background(MaterialTheme.colors.background)
+                    Modifier.height(1.dp).fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
                 )
             }
             handle {
@@ -142,7 +145,7 @@ fun PluginInfoPanel(settingsPlugins: SettingsPlugins, plugins: MutableList<DLTSt
     if (plugin != null) {
         Box {
             Column(
-                Modifier.fillMaxSize().background(Color.White).padding(4.dp)
+                Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(4.dp)
                     .verticalScroll(scrollState)
             ) {
                 Text(plugin.pluginName(), fontWeight = FontWeight.Bold)
@@ -178,8 +181,8 @@ fun PluginItem(
     onPluginStateChanged: ((Boolean) -> Unit)? = null
 ) {
     Row(
-        modifier.background(Color(0xFFEEEEEE)).padding(bottom = 1.dp)
-            .background(if (isRowSelected) Color.LightGray else Color.White)
+        modifier.background(MaterialTheme.colorScheme.secondary).padding(bottom = 1.dp)
+            .background(if (isRowSelected) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.background)
             .height(IntrinsicSize.Max).clickable(onClick = { onClick?.invoke() })
     ) {
         TableTextCell(
@@ -224,14 +227,14 @@ fun PluginItem(
 @Preview
 @Composable
 fun PreviewPluginsPanel() {
-    Column(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
-        PluginsPanel(
-            SettingsPlugins(
-                selectedPlugin = "VirtualDevicePlugin",
-                pluginsState = listOf(PluginState("VirtualDevicePlugin", true)),
-            ),
-            SettingsPluginsCallbacks.Stub,
-            SplitPaneState(0.2f, true)
-        )
+    ThemeManager.CustomTheme(SystemTheme(true)) {
+        Column(Modifier.fillMaxSize()) {
+            PluginsPanel(
+                SettingsPlugins(
+                    selectedPlugin = "VirtualDevicePlugin",
+                    pluginsState = listOf(PluginState("VirtualDevicePlugin", true)),
+                ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
+            )
+        }
     }
 }
