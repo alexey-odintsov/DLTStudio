@@ -13,6 +13,9 @@ class DeviceAnalyzePlugin : DLTStudioPlugin, PluginPanel {
     override fun pluginDirectoryName(): String = "device-analyze"
     override fun pluginVersion(): String = "1.0.0"
     override fun pluginClassName(): String = DeviceAnalyzePlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Executes predefined adb commands"
     override fun getPanelName(): String = "Device Analyse"
 
     override fun init(

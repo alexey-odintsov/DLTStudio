@@ -12,6 +12,9 @@ class TestPlugin : DLTStudioPlugin, PluginPanel {
     override fun pluginDirectoryName(): String = "test-plugin"
     override fun pluginVersion(): String = "1.0.0"
     override fun pluginClassName(): String = TestPlugin::class.qualifiedName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Example plugin that shows empty panel"
     override fun getPanelName(): String = "Test Plugin"
 
     override fun init(

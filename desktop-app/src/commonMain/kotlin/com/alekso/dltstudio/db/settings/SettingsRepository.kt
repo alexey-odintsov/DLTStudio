@@ -8,8 +8,12 @@ import kotlinx.coroutines.flow.Flow
 interface SettingsRepository {
     suspend fun updateSettingsUI(item: SettingsUIEntity)
     fun getSettingsUIFlow(): Flow<SettingsUIEntity?>
+
     suspend fun updateSettingsLogs(item: SettingsLogsEntity)
     fun getSettingsLogsFlow(): Flow<SettingsLogsEntity?>
+
+    suspend fun updatePluginState(item: PluginStateEntity)
+    fun getPluginsStatesFlow(): Flow<List<PluginStateEntity>>
 }
 
 class SettingsRepositoryImpl(
@@ -33,5 +37,14 @@ class SettingsRepositoryImpl(
 
     override fun getSettingsLogsFlow(): Flow<SettingsLogsEntity?> {
         return database.getSettingsDao().getSettingsLogsFlow()
+    }
+
+    override suspend fun updatePluginState(item: PluginStateEntity) {
+        Log.d("updatePluginState($item)")
+        database.getSettingsDao().updateSettingsPlugins(item)
+    }
+
+    override fun getPluginsStatesFlow(): Flow<List<PluginStateEntity>> {
+        return database.getSettingsDao().getPluginsStatesFlow()
     }
 }
