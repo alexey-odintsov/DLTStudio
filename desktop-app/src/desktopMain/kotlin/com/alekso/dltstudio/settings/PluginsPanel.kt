@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.settings
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +18,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +39,6 @@ import com.alekso.dltstudio.model.PluginState
 import com.alekso.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -51,10 +55,17 @@ fun PluginsPanel(
 ) {
     val pluginManager = remember { DependencyManager.providePluginsManager() }
     val plugins = DependencyManager.providePluginsManager().plugins
+    val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
+
     Text(
-        text = "Plugins", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 10.dp)
+        text = "Plugins",
+        fontWeight = FontWeight.Bold,
+        modifier = paddingModifier.padding(bottom = 10.dp)
     )
-    Row(verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = paddingModifier.padding(bottom = 10.dp)
+    ) {
         Text("Plugins path:")
         Text(
             modifier = Modifier.padding(start = 4.dp).background(Color.White),
@@ -126,15 +137,28 @@ fun PluginsPanel(
 @Composable
 fun PluginInfoPanel(settingsPlugins: SettingsPlugins, plugins: MutableList<DLTStudioPlugin>) {
     val plugin = plugins.find { it.pluginClassName() == settingsPlugins.selectedPlugin }
+    val scrollState = rememberScrollState()
+
     if (plugin != null) {
-        Column(Modifier.fillMaxSize().background(Color.White).padding(4.dp)) {
-            Text(plugin.pluginName(), fontWeight = FontWeight.Bold)
-            Text("Version: ${plugin.pluginVersion()}")
-            Text("Author: ${plugin.author()}")
-            if (plugin.pluginLink() != null) {
-                Text("Link: ${plugin.pluginLink()}")
+        Box {
+            Column(
+                Modifier.fillMaxSize().background(Color.White).padding(4.dp)
+                    .verticalScroll(scrollState)
+            ) {
+                Text(plugin.pluginName(), fontWeight = FontWeight.Bold)
+                Text("Version: ${plugin.pluginVersion()}")
+                Text("Author: ${plugin.author()}")
+                if (plugin.pluginLink() != null) {
+                    Text("Link: ${plugin.pluginLink()}")
+                }
+                Text(text = plugin.description(), modifier = Modifier.padding(top = 4.dp))
             }
-            Text(text = plugin.description(), modifier = Modifier.padding(top = 4.dp))
+            VerticalScrollbar(
+                modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+                adapter = rememberScrollbarAdapter(
+                    scrollState = scrollState
+                )
+            )
         }
     }
 
@@ -178,21 +202,21 @@ fun PluginItem(
         /**
         TableDivider()
         TableTextCell(
-            text = state,
-            modifier = Modifier.width(60.dp).padding(2.dp),
-            isHeader = isHeader,
+        text = state,
+        modifier = Modifier.width(60.dp).padding(2.dp),
+        isHeader = isHeader,
         )
         TableDivider()
         Box(modifier = Modifier.width(100.dp).padding(horizontal = 2.dp)) {
-            if (!isHeader) {
-                CustomButton(
-                    onClick = { onPluginStateChanged?.invoke(!isEnabled) },
-                ) {
-                    Text(text = if (isEnabled) "Disable" else "Enable")
-                }
-            }
+        if (!isHeader) {
+        CustomButton(
+        onClick = { onPluginStateChanged?.invoke(!isEnabled) },
+        ) {
+        Text(text = if (isEnabled) "Disable" else "Enable")
         }
-        */
+        }
+        }
+         */
     }
 }
 
@@ -200,11 +224,14 @@ fun PluginItem(
 @Preview
 @Composable
 fun PreviewPluginsPanel() {
-    Column(Modifier.background(MaterialTheme.colors.background)) {
+    Column(Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
         PluginsPanel(
-            SettingsPlugins(pluginsState = emptyList()),
+            SettingsPlugins(
+                selectedPlugin = "VirtualDevicePlugin",
+                pluginsState = listOf(PluginState("VirtualDevicePlugin", true)),
+            ),
             SettingsPluginsCallbacks.Stub,
-            SplitPaneState(0.8f, true)
+            SplitPaneState(0.2f, true)
         )
     }
 }

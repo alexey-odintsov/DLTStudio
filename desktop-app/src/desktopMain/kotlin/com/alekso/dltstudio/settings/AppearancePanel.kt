@@ -30,11 +30,16 @@ fun AppearancePanel(
     println("Recompose AppearancePanel $settingsUI")
     var fontSize by remember { mutableStateOf(settingsUI.fontSize.toString()) }
     var fontFamily by remember { mutableStateOf(settingsUI.fontFamily) }
+    val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(text = "Appearance", fontWeight = FontWeight.Bold, modifier = Modifier.padding(bottom = 10.dp))
+        Text(
+            text = "Appearance",
+            fontWeight = FontWeight.Bold,
+            modifier = paddingModifier.padding(bottom = 10.dp)
+        )
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = paddingModifier) {
             Text("Font size:", Modifier.width(70.dp))
             CustomEditText(
                 modifier = Modifier.width(50.dp),
@@ -43,7 +48,7 @@ fun AppearancePanel(
                 }
             )
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = paddingModifier) {
             Text("Font:", Modifier.width(70.dp))
             CustomDropDown(
                 modifier = Modifier.width(150.dp).padding(horizontal = 4.dp),
@@ -54,7 +59,9 @@ fun AppearancePanel(
                 }
             )
         }
-        CustomButton(onClick = {
+        CustomButton(
+            modifier = paddingModifier,
+            onClick = {
             callbacks.onSettingsUIUpdate(SettingsUI(fontSize.toInt(), fontFamily))
         }) {
             Text("Apply")
