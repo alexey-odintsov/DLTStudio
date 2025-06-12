@@ -17,18 +17,10 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":logger"))
-            implementation(project(":app-theme"))
             implementation(project(":dlt-message"))
-            implementation(project(":extraction"))
             implementation(project(":model-contract"))
-            implementation(project(":ui-components"))
-            implementation(project(":plugins:contract"))
-            implementation(project(":resources"))
-            implementation(compose.components.resources)
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
         }
 
         desktopMain.dependencies {

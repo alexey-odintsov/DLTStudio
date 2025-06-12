@@ -4,9 +4,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive

@@ -16,6 +16,7 @@ import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
+import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
@@ -28,10 +29,9 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesEx
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.predefinedTimelineFilters
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
-import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -179,7 +179,7 @@ class TimelineViewModel(
     private fun startAnalyzing(dltMessages: SnapshotStateList<LogMessage>) {
         cleanup()
         _analyzeState.value = AnalyzeState.ANALYZING
-        analyzeJob = viewModelScope.launch(IO) {
+        analyzeJob = viewModelScope.launch(Dispatchers.Default) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
                 val entries = mutableStateMapOf<String, ChartData>()
