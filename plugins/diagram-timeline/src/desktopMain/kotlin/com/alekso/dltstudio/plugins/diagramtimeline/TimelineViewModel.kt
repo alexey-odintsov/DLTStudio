@@ -31,7 +31,7 @@ import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -179,7 +179,7 @@ class TimelineViewModel(
     private fun startAnalyzing(dltMessages: SnapshotStateList<LogMessage>) {
         cleanup()
         _analyzeState.value = AnalyzeState.ANALYZING
-        analyzeJob = viewModelScope.launch(IO) {
+        analyzeJob = viewModelScope.launch(Dispatchers.Default) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
                 val entries = mutableStateMapOf<String, ChartData>()
