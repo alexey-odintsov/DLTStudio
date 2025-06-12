@@ -54,6 +54,7 @@ import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
@@ -428,7 +429,7 @@ class MainViewModel(
             }
         }
 
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(Default) {
             val logPreviewPlugins = pluginManager.getPluginLogPreviews()
             previewPlugins.clear()
             previewPlugins.addAll(logPreviewPlugins)
@@ -436,7 +437,7 @@ class MainViewModel(
     }
 
     fun parseFile(dltFiles: List<File>) {
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(Default) {
             pluginManager.notifyLogsChanged()
         }
         parseJob?.cancel()
