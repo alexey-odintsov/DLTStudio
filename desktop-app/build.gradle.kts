@@ -19,6 +19,7 @@ kotlin {
             implementation(project(":resources"))
             implementation(project(":logger"))
             implementation(project(":data-utils"))
+            implementation(project(":extraction"))
             implementation(project(":dlt-message"))
             implementation(project(":dlt-parser"))
             implementation(project(":ui-components"))
