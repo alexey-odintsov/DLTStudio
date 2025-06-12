@@ -7,20 +7,19 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
+import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
-import com.alekso.dltstudio.uicomponents.forEachWithProgress
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.decodeToImageBitmap
 import java.io.File
 
@@ -96,7 +95,7 @@ class FilesViewModel(
     private fun startAnalyzing(dltMessages: List<LogMessage>) {
         cleanup()
         _analyzeState.value = FilesState.ANALYZING
-        analyzeJob = viewModelScope.launch(IO) {
+        analyzeJob = viewModelScope.launch(Default) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
                 val fileExtractor = FileExtractor()
@@ -110,7 +109,7 @@ class FilesViewModel(
                     }
                 }
 
-                withContext(Dispatchers.Default) {
+                withContext(Main) {
                     filesEntries.clear()
                     filesEntries.addAll(fileExtractor.filesMap.values.toList().sortedBy { it.name })
                     _analyzeState.value = FilesState.IDLE
@@ -120,9 +119,8 @@ class FilesViewModel(
         }
     }
 
-    @OptIn(ExperimentalResourceApi::class)
     fun onFileClicked(entry: FileEntry) {
-        viewModelScope.launch(IO) {
+        viewModelScope.launch {
             println("On file clicked ${entry.name}")
 
             when (entry.getExtension()) {
@@ -159,7 +157,7 @@ class FilesViewModel(
         _previewState.value = null
     }
 
-    fun saveFile(file: File) {
+    private fun saveFile(file: File) {
         fileDialogState = fileDialogState.copy(visible = false)
         viewModelScope.launch(IO) {
             try {
