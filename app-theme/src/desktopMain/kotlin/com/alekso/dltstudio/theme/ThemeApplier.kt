@@ -11,33 +11,41 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material.Chip
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ElevatedAssistChip
+import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ElevatedFilterChip
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderState
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -53,7 +61,7 @@ const val LOGS_LINE_HEIGHT = LOGS_FONT_SIZE + 2
 /**
  * Applies a theme on top of MaterialTheme
  */
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ThemeApplier(
     theme: Theme,
@@ -246,31 +254,75 @@ fun PreviewColors(isDark: Boolean) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PreviewComponents(isDark: Boolean) {
     ThemeApplier(theme = SystemTheme(isDark = isDark)) {
         Column {
             Text(if (isDark) "Dark" else "Light")
-            Button(onClick = {}) { Text("Button") }
-            OutlinedButton(onClick = {}) { Text("OutlinedButton") }
-            TextButton(onClick = {}) { Text("TextButton") }
-            BasicTextField(TextFieldState("Edit text"))
+            Row {
+                Button(onClick = {}) { Text("Button") }
+                OutlinedButton(onClick = {}) { Text("Outlined") }
+            }
+            Row {
+                FilledTonalButton(onClick = {}) { Text("FilledTonal") }
+                ElevatedButton(onClick = {}) { Text("Elevated") }
+            }
+            Row {
+                BasicTextField("Edit text", onValueChange = {})
+                OutlinedTextField("Edit text", onValueChange = {})
+            }
             BadgedBox(badge = { Text("1") }) { Text("2") }
             //BasicAlertDialog(onDismissRequest = {}) { Button(onClick = {}) { Text("OK") } }
-            Card {
-                Text("Card")
+            Row {
+                Card(Modifier.padding(4.dp)) {
+                    Text("Card")
+                }
+                ElevatedCard(Modifier.padding(4.dp)) {
+                    Text("Elevated Card")
+                }
+                OutlinedCard(Modifier.padding(4.dp)) {
+                    Text("Outlined Card")
+                }
             }
-            Chip(onClick = {}) { Text("Chip") }
+            Row {
+                AssistChip(onClick = {}, label = { Text("AssistChip") })
+                ElevatedAssistChip(onClick = {}, label = { Text("ElevatedAssistChip") })
+            }
+            Row {
+                FilterChip(selected = false, onClick = {}, label = { Text("FilterChip") })
+                ElevatedFilterChip(selected = false, onClick = {}, label = { Text("ElevatedFilterChip") })
+            }
+            Row {
+                InputChip(selected = false, onClick = {}, label = { Text("InputChip") })
+                SuggestionChip(onClick = {}, label = { Text("SuggestionChip") })
+            }
+            Spacer(Modifier.height(10.dp))
+
             HorizontalDivider(Modifier.width(100.dp).height(1.dp))
-            Checkbox(checked = true, onCheckedChange = {})
+            Row {
+                Checkbox(checked = true, onCheckedChange = {})
+                Checkbox(checked = false, onCheckedChange = {})
+                Checkbox(enabled = false, checked = true, onCheckedChange = {})
+                RadioButton(selected = true, onClick = {})
+                RadioButton(selected = false, onClick = {})
+                RadioButton(enabled = false, selected = false, onClick = {})
+            }
+            Row {
+                Switch(checked = true, onCheckedChange = {})
+                Switch(checked = false, onCheckedChange = {})
+                Switch(enabled = false, checked = true, onCheckedChange = {})
+            }
             FloatingActionButton(onClick = {}) { Text("FAB") }
 //            IconButton(onClick = {}) { Icon(painter = painterResource(Res.drawable.icon_upload),"") }
-            RadioButton(selected = true, onClick = {})
-            LinearProgressIndicator(progress = { 0.5f })
-            Slider(modifier = Modifier.size(200.dp, 20.dp), state = SliderState(value = 0.5f))
-            Switch(checked = true, onCheckedChange = {})
-            Tab(selected = true, onClick = {}) { Text("Tab") }
+            Row {
+                LinearProgressIndicator(modifier = Modifier.weight(1f), progress = { 0.5f })
+                Slider(modifier = Modifier.weight(1f), state = SliderState(value = 0.5f))
+            }
+            Row {
+                Tab(modifier = Modifier.weight(1f), selected = true, onClick = {}) { Text("Tab1") }
+                Tab(modifier = Modifier.weight(1f), selected = false, onClick = {}) { Text("Tab2") }
+            }
 //            NavigationRail { Text("NavigationRail") }
         }
     }
@@ -279,7 +331,7 @@ fun PreviewComponents(isDark: Boolean) {
 @Preview
 @Composable
 fun PreviewDarkAndLightTheme() {
-    Row(Modifier.fillMaxSize().background(color = Color.DarkGray)) {
+    Row(Modifier.fillMaxSize()) {
         Box(Modifier.weight(1f)) {
             PreviewComponents(isDark = true)
         }

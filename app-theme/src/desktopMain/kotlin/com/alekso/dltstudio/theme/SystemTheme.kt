@@ -1,7 +1,6 @@
 package com.alekso.dltstudio.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Shapes
@@ -29,7 +28,20 @@ class SystemTheme(
     }
 
     override fun colorScheme(): ColorScheme {
-        return if (isDark) darkColorScheme() else lightColorScheme()
+        return if (isDark) darkColorScheme(
+            primary = Color(40, 90, 232),
+            onPrimary = Color(218, 218, 218),
+        ) else lightColorScheme(
+            primary = Color(40, 90, 232),
+            onPrimary = Color(218, 218, 218),
+
+            surface = Color(245, 246, 249),
+            surfaceTint = Color(245, 246, 249),
+            surfaceVariant = Color(203, 217, 254),
+            background = Color.White,//(245, 246, 249),
+
+            secondaryContainer = Color.White,//Color(245, 246, 249),
+        )
     }
 
     override fun colors(): Colors {

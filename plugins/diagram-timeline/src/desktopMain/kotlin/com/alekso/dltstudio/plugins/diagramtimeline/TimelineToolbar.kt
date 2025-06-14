@@ -181,19 +181,19 @@ fun TimelineToolbar(
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onLoadFilterClicked
+            modifier = Modifier, onClick = callbacks::onLoadFilterClicked
         ) {
             Text("Load")
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onSaveFilterClicked
+            modifier = Modifier, onClick = callbacks::onSaveFilterClicked
         ) {
             Text("Save")
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onClearFilterClicked
+            modifier = Modifier, onClick = callbacks::onClearFilterClicked
         ) {
             Text("Clear")
         }
