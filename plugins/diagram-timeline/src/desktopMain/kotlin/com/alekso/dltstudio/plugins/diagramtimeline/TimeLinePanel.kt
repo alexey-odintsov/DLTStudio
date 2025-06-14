@@ -58,6 +58,7 @@ import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
+import com.alekso.dltstudio.charts.ui.ChartStyle
 import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.charts.ui.calculateTimestamp
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -66,6 +67,7 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialog
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
+import com.alekso.dltstudio.theme.ThemeManager
 import java.awt.Cursor
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
@@ -186,6 +188,9 @@ fun TimeLinePanel(
                             totalTime = timeFrame,
                             timeFrame = timeFrame,
                             type = chartType,
+                            style = if (ThemeManager.currentTheme()
+                                    .isDark()
+                            ) ChartStyle.Dark else ChartStyle.Default
                         )
                     }
                 }

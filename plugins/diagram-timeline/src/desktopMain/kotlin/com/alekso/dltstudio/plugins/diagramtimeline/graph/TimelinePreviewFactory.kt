@@ -23,8 +23,10 @@ import com.alekso.dltstudio.charts.model.StateEntry
 import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
+import com.alekso.dltstudio.charts.ui.ChartStyle
 import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
+import com.alekso.dltstudio.theme.ThemeManager
 
 private val timeFrame = TimeFrame(0L, 5_000_000L)
 
@@ -107,6 +109,7 @@ object TimelinePreviewFactory {
             totalTime = timeFrame,
             timeFrame = timeFrame,
             type = chartType,
+            style = if (ThemeManager.currentTheme().isDark()) ChartStyle.Dark else ChartStyle.Default
         )
     }
 }
