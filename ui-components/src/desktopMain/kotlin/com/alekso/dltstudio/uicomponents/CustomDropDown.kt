@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -27,6 +28,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 
 @Composable
 fun CustomDropDown(
@@ -78,9 +81,24 @@ fun CustomDropDown(
 
 @Preview
 @Composable
-fun PreviewCustomDropDown() {
-    CustomDropDown(
-        Modifier.width(200.dp), items = mutableStateListOf("a", "b", "c"),
-        initialSelectedIndex = 1,
-        { i -> })
+fun PreviewCustomDropDownThemes() {
+    Column {
+        ThemeManager.CustomTheme(SystemTheme(isDark = false)) {
+            PreviewCustomDropDownDark()
+        }
+        ThemeManager.CustomTheme(SystemTheme(isDark = true)) {
+            PreviewCustomDropDownDark()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewCustomDropDownDark() {
+    Column {
+        CustomDropDown(
+            Modifier.width(200.dp), items = mutableStateListOf("a", "b", "c"),
+            initialSelectedIndex = 1,
+            { i -> })
+    }
 }
