@@ -117,7 +117,7 @@ class SystemTheme(
     val onErrorContainerDark = Color(0xFFFFDAD6)
     val backgroundDark = Color(0xFF111318)
     val onBackgroundDark = Color(0xFFE2E2E9)
-    val surfaceDark = Color(0xFF111318)
+    val surfaceDark = Color(0xFF2b2d30)
     val onSurfaceDark = Color(0xFFE2E2E9)
     val surfaceVariantDark = Color(0xFF44474E)
     val onSurfaceVariantDark = Color(0xFFC4C6D0)

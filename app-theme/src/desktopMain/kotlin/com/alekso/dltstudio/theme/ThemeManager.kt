@@ -3,7 +3,7 @@ package com.alekso.dltstudio.theme
 import androidx.compose.runtime.Composable
 
 object ThemeManager {
-    val isDark = false
+    val isDark = true
     private val currentTheme = SystemTheme(isDark)
 
     fun currentTheme(): Theme {
