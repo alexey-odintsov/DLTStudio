@@ -25,7 +25,7 @@ enum class SupportedFontFamilies(
 data class SettingsUI(
     val fontSize: Int,
     val fontFamily: FontFamily,
-    val lineHeight: Float = 1f,
+    val lineHeight: Float = fontSize * 1.2f,
 ) {
     companion object {
         val Default = SettingsUI(
