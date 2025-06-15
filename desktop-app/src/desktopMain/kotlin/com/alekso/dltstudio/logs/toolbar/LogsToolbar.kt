@@ -1,11 +1,14 @@
 package com.alekso.dltstudio.logs.toolbar
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -21,8 +24,9 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.search.SearchType
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.AutoCompleteEditText
-import com.alekso.dltstudio.uicomponents.HorizontalDivider
 import com.alekso.dltstudio.uicomponents.ImageButton
 import com.alekso.dltstudio.uicomponents.ToggleImageButton
 import com.alekso.dltstudio.uicomponents.Tooltip
@@ -99,10 +103,11 @@ fun LogsToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_color_filters,
                 title = "Color filters",
-                onClick = callbacks::onColorFiltersClicked
+                onClick = callbacks::onColorFiltersClicked,
+                tintable = false,
             )
         }
-        HorizontalDivider(modifier = Modifier.height(32.dp))
+        VerticalDivider(Modifier.height(32.dp).width(1.dp))
 
         Tooltip(text = "Show marked logs") {
             ImageButton(
@@ -115,7 +120,8 @@ fun LogsToolbar(
                 title = "Show marked logs",
                 onClick = {
                     callbacks.onSearchButtonClicked(SearchType.MarkedRows, "")
-                }
+                },
+                tintable = false,
             )
         }
         Tooltip(text = "Show marked logs along with search results") {
@@ -138,7 +144,7 @@ fun LogsToolbar(
             )
         }
         AutoCompleteEditText(
-            modifier = Modifier.height(20.dp).weight(1f),
+            modifier = Modifier.weight(1f),
             onEnterClicked = {
                 callbacks.onSearchButtonClicked(SearchType.Text, text)
             },
@@ -149,20 +155,22 @@ fun LogsToolbar(
             items = searchAutoComplete
         )
 
-        Tooltip(text = "Start/Stop search") {
-            ImageButton(
-                modifier = Modifier.size(32.dp),
-                icon = if (searchState.state == SearchState.State.IDLE) {
-                    Res.drawable.icon_search
-                } else {
-                    Res.drawable.icon_stop
-                },
-                title = "Search",
-                onClick = {
-                    callbacks.onSearchButtonClicked(SearchType.Text, text)
-                })
-        }
-        HorizontalDivider(modifier = Modifier.height(32.dp))
+//        Tooltip(text = "Start/Stop search") {
+//            ImageButton(
+//                modifier = Modifier.size(32.dp),
+//                icon = if (searchState.state == SearchState.State.IDLE) {
+//                    Res.drawable.icon_search
+//                } else {
+//                    Res.drawable.icon_stop
+//                },
+//                title = "Search",
+//                onClick = {
+//                    callbacks.onSearchButtonClicked(SearchType.Text, text)
+//                },
+//                tintable = false,
+//            )
+//        }
+//        HorizontalDivider(modifier = Modifier.height(32.dp))
 
         val formatter = LocalFormatter.current
         var timeZoneText by rememberSaveable { mutableStateOf(formatter.getTimeZone().toString()) }
@@ -183,6 +191,18 @@ fun LogsToolbar(
 
 @Preview
 @Composable
+fun PreviewLogsToolbarTheme() {
+    Column {
+        ThemeManager.CustomTheme(SystemTheme(true)) {
+            PreviewLogsToolbar()
+        }
+        ThemeManager.CustomTheme(SystemTheme(false)) {
+            PreviewLogsToolbar()
+        }
+    }
+}
+
+@Composable
 fun PreviewLogsToolbar() {
     LogsToolbar(
         state = LogsToolbarState(
@@ -193,7 +213,7 @@ fun PreviewLogsToolbar() {
             toolbarWrapContentChecked = true,
             toolbarCommentsChecked = false,
         ),
-        searchState = SearchState(),
+        searchState = SearchState(searchText = "Search text"),
         searchAutoComplete = mutableStateListOf(),
         callbacks = LogsToolbarCallbacks.Stub,
     )

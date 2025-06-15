@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -282,7 +283,7 @@ fun CellDivider(
     key: String = "",
     onResized: ((String, Float) -> Unit) = { _, _ -> }
 ) {
-    var finalModifier = modifier.fillMaxHeight().width(1.dp).background(color = Color.LightGray)
+    var finalModifier = modifier.fillMaxHeight().width(1.dp).background(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
 
     if (resizeable) {
         finalModifier = finalModifier.pointerHoverIcon(PointerIcon(Cursor(Cursor.E_RESIZE_CURSOR)))
@@ -302,7 +303,7 @@ fun RowDivider() {
         Modifier
             .fillMaxWidth()
             .height(1.dp)
-            .background(color = Color.LightGray)
+            .background(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f))
     )
 }
 

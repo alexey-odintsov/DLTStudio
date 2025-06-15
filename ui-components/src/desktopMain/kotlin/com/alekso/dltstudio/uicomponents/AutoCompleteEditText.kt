@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +54,8 @@ fun AutoCompleteEditText(
                     }
                 },
             singleLine = singleLine,
+            minLines = 1,
+            maxLines = 1,
             interactionSource = interactionSource,
         )
 
@@ -75,16 +77,17 @@ fun AutoCompleteEditText(
                         onClick = {
                             onValueChange(selectionOption)
                             expanded = false
+                        },
+                        text = {
+                            Text(
+                                text = selectionOption,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 12.sp,
+                                lineHeight = 12.sp,
+                            )
                         }
-                    ) {
-                        Text(
-                            text = selectionOption,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            fontSize = 12.sp,
-                            lineHeight = 12.sp,
-                        )
-                    }
+                    )
                 }
             }
         }

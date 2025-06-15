@@ -184,8 +184,8 @@ class SystemTheme(
     override fun colors(): Colors {
         return if (isDark)
             Colors(
-                logRow = Color(0xff3b3b3d),
-                onLogRow = Color(0xffc3c3c3),
+                logRow = Color(0xff1e1f22),
+                onLogRow = Color(0xffbcbec3),
             )
         else
             Colors(

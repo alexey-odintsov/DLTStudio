@@ -62,7 +62,7 @@ fun DeviceAnalysePanel(
             Text(modifier = textStyle, text = "Command:")
             Row {
                 CustomDropDown(
-                    modifier = Modifier.padding(horizontal = 4.dp),
+                    modifier = Modifier.padding(4.dp),//.padding(horizontal = 4.dp, vertical = 2.dp),
                     items = predefinedCommands,
                     initialSelectedIndex = 0,
                     onItemsSelected = { index -> cmd = predefinedCommands[index] }
