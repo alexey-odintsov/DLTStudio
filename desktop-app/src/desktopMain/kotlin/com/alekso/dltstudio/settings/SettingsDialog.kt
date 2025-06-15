@@ -24,6 +24,7 @@ import com.alekso.dltstudio.model.SettingsLogs
 import com.alekso.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.TabsPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
@@ -67,11 +68,13 @@ fun SettingsDialog(
         title = "Settings",
         state = rememberDialogState(width = 800.dp, height = 600.dp)
     ) {
-        SettingsPanel(
-            callbacks, settingsUI, settingsLogs,
-            pluginsCallbacks,
-            settingsPlugins
-        )
+        ThemeManager.AppTheme {
+            SettingsPanel(
+                callbacks, settingsUI, settingsLogs,
+                pluginsCallbacks,
+                settingsPlugins
+            )
+        }
     }
 }
 

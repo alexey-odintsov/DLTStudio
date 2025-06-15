@@ -27,6 +27,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
 import com.alekso.dltstudio.model.ColumnParams
+import com.alekso.dltstudio.theme.AppTheme
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource
@@ -69,11 +72,11 @@ fun LogRow(
         Row(
             modifier.height(IntrinsicSize.Max).background(
                 if (isHeader) {
-                    Color.White
+                    AppTheme.colors.logRow
                 } else if (finalCellStyle != null) {
-                    finalCellStyle.backgroundColor ?: Color(250, 250, 250)
+                    finalCellStyle.backgroundColor ?: AppTheme.colors.logRow
                 } else {
-                    Color.White
+                    AppTheme.colors.logRow
                 }
             )
         ) {
@@ -253,9 +256,9 @@ fun LogRow(
             Row(
                 modifier.height(IntrinsicSize.Max).background(
                     if (finalCellStyle != null) {
-                        finalCellStyle.backgroundColor ?: Color(250, 250, 250)
+                        finalCellStyle.backgroundColor ?: AppTheme.colors.logRow
                     } else {
-                        Color.White
+                        AppTheme.colors.logRow
                     }
                 )
             ) {
@@ -306,56 +309,58 @@ fun RowDivider() {
 @Preview
 @Composable
 fun LogRowPreview() {
-    val contents = listOf(
-        listOf("Content", null),
-        listOf("Another string with _ character", "This is a comment"),
-        listOf("ÄÜË", null),
-        listOf("0123456789-+=<>/?", "These strange numbers, they should mean something.."),
-        listOf("汉语", null),
-        listOf("~`!@#$%^&*()_+", null),
-        listOf("Fatal error", "Wow, fatal error!"),
-        listOf("", null),
-        listOf("hey-ho!", "No way, I've found that comment at last!"),
-        listOf(
-            "This is the logs content strings, that doesn't fit in one line, let's repeat, This is the logs content strings, that doesn't fit in one line, let's repeat",
-            "A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. "
-        ),
-    )
-    Column(modifier = Modifier.background(Color.Gray)) {
-        (0..9).forEach { i ->
-            LogRow(
-                modifier = Modifier.fillMaxWidth().wrapContentHeight(),
-                columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
-                isSelected = i == 3,
-                index = (16_345_345 + i).toString(),
-                datetime = "2024-02-04 18:26:23.074689",
-                timeOffset = "1234",
-                messageCounter = "1",
-                ecuId = "EcuId",
-                sessionId = "123",
-                applicationId = "AppId",
-                contextId = "Con",
-                content = contents[i][0] ?: "",
-                isHeader = i == 0,
-                cellStyle = when (i) {
-                    6 -> CellStyle(backgroundColor = Color.Green)
-                    9 -> CellStyle(backgroundColor = Color.Yellow)
-                    8 -> CellStyle(
-                        backgroundColor = Color(0xE7, 0x62, 0x29),
-                        textColor = Color.White
-                    )
+    ThemeManager.CustomTheme(SystemTheme(isDark = true)) {
+        val contents = listOf(
+            listOf("Content", null),
+            listOf("Another string with _ character", "This is a comment"),
+            listOf("ÄÜË", null),
+            listOf("0123456789-+=<>/?", "These strange numbers, they should mean something.."),
+            listOf("汉语", null),
+            listOf("~`!@#$%^&*()_+", null),
+            listOf("Fatal error", "Wow, fatal error!"),
+            listOf("", null),
+            listOf("hey-ho!", "No way, I've found that comment at last!"),
+            listOf(
+                "This is the logs content strings, that doesn't fit in one line, let's repeat, This is the logs content strings, that doesn't fit in one line, let's repeat",
+                "A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. A warning message - to research what does it mean. "
+            ),
+        )
+        Column(modifier = Modifier.background(Color.Gray)) {
+            (0..9).forEach { i ->
+                LogRow(
+                    modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                    columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
+                    isSelected = i == 3,
+                    index = (16_345_345 + i).toString(),
+                    datetime = "2024-02-04 18:26:23.074689",
+                    timeOffset = "1234",
+                    messageCounter = "1",
+                    ecuId = "EcuId",
+                    sessionId = "123",
+                    applicationId = "AppId",
+                    contextId = "Con",
+                    content = contents[i][0] ?: "",
+                    isHeader = i == 0,
+                    cellStyle = when (i) {
+                        6 -> CellStyle(backgroundColor = Color.Green)
+                        9 -> CellStyle(backgroundColor = Color.Yellow)
+                        8 -> CellStyle(
+                            backgroundColor = Color(0xE7, 0x62, 0x29),
+                            textColor = Color.White
+                        )
 
-                    else -> null
-                },
-                logTypeIndicator = if (i == 6) LogTypeIndicator(
-                    "F",
-                    ColorFilterFatal.cellStyle
-                ) else null,
-                wrapContent = true,
-                marked = i % 2 == 0,
-                comment = contents[i][1],
-                showComments = true,
-                onColumnResized = { _, _ -> })
+                        else -> null
+                    },
+                    logTypeIndicator = if (i == 6) LogTypeIndicator(
+                        "F",
+                        ColorFilterFatal.cellStyle
+                    ) else null,
+                    wrapContent = true,
+                    marked = i % 2 == 0,
+                    comment = contents[i][1],
+                    showComments = true,
+                    onColumnResized = { _, _ -> })
+            }
         }
     }
 }
