@@ -64,7 +64,8 @@ fun CustomEditText(
     minLines: Int = 1,
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = OutlinedTextFieldDefaults.shape,
-    colors: TextFieldColors = OutlinedTextFieldDefaults.colors()
+    colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
+    contentPadding: PaddingValues = PaddingValues(4.dp)
 ) {
     @Suppress("NAME_SHADOWING")
     val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
@@ -102,7 +103,7 @@ fun CustomEditText(
 //                    .defaultErrorSemantics(isError, getString(Strings.DefaultErrorMessage))
                     .defaultMinSize(
                         minWidth = OutlinedTextFieldDefaults.MinWidth,
-                        minHeight = OutlinedTextFieldDefaults.MinHeight
+                        minHeight = 24.dp
                     ),
             onValueChange = onValueChange,
             enabled = enabled,
@@ -134,7 +135,7 @@ fun CustomEditText(
                         isError = isError,
                         interactionSource = interactionSource,
                         colors = colors,
-                        contentPadding = PaddingValues(4.dp),
+                        contentPadding = contentPadding,
                         container = {
                             OutlinedTextFieldDefaults.Container(
                                 enabled = enabled,

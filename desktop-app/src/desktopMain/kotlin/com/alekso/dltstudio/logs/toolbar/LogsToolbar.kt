@@ -133,7 +133,6 @@ fun LogsToolbar(
                 updateCheckedState = callbacks::updateToolbarSearchWithMarkedCheck,
             )
         }
-        var text by rememberSaveable { mutableStateOf(searchState.searchText) }
         Tooltip(text = "Toggle regular expression or plain search") {
             ToggleImageButton(
                 checkedState = searchState.searchUseRegex,
@@ -143,6 +142,7 @@ fun LogsToolbar(
                 updateCheckedState = callbacks::onSearchUseRegexChanged
             )
         }
+        var text by rememberSaveable { mutableStateOf(searchState.searchText) }
         AutoCompleteEditText(
             modifier = Modifier.weight(1f),
             onEnterClicked = {
@@ -155,22 +155,22 @@ fun LogsToolbar(
             items = searchAutoComplete
         )
 
-//        Tooltip(text = "Start/Stop search") {
-//            ImageButton(
-//                modifier = Modifier.size(32.dp),
-//                icon = if (searchState.state == SearchState.State.IDLE) {
-//                    Res.drawable.icon_search
-//                } else {
-//                    Res.drawable.icon_stop
-//                },
-//                title = "Search",
-//                onClick = {
-//                    callbacks.onSearchButtonClicked(SearchType.Text, text)
-//                },
-//                tintable = false,
-//            )
-//        }
-//        HorizontalDivider(modifier = Modifier.height(32.dp))
+        Tooltip(text = "Start/Stop search") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = if (searchState.state == SearchState.State.IDLE) {
+                    Res.drawable.icon_search
+                } else {
+                    Res.drawable.icon_stop
+                },
+                title = "Search",
+                onClick = {
+                    callbacks.onSearchButtonClicked(SearchType.Text, text)
+                },
+                tintable = false,
+            )
+        }
+        HorizontalDivider(modifier = Modifier.width(1.dp).height(32.dp))
 
         val formatter = LocalFormatter.current
         var timeZoneText by rememberSaveable { mutableStateOf(formatter.getTimeZone().toString()) }

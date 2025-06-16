@@ -3,6 +3,7 @@ package com.alekso.dltstudio.uicomponents
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -43,6 +44,7 @@ fun AutoCompleteEditText(
                 expanded = true
                 onValueChange(it)
             },
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
             modifier = Modifier.fillMaxWidth()
                 .onKeyEvent { e ->
                     if (e.key == Key.Enter) {
