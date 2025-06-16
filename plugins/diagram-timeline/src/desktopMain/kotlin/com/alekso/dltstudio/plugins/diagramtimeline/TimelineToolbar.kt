@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -30,6 +30,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.HorizontalDivider
 import com.alekso.dltstudio.uicomponents.ImageButton
@@ -98,7 +100,8 @@ fun TimelineToolbar(
                     Res.drawable.icon_stop
                 },
                 title = "Analyze timeline",
-                onClick = callbacks::onAnalyzeClicked
+                onClick = callbacks::onAnalyzeClicked,
+                tintable = false
             )
         }
         HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp))
@@ -151,7 +154,8 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_color_filters,
                 title = "Timeline filters",
-                onClick = callbacks::onTimelineFiltersClicked
+                onClick = callbacks::onTimelineFiltersClicked,
+                tintable = false,
             )
         }
 
@@ -166,15 +170,23 @@ fun TimelineToolbar(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.width(200.dp)
+                    modifier = Modifier.wrapContentSize()
                 ) {
                     recentFiltersFiles.forEachIndexed { index, s ->
                         DropdownMenuItem(
-                            text = { s.fileName },
+                            text = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = s.fileName,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
                             onClick = {
-                            expanded = false
-                            callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
-                        })
+                                expanded = false
+                                callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
+                            }
+                        )
                     }
                 }
             }
@@ -200,7 +212,20 @@ fun TimelineToolbar(
     }
 }
 
+
 @Preview
+@Composable
+fun PreviewLogsToolbarTheme() {
+    Column {
+        ThemeManager.CustomTheme(SystemTheme(true)) {
+            PreviewTimelineToolbar()
+        }
+        ThemeManager.CustomTheme(SystemTheme(false)) {
+            PreviewTimelineToolbar()
+        }
+    }
+}
+
 @Composable
 fun PreviewTimelineToolbar() {
     Column {

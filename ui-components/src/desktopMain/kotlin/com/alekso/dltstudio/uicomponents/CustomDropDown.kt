@@ -67,18 +67,19 @@ fun CustomDropDown(
             modifier = Modifier.wrapContentSize()
         ) {
             items.forEachIndexed { index, s ->
-                DropdownMenuItem(onClick = {
-                    selectedIndex = index
-                    expanded = false
-                    onItemsSelected(selectedIndex)
-                }, text = {
-                    Text(
-                        modifier = Modifier.fillMaxWidth(),
-                        text = s,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                })
+                DropdownMenuItem(
+                    onClick = {
+                        selectedIndex = index
+                        expanded = false
+                        onItemsSelected(selectedIndex)
+                    }, text = {
+                        Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            text = s,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    })
             }
         }
     }
