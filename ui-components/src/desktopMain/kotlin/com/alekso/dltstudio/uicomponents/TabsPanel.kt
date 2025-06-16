@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager
@@ -51,7 +52,7 @@ fun TabsPanel(
 @Composable
 private fun Tab(title: String, index: Int, selected: Boolean, callback: (Int) -> Unit) {
     val backgroundModifier =
-        if (selected) Modifier.background(MaterialTheme.colorScheme.surfaceVariant) else Modifier
+        if (selected) Modifier.background(MaterialTheme.colorScheme.secondary) else Modifier
     Box(
         modifier = Modifier.then(backgroundModifier)
             .clickable(enabled = true, onClick = { callback(index) })
@@ -59,6 +60,7 @@ private fun Tab(title: String, index: Int, selected: Boolean, callback: (Int) ->
         Text(
             text = title,
             maxLines = 1,
+            color = if (selected) MaterialTheme.colorScheme.onSecondary else Color.Unspecified,
             modifier = Modifier.padding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
         )
     }

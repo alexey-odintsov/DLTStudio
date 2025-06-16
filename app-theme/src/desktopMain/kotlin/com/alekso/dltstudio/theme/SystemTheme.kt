@@ -14,41 +14,66 @@ import androidx.compose.ui.unit.sp
 
 /**
  * Default app theme that automatically applies dark mode based on the system settings.
+ *
+ * https://m3.material.io/styles/color/roles
+ *
+ * Surface – A role used for backgrounds and large, low-emphasis areas of the screen.
+ *      Use surface roles for more neutral backgrounds, and container colors for components like cards, sheets, and dialogs.
+ *
+ * Primary, Secondary, Tertiary – Accent color roles used to emphasize or de-emphasize foreground elements.
+ *      Primary roles are for important actions and elements needing the most emphasis, like a FAB to start a new message.
+ *      Secondary roles are for elements that don’t need immediate attention and don’t need emphasis, like the selected state of a navigation icon or a dismissive button.
+ *      Tertiary roles are for smaller elements that need special emphasis but don't require immediate attention, such as a badge or notification.
+ * Container – Roles used as a fill color for foreground elements like buttons. They should not be used for text or icons.
+ * On – Roles starting with this term indicate a color for text or icons on top of its paired parent color. For example, on primary is used for text and icons against the primary fill color.
+ * Variant – Roles ending with this term offer a lower emphasis alternative to its non-variant pair. For example, outline variant is a less emphasized version of the outline color.
  */
 class SystemTheme(
     private val isDark: Boolean
 ) : Theme {
 
+    // primary,
     val primaryLight = Color(0xFF415F91) // Accent + bg tone
     val onPrimaryLight = Color(0xFFFFFFFF)
     val primaryContainerLight = Color(0xFFD7E3FF) // FAB bg
     val onPrimaryContainerLight = Color(0xFF284777)
-    val secondaryLight = Color.Red//(0xFF565E71)
+
+    // secondary
+    val secondaryLight = Color(0xFF9d9db0)
     val onSecondaryLight = Color(0xFFFFFFFF)
     val secondaryContainerLight = Color(0xFFDAE2F9)
     val onSecondaryContainerLight = Color(0xFF3E4759)
+
+    // tertiary
     val tertiaryLight = Color(0xFF5E621B)
     val onTertiaryLight = Color(0xFFFFFFFF)
     val tertiaryContainerLight = Color(0xFFE4E892)
     val onTertiaryContainerLight = Color(0xFF464A02)
+
+    // error
     val errorLight = Color(0xFFBA1A1A)
     val onErrorLight = Color(0xFFFFFFFF)
     val errorContainerLight = Color(0xFFFFDAD6)
     val onErrorContainerLight = Color(0xFF93000A)
+
+    // surface & outline
     val backgroundLight = Color(0xFFF9F9FF) // ?
     val onBackgroundLight = Color(0xFF191C20)
+
     val surfaceLight = Color(0xFFF3F4F4) // background
     val onSurfaceLight = Color(0xFF191C20)
     val surfaceVariantLight = Color(0xFFE0E2EC)
     val onSurfaceVariantLight = Color(0xFF44474E)
-    val outlineLight = Color(0xFF74777F)
-    val outlineVariantLight = Color(0xFFC4C6D0)
+
+    val outlineLight = Color(0xFF74777F) // Important boundaries, such as a text field outline
+    val outlineVariantLight = Color(0xFFC4C6D0) // Decorative elements, such as dividers, and when other elements provide 4.5:1 contrast
     val scrimLight = Color(0xFF000000)
     val inverseSurfaceLight = Color(0xFF2E3036)
     val inverseOnSurfaceLight = Color(0xFFF0F0F7)
     val inversePrimaryLight = Color(0xFFAAC7FF)
     val surfaceDimLight = Color(0xFFD9D9E0)
     val surfaceBrightLight = Color(0xFFF9F9FF)
+
     val surfaceContainerLowestLight = Color(0xFFFFFFFF)
     val surfaceContainerLowLight = Color(0xFFF3F3FA)
     val surfaceContainerLight = Color(0xFFEDEDF4)

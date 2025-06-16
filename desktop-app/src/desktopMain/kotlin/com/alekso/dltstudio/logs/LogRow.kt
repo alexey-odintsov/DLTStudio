@@ -37,7 +37,6 @@ import org.jetbrains.compose.resources.painterResource
 import java.awt.Cursor
 
 
-private val selectedCellStyle = CellStyle(backgroundColor = Color.LightGray)
 
 @Composable
 @Preview
@@ -63,6 +62,11 @@ fun LogRow(
     showComments: Boolean = false,
     onColumnResized: (String, Float) -> Unit,
 ) {
+    val selectedCellStyle = CellStyle(
+        backgroundColor = MaterialTheme.colorScheme.secondary,
+        textColor = MaterialTheme.colorScheme.onSecondary
+    )
+
     Column(
         modifier = modifier.then(
             Modifier.fillMaxWidth()
