@@ -16,7 +16,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -33,7 +35,6 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.HorizontalDivider
 import com.alekso.dltstudio.uicomponents.ImageButton
 import com.alekso.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
@@ -104,7 +105,7 @@ fun TimelineToolbar(
                 tintable = false
             )
         }
-        HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp))
+        VerticalDivider()
 
         Tooltip(text = "Move offset to the left") {
             ImageButton(

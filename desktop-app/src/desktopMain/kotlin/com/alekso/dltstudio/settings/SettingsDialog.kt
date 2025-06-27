@@ -3,10 +3,9 @@ package com.alekso.dltstudio.settings
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -97,7 +96,7 @@ fun SettingsPanel(
         Column(Modifier.width(140.dp)) {
             TabsPanel(tabIndex, tabs, { i -> tabIndex = i }, vertical = true)
         }
-        Divider(Modifier.width(1.dp).fillMaxHeight())
+        VerticalDivider()
         Column(Modifier.weight(1f)) {
             when (tabIndex) {
                 0 -> AppearancePanel(callbacks, settingsUI)
