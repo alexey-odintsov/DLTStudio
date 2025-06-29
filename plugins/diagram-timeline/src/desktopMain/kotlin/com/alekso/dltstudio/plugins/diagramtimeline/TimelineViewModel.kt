@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.EventsChartData
@@ -59,6 +60,7 @@ class TimelineViewModel(
     val filtersDialogState = mutableStateOf(false)
     var entriesMap = mutableStateMapOf<String, ChartData>()
     var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
+    var selectedEntry by mutableStateOf<ChartEntry?>(null)
 
     private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
@@ -308,6 +310,10 @@ class TimelineViewModel(
 
     fun onLegendResized(diff: Float) {
         legendSize += diff
+    }
+
+    fun onEntrySelected(chartKey: ChartKey, chartEntry: ChartEntry) {
+        selectedEntry = chartEntry
     }
 
 }

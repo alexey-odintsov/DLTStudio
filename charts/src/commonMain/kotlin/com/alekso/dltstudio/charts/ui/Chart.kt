@@ -2,6 +2,7 @@ package com.alekso.dltstudio.charts.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.EventsChartData
@@ -29,6 +31,7 @@ import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
+import kotlin.math.abs
 
 @Composable
 fun Chart(
@@ -42,7 +45,10 @@ fun Chart(
     labelsCount: Int = 11,
     labelsPostfix: String = "",
     highlightedKey: ChartKey? = null,
+    selectedEntry: ChartEntry? = null,
+    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)? = null,
 ) {
+    println("recompose Chart(timeFrame: $timeFrame; entries: ${entries})")
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
 
@@ -50,6 +56,19 @@ fun Chart(
         modifier = modifier.fillMaxSize().background(style.backgroundColor).clipToBounds()
             .onSizeChanged { size ->
                 usSize = size.width.toFloat() / timeFrame.duration
+            }
+            .pointerInput("chart-selection", entries, timeFrame) {
+                detectTapGestures(
+                    onPress = { offset ->
+                        onChartClicked(
+                            offset,
+                            entries,
+                            onEntrySelected,
+                            timeFrame,
+                            size.width.toFloat()
+                        )
+                    }
+                )
             }
             .pointerInput("chart-dragging") {
                 detectDragGestures { change, dragAmount ->
@@ -67,11 +86,48 @@ fun Chart(
                     }
                     val labelsSize = if (entries.getLabels().isNotEmpty()) entries.getLabels().size else labelsCount
                     renderSeries(type, labelsSize, style)
-                    renderEntries(type, entries, timeFrame, style, highlightedKey, labelsSize)
+                    renderEntries(
+                        type,
+                        entries,
+                        timeFrame,
+                        style,
+                        highlightedKey,
+                        labelsSize,
+                        selectedEntry
+                    )
                     renderLabels(type, labelsSize, textMeasurer, style, entries, labelsPostfix)
                 }
             }
     )
+}
+
+private fun onChartClicked(
+    offset: Offset,
+    entries: ChartData?,
+    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)?,
+    timeFrame: TimeFrame,
+    width: Float,
+) {
+    if (entries != null && onEntrySelected != null) {
+        val pixelThreshold = 15f
+
+        val distances = mutableMapOf<Float, Pair<ChartKey, ChartEntry>>()
+        for (key in entries.getKeys()) {
+            val entryList = entries.getEntries(key) ?: continue
+            for (entry in entryList) {
+                val entryX = calculateX(entry.timestamp, timeFrame, width)
+                val distance = abs(entryX - offset.x)
+                if (distance <= pixelThreshold) {
+                    distances[distance] = Pair(key, entry)
+                }
+            }
+
+        }
+        if (distances.isNotEmpty()) {
+            val pair = distances.minBy { it.key }
+            onEntrySelected(pair.value.first, pair.value.second)
+        }
+    }
 }
 
 private fun DrawScope.renderLabels(
@@ -130,7 +186,8 @@ private fun DrawScope.renderEntries(
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
-    labelsSize: Int
+    labelsSize: Int,
+    selectedEntry: ChartEntry?
 ) {
     when (type) {
         ChartType.Events -> renderEvents(
@@ -138,6 +195,7 @@ private fun DrawScope.renderEntries(
             timeFrame,
             style,
             highlightedKey = highlightedKey,
+            selectedEntry = selectedEntry,
         )
 
         ChartType.Percentage -> renderPercentageLines(

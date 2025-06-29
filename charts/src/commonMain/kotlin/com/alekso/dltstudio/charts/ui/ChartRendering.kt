@@ -5,12 +5,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.DurationEntry
@@ -133,15 +135,25 @@ internal fun DrawScope.renderEvents(
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
+    selectedEntry: ChartEntry?,
 ) {
     val verticalPadding = style.verticalPadding.toPx()
 
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderEventsEntries(entriesMap, key, false, style, keyIndex, timeFrame, verticalPadding)
+        renderEventsEntries(entriesMap, key, false, style, keyIndex, timeFrame, verticalPadding, selectedEntry)
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
-        renderEventsEntries(entriesMap, highlightedKey, true, style, keyIndex, timeFrame, verticalPadding)
+        renderEventsEntries(
+            entriesMap,
+            highlightedKey,
+            true,
+            style,
+            keyIndex,
+            timeFrame,
+            verticalPadding,
+            selectedEntry
+        )
     }
 }
 
@@ -152,7 +164,8 @@ private fun DrawScope.renderEventsEntries(
     style: ChartStyle,
     keyIndex: Int,
     timeFrame: TimeFrame,
-    verticalPadding: Float
+    verticalPadding: Float,
+    selectedEntry: ChartEntry?
 ) {
     val entries = entriesMap.getEntries(key)
     entries.forEach { entry ->
@@ -175,6 +188,14 @@ private fun DrawScope.renderEventsEntries(
             radius = 2.dp.toPx(),
             center = Offset(x, y)
         )
+        if (entry == selectedEntry) {
+            drawCircle(
+                color = Color.Green,
+                radius = 4.dp.toPx(),
+                center = Offset(x, y),
+                style = Stroke(width = 2.dp.toPx())
+            )
+        }
     }
 }
 

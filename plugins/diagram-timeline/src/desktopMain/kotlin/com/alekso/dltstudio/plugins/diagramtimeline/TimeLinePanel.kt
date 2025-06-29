@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
@@ -91,6 +92,8 @@ fun TimeLinePanel(
     currentFilterFile: RecentTimelineFilterFileEntry?,
     toolbarCallbacks: ToolbarCallbacks,
     onCloseFiltersDialog: () -> Unit,
+    selectedEntry: ChartEntry? = null,
+    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)? = null,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
 
@@ -186,6 +189,8 @@ fun TimeLinePanel(
                             totalTime = timeFrame,
                             timeFrame = timeFrame,
                             type = chartType,
+                            selectedEntry = selectedEntry,
+                            onEntrySelected = onEntrySelected,
                         )
                     }
                 }
