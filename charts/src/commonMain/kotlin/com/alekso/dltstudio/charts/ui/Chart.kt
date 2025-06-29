@@ -48,7 +48,6 @@ fun Chart(
     selectedEntry: ChartEntry? = null,
     onEntrySelected: ((ChartKey, ChartEntry) -> Unit)? = null,
 ) {
-    println("recompose Chart(timeFrame: $timeFrame; entries: ${entries})")
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
 
@@ -204,6 +203,7 @@ private fun DrawScope.renderEntries(
             timeFrame,
             style = style,
             highlightedKey = highlightedKey,
+            selectedEntry = selectedEntry,
         )
 
         ChartType.MinMax -> renderMinMaxLines(

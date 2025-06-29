@@ -18,6 +18,7 @@ import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 
@@ -58,6 +59,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         viewModel.cleanup()
     }
 
+    @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
     override fun renderPanel(modifier: Modifier) {
         val analyzeState by viewModel.analyzeState.collectAsState()
@@ -87,6 +89,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 onCloseFiltersDialog = viewModel::onCloseFiltersDialogClicked,
                 selectedEntry = viewModel.selectedEntry,
                 onEntrySelected = viewModel::onEntrySelected,
+                vSplitterState = viewModel.vSplitterState,
             )
         }
     }

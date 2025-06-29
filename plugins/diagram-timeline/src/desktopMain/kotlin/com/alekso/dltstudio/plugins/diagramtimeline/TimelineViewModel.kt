@@ -41,6 +41,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
 
 
@@ -49,6 +51,8 @@ class TimelineViewModel(
     private val timelineRepository: TimelineRepository,
     private val messagesRepository: MessagesRepository,
 ) {
+    @OptIn(ExperimentalSplitPaneApi::class)
+    val vSplitterState = SplitPaneState(0.9f, true)
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
     private var analyzeJob: Job? = null

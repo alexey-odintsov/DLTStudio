@@ -189,12 +189,7 @@ private fun DrawScope.renderEventsEntries(
             center = Offset(x, y)
         )
         if (entry == selectedEntry) {
-            drawCircle(
-                color = Color.Green,
-                radius = 4.dp.toPx(),
-                center = Offset(x, y),
-                style = Stroke(width = 2.dp.toPx())
-            )
+            renderSelection(Offset(x, y))
         }
     }
 }
@@ -517,6 +512,7 @@ internal fun DrawScope.renderPercentageLines(
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
+    selectedEntry: ChartEntry?,
 ) {
     val verticalPaddingPx = style.verticalPadding.toPx()
 
@@ -529,7 +525,8 @@ internal fun DrawScope.renderPercentageLines(
             keyIndex,
             timeFrame,
             labelsSize,
-            verticalPaddingPx
+            verticalPaddingPx,
+            selectedEntry
         )
     }
     if (highlightedKey != null) {
@@ -542,7 +539,8 @@ internal fun DrawScope.renderPercentageLines(
             keyIndex,
             timeFrame,
             labelsSize,
-            verticalPaddingPx
+            verticalPaddingPx,
+            selectedEntry
         )
     }
 }
@@ -555,7 +553,8 @@ private fun DrawScope.renderPercentageEntries(
     keyIndex: Int,
     timeFrame: TimeFrame,
     labelsSize: Int,
-    verticalPaddingPx: Float
+    verticalPaddingPx: Float,
+    selectedEntry: ChartEntry?
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -600,6 +599,9 @@ private fun DrawScope.renderPercentageEntries(
                 strokeWidth = lineWidthPx,
             )
         }
+        if (entry == selectedEntry) {
+            renderSelection(Offset(x, y))
+        }
     }
 }
 
@@ -616,5 +618,14 @@ internal fun DrawScope.renderEmptyMessage(
             x = size.width / 2 - textSize.width / 2,
             y = size.height / 2 - textSize.height / 2
         )
+    )
+}
+
+internal fun DrawScope.renderSelection(offset: Offset) {
+    drawCircle(
+        color = Color.Green,
+        radius = 4.dp.toPx(),
+        center = offset,
+        style = Stroke(width = 1.5.dp.toPx())
     )
 }

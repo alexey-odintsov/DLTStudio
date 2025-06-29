@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -35,6 +37,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -67,12 +70,15 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialog
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.SplitPaneState
+import org.jetbrains.compose.splitpane.VerticalSplitPane
 import java.awt.Cursor
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
 private val TIME_MARKER_HEIGHT_DP = 12.dp
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalSplitPaneApi::class)
 @Composable
 fun TimeLinePanel(
     modifier: Modifier,
@@ -94,6 +100,7 @@ fun TimeLinePanel(
     onCloseFiltersDialog: () -> Unit,
     selectedEntry: ChartEntry? = null,
     onEntrySelected: ((ChartKey, ChartEntry) -> Unit)? = null,
+    vSplitterState: SplitPaneState,
 ) {
     var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
 
@@ -143,6 +150,77 @@ fun TimeLinePanel(
         }
 
         Divider()
+        VerticalSplitPane(splitPaneState = vSplitterState) {
+            first(50.dp) {
+                charts(
+                    legendSize,
+                    timeTotal,
+                    timeFrame,
+                    timelineFilters,
+                    entriesMap,
+                    highlightedKeysMap,
+                    onLegendResized,
+                    retrieveEntriesForFilter,
+                    toolbarCallbacks,
+                    selectedEntry,
+                    onEntrySelected,
+                    cursorPosition,
+                    listState,
+                    modifier
+                )
+            }
+            second(20.dp) {
+                entryPreview(selectedEntry)
+            }
+            splitter {
+                visiblePart {
+                    Box(
+                        Modifier
+                            .height(1.dp)
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colors.background)
+                    )
+                }
+                handle {
+                    Box(
+                        Modifier
+                            .markAsHandle()
+                            .pointerHoverIcon(PointerIcon(Cursor(Cursor.S_RESIZE_CURSOR)))
+                            .background(SolidColor(Color.Gray), alpha = 0.50f)
+                            .height(4.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun entryPreview(selectedEntry: ChartEntry?) {
+    Text("${selectedEntry}")
+}
+
+@Composable
+@OptIn(ExperimentalComposeUiApi::class)
+private fun charts(
+    legendSize: Float,
+    timeTotal: TimeFrame,
+    timeFrame: TimeFrame,
+    timelineFilters: SnapshotStateList<TimelineFilter>,
+    entriesMap: SnapshotStateMap<String, ChartData>,
+    highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
+    onLegendResized: (Float) -> Unit,
+    retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData?,
+    toolbarCallbacks: ToolbarCallbacks,
+    selectedEntry: ChartEntry?,
+    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)?,
+    cursorPosition: Offset,
+    listState: LazyListState,
+    modifier: Modifier
+) {
+    var cursorPosition1 = cursorPosition
+    Column {
         Row {
             Box(modifier = Modifier.width(legendSize.dp))
             TimeRuler(
@@ -197,12 +275,12 @@ fun TimeLinePanel(
             }
         }
 
-        Box(modifier = Modifier.weight(1f)) {
+        Box(modifier = Modifier.Companion.weight(1f)) {
             LazyColumn(
                 Modifier.onPointerEvent(
                     eventType = PointerEventType.Move,
                     onEvent = { event ->
-                        cursorPosition = event.changes[0].position
+                        cursorPosition1 = event.changes[0].position
                     }),
                 listState
             ) {
@@ -222,17 +300,17 @@ fun TimeLinePanel(
             val textMeasurer = rememberTextMeasurer()
             val formatter = LocalFormatter.current
             Canvas(modifier = modifier.fillMaxSize().clipToBounds()) {
-                if (cursorPosition.x < legendSize.dp.toPx()) return@Canvas
+                if (cursorPosition1.x < legendSize.dp.toPx()) return@Canvas
 
-                val doesMarkerFit = (size.width - cursorPosition.x) > TIME_MARKER_WIDTH_DP.toPx()
+                val doesMarkerFit = (size.width - cursorPosition1.x) > TIME_MARKER_WIDTH_DP.toPx()
 
                 drawLine(
                     Color(0xff8080ff),
-                    Offset(cursorPosition.x, 0f),
-                    Offset(cursorPosition.x, size.height)
+                    Offset(cursorPosition1.x, 0f),
+                    Offset(cursorPosition1.x, size.height)
                 )
                 val cursorTimestamp = calculateTimestamp(
-                    cursorPosition.x - legendSize.dp.toPx(),
+                    cursorPosition1.x - legendSize.dp.toPx(),
                     timeFrame,
                     size.width - legendSize.dp.toPx()
                 )
@@ -241,7 +319,7 @@ fun TimeLinePanel(
                     textMeasurer = textMeasurer,
                     text = formatter.formatTime(cursorTimestamp),
                     topLeft = Offset(
-                        if (doesMarkerFit) cursorPosition.x + 4.dp.toPx() else cursorPosition.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
+                        if (doesMarkerFit) cursorPosition1.x + 4.dp.toPx() else cursorPosition1.x - TIME_MARKER_WIDTH_DP.toPx() - 4.dp.toPx(),
                         4.dp.toPx()
                     ),
                     style = TextStyle(
@@ -274,6 +352,7 @@ fun LegendResizer(
     Box(finalModifier)
 }
 
+@OptIn(ExperimentalSplitPaneApi::class)
 @Preview
 @Composable
 fun PreviewTimeline() {
@@ -301,5 +380,6 @@ fun PreviewTimeline() {
         filtersDialogState = false,
         onCloseFiltersDialog = {},
         currentFilterFile = null,
+        vSplitterState = SplitPaneState(1f, false)
     )
 }
