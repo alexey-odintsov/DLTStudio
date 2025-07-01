@@ -4,20 +4,20 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateMapOf
 
 @Stable
-interface ChartData {
+interface ChartData<T> {
     fun isEmpty(): Boolean
     fun getKeys(): List<ChartKey>
-    fun getEntries(key: ChartKey): List<ChartEntry>?
+    fun getEntries(key: ChartKey): List<ChartEntry<T>>?
     fun getLabels(): List<String>
 }
 
-data class PercentageChartData(
-    private val entriesMap: MutableMap<ChartKey, MutableList<PercentageEntry>> = mutableMapOf(),
-) : ChartData {
+data class PercentageChartData<T>(
+    private val entriesMap: MutableMap<ChartKey, MutableList<PercentageEntry<T>>> = mutableMapOf(),
+) : ChartData<T> {
     private var minValue = 0f
     private var maxValue = 100f
 
-    fun addEntry(key: ChartKey, value: PercentageEntry) {
+    fun addEntry(key: ChartKey, value: PercentageEntry<T>) {
         val list = entriesMap[key] ?: mutableListOf()
         list.add(value)
         entriesMap[key] = list
@@ -31,7 +31,7 @@ data class PercentageChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<PercentageEntry> {
+    override fun getEntries(key: ChartKey): List<PercentageEntry<T>> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 
@@ -43,13 +43,13 @@ data class PercentageChartData(
     fun getMinValue() = minValue
 }
 
-data class MinMaxChartData(
-    private val entriesMap: MutableMap<ChartKey, MutableList<MinMaxEntry>> = mutableMapOf(),
-) : ChartData {
+data class MinMaxChartData<T>(
+    private val entriesMap: MutableMap<ChartKey, MutableList<MinMaxEntry<T>>> = mutableMapOf(),
+) : ChartData<T> {
     private var minValue = 0f
     private var maxValue = 0f
 
-    fun addEntry(key: ChartKey, value: MinMaxEntry) {
+    fun addEntry(key: ChartKey, value: MinMaxEntry<T>) {
         if (value.value > maxValue) {
             maxValue = value.value
         }
@@ -69,7 +69,7 @@ data class MinMaxChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<MinMaxEntry> {
+    override fun getEntries(key: ChartKey): List<MinMaxEntry<T>> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 
@@ -81,12 +81,12 @@ data class MinMaxChartData(
     fun getMinValue() = minValue
 }
 
-data class EventsChartData(
-    private val entriesMap: MutableMap<ChartKey, MutableList<EventEntry>> = mutableStateMapOf()
-) : ChartData {
+data class EventsChartData<T>(
+    private val entriesMap: MutableMap<ChartKey, MutableList<EventEntry<T>>> = mutableStateMapOf()
+) : ChartData<T> {
     private val _labels = mutableListOf<String>()
 
-    fun addEntry(key: ChartKey, value: EventEntry) {
+    fun addEntry(key: ChartKey, value: EventEntry<T>) {
         if (!_labels.contains(value.event)) {
             _labels.add(value.event)
         }
@@ -103,7 +103,7 @@ data class EventsChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<EventEntry> {
+    override fun getEntries(key: ChartKey): List<EventEntry<T>> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 
@@ -112,12 +112,12 @@ data class EventsChartData(
     }
 }
 
-data class StateChartData(
-    private val entriesMap: MutableMap<ChartKey, MutableList<StateEntry>> = mutableMapOf(),
-) : ChartData {
+data class StateChartData<T>(
+    private val entriesMap: MutableMap<ChartKey, MutableList<StateEntry<T>>> = mutableMapOf(),
+) : ChartData<T> {
     private val _labels = mutableListOf<String>()
 
-    fun addEntry(key: ChartKey, value: StateEntry) {
+    fun addEntry(key: ChartKey, value: StateEntry<T>) {
         if (!_labels.contains(value.oldState)) {
             _labels.add(value.oldState)
         }
@@ -137,7 +137,7 @@ data class StateChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<StateEntry> {
+    override fun getEntries(key: ChartKey): List<StateEntry<T>> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 
@@ -146,11 +146,11 @@ data class StateChartData(
     }
 }
 
-data class SingleStateChartData(
-    private val entriesMap: MutableMap<ChartKey, MutableList<SingleStateEntry>> = mutableStateMapOf(),
-) : ChartData {
+data class SingleStateChartData<T>(
+    private val entriesMap: MutableMap<ChartKey, MutableList<SingleStateEntry<T>>> = mutableStateMapOf(),
+) : ChartData<T> {
     private val _labels = mutableListOf<String>()
-    fun addEntry(key: ChartKey, value: SingleStateEntry) {
+    fun addEntry(key: ChartKey, value: SingleStateEntry<T>) {
         if (!_labels.contains(value.state)) {
             _labels.add(value.state)
         }
@@ -167,7 +167,7 @@ data class SingleStateChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<SingleStateEntry> {
+    override fun getEntries(key: ChartKey): List<SingleStateEntry<T>> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 
@@ -176,11 +176,11 @@ data class SingleStateChartData(
     }
 }
 
-data class DurationChartData(
-    private val entriesMap: MutableMap<ChartKey, MutableList<DurationEntry>> = mutableStateMapOf(),
-) : ChartData {
+data class DurationChartData<T>(
+    private val entriesMap: MutableMap<ChartKey, MutableList<DurationEntry<T>>> = mutableStateMapOf(),
+) : ChartData<T> {
     private val _labels = mutableListOf<String>()
-    fun addEntry(key: ChartKey, value: DurationEntry) {
+    fun addEntry(key: ChartKey, value: DurationEntry<T>) {
         if (!_labels.contains(key.key)) {
             _labels.add(key.key)
         }
@@ -197,7 +197,7 @@ data class DurationChartData(
         return entriesMap.keys.toList()
     }
 
-    override fun getEntries(key: ChartKey): List<DurationEntry> {
+    override fun getEntries(key: ChartKey): List<DurationEntry<T>> {
         return entriesMap[key]?.toList() ?: emptyList()
     }
 

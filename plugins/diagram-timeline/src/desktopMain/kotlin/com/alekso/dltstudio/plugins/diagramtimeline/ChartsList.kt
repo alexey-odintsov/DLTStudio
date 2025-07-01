@@ -46,6 +46,7 @@ import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
 import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.charts.ui.calculateTimestamp
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
@@ -58,13 +59,13 @@ internal fun ChartsList(
     timeTotal: TimeFrame,
     timeFrame: TimeFrame,
     timelineFilters: SnapshotStateList<TimelineFilter>,
-    entriesMap: SnapshotStateMap<String, ChartData>,
+    entriesMap: SnapshotStateMap<String, ChartData<LogMessage>>,
     highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
     onLegendResized: (Float) -> Unit,
-    retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData?,
+    retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
     toolbarCallbacks: ToolbarCallbacks,
-    selectedEntry: ChartEntry?,
-    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)?,
+    selectedEntry: ChartEntry<LogMessage>?,
+    onEntrySelected: ((ChartKey, ChartEntry<LogMessage>) -> Unit)?,
     listState: LazyListState,
     modifier: Modifier
 ) {

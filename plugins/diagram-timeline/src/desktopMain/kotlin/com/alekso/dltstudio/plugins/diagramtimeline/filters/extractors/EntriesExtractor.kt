@@ -1,6 +1,5 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.EventsChartData
@@ -8,10 +7,11 @@ import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.StateChartData
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 
 
-interface EntriesExtractor<T : ChartData> {
+interface EntriesExtractor<T : ChartData<LogMessage>> {
     enum class ExtractionType(val description: String) {
         NamedGroupsOneEntry("One entry per line, key and value are extracted from string: '<key:X> <value:y>'"),
         NamedGroupsManyEntries("Many entries per line, keys are fixed and values are extracted from string: '<key1:value1> <key2:value2>'"),
@@ -34,7 +34,7 @@ interface EntriesExtractor<T : ChartData> {
     )
 
     fun extractEntry(
-        message: DLTMessage,
+        message: LogMessage,
         regex: Regex,
         extractionType: ExtractionType,
         data: T,
@@ -42,11 +42,11 @@ interface EntriesExtractor<T : ChartData> {
 
     companion object {
         fun analyzeEntriesRegex(
-            message: DLTMessage,
+            message: LogMessage,
             diagramType: DiagramType,
             extractorType: ExtractionType,
             regex: Regex,
-            entries: ChartData
+            entries: ChartData<LogMessage>
         ) {
             try {
                 when (diagramType) {

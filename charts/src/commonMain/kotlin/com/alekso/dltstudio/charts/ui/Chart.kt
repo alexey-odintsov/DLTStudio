@@ -34,19 +34,19 @@ import com.alekso.dltstudio.charts.model.TimeFrame
 import kotlin.math.abs
 
 @Composable
-fun Chart(
+fun <T> Chart(
     modifier: Modifier,
     style: ChartStyle = ChartStyle.Default,
     totalTime: TimeFrame, // min .. max timeStamps
     timeFrame: TimeFrame,
-    entries: ChartData?,
+    entries: ChartData<T>?,
     onDragged: ((Float) -> Unit)? = null,
     type: ChartType,
     labelsCount: Int = 11,
     labelsPostfix: String = "",
     highlightedKey: ChartKey? = null,
-    selectedEntry: ChartEntry? = null,
-    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)? = null,
+    selectedEntry: ChartEntry<T>? = null,
+    onEntrySelected: ((ChartKey, ChartEntry<T>) -> Unit)? = null,
 ) {
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
@@ -100,17 +100,17 @@ fun Chart(
     )
 }
 
-private fun onChartClicked(
+private fun <T> onChartClicked(
     offset: Offset,
-    entries: ChartData?,
-    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)?,
+    entries: ChartData<T>?,
+    onEntrySelected: ((ChartKey, ChartEntry<T>) -> Unit)?,
     timeFrame: TimeFrame,
     width: Float,
 ) {
     if (entries != null && onEntrySelected != null) {
         val pixelThreshold = 15f
 
-        val distances = mutableMapOf<Float, Pair<ChartKey, ChartEntry>>()
+        val distances = mutableMapOf<Float, Pair<ChartKey, ChartEntry<T>>>()
         for (key in entries.getKeys()) {
             val entryList = entries.getEntries(key) ?: continue
             for (entry in entryList) {
@@ -129,12 +129,12 @@ private fun onChartClicked(
     }
 }
 
-private fun DrawScope.renderLabels(
+private fun <T> DrawScope.renderLabels(
     type: ChartType,
     labelsSize: Int,
     textMeasurer: TextMeasurer,
     style: ChartStyle,
-    entries: ChartData,
+    entries: ChartData<T>,
     labelsPostfix: String
 ) {
     when (type) {
@@ -179,14 +179,14 @@ private fun DrawScope.renderCenterLine() {
     )
 }
 
-private fun DrawScope.renderEntries(
+private fun <T> DrawScope.renderEntries(
     type: ChartType,
-    entries: ChartData,
+    entries: ChartData<T>,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
     labelsSize: Int,
-    selectedEntry: ChartEntry?
+    selectedEntry: ChartEntry<T>?
 ) {
     when (type) {
         ChartType.Events -> renderEvents(

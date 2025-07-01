@@ -130,12 +130,12 @@ internal fun DrawScope.renderLabelsForValue(
     }
 }
 
-internal fun DrawScope.renderEvents(
-    entriesMap: EventsChartData,
+internal fun <T> DrawScope.renderEvents(
+    entriesMap: EventsChartData<T>,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
-    selectedEntry: ChartEntry?,
+    selectedEntry: ChartEntry<T>?,
 ) {
     val verticalPadding = style.verticalPadding.toPx()
 
@@ -157,15 +157,15 @@ internal fun DrawScope.renderEvents(
     }
 }
 
-private fun DrawScope.renderEventsEntries(
-    entriesMap: EventsChartData,
+private fun <T> DrawScope.renderEventsEntries(
+    entriesMap: EventsChartData<T>,
     key: ChartKey,
     isHighlighted: Boolean,
     style: ChartStyle,
     keyIndex: Int,
     timeFrame: TimeFrame,
     verticalPadding: Float,
-    selectedEntry: ChartEntry?
+    selectedEntry: ChartEntry<T>?
 ) {
     val entries = entriesMap.getEntries(key)
     entries.forEach { entry ->
@@ -194,8 +194,8 @@ private fun DrawScope.renderEventsEntries(
     }
 }
 
-internal fun DrawScope.renderMinMaxLines(
-    entriesMap: MinMaxChartData,
+internal fun <T> DrawScope.renderMinMaxLines(
+    entriesMap: MinMaxChartData<T>,
     labelsSize: Int,
     timeFrame: TimeFrame,
     style: ChartStyle,
@@ -210,8 +210,8 @@ internal fun DrawScope.renderMinMaxLines(
     }
 }
 
-private fun DrawScope.renderMinMaxEntries(
-    entriesMap: MinMaxChartData,
+private fun <T> DrawScope.renderMinMaxEntries(
+    entriesMap: MinMaxChartData<T>,
     key: ChartKey,
     isHighlighted: Boolean,
     style: ChartStyle,
@@ -268,8 +268,8 @@ private fun DrawScope.renderMinMaxEntries(
 
 val dashPath = PathEffect.dashPathEffect(floatArrayOf(3f, 3f))
 
-internal fun DrawScope.renderStateLines(
-    entriesMap: StateChartData,
+internal fun <T> DrawScope.renderStateLines(
+    entriesMap: StateChartData<T>,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
@@ -283,8 +283,8 @@ internal fun DrawScope.renderStateLines(
     }
 }
 
-private fun DrawScope.renderStateEntries(
-    entriesMap: StateChartData,
+private fun <T> DrawScope.renderStateEntries(
+    entriesMap: StateChartData<T>,
     key: ChartKey,
     isHighlighted: Boolean,
     style: ChartStyle,
@@ -348,8 +348,8 @@ private fun DrawScope.renderStateEntries(
     }
 }
 
-internal fun DrawScope.renderSingleStateLines(
-    entriesMap: SingleStateChartData,
+internal fun <T> DrawScope.renderSingleStateLines(
+    entriesMap: SingleStateChartData<T>,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
@@ -363,8 +363,8 @@ internal fun DrawScope.renderSingleStateLines(
     }
 }
 
-private fun DrawScope.renderSingleStateEntries(
-    entriesMap: SingleStateChartData,
+private fun <T> DrawScope.renderSingleStateEntries(
+    entriesMap: SingleStateChartData<T>,
     key: ChartKey,
     isHighlighted: Boolean,
     style: ChartStyle,
@@ -426,8 +426,8 @@ private fun DrawScope.renderSingleStateEntries(
     }
 }
 
-internal fun DrawScope.renderDurationLines(
-    entriesMap: DurationChartData,
+internal fun <T> DrawScope.renderDurationLines(
+    entriesMap: DurationChartData<T>,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
@@ -441,8 +441,8 @@ internal fun DrawScope.renderDurationLines(
     }
 }
 
-private fun DrawScope.renderDurationEntries(
-    entriesMap: DurationChartData,
+private fun <T> DrawScope.renderDurationEntries(
+    entriesMap: DurationChartData<T>,
     key: ChartKey,
     isHighlighted: Boolean,
     style: ChartStyle,
@@ -458,7 +458,7 @@ private fun DrawScope.renderDurationEntries(
     val lineWidthPx = if (isHighlighted) style.lineWidth.toPx() + 1f else style.lineWidth.toPx()
     val verticalPaddingPx = style.verticalPadding.toPx()
 
-    var prev: DurationEntry? = null
+    var prev: DurationEntry<T>? = null
     entries.forEachIndexed entriesIteration@{ i, entry ->
 
         val labels = entriesMap.getLabels()
@@ -506,13 +506,13 @@ private fun DrawScope.renderDurationEntries(
     }
 }
 
-internal fun DrawScope.renderPercentageLines(
-    entriesMap: PercentageChartData,
+internal fun <T> DrawScope.renderPercentageLines(
+    entriesMap: PercentageChartData<T>,
     labelsSize: Int,
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
-    selectedEntry: ChartEntry?,
+    selectedEntry: ChartEntry<T>?,
 ) {
     val verticalPaddingPx = style.verticalPadding.toPx()
 
@@ -545,8 +545,8 @@ internal fun DrawScope.renderPercentageLines(
     }
 }
 
-private fun DrawScope.renderPercentageEntries(
-    entriesMap: PercentageChartData,
+private fun <T> DrawScope.renderPercentageEntries(
+    entriesMap: PercentageChartData<T>,
     key: ChartKey,
     isHighlighted: Boolean,
     style: ChartStyle,
@@ -554,7 +554,7 @@ private fun DrawScope.renderPercentageEntries(
     timeFrame: TimeFrame,
     labelsSize: Int,
     verticalPaddingPx: Float,
-    selectedEntry: ChartEntry?
+    selectedEntry: ChartEntry<T>?
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =

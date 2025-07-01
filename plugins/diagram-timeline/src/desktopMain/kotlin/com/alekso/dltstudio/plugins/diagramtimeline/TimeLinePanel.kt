@@ -58,18 +58,18 @@ fun TimeLinePanel(
     analyzeState: AnalyzeState,
     timelineFilters: SnapshotStateList<TimelineFilter>,
     filtersDialogState: Boolean,
-    entriesMap: SnapshotStateMap<String, ChartData>,
+    entriesMap: SnapshotStateMap<String, ChartData<LogMessage>>,
     highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
     filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
-    retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData?,
+    retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
     onLegendResized: (Float) -> Unit = { _ -> },
     legendSize: Float,
     recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
     currentFilterFile: RecentTimelineFilterFileEntry?,
     toolbarCallbacks: ToolbarCallbacks,
     onCloseFiltersDialog: () -> Unit,
-    selectedEntry: ChartEntry? = null,
-    onEntrySelected: ((ChartKey, ChartEntry) -> Unit)? = null,
+    selectedEntry: ChartEntry<LogMessage>? = null,
+    onEntrySelected: ((ChartKey, ChartEntry<LogMessage>) -> Unit)? = null,
     vSplitterState: SplitPaneState,
 ) {
     Column(modifier = modifier.onKeyEvent { e ->
@@ -137,7 +137,7 @@ fun TimeLinePanel(
                 )
             }
             second(20.dp) {
-                entryPreview(selectedEntry)
+                EntryPreview(selectedEntry)
             }
             splitter {
                 visiblePart {
