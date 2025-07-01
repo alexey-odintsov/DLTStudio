@@ -212,6 +212,7 @@ private fun <T> DrawScope.renderEntries(
             timeFrame,
             style = style,
             highlightedKey = highlightedKey,
+            selectedEntry = selectedEntry,
         )
 
         ChartType.State -> renderStateLines(
@@ -219,6 +220,7 @@ private fun <T> DrawScope.renderEntries(
             timeFrame,
             style = style,
             highlightedKey = highlightedKey,
+            selectedEntry = selectedEntry,
         )
 
         ChartType.SingleState -> renderSingleStateLines(
@@ -226,6 +228,7 @@ private fun <T> DrawScope.renderEntries(
             timeFrame,
             style = style,
             highlightedKey = highlightedKey,
+            selectedEntry = selectedEntry,
         )
 
         ChartType.Duration -> renderDurationLines(
@@ -233,6 +236,7 @@ private fun <T> DrawScope.renderEntries(
             timeFrame,
             style = style,
             highlightedKey = highlightedKey,
+            selectedEntry = selectedEntry,
         )
     }
 }

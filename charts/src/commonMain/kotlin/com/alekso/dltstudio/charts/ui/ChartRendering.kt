@@ -200,13 +200,32 @@ internal fun <T> DrawScope.renderMinMaxLines(
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
+    selectedEntry: ChartEntry<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderMinMaxEntries(entriesMap, key, false, style, keyIndex, timeFrame, labelsSize)
+        renderMinMaxEntries(
+            entriesMap,
+            key,
+            false,
+            style,
+            keyIndex,
+            timeFrame,
+            labelsSize,
+            selectedEntry
+        )
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
-        renderMinMaxEntries(entriesMap, highlightedKey, true, style, keyIndex, timeFrame, labelsSize)
+        renderMinMaxEntries(
+            entriesMap,
+            highlightedKey,
+            true,
+            style,
+            keyIndex,
+            timeFrame,
+            labelsSize,
+            selectedEntry
+        )
     }
 }
 
@@ -217,7 +236,8 @@ private fun <T> DrawScope.renderMinMaxEntries(
     style: ChartStyle,
     keyIndex: Int,
     timeFrame: TimeFrame,
-    labelsSize: Int
+    labelsSize: Int,
+    selectedEntry: ChartEntry<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -244,6 +264,9 @@ private fun <T> DrawScope.renderMinMaxEntries(
                 radius = lineWidthPx,
                 center = Offset(x, y)
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x, y))
+            }
             return@entriesIteration
         } else {
             val prev = entries[i - 1]
@@ -262,6 +285,9 @@ private fun <T> DrawScope.renderMinMaxEntries(
                 Offset(x, y),
                 strokeWidth = lineWidthPx,
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x, y))
+            }
         }
     }
 }
@@ -273,13 +299,22 @@ internal fun <T> DrawScope.renderStateLines(
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
+    selectedEntry: ChartEntry<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderStateEntries(entriesMap, key, false, style, keyIndex, timeFrame)
+        renderStateEntries(entriesMap, key, false, style, keyIndex, timeFrame, selectedEntry)
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
-        renderStateEntries(entriesMap, highlightedKey, true, style, keyIndex, timeFrame)
+        renderStateEntries(
+            entriesMap,
+            highlightedKey,
+            true,
+            style,
+            keyIndex,
+            timeFrame,
+            selectedEntry
+        )
     }
 }
 
@@ -289,7 +324,8 @@ private fun <T> DrawScope.renderStateEntries(
     isHighlighted: Boolean,
     style: ChartStyle,
     keyIndex: Int,
-    timeFrame: TimeFrame
+    timeFrame: TimeFrame,
+    selectedEntry: ChartEntry<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -326,6 +362,9 @@ private fun <T> DrawScope.renderStateEntries(
                 strokeWidth = lineWidthPx,
                 pathEffect = dashPath,
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x, y))
+            }
             return@entriesIteration
         } else {
             val prev = entries[i - 1]
@@ -344,6 +383,9 @@ private fun <T> DrawScope.renderStateEntries(
                 strokeWidth = lineWidthPx,
                 pathEffect = dashPath,
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x, y))
+            }
         }
     }
 }
@@ -353,13 +395,22 @@ internal fun <T> DrawScope.renderSingleStateLines(
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
+    selectedEntry: ChartEntry<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderSingleStateEntries(entriesMap, key, false, style, keyIndex, timeFrame)
+        renderSingleStateEntries(entriesMap, key, false, style, keyIndex, timeFrame, selectedEntry)
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
-        renderSingleStateEntries(entriesMap, highlightedKey, true, style, keyIndex, timeFrame)
+        renderSingleStateEntries(
+            entriesMap,
+            highlightedKey,
+            true,
+            style,
+            keyIndex,
+            timeFrame,
+            selectedEntry
+        )
     }
 }
 
@@ -369,7 +420,8 @@ private fun <T> DrawScope.renderSingleStateEntries(
     isHighlighted: Boolean,
     style: ChartStyle,
     keyIndex: Int,
-    timeFrame: TimeFrame
+    timeFrame: TimeFrame,
+    selectedEntry: ChartEntry<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -398,6 +450,9 @@ private fun <T> DrawScope.renderSingleStateEntries(
                 radius = lineWidthPx,
                 center = Offset(x, y)
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x, y))
+            }
         } else {
             val prev = entries[i - 1]
             val prevX = calculateX(prev.timestamp, timeFrame, size.width)
@@ -421,6 +476,9 @@ private fun <T> DrawScope.renderSingleStateEntries(
                 strokeWidth = lineWidthPx,
                 pathEffect = dashPath,
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x, y))
+            }
         }
         oldLabelIndex = labelIndex
     }
@@ -431,13 +489,22 @@ internal fun <T> DrawScope.renderDurationLines(
     timeFrame: TimeFrame,
     style: ChartStyle,
     highlightedKey: ChartKey?,
+    selectedEntry: ChartEntry<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderDurationEntries(entriesMap, key, false, style, keyIndex, timeFrame)
+        renderDurationEntries(entriesMap, key, false, style, keyIndex, timeFrame, selectedEntry)
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
-        renderDurationEntries(entriesMap, highlightedKey, true, style, keyIndex, timeFrame)
+        renderDurationEntries(
+            entriesMap,
+            highlightedKey,
+            true,
+            style,
+            keyIndex,
+            timeFrame,
+            selectedEntry
+        )
     }
 }
 
@@ -447,7 +514,8 @@ private fun <T> DrawScope.renderDurationEntries(
     isHighlighted: Boolean,
     style: ChartStyle,
     keyIndex: Int,
-    timeFrame: TimeFrame
+    timeFrame: TimeFrame,
+    selectedEntry: ChartEntry<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -464,7 +532,7 @@ private fun <T> DrawScope.renderDurationEntries(
         val labels = entriesMap.getLabels()
         val labelIndex = labels.indexOf(key.key)
         val x1 = calculateX(entry.timestamp, timeFrame, size.width)
-        val x2 = if (prev != null) calculateX(prev!!.timestamp, timeFrame, size.width) else null
+        val x2 = if (prev != null) calculateX(prev.timestamp, timeFrame, size.width) else null
         val y = calculateY(
             labelIndex,
             labels.size,
@@ -485,6 +553,9 @@ private fun <T> DrawScope.renderDurationEntries(
                 Offset(x1 - 3.dp.toPx(), y + 3.dp.toPx()),
                 strokeWidth = lineWidthPx,
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x1, y))
+            }
         } else if (entry.end != null) {
             drawLine(
                 lineColor,
@@ -501,6 +572,9 @@ private fun <T> DrawScope.renderDurationEntries(
                 Offset(x2, y),
                 strokeWidth = lineWidthPx,
             )
+            if (entry == selectedEntry) {
+                renderSelection(Offset(x2, y))
+            }
         }
         prev = entry
     }
