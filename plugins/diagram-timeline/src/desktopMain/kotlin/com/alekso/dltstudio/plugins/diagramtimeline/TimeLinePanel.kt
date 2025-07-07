@@ -69,7 +69,9 @@ fun TimeLinePanel(
     toolbarCallbacks: ToolbarCallbacks,
     onCloseFiltersDialog: () -> Unit,
     selectedEntry: ChartEntry<LogMessage>? = null,
-    onEntrySelected: ((ChartKey, ChartEntry<LogMessage>) -> Unit)? = null,
+    hoveredEntry: ChartEntry<LogMessage>? = null,
+    onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)? = null,
+    onEntryHovered: ((ChartEntry<LogMessage>) -> Unit)? = null,
     vSplitterState: SplitPaneState,
 ) {
     Column(modifier = modifier.onKeyEvent { e ->
@@ -131,7 +133,9 @@ fun TimeLinePanel(
                     retrieveEntriesForFilter,
                     toolbarCallbacks,
                     selectedEntry,
+                    hoveredEntry,
                     onEntrySelected,
+                    onEntryHovered,
                     listState,
                     modifier
                 )

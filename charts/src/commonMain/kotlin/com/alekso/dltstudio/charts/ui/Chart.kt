@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
@@ -17,6 +18,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.center
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.TextMeasurer
@@ -31,8 +34,39 @@ import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
-import kotlin.math.abs
+import kotlin.math.hypot
 
+class PositionCache<T> {
+    private val cache = mutableMapOf<Pair<ChartKey, Long>, Pair<Offset, ChartEntry<T>>>()
+
+    fun put(key: ChartKey, timestamp: Long, offset: Offset, entry: ChartEntry<T>) {
+        cache[Pair(key, timestamp)] = Pair(offset, entry)
+    }
+
+    fun get(key: ChartKey, timestamp: Long): Pair<Offset, ChartEntry<T>>? {
+        return cache[Pair(key, timestamp)]
+    }
+
+    fun getNearestEntry(position: Offset): ChartEntry<T>? {
+        val pixelThreshold = 15f
+        val distances = mutableMapOf<Float, ChartEntry<T>>()
+        for (key in cache.keys) {
+            val entryPosition = cache[key] ?: continue
+            val distance =
+                hypot(position.x - entryPosition.first.x, position.y - entryPosition.first.y)
+            if (distance <= pixelThreshold) {
+                distances[distance] = entryPosition.second
+            }
+        }
+        if (distances.isNotEmpty()) {
+            val pair = distances.minBy { it.key }
+            return pair.value
+        }
+        return null
+    }
+}
+
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun <T> Chart(
     modifier: Modifier,
@@ -46,26 +80,32 @@ fun <T> Chart(
     labelsPostfix: String = "",
     highlightedKey: ChartKey? = null,
     selectedEntry: ChartEntry<T>? = null,
-    onEntrySelected: ((ChartKey, ChartEntry<T>) -> Unit)? = null,
+    hoveredEntry: ChartEntry<T>? = null,
+    onEntrySelected: ((ChartEntry<T>) -> Unit)? = null,
+    onEntryHovered: ((ChartEntry<T>) -> Unit)? = null,
 ) {
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
+    val positionCache = remember { PositionCache<T>() }
 
     Spacer(
         modifier = modifier.fillMaxSize().background(style.backgroundColor).clipToBounds()
             .onSizeChanged { size ->
                 usSize = size.width.toFloat() / timeFrame.duration
             }
+            .onPointerEvent(PointerEventType.Move) { event ->
+                val hoveredEvent = positionCache.getNearestEntry(event.changes.first().position)
+                if (hoveredEvent != null) {
+                    onEntryHovered?.invoke(hoveredEvent)
+                }
+            }
             .pointerInput("chart-selection", entries, timeFrame) {
                 detectTapGestures(
                     onPress = { offset ->
-                        onChartClicked(
-                            offset,
-                            entries,
-                            onEntrySelected,
-                            timeFrame,
-                            size.width.toFloat()
-                        )
+                        val selectedEvent = positionCache.getNearestEntry(offset)
+                        if (selectedEvent != null) {
+                            onEntrySelected?.invoke(selectedEvent)
+                        }
                     }
                 )
             }
@@ -92,41 +132,14 @@ fun <T> Chart(
                         style,
                         highlightedKey,
                         labelsSize,
-                        selectedEntry
+                        selectedEntry,
+                        hoveredEntry,
+                        positionCache,
                     )
                     renderLabels(type, labelsSize, textMeasurer, style, entries, labelsPostfix)
                 }
             }
     )
-}
-
-private fun <T> onChartClicked(
-    offset: Offset,
-    entries: ChartData<T>?,
-    onEntrySelected: ((ChartKey, ChartEntry<T>) -> Unit)?,
-    timeFrame: TimeFrame,
-    width: Float,
-) {
-    if (entries != null && onEntrySelected != null) {
-        val pixelThreshold = 15f
-
-        val distances = mutableMapOf<Float, Pair<ChartKey, ChartEntry<T>>>()
-        for (key in entries.getKeys()) {
-            val entryList = entries.getEntries(key) ?: continue
-            for (entry in entryList) {
-                val entryX = calculateX(entry.timestamp, timeFrame, width)
-                val distance = abs(entryX - offset.x)
-                if (distance <= pixelThreshold) {
-                    distances[distance] = Pair(key, entry)
-                }
-            }
-
-        }
-        if (distances.isNotEmpty()) {
-            val pair = distances.minBy { it.key }
-            onEntrySelected(pair.value.first, pair.value.second)
-        }
-    }
 }
 
 private fun <T> DrawScope.renderLabels(
@@ -186,7 +199,9 @@ private fun <T> DrawScope.renderEntries(
     style: ChartStyle,
     highlightedKey: ChartKey?,
     labelsSize: Int,
-    selectedEntry: ChartEntry<T>?
+    selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>,
 ) {
     when (type) {
         ChartType.Events -> renderEvents(
@@ -195,6 +210,8 @@ private fun <T> DrawScope.renderEntries(
             style,
             highlightedKey = highlightedKey,
             selectedEntry = selectedEntry,
+            hoveredEntry = hoveredEntry,
+            positionCache,
         )
 
         ChartType.Percentage -> renderPercentageLines(
@@ -204,6 +221,8 @@ private fun <T> DrawScope.renderEntries(
             style = style,
             highlightedKey = highlightedKey,
             selectedEntry = selectedEntry,
+            hoveredEntry = hoveredEntry,
+            positionCache,
         )
 
         ChartType.MinMax -> renderMinMaxLines(
@@ -213,6 +232,8 @@ private fun <T> DrawScope.renderEntries(
             style = style,
             highlightedKey = highlightedKey,
             selectedEntry = selectedEntry,
+            hoveredEntry = hoveredEntry,
+            positionCache,
         )
 
         ChartType.State -> renderStateLines(
@@ -221,6 +242,8 @@ private fun <T> DrawScope.renderEntries(
             style = style,
             highlightedKey = highlightedKey,
             selectedEntry = selectedEntry,
+            hoveredEntry = hoveredEntry,
+            positionCache,
         )
 
         ChartType.SingleState -> renderSingleStateLines(
@@ -229,6 +252,8 @@ private fun <T> DrawScope.renderEntries(
             style = style,
             highlightedKey = highlightedKey,
             selectedEntry = selectedEntry,
+            hoveredEntry = hoveredEntry,
+            positionCache,
         )
 
         ChartType.Duration -> renderDurationLines(
@@ -237,6 +262,8 @@ private fun <T> DrawScope.renderEntries(
             style = style,
             highlightedKey = highlightedKey,
             selectedEntry = selectedEntry,
+            hoveredEntry = hoveredEntry,
+            positionCache,
         )
     }
 }

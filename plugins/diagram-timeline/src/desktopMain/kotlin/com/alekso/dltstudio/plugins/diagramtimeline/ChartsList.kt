@@ -65,7 +65,9 @@ internal fun ChartsList(
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
     toolbarCallbacks: ToolbarCallbacks,
     selectedEntry: ChartEntry<LogMessage>?,
-    onEntrySelected: ((ChartKey, ChartEntry<LogMessage>) -> Unit)?,
+    hoveredEntry: ChartEntry<LogMessage>?,
+    onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)?,
+    onEntryHovered: ((ChartEntry<LogMessage>) -> Unit)?,
     listState: LazyListState,
     modifier: Modifier
 ) {
@@ -118,7 +120,9 @@ internal fun ChartsList(
                             timeFrame = timeFrame,
                             type = chartType,
                             selectedEntry = selectedEntry,
+                            hoveredEntry = hoveredEntry,
                             onEntrySelected = onEntrySelected,
+                            onEntryHovered = onEntryHovered,
                         )
                     }
                 }

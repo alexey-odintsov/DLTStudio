@@ -88,7 +88,9 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 filtersDialogState = viewModel.filtersDialogState.value,
                 onCloseFiltersDialog = viewModel::onCloseFiltersDialogClicked,
                 selectedEntry = viewModel.selectedEntry,
+                hoveredEntry = viewModel.hoveredEntry,
                 onEntrySelected = viewModel::onEntrySelected,
+                onEntryHovered = viewModel::onEntryHovered,
                 vSplitterState = viewModel.vSplitterState,
             )
         }

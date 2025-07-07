@@ -65,6 +65,7 @@ class TimelineViewModel(
     var entriesMap = mutableStateMapOf<String, ChartData<LogMessage>>()
     var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
     var selectedEntry by mutableStateOf<ChartEntry<LogMessage>?>(null)
+    var hoveredEntry by mutableStateOf<ChartEntry<LogMessage>?>(null)
 
     private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
@@ -316,8 +317,12 @@ class TimelineViewModel(
         legendSize += diff
     }
 
-    fun onEntrySelected(chartKey: ChartKey, chartEntry: ChartEntry<LogMessage>) {
+    fun onEntrySelected(chartEntry: ChartEntry<LogMessage>) {
         selectedEntry = chartEntry
+    }
+
+    fun onEntryHovered(chartEntry: ChartEntry<LogMessage>) {
+        hoveredEntry = chartEntry
     }
 
 }

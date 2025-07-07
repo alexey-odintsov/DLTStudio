@@ -136,11 +136,24 @@ internal fun <T> DrawScope.renderEvents(
     style: ChartStyle,
     highlightedKey: ChartKey?,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>,
 ) {
     val verticalPadding = style.verticalPadding.toPx()
 
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderEventsEntries(entriesMap, key, false, style, keyIndex, timeFrame, verticalPadding, selectedEntry)
+        renderEventsEntries(
+            entriesMap,
+            key,
+            false,
+            style,
+            keyIndex,
+            timeFrame,
+            verticalPadding,
+            selectedEntry,
+            hoveredEntry,
+            positionCache
+        )
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
@@ -152,7 +165,9 @@ internal fun <T> DrawScope.renderEvents(
             keyIndex,
             timeFrame,
             verticalPadding,
-            selectedEntry
+            selectedEntry,
+            null,
+            null
         )
     }
 }
@@ -165,7 +180,9 @@ private fun <T> DrawScope.renderEventsEntries(
     keyIndex: Int,
     timeFrame: TimeFrame,
     verticalPadding: Float,
-    selectedEntry: ChartEntry<T>?
+    selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     entries.forEach { entry ->
@@ -182,13 +199,17 @@ private fun <T> DrawScope.renderEventsEntries(
             size.height,
             verticalPadding
         )
+        positionCache?.put(key, entry.timestamp, Offset(x, y), entry)
 
         drawCircle(
             color = color,
             radius = 2.dp.toPx(),
             center = Offset(x, y)
         )
-        if (entry == selectedEntry) {
+
+        if (entry == hoveredEntry) {
+            renderHover(Offset(x, y), entry)
+        } else if (entry == selectedEntry) {
             renderSelection(Offset(x, y))
         }
     }
@@ -201,6 +222,8 @@ internal fun <T> DrawScope.renderMinMaxLines(
     style: ChartStyle,
     highlightedKey: ChartKey?,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
         renderMinMaxEntries(
@@ -211,7 +234,9 @@ internal fun <T> DrawScope.renderMinMaxLines(
             keyIndex,
             timeFrame,
             labelsSize,
-            selectedEntry
+            selectedEntry,
+            hoveredEntry,
+            positionCache,
         )
     }
     if (highlightedKey != null) {
@@ -224,7 +249,9 @@ internal fun <T> DrawScope.renderMinMaxLines(
             keyIndex,
             timeFrame,
             labelsSize,
-            selectedEntry
+            selectedEntry,
+            null,
+            null,
         )
     }
 }
@@ -238,6 +265,8 @@ private fun <T> DrawScope.renderMinMaxEntries(
     timeFrame: TimeFrame,
     labelsSize: Int,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -257,6 +286,7 @@ private fun <T> DrawScope.renderMinMaxEntries(
             size.height,
             verticalPaddingPx,
         )
+        positionCache?.put(key, entry.timestamp, Offset(x, y), entry)
 
         if (i == 0 || entries.size == 1) {
             drawCircle(
@@ -264,7 +294,9 @@ private fun <T> DrawScope.renderMinMaxEntries(
                 radius = lineWidthPx,
                 center = Offset(x, y)
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x, y))
             }
             return@entriesIteration
@@ -285,7 +317,9 @@ private fun <T> DrawScope.renderMinMaxEntries(
                 Offset(x, y),
                 strokeWidth = lineWidthPx,
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x, y))
             }
         }
@@ -300,9 +334,21 @@ internal fun <T> DrawScope.renderStateLines(
     style: ChartStyle,
     highlightedKey: ChartKey?,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderStateEntries(entriesMap, key, false, style, keyIndex, timeFrame, selectedEntry)
+        renderStateEntries(
+            entriesMap,
+            key,
+            false,
+            style,
+            keyIndex,
+            timeFrame,
+            selectedEntry,
+            hoveredEntry,
+            positionCache
+        )
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
@@ -313,7 +359,9 @@ internal fun <T> DrawScope.renderStateLines(
             style,
             keyIndex,
             timeFrame,
-            selectedEntry
+            selectedEntry,
+            null,
+            null,
         )
     }
 }
@@ -326,6 +374,8 @@ private fun <T> DrawScope.renderStateEntries(
     keyIndex: Int,
     timeFrame: TimeFrame,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -347,6 +397,8 @@ private fun <T> DrawScope.renderStateEntries(
             size.height,
             verticalPaddingPx,
         )
+        positionCache?.put(key, entry.timestamp, Offset(x, y), entry)
+
         val prevY = calculateY(
             oldLabelIndex,
             labels.size,
@@ -362,7 +414,9 @@ private fun <T> DrawScope.renderStateEntries(
                 strokeWidth = lineWidthPx,
                 pathEffect = dashPath,
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x, y))
             }
             return@entriesIteration
@@ -383,7 +437,9 @@ private fun <T> DrawScope.renderStateEntries(
                 strokeWidth = lineWidthPx,
                 pathEffect = dashPath,
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x, y))
             }
         }
@@ -396,9 +452,21 @@ internal fun <T> DrawScope.renderSingleStateLines(
     style: ChartStyle,
     highlightedKey: ChartKey?,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderSingleStateEntries(entriesMap, key, false, style, keyIndex, timeFrame, selectedEntry)
+        renderSingleStateEntries(
+            entriesMap,
+            key,
+            false,
+            style,
+            keyIndex,
+            timeFrame,
+            selectedEntry,
+            hoveredEntry,
+            positionCache
+        )
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
@@ -409,7 +477,9 @@ internal fun <T> DrawScope.renderSingleStateLines(
             style,
             keyIndex,
             timeFrame,
-            selectedEntry
+            selectedEntry,
+            null,
+            null,
         )
     }
 }
@@ -422,6 +492,8 @@ private fun <T> DrawScope.renderSingleStateEntries(
     keyIndex: Int,
     timeFrame: TimeFrame,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -443,6 +515,7 @@ private fun <T> DrawScope.renderSingleStateEntries(
             size.height,
             verticalPaddingPx,
         )
+        positionCache?.put(key, entry.timestamp, Offset(x, y), entry)
 
         if (i == 0) {
             drawCircle(
@@ -450,7 +523,9 @@ private fun <T> DrawScope.renderSingleStateEntries(
                 radius = lineWidthPx,
                 center = Offset(x, y)
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x, y))
             }
         } else {
@@ -476,7 +551,9 @@ private fun <T> DrawScope.renderSingleStateEntries(
                 strokeWidth = lineWidthPx,
                 pathEffect = dashPath,
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x, y))
             }
         }
@@ -490,9 +567,21 @@ internal fun <T> DrawScope.renderDurationLines(
     style: ChartStyle,
     highlightedKey: ChartKey?,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     entriesMap.getKeys().forEachIndexed { keyIndex, key ->
-        renderDurationEntries(entriesMap, key, false, style, keyIndex, timeFrame, selectedEntry)
+        renderDurationEntries(
+            entriesMap,
+            key,
+            false,
+            style,
+            keyIndex,
+            timeFrame,
+            selectedEntry,
+            hoveredEntry,
+            positionCache
+        )
     }
     if (highlightedKey != null) {
         val keyIndex = entriesMap.getKeys().indexOfFirst { it.key == highlightedKey.key }
@@ -503,7 +592,9 @@ internal fun <T> DrawScope.renderDurationLines(
             style,
             keyIndex,
             timeFrame,
-            selectedEntry
+            selectedEntry,
+            null,
+            null,
         )
     }
 }
@@ -516,6 +607,8 @@ private fun <T> DrawScope.renderDurationEntries(
     keyIndex: Int,
     timeFrame: TimeFrame,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -539,6 +632,7 @@ private fun <T> DrawScope.renderDurationEntries(
             size.height,
             verticalPaddingPx,
         )
+        positionCache?.put(key, entry.timestamp, Offset(x1, y), entry)
 
         if (entry.begin != null) {
             drawLine(
@@ -553,7 +647,9 @@ private fun <T> DrawScope.renderDurationEntries(
                 Offset(x1 - 3.dp.toPx(), y + 3.dp.toPx()),
                 strokeWidth = lineWidthPx,
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x1, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x1, y))
             }
         } else if (entry.end != null) {
@@ -572,7 +668,9 @@ private fun <T> DrawScope.renderDurationEntries(
                 Offset(x2, y),
                 strokeWidth = lineWidthPx,
             )
-            if (entry == selectedEntry) {
+            if (entry == hoveredEntry) {
+                renderHover(Offset(x2, y), entry)
+            } else if (entry == selectedEntry) {
                 renderSelection(Offset(x2, y))
             }
         }
@@ -587,6 +685,8 @@ internal fun <T> DrawScope.renderPercentageLines(
     style: ChartStyle,
     highlightedKey: ChartKey?,
     selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     val verticalPaddingPx = style.verticalPadding.toPx()
 
@@ -600,7 +700,9 @@ internal fun <T> DrawScope.renderPercentageLines(
             timeFrame,
             labelsSize,
             verticalPaddingPx,
-            selectedEntry
+            selectedEntry,
+            hoveredEntry,
+            positionCache,
         )
     }
     if (highlightedKey != null) {
@@ -614,7 +716,9 @@ internal fun <T> DrawScope.renderPercentageLines(
             timeFrame,
             labelsSize,
             verticalPaddingPx,
-            selectedEntry
+            selectedEntry,
+            null,
+            null,
         )
     }
 }
@@ -628,7 +732,9 @@ private fun <T> DrawScope.renderPercentageEntries(
     timeFrame: TimeFrame,
     labelsSize: Int,
     verticalPaddingPx: Float,
-    selectedEntry: ChartEntry<T>?
+    selectedEntry: ChartEntry<T>?,
+    hoveredEntry: ChartEntry<T>?,
+    positionCache: PositionCache<T>?,
 ) {
     val entries = entriesMap.getEntries(key)
     val lineColor =
@@ -647,6 +753,7 @@ private fun <T> DrawScope.renderPercentageEntries(
             size.height,
             verticalPaddingPx,
         )
+        positionCache?.put(key, entry.timestamp, Offset(x, y), entry)
 
         if (i == 0 || entries.size == 1) {
             drawCircle(
@@ -673,7 +780,9 @@ private fun <T> DrawScope.renderPercentageEntries(
                 strokeWidth = lineWidthPx,
             )
         }
-        if (entry == selectedEntry) {
+        if (entry == hoveredEntry) {
+            renderHover(Offset(x, y), entry)
+        } else if (entry == selectedEntry) {
             renderSelection(Offset(x, y))
         }
     }
@@ -698,6 +807,15 @@ internal fun DrawScope.renderEmptyMessage(
 internal fun DrawScope.renderSelection(offset: Offset) {
     drawCircle(
         color = Color.Green,
+        radius = 4.dp.toPx(),
+        center = offset,
+        style = Stroke(width = 1.5.dp.toPx())
+    )
+}
+
+internal fun <T> DrawScope.renderHover(offset: Offset, entry: ChartEntry<T>) {
+    drawCircle(
+        color = Color.Red,
         radius = 4.dp.toPx(),
         center = offset,
         style = Stroke(width = 1.5.dp.toPx())
