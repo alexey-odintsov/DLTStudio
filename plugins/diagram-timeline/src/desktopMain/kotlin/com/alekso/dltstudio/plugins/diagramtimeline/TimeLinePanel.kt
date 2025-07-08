@@ -71,7 +71,7 @@ fun TimeLinePanel(
     selectedEntry: ChartEntry<LogMessage>? = null,
     hoveredEntry: ChartEntry<LogMessage>? = null,
     onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)? = null,
-    onEntryHovered: ((ChartEntry<LogMessage>) -> Unit)? = null,
+    onEntryHovered: ((ChartEntry<LogMessage>?) -> Unit)? = null,
     vSplitterState: SplitPaneState,
 ) {
     Column(modifier = modifier.onKeyEvent { e ->

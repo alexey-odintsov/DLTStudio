@@ -3,8 +3,11 @@ package com.alekso.dltstudio.charts.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,8 +25,10 @@ import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.ChartKey
@@ -82,48 +87,46 @@ fun <T> Chart(
     selectedEntry: ChartEntry<T>? = null,
     hoveredEntry: ChartEntry<T>? = null,
     onEntrySelected: ((ChartEntry<T>) -> Unit)? = null,
-    onEntryHovered: ((ChartEntry<T>) -> Unit)? = null,
+    onEntryHovered: ((ChartEntry<T>?) -> Unit)? = null,
 ) {
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
     val positionCache = remember { PositionCache<T>() }
+    var cursorPosition by remember { mutableStateOf(Offset.Zero) }
 
-    Spacer(
-        modifier = modifier.fillMaxSize().background(style.backgroundColor).clipToBounds()
+    Box {
+        Spacer(
+            modifier = modifier.fillMaxSize().background(style.backgroundColor).clipToBounds()
             .onSizeChanged { size ->
                 usSize = size.width.toFloat() / timeFrame.duration
-            }
-            .onPointerEvent(PointerEventType.Move) { event ->
-                val hoveredEvent = positionCache.getNearestEntry(event.changes.first().position)
-                if (hoveredEvent != null) {
-                    onEntryHovered?.invoke(hoveredEvent)
-                }
-            }
-            .pointerInput("chart-selection", entries, timeFrame) {
+            }.onPointerEvent(PointerEventType.Move) { event ->
+                cursorPosition = event.changes.first().position
+                val hoveredEvent = positionCache.getNearestEntry(cursorPosition)
+                onEntryHovered?.invoke(hoveredEvent)
+            }.pointerInput("chart-selection", entries, timeFrame) {
                 detectTapGestures(
                     onPress = { offset ->
                         val selectedEvent = positionCache.getNearestEntry(offset)
                         if (selectedEvent != null) {
                             onEntrySelected?.invoke(selectedEvent)
                         }
-                    }
-                )
-            }
-            .pointerInput("chart-dragging") {
+                    })
+            }.pointerInput("chart-dragging") {
                 detectDragGestures { change, dragAmount ->
                     change.consume()
                     val dragUs = -dragAmount.x / usSize
                     onDragged?.invoke(dragUs)
                 }
-            }
-            .drawWithCache {
+            }.drawWithCache {
                 onDrawBehind {
                     renderCenterLine()
                     if (entries == null || entries.isEmpty()) {
                         renderEmptyMessage(textMeasurer, style)
                         return@onDrawBehind
                     }
-                    val labelsSize = if (entries.getLabels().isNotEmpty()) entries.getLabels().size else labelsCount
+                    val labelsSize = if (entries.getLabels()
+                            .isNotEmpty()
+                    ) entries.getLabels().size else labelsCount
                     renderSeries(type, labelsSize, style)
                     renderEntries(
                         type,
@@ -138,8 +141,14 @@ fun <T> Chart(
                     )
                     renderLabels(type, labelsSize, textMeasurer, style, entries, labelsPostfix)
                 }
-            }
-    )
+            })
+        if (hoveredEntry != null) {
+            val density = LocalDensity.current
+            val xDp = with(density) { cursorPosition.x.toDp() }
+            val yDp = with(density) { cursorPosition.y.toDp() }
+            Text(hoveredEntry.getText(), Modifier.absoluteOffset(xDp, yDp - 30.dp))
+        }
+    }
 }
 
 private fun <T> DrawScope.renderLabels(
@@ -151,27 +160,25 @@ private fun <T> DrawScope.renderLabels(
     labelsPostfix: String
 ) {
     when (type) {
-        ChartType.Percentage ->
-            renderLabelsForValue(
-                getSteps(0f, 100f, labelsSize),
-                textMeasurer,
-                style.labelTextStyle,
-                "%",
-                style.verticalPadding.toPx(),
-            )
+        ChartType.Percentage -> renderLabelsForValue(
+            getSteps(0f, 100f, labelsSize),
+            textMeasurer,
+            style.labelTextStyle,
+            "%",
+            style.verticalPadding.toPx(),
+        )
 
-        ChartType.MinMax ->
-            renderLabelsForValue(
-                getSteps(
-                    (entries as MinMaxChartData).getMinValue(),
-                    (entries as MinMaxChartData).getMaxValue(),
-                    labelsSize
-                ),
-                textMeasurer,
-                style.labelTextStyle,
-                labelsPostfix,
-                style.verticalPadding.toPx(),
-            )
+        ChartType.MinMax -> renderLabelsForValue(
+            getSteps(
+                (entries as MinMaxChartData).getMinValue(),
+                (entries as MinMaxChartData).getMaxValue(),
+                labelsSize
+            ),
+            textMeasurer,
+            style.labelTextStyle,
+            labelsPostfix,
+            style.verticalPadding.toPx(),
+        )
 
         ChartType.Events, ChartType.State, ChartType.SingleState, ChartType.Duration -> renderLabels(
             entries.getLabels(),
@@ -185,10 +192,7 @@ private fun <T> DrawScope.renderLabels(
 
 private fun DrawScope.renderCenterLine() {
     drawLine(
-        Color.LightGray,
-        Offset(size.center.x, 0f),
-        Offset(size.center.x, size.height),
-        alpha = 0.5f
+        Color.LightGray, Offset(size.center.x, 0f), Offset(size.center.x, size.height), alpha = 0.5f
     )
 }
 
@@ -269,24 +273,16 @@ private fun <T> DrawScope.renderEntries(
 }
 
 private fun DrawScope.renderSeries(
-    type: ChartType,
-    labelsSize: Int,
-    style: ChartStyle
+    type: ChartType, labelsSize: Int, style: ChartStyle
 ) {
     when (type) {
-        ChartType.Percentage, ChartType.MinMax ->
-            renderSeriesByValue(
-                labelsSize,
-                style.seriesColor,
-                style.verticalPadding.toPx()
-            )
+        ChartType.Percentage, ChartType.MinMax -> renderSeriesByValue(
+            labelsSize, style.seriesColor, style.verticalPadding.toPx()
+        )
 
-        else ->
-            renderSeries(
-                labelsSize,
-                style.seriesColor,
-                style.verticalPadding.toPx()
-            )
+        else -> renderSeries(
+            labelsSize, style.seriesColor, style.verticalPadding.toPx()
+        )
 
     }
 }

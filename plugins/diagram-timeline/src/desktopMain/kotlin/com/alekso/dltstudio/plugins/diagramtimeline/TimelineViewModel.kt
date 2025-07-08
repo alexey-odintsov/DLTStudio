@@ -321,7 +321,7 @@ class TimelineViewModel(
         selectedEntry = chartEntry
     }
 
-    fun onEntryHovered(chartEntry: ChartEntry<LogMessage>) {
+    fun onEntryHovered(chartEntry: ChartEntry<LogMessage>?) {
         hoveredEntry = chartEntry
     }
 

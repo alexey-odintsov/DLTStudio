@@ -806,16 +806,19 @@ internal fun DrawScope.renderEmptyMessage(
 
 internal fun DrawScope.renderSelection(offset: Offset) {
     drawCircle(
-        color = Color.Green,
+        color = Color.Red,
         radius = 4.dp.toPx(),
         center = offset,
         style = Stroke(width = 1.5.dp.toPx())
     )
 }
 
-internal fun <T> DrawScope.renderHover(offset: Offset, entry: ChartEntry<T>) {
+internal fun <T> DrawScope.renderHover(
+    offset: Offset,
+    entry: ChartEntry<T>,
+) {
     drawCircle(
-        color = Color.Red,
+        color = Color.Green,
         radius = 4.dp.toPx(),
         center = offset,
         style = Stroke(width = 1.5.dp.toPx())

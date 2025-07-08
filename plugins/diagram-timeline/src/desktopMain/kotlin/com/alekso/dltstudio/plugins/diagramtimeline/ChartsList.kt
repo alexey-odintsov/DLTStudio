@@ -67,7 +67,7 @@ internal fun ChartsList(
     selectedEntry: ChartEntry<LogMessage>?,
     hoveredEntry: ChartEntry<LogMessage>?,
     onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)?,
-    onEntryHovered: ((ChartEntry<LogMessage>) -> Unit)?,
+    onEntryHovered: ((ChartEntry<LogMessage>?) -> Unit)?,
     listState: LazyListState,
     modifier: Modifier
 ) {
