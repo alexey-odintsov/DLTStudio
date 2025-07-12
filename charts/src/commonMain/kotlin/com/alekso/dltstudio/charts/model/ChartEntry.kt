@@ -34,7 +34,7 @@ data class DurationEntry<T>(
     override val data: T? = null
 ) : ChartEntry<T> {
     override fun getText(): String {
-        return "$begin -> $end"
+        return if (begin != null && end != null) "$begin -> $end" else begin ?: (end ?: "")
     }
 }
 

@@ -599,6 +599,13 @@ internal fun <T> DrawScope.renderDurationLines(
     }
 }
 
+/**
+ * Renders duration entries
+ *
+ * only begin: >
+ * begin and end: >----|
+ * only end: |
+ */
 private fun <T> DrawScope.renderDurationEntries(
     entriesMap: DurationChartData<T>,
     key: ChartKey,
@@ -620,10 +627,11 @@ private fun <T> DrawScope.renderDurationEntries(
     val verticalPaddingPx = style.verticalPadding.toPx()
 
     var prev: DurationEntry<T>? = null
-    entries.forEachIndexed entriesIteration@{ i, entry ->
+    val labels = entriesMap.getLabels()
+    val labelIndex = labels.indexOf(key.key)
+    val arrowOffset = 3.dp.toPx()
 
-        val labels = entriesMap.getLabels()
-        val labelIndex = labels.indexOf(key.key)
+    entries.forEachIndexed entriesIteration@{ i, entry ->
         val x1 = calculateX(entry.timestamp, timeFrame, size.width)
         val x2 = if (prev != null) calculateX(prev.timestamp, timeFrame, size.width) else null
         val y = calculateY(
@@ -635,44 +643,43 @@ private fun <T> DrawScope.renderDurationEntries(
         positionCache?.put(key, entry.timestamp, Offset(x1, y), entry)
 
         if (entry.begin != null) {
+            // render begin arrow ">"
             drawLine(
                 lineColor,
-                Offset(x1 - 3.dp.toPx(), y - 3.dp.toPx()),
+                Offset(x1 - arrowOffset, y - arrowOffset),
                 Offset(x1, y),
                 strokeWidth = lineWidthPx,
             )
             drawLine(
                 lineColor,
                 Offset(x1, y),
-                Offset(x1 - 3.dp.toPx(), y + 3.dp.toPx()),
+                Offset(x1 - arrowOffset, y + arrowOffset),
                 strokeWidth = lineWidthPx,
             )
-            if (entry == hoveredEntry) {
-                renderHover(Offset(x1, y), entry)
-            } else if (entry == selectedEntry) {
-                renderSelection(Offset(x1, y))
-            }
         } else if (entry.end != null) {
+            // render end line "|"
             drawLine(
                 lineColor,
-                Offset(x1, y - 3.dp.toPx()),
-                Offset(x1, y + 3.dp.toPx()),
+                Offset(x1, y - arrowOffset),
+                Offset(x1, y + arrowOffset),
                 strokeWidth = lineWidthPx,
             )
         }
 
+        if (entry == hoveredEntry) {
+            renderHover(Offset(x1, y), entry)
+        } else if (entry == selectedEntry) {
+            renderSelection(Offset(x1, y))
+        }
+
         if (x2 != null) {
+            // render begin - end line
             drawLine(
                 lineColor,
                 Offset(x1, y),
                 Offset(x2, y),
                 strokeWidth = lineWidthPx,
             )
-            if (entry == hoveredEntry) {
-                renderHover(Offset(x2, y), entry)
-            } else if (entry == selectedEntry) {
-                renderSelection(Offset(x2, y))
-            }
         }
         prev = entry
     }
