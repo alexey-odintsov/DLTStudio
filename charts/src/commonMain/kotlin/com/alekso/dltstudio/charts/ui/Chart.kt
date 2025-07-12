@@ -92,16 +92,26 @@ fun <T> Chart(
     var usSize by remember { mutableStateOf(1f) }
     val textMeasurer = rememberTextMeasurer()
     val positionCache = remember { PositionCache<T>() }
-    var cursorPosition by remember { mutableStateOf(Offset.Zero) }
+    var localCursorPosition by remember { mutableStateOf(Offset.Zero) }
+    var isCursorInsideChart by remember { mutableStateOf(false) }
+    if (type == ChartType.Events) {
+        println("isCursorInsideChart: $isCursorInsideChart")
+    }
 
     Box {
         Spacer(
             modifier = modifier.fillMaxSize().background(style.backgroundColor).clipToBounds()
+                .onPointerEvent(PointerEventType.Enter) {
+                    isCursorInsideChart = true
+                }
+                .onPointerEvent(PointerEventType.Exit) {
+                    isCursorInsideChart = false
+                }
             .onSizeChanged { size ->
                 usSize = size.width.toFloat() / timeFrame.duration
             }.onPointerEvent(PointerEventType.Move) { event ->
-                cursorPosition = event.changes.first().position
-                val hoveredEvent = positionCache.getNearestEntry(cursorPosition)
+                localCursorPosition = event.changes.first().position
+                val hoveredEvent = positionCache.getNearestEntry(localCursorPosition)
                 onEntryHovered?.invoke(hoveredEvent)
             }.pointerInput("chart-selection", entries, timeFrame) {
                 detectTapGestures(
@@ -142,11 +152,14 @@ fun <T> Chart(
                     renderLabels(type, labelsSize, textMeasurer, style, entries, labelsPostfix)
                 }
             })
-        if (hoveredEntry != null) {
+        if (hoveredEntry != null && isCursorInsideChart) {
             val density = LocalDensity.current
-            val xDp = with(density) { cursorPosition.x.toDp() }
-            val yDp = with(density) { cursorPosition.y.toDp() }
-            Text(hoveredEntry.getText(), Modifier.absoluteOffset(xDp, yDp - 30.dp))
+            val xDp = with(density) { localCursorPosition.x.toDp() }
+            val yDp = with(density) { localCursorPosition.y.toDp() }
+            Text(
+                hoveredEntry.getText(),
+                Modifier.absoluteOffset(xDp, yDp - 20.dp).background(Color.White)
+            )
         }
     }
 }

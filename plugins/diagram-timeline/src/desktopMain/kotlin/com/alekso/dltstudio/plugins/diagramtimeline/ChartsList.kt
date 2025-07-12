@@ -71,7 +71,8 @@ internal fun ChartsList(
     listState: LazyListState,
     modifier: Modifier
 ) {
-    var cursorPosition by remember { mutableStateOf(Offset(0f, 0f)) }
+    var cursorPosition by remember { mutableStateOf(Offset.Zero) }
+
     Column {
         Row {
             Box(modifier = Modifier.width(legendSize.dp))
@@ -116,7 +117,7 @@ internal fun ChartsList(
                             entries = retrieveEntriesForFilter(timelineFilter),
                             highlightedKey = highlightedKeysMap[timelineFilter.key],
                             onDragged = toolbarCallbacks::onDragTimeline,
-                            totalTime = timeFrame,
+                            totalTime = timeTotal,
                             timeFrame = timeFrame,
                             type = chartType,
                             selectedEntry = selectedEntry,
