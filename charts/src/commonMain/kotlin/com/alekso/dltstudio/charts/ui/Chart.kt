@@ -39,37 +39,6 @@ import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
-import kotlin.math.hypot
-
-class PositionCache<T> {
-    private val cache = mutableMapOf<Pair<ChartKey, Long>, Pair<Offset, ChartEntry<T>>>()
-
-    fun put(key: ChartKey, timestamp: Long, offset: Offset, entry: ChartEntry<T>) {
-        cache[Pair(key, timestamp)] = Pair(offset, entry)
-    }
-
-    fun get(key: ChartKey, timestamp: Long): Pair<Offset, ChartEntry<T>>? {
-        return cache[Pair(key, timestamp)]
-    }
-
-    fun getNearestEntry(position: Offset): ChartEntry<T>? {
-        val pixelThreshold = 15f
-        val distances = mutableMapOf<Float, ChartEntry<T>>()
-        for (key in cache.keys) {
-            val entryPosition = cache[key] ?: continue
-            val distance =
-                hypot(position.x - entryPosition.first.x, position.y - entryPosition.first.y)
-            if (distance <= pixelThreshold) {
-                distances[distance] = entryPosition.second
-            }
-        }
-        if (distances.isNotEmpty()) {
-            val pair = distances.minBy { it.key }
-            return pair.value
-        }
-        return null
-    }
-}
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -94,9 +63,6 @@ fun <T> Chart(
     val positionCache = remember { PositionCache<T>() }
     var localCursorPosition by remember { mutableStateOf(Offset.Zero) }
     var isCursorInsideChart by remember { mutableStateOf(false) }
-    if (type == ChartType.Events) {
-        println("isCursorInsideChart: $isCursorInsideChart")
-    }
 
     Box {
         Spacer(
@@ -107,51 +73,52 @@ fun <T> Chart(
                 .onPointerEvent(PointerEventType.Exit) {
                     isCursorInsideChart = false
                 }
-            .onSizeChanged { size ->
-                usSize = size.width.toFloat() / timeFrame.duration
-            }.onPointerEvent(PointerEventType.Move) { event ->
-                localCursorPosition = event.changes.first().position
-                val hoveredEvent = positionCache.getNearestEntry(localCursorPosition)
-                onEntryHovered?.invoke(hoveredEvent)
-            }.pointerInput("chart-selection", entries, timeFrame) {
-                detectTapGestures(
-                    onPress = { offset ->
-                        val selectedEvent = positionCache.getNearestEntry(offset)
-                        if (selectedEvent != null) {
-                            onEntrySelected?.invoke(selectedEvent)
-                        }
-                    })
-            }.pointerInput("chart-dragging") {
-                detectDragGestures { change, dragAmount ->
-                    change.consume()
-                    val dragUs = -dragAmount.x / usSize
-                    onDragged?.invoke(dragUs)
-                }
-            }.drawWithCache {
-                onDrawBehind {
-                    renderCenterLine()
-                    if (entries == null || entries.isEmpty()) {
-                        renderEmptyMessage(textMeasurer, style)
-                        return@onDrawBehind
+                .onSizeChanged { size ->
+                    usSize = size.width.toFloat() / timeFrame.duration
+                }.onPointerEvent(PointerEventType.Move) { event ->
+                    localCursorPosition = event.changes.first().position
+                    val hoveredEvent = positionCache.getNearestEntry(localCursorPosition)
+                    onEntryHovered?.invoke(hoveredEvent)
+                }.pointerInput("chart-selection", entries, timeFrame) {
+                    detectTapGestures(
+                        onPress = { offset ->
+                            val selectedEvent = positionCache.getNearestEntry(offset)
+                            if (selectedEvent != null) {
+                                onEntrySelected?.invoke(selectedEvent)
+                            }
+                        })
+                }.pointerInput("chart-dragging") {
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+                        val dragUs = -dragAmount.x / usSize
+                        onDragged?.invoke(dragUs)
                     }
-                    val labelsSize = if (entries.getLabels()
-                            .isNotEmpty()
-                    ) entries.getLabels().size else labelsCount
-                    renderSeries(type, labelsSize, style)
-                    renderEntries(
-                        type,
-                        entries,
-                        timeFrame,
-                        style,
-                        highlightedKey,
-                        labelsSize,
-                        selectedEntry,
-                        hoveredEntry,
-                        positionCache,
-                    )
-                    renderLabels(type, labelsSize, textMeasurer, style, entries, labelsPostfix)
-                }
-            })
+                }.drawWithCache {
+                    onDrawBehind {
+                        renderCenterLine()
+                        if (entries == null || entries.isEmpty()) {
+                            renderEmptyMessage(textMeasurer, style)
+                            return@onDrawBehind
+                        }
+                        val labelsSize = if (entries.getLabels()
+                                .isNotEmpty()
+                        ) entries.getLabels().size else labelsCount
+                        renderSeries(type, labelsSize, style)
+                        renderEntries(
+                            type,
+                            entries,
+                            timeFrame,
+                            style,
+                            highlightedKey,
+                            labelsSize,
+                            selectedEntry,
+                            hoveredEntry,
+                            positionCache,
+                        )
+                        renderLabels(type, labelsSize, textMeasurer, style, entries, labelsPostfix)
+                    }
+                })
+
         if (hoveredEntry != null && isCursorInsideChart) {
             val density = LocalDensity.current
             val xDp = with(density) { localCursorPosition.x.toDp() }
