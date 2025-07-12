@@ -70,6 +70,28 @@ fun LogInfoView(
                         showCopy = true
                     )
                     TextSection(text = payload)
+                    Header(
+                        modifier = paddingModifier.padding(top = 8.dp), text = "Comment:"
+                    )
+                    Row {
+                        CustomEditText(
+                            modifier = Modifier.fillMaxWidth().height(64.dp).padding(top = 4.dp)
+                                .align(Alignment.Top),
+                            singleLine = false,
+                            value = comment ?: "",
+                            onValueChange = {
+                                comment = it
+                            })
+                    }
+                    CustomButton(
+                        modifier = Modifier.padding(start = 6.dp), onClick = {
+                            onCommentUpdated(
+                                logMessage,
+                                if (comment.isNullOrEmpty()) null else comment
+                            )
+                        }) {
+                        Text(text = if (logMessage.comment != null) "Update" else "Add")
+                    }
                 }
                 VerticalScrollbar(
                     modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
@@ -78,27 +100,6 @@ fun LogInfoView(
                     )
                 )
 
-            }
-            Column {
-                Header(
-                    modifier = paddingModifier.padding(top = 8.dp), text = "Comment:"
-                )
-                Row {
-                    CustomEditText(
-                        modifier = Modifier.fillMaxWidth().height(64.dp).padding(top = 4.dp)
-                            .align(Alignment.Top),
-                        singleLine = false,
-                        value = comment ?: "",
-                        onValueChange = {
-                            comment = it
-                        })
-                }
-                CustomButton(
-                    modifier = Modifier.padding(start = 6.dp), onClick = {
-                        onCommentUpdated(logMessage, if (comment.isNullOrEmpty()) null else comment)
-                    }) {
-                    Text(text = if (logMessage.comment != null) "Update" else "Add")
-                }
             }
         }
     }
@@ -153,7 +154,7 @@ fun PreviewLogSimplifiedInfoView() {
         payloadText = "TestView[2797]: onGlobalFocusChanged: oldFocus:com.ui.custom.ProgressBarFrameLayout{f5e8f76 VFE...CL. ......ID 2298,22-2835,709 #7f090453 app:id/theme_container aid=1073741849}, newFocus:com.android.car.ui.FocusParkingView{736743f VFED..... .F...... 0,0-1,1 #7f090194 app:id/focus_parking_view aid=1073741832} {bounds:Rect(0, 0 - 342, 240),hasBoundsTransaction,}",
     )
     LogInfoView(
-        modifier = Modifier.height(400.dp).fillMaxWidth(),
+        modifier = Modifier.height(250.dp).fillMaxWidth(),
         logMessage = LogMessage(dltMessage),
     )
 }
