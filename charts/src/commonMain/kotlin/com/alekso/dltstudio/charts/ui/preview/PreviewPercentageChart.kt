@@ -29,7 +29,7 @@ fun PreviewPercentageChart() {
     val app2 = StringKey("app2")
     val service1 = StringKey("service1")
 
-    val chartData = PercentageChartData()
+    val chartData = PercentageChartData<String>()
     chartData.addEntry(app1, PercentageEntry(now + 100_000L, 0f, ""))
     chartData.addEntry(app1, PercentageEntry(now + 200_000L, 20f, ""))
     chartData.addEntry(app1, PercentageEntry(now + 300_000L, 30f, ""))

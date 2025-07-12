@@ -29,7 +29,7 @@ fun PreviewMinMaxChart() {
     val app2 = StringKey("app2")
     val service1 = StringKey("service1")
 
-    val chartData = MinMaxChartData()
+    val chartData = MinMaxChartData<String>()
     chartData.addEntry(app1, MinMaxEntry(now + 100_000L,0f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 200_000L,100f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 300_000L,200f, ""))

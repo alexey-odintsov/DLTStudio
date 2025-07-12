@@ -3,6 +3,7 @@ package com.alekso.dltstudio.plugins.diagramtimiline.extractors
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.MinMaxEntriesExtractor
 import org.junit.Test
@@ -15,17 +16,19 @@ class MinMaxEntriesExtractorTest {
 
     @Test
     fun `Test MinMaxEntriesExtractor using named groups`() {
-        val dltMessage = SampleData.create(
-            timeStampUs = 1234567890L, payloadText = "12345 67 890"
+        val logMessage = LogMessage(
+            SampleData.create(
+                timeStampUs = 1234567890L, payloadText = "12345 67 890"
+            )
         )
 
         val key1 = StringKey("g1")
         val key2 = StringKey("g2")
         val key3 = StringKey("g3")
 
-        val actualChartData = MinMaxChartData()
+        val actualChartData = MinMaxChartData<LogMessage>()
         extractor.extractEntry(
-            dltMessage,
+            logMessage,
             """(?<g1>\d+)\s(?<g2>\d+)\s(?<g3>\d+)""".toRegex(),
             EntriesExtractor.ExtractionType.NamedGroupsManyEntries,
             actualChartData
@@ -38,15 +41,17 @@ class MinMaxEntriesExtractorTest {
 
     @Test
     fun `Test MinMaxEntriesExtractor using named groups one entry`() {
-        val dltMessage = SampleData.create(
-            timeStampUs = 1234567890L, payloadText = "MaxRSS: 345"
+        val logMessage = LogMessage(
+            SampleData.create(
+                timeStampUs = 1234567890L, payloadText = "MaxRSS: 345"
+            )
         )
 
         val key1 = StringKey("MaxRSS")
 
-        val actualChartData = MinMaxChartData()
+        val actualChartData = MinMaxChartData<LogMessage>()
         extractor.extractEntry(
-            dltMessage,
+            logMessage,
             """(?<key>MaxRSS):\s(?<value>\d+)""".toRegex(),
             EntriesExtractor.ExtractionType.NamedGroupsOneEntry,
             actualChartData
@@ -57,16 +62,18 @@ class MinMaxEntriesExtractorTest {
 
     @Test
     fun `Test MinMaxEntriesExtractor with dynamic group names`() {
-        val dltMessage = SampleData.create(
-            timeStampUs = 1234567890L, payloadText = "cpu0: 12 cpu1: 34 cpu3: 66"
+        val logMessage = LogMessage(
+            SampleData.create(
+                timeStampUs = 1234567890L, payloadText = "cpu0: 12 cpu1: 34 cpu3: 66"
+            )
         )
         val key1 = StringKey("cpu0")
         val key2 = StringKey("cpu1")
         val key3 = StringKey("cpu3")
 
-        val actualChartData = MinMaxChartData()
+        val actualChartData = MinMaxChartData<LogMessage>()
         extractor.extractEntry(
-            dltMessage,
+            logMessage,
             """(.*):\s(\d+)\s(.*):\s(\d+)\s(.*):\s(\d+)""".toRegex(),
             EntriesExtractor.ExtractionType.GroupsManyEntries,
             actualChartData

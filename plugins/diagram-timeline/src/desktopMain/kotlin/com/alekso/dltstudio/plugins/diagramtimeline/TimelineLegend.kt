@@ -34,6 +34,7 @@ import com.alekso.dltstudio.charts.model.MinMaxChartData
 import com.alekso.dltstudio.charts.model.MinMaxEntry
 import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.charts.ui.ChartPalette
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.Tooltip
 import kotlinx.datetime.Clock
 
@@ -41,7 +42,7 @@ import kotlinx.datetime.Clock
 fun TimelineLegend(
     modifier: Modifier,
     title: String,
-    entries: ChartData? = null,
+    entries: ChartData<LogMessage>? = null,
     updateHighlightedKey: (ChartKey?) -> Unit,
     highlightedKey: ChartKey? = null,
 ) {
@@ -101,14 +102,14 @@ fun TimelineLegend(
 fun PreviewTimeLineLegend() {
     val ts = Clock.System.now().toEpochMilliseconds() * 1000L
 
-    val entries = EventsChartData()
+    val entries = EventsChartData<LogMessage>()
     entries.addEntry(StringKey("app1"), EventEntry(ts, "ANR", null))
     entries.addEntry(StringKey("app2"), EventEntry(ts, "ANR", null))
     entries.addEntry(StringKey("app3"), EventEntry(ts, "ANR", null))
     entries.addEntry(StringKey("mysuperservice1: 12345"), EventEntry(ts, "ANR", null))
     entries.addEntry(StringKey("mysuperservice2: 12345"), EventEntry(ts, "ANR", null))
 
-    val minMax = MinMaxChartData()
+    val minMax = MinMaxChartData<LogMessage>()
     minMax.addEntry(
         StringKey("app1"),
         MinMaxEntry(ts, 100f, null)

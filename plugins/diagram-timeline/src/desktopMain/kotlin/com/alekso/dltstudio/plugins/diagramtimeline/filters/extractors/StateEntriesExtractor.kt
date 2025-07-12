@@ -1,22 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.charts.model.StateEntry
 import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class StateEntriesExtractor : EntriesExtractor<StateChartData> {
+class StateEntriesExtractor : EntriesExtractor<StateChartData<LogMessage>> {
 
     override fun extractEntry(
-        message: DLTMessage,
+        message: LogMessage,
         regex: Regex,
         extractionType: ExtractionType,
-        data: StateChartData,
+        data: StateChartData<LogMessage>,
     ) {
-        val matches = regex.find(message.payloadText())!!
+        val matches = regex.find(message.dltMessage.payloadText())!!
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -27,7 +27,7 @@ class StateEntriesExtractor : EntriesExtractor<StateChartData> {
                 if (value != null && oldValue != null) {
                     data.addEntry(
                         StringKey(key),
-                        StateEntry(message.timeStampUs, oldValue, value, null)
+                        StateEntry(message.dltMessage.timeStampUs, oldValue, value, message)
                     )
                 }
             }
@@ -42,7 +42,7 @@ class StateEntriesExtractor : EntriesExtractor<StateChartData> {
                     if (key != null && value != null && oldValue != null) {
                         data.addEntry(
                             StringKey(key),
-                            StateEntry(message.timeStampUs, oldValue, value, null)
+                            StateEntry(message.dltMessage.timeStampUs, oldValue, value, message)
                         )
                     }
                 }

@@ -24,6 +24,7 @@ import com.alekso.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
 import com.alekso.dltstudio.charts.ui.ChartType
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 
 private val timeFrame = TimeFrame(0L, 5_000_000L)
@@ -31,7 +32,7 @@ private val timeFrame = TimeFrame(0L, 5_000_000L)
 object TimelinePreviewFactory {
     @Composable
     fun getPreview(diagramType: DiagramType, modifier: Modifier) {
-        var chartData: ChartData?
+        var chartData: ChartData<LogMessage>?
         var chartType: ChartType?
         val key1 = StringKey("app1")
         val key2 = StringKey("app2")
