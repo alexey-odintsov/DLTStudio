@@ -13,6 +13,7 @@ import com.alekso.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.settings.SettingsDialog
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.ui.MainWindow
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 import com.alekso.logger.Log
@@ -35,7 +36,7 @@ fun main() = application {
             exitApplication()
         }, title = "DLT Studio", state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
-        AppTheme {
+        ThemeManager.AppTheme {
             val mainViewModel = remember { DependencyManager.provideMainViewModel() }
             val settingsUI = mainViewModel.settingsUI.collectAsState()
             val settingsLogs = mainViewModel.settingsLogs.collectAsState()

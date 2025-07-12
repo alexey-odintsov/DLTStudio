@@ -5,8 +5,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -154,7 +154,7 @@ fun PreviewTimeRuler() {
                 timeFrame = frame,
                 debug = true,
             )
-            Divider()
+            HorizontalDivider()
             val zoomed = frame.zoom(false)
             TimeRuler(
                 modifier = Modifier.fillMaxWidth(),
@@ -162,7 +162,7 @@ fun PreviewTimeRuler() {
                 timeFrame = zoomed,
                 debug = true,
             )
-            Divider()
+            HorizontalDivider()
         }
     }
 }

@@ -18,7 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -58,6 +58,7 @@ import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.charts.ui.Chart
+import com.alekso.dltstudio.charts.ui.ChartStyle
 import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.charts.ui.calculateTimestamp
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -66,6 +67,7 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialog
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
+import com.alekso.dltstudio.theme.ThemeManager
 import java.awt.Cursor
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
@@ -139,7 +141,7 @@ fun TimeLinePanel(
             )
         }
 
-        Divider()
+        HorizontalDivider()
         Row {
             Box(modifier = Modifier.width(legendSize.dp))
             TimeRuler(
@@ -186,6 +188,9 @@ fun TimeLinePanel(
                             totalTime = timeFrame,
                             timeFrame = timeFrame,
                             type = chartType,
+                            style = if (ThemeManager.currentTheme()
+                                    .isDark()
+                            ) ChartStyle.Dark else ChartStyle.Default
                         )
                     }
                 }
@@ -203,7 +208,7 @@ fun TimeLinePanel(
             ) {
                 items(panels.size) { i ->
                     if (i > 0) {
-                        Divider(Modifier.padding(2.dp))
+                        HorizontalDivider(Modifier.padding(2.dp))
                     }
                     panels[i].invoke()
                 }
