@@ -1,22 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.charts.model.PercentageChartData
 import com.alekso.dltstudio.charts.model.PercentageEntry
 import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class PercentageEntriesExtractor : EntriesExtractor<PercentageChartData> {
+class PercentageEntriesExtractor : EntriesExtractor<PercentageChartData<LogMessage>> {
 
     override fun extractEntry(
-        message: DLTMessage,
+        message: LogMessage,
         regex: Regex,
         extractionType: ExtractionType,
-        data: PercentageChartData,
+        data: PercentageChartData<LogMessage>,
     ) {
-        val matches = regex.find(message.payloadText())!!
+        val matches = regex.find(message.dltMessage.payloadText())!!
         val namedGroupsMap =
             regex.toPattern().namedGroups().entries.associateBy({ it.value }) { it.key }
 
@@ -27,7 +27,7 @@ class PercentageEntriesExtractor : EntriesExtractor<PercentageChartData> {
                 if (value != null) {
                     data.addEntry(
                         StringKey(key),
-                        PercentageEntry(message.timeStampUs, value.toFloat(), null)
+                        PercentageEntry(message.dltMessage.timeStampUs, value.toFloat(), message)
                     )
                 }
             }
@@ -40,7 +40,11 @@ class PercentageEntriesExtractor : EntriesExtractor<PercentageChartData> {
                             val value = group.value
                             data.addEntry(
                                 StringKey(key ?: ""),
-                                PercentageEntry(message.timeStampUs, value.toFloat(), null)
+                                PercentageEntry(
+                                    message.dltMessage.timeStampUs,
+                                    value.toFloat(),
+                                    message
+                                )
                             )
                         }
                     }
@@ -55,7 +59,11 @@ class PercentageEntriesExtractor : EntriesExtractor<PercentageChartData> {
                         if (key != null && value != null) {
                             data.addEntry(
                                 StringKey(key),
-                                PercentageEntry(message.timeStampUs, value.toFloat(), null)
+                                PercentageEntry(
+                                    message.dltMessage.timeStampUs,
+                                    value.toFloat(),
+                                    message
+                                )
                             )
                         }
                     }

@@ -1,22 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.DurationEntry
 import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class DurationEntriesExtractor : EntriesExtractor<DurationChartData> {
+class DurationEntriesExtractor : EntriesExtractor<DurationChartData<LogMessage>> {
 
     override fun extractEntry(
-        message: DLTMessage,
+        message: LogMessage,
         regex: Regex,
         extractionType: ExtractionType,
-        data: DurationChartData,
+        data: DurationChartData<LogMessage>,
     ) {
-        val matches = regex.find(message.payloadText())!!
+        val matches = regex.find(message.dltMessage.payloadText())!!
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -26,7 +26,12 @@ class DurationEntriesExtractor : EntriesExtractor<DurationChartData> {
 
                 data.addEntry(
                     StringKey(key),
-                    DurationEntry(message.timeStampUs, begin = begin, end = end, data = null)
+                    DurationEntry(
+                        message.dltMessage.timeStampUs,
+                        begin = begin,
+                        end = end,
+                        data = message
+                    )
                 )
             }
 

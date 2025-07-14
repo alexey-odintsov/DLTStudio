@@ -29,16 +29,16 @@ fun PreviewEventsChart() {
     val app2 = StringKey("app2")
     val service1 = StringKey("service1")
 
-    val chartData = EventsChartData()
+    val chartData = EventsChartData<String>()
     chartData.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
     chartData.addEntry(app2, EventEntry(now + 1_000_000L, "ANR", ""))
     chartData.addEntry(app2, EventEntry(now + 1_500_000L, "Crash", ""))
     chartData.addEntry(service1, EventEntry(now + 2_000_000L, "WTF", ""))
 
-    val chartData2 = EventsChartData()
+    val chartData2 = EventsChartData<String>()
     chartData2.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
 
-    val chartData3 = EventsChartData()
+    val chartData3 = EventsChartData<String>()
     chartData3.addEntry(app1, EventEntry(now + 500_000L, "Crash", ""))
     chartData3.addEntry(app2, EventEntry(now + 1_500_000L, "WTF", ""))
 

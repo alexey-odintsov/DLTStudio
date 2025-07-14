@@ -37,6 +37,7 @@ kotlin {
             implementation(compose.components.resources)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
+            implementation(libs.compose.splitpane)
         }
 
         desktopMain.dependencies {

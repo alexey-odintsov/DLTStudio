@@ -1,22 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.charts.model.EventEntry
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class EventEntriesExtractor : EntriesExtractor<EventsChartData> {
+class EventEntriesExtractor : EntriesExtractor<EventsChartData<LogMessage>> {
 
     override fun extractEntry(
-        message: DLTMessage,
+        message: LogMessage,
         regex: Regex,
         extractionType: ExtractionType,
-        data: EventsChartData
+        data: EventsChartData<LogMessage>
     ) {
-        val matches = regex.find(message.payloadText())!!
+        val matches = regex.find(message.dltMessage.payloadText())!!
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -25,7 +25,10 @@ class EventEntriesExtractor : EntriesExtractor<EventsChartData> {
                 val info: String? = matches.groups[Param.INFO.value]?.value
 
                 if (value != null) {
-                    data.addEntry(StringKey(key), EventEntry(message.timeStampUs, value, info))
+                    data.addEntry(
+                        StringKey(key),
+                        EventEntry(message.dltMessage.timeStampUs, value, message)
+                    )
                 }
             }
 

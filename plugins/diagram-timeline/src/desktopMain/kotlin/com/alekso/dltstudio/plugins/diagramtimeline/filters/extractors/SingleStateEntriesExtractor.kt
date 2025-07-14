@@ -1,22 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltstudio.charts.model.SingleStateChartData
 import com.alekso.dltstudio.charts.model.SingleStateEntry
 import com.alekso.dltstudio.charts.model.StringKey
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param
 
-class SingleStateEntriesExtractor : EntriesExtractor<SingleStateChartData> {
+class SingleStateEntriesExtractor : EntriesExtractor<SingleStateChartData<LogMessage>> {
 
     override fun extractEntry(
-        message: DLTMessage,
+        message: LogMessage,
         regex: Regex,
         extractionType: ExtractionType,
-        data: SingleStateChartData
+        data: SingleStateChartData<LogMessage>
     ) {
-        val matches = regex.find(message.payloadText())!!
+        val matches = regex.find(message.dltMessage.payloadText())!!
 
         when (extractionType) {
             ExtractionType.NamedGroupsOneEntry -> {
@@ -24,7 +24,10 @@ class SingleStateEntriesExtractor : EntriesExtractor<SingleStateChartData> {
                 val value: String? = matches.groups[Param.VALUE.value]?.value
 
                 if (value != null) {
-                    data.addEntry(StringKey(key), SingleStateEntry(message.timeStampUs, value, ""))
+                    data.addEntry(
+                        StringKey(key),
+                        SingleStateEntry<LogMessage>(message.dltMessage.timeStampUs, value, message)
+                    )
                 }
             }
 
@@ -35,7 +38,14 @@ class SingleStateEntriesExtractor : EntriesExtractor<SingleStateChartData> {
                     val key = matches.groups[INDEX_KEY + 1]?.value
                     val value = matches.groups[INDEX_VALUE + 1]?.value
                     if (key != null && value != null) {
-                        data.addEntry(StringKey(key), SingleStateEntry(message.timeStampUs, value, ""))
+                        data.addEntry(
+                            StringKey(key),
+                            SingleStateEntry<LogMessage>(
+                                message.dltMessage.timeStampUs,
+                                value,
+                                message
+                            )
+                        )
                     }
                 }
             }

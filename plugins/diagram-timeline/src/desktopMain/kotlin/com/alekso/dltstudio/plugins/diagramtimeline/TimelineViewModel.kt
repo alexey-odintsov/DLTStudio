@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.charts.model.ChartData
+import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.ChartKey
 import com.alekso.dltstudio.charts.model.DurationChartData
 import com.alekso.dltstudio.charts.model.EventsChartData
@@ -40,6 +41,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
 
 
@@ -48,6 +51,8 @@ class TimelineViewModel(
     private val timelineRepository: TimelineRepository,
     private val messagesRepository: MessagesRepository,
 ) {
+    @OptIn(ExperimentalSplitPaneApi::class)
+    val vSplitterState = SplitPaneState(0.9f, true)
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
     private var analyzeJob: Job? = null
@@ -57,8 +62,10 @@ class TimelineViewModel(
 
 
     val filtersDialogState = mutableStateOf(false)
-    var entriesMap = mutableStateMapOf<String, ChartData>()
+    var entriesMap = mutableStateMapOf<String, ChartData<LogMessage>>()
     var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
+    var selectedEntry by mutableStateOf<ChartEntry<LogMessage>?>(null)
+    var hoveredEntry by mutableStateOf<ChartEntry<LogMessage>?>(null)
 
     private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
@@ -182,7 +189,7 @@ class TimelineViewModel(
         analyzeJob = viewModelScope.launch(Dispatchers.Default) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
-                val entries = mutableStateMapOf<String, ChartData>()
+                val entries = mutableStateMapOf<String, ChartData<LogMessage>>()
                 var timeStart = Long.MAX_VALUE
                 var timeEnd = Long.MIN_VALUE
 
@@ -215,7 +222,7 @@ class TimelineViewModel(
                             )
                         ) {
                             EntriesExtractor.analyzeEntriesRegex(
-                                message.dltMessage,
+                                message,
                                 timelineFilter.diagramType,
                                 timelineFilter.extractorType,
                                 regexps[i]!!,
@@ -293,7 +300,7 @@ class TimelineViewModel(
         timelineFilters.clear()
     }
 
-    fun retrieveEntriesForFilter(filter: TimelineFilter): ChartData? {
+    fun retrieveEntriesForFilter(filter: TimelineFilter): ChartData<LogMessage>? {
         return when (filter.diagramType) {
             DiagramType.Percentage -> entriesMap[filter.key] as? PercentageChartData
             DiagramType.MinMaxValue -> entriesMap[filter.key] as? MinMaxChartData
@@ -308,6 +315,14 @@ class TimelineViewModel(
 
     fun onLegendResized(diff: Float) {
         legendSize += diff
+    }
+
+    fun onEntrySelected(chartEntry: ChartEntry<LogMessage>) {
+        selectedEntry = chartEntry
+    }
+
+    fun onEntryHovered(chartEntry: ChartEntry<LogMessage>?) {
+        hoveredEntry = chartEntry
     }
 
 }

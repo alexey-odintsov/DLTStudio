@@ -29,7 +29,7 @@ fun PreviewDurationChart() {
     val app2 = StringKey("app2")
     val app3 = StringKey("app3")
 
-    val chartData = DurationChartData()
+    val chartData = DurationChartData<String>()
     chartData.addEntry(app1, DurationEntry(now + 500_000L, "start", end = null, ""))
     chartData.addEntry(app1, DurationEntry(now + 900_000L, null, end = "stop", ""))
     chartData.addEntry(app1, DurationEntry(now + 1_000_000L, null, end = "stop", ""))

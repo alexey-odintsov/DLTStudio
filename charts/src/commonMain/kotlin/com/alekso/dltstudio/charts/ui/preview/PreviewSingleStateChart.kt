@@ -29,7 +29,7 @@ fun PreviewSingleStateChart() {
     val app2 = StringKey("app2")
     val service1 = StringKey("service1")
 
-    val chartData = SingleStateChartData()
+    val chartData = SingleStateChartData<String>()
     chartData.addEntry(app1, SingleStateEntry(now + 500_000L, "ON_CREATE", ""))
     chartData.addEntry(app1, SingleStateEntry(now + 700_000L, "ON_START", ""))
     chartData.addEntry(app2, SingleStateEntry(now + 900_000L, "ON_CREATE", ""))
