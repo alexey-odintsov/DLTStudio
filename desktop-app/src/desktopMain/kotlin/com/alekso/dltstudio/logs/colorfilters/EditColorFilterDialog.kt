@@ -31,6 +31,7 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
@@ -57,7 +58,9 @@ fun EditColorFilterDialog(
         title = if (colorFilterIndex >= 0) "Edit Color Filter" else "Add new color filter",
         state = rememberDialogState(width = 700.dp, height = 500.dp)
     ) {
-        EditColorFilterPanel(colorFilter, colorFilterIndex, onFilterUpdate, onDialogClosed)
+        ThemeManager.AppTheme {
+            EditColorFilterPanel(colorFilter, colorFilterIndex, onFilterUpdate, onDialogClosed)
+        }
     }
 }
 

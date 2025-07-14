@@ -5,10 +5,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +26,7 @@ import com.alekso.dltstudio.logs.CellStyle
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
 import com.alekso.dltstudio.uicomponents.ImageButton
@@ -51,26 +54,28 @@ fun ColorFiltersDialog(
         title = "Color Filters",
         state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
-        val editDialogState = remember { mutableStateOf(EditDialogState(false)) }
+        ThemeManager.AppTheme {
+            val editDialogState = remember { mutableStateOf(EditDialogState(false)) }
 
-        if (editDialogState.value.visible) {
-            EditColorFilterDialog(
-                visible = editDialogState.value.visible,
-                onDialogClosed = { editDialogState.value = EditDialogState(false) },
-                colorFilter = editDialogState.value.filter,
-                colorFilterIndex = editDialogState.value.filterIndex,
-                onFilterUpdate = { i, filter ->
-                    editDialogState.value.filter = filter
-                    callbacks.onColorFilterUpdate(i, filter)
-                }
+            if (editDialogState.value.visible) {
+                EditColorFilterDialog(
+                    visible = editDialogState.value.visible,
+                    onDialogClosed = { editDialogState.value = EditDialogState(false) },
+                    colorFilter = editDialogState.value.filter,
+                    colorFilterIndex = editDialogState.value.filterIndex,
+                    onFilterUpdate = { i, filter ->
+                        editDialogState.value.filter = filter
+                        callbacks.onColorFilterUpdate(i, filter)
+                    }
+                )
+            }
+
+            ColorFiltersPanel(
+                colorFilters,
+                callbacks,
+                { i, filter -> editDialogState.value = EditDialogState(true, filter, i) },
             )
         }
-
-        ColorFiltersPanel(
-            colorFilters,
-            callbacks,
-            { i, filter -> editDialogState.value = EditDialogState(true, filter, i) },
-        )
     }
 }
 
@@ -81,7 +86,7 @@ fun ColorFiltersPanel(
     onEditFilterClick: (Int, ColorFilter) -> Unit,
 ) {
 
-    Column(modifier = Modifier.padding(4.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(4.dp)) {
         LazyColumn(Modifier.weight(1f)) {
             items(colorFilters.size) { i ->
                 val filter = colorFilters[i]
@@ -120,7 +125,7 @@ fun ColorFiltersPanel(
                             modifier = Modifier.fillMaxWidth(),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
-                            color = filter.cellStyle.textColor ?: Color.Black
+                            color = filter.cellStyle.textColor ?: MaterialTheme.colorScheme.onBackground
                         )
                     }
 
