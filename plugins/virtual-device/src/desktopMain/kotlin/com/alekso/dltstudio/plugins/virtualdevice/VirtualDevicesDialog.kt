@@ -21,11 +21,11 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.plugins.virtualdevice.model.VirtualDevice
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.ImageButton
+import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_edit
@@ -39,8 +39,9 @@ fun VirtualDevicesDialog(
     onVirtualDeviceUpdate: (VirtualDevice) -> Unit,
     onVirtualDeviceDelete: (VirtualDevice) -> Unit,
 ) {
-    DialogWindow(
-        visible = visible, onCloseRequest = onDialogClosed,
+    DesktopDialogWindow(
+        visible = visible,
+        onCloseRequest = onDialogClosed,
         title = "Virtual Devices",
         state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
@@ -121,7 +122,7 @@ fun VirtualDevicesPanel(
         }
 
         CustomButton(
-            modifier = Modifier,
+            modifier = Modifier.align(Alignment.End),
             onClick = { onEditItemClick(VirtualDevice.Empty) },
         ) {
             Text("Add device")

@@ -5,6 +5,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -18,11 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.plugins.virtualdevice.model.VirtualDevice
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomEditText
+import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 
 
 class EditVirtualDeviceDialogState(
@@ -38,7 +40,7 @@ fun EditVirtualDeviceDialog(
     onItemUpdate: (VirtualDevice) -> Unit,
 ) {
     var validationErrors = remember { mutableStateListOf<String>() }
-    DialogWindow(
+    DesktopDialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = if (device.id >= 0) "Edit virtual device" else "Add new virtual device",
         state = rememberDialogState(width = 400.dp)
@@ -74,10 +76,10 @@ fun EditVirtualDevicePanel(
     val colNameStyle = Modifier.width(COL_NAME_SIZE_DP).padding(horizontal = 4.dp)
 
     Column(
-        Modifier.width(1000.dp).padding(4.dp),
+        Modifier.fillMaxSize().padding(4.dp),
     ) {
         Column(
-            modifier = Modifier,
+            modifier = Modifier.weight(1f).fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -117,7 +119,9 @@ fun EditVirtualDevicePanel(
             }
         }
 
-        CustomButton(onClick = {
+        CustomButton(
+            modifier = Modifier.align(Alignment.End),
+            onClick = {
             val newValidationErrors = validateInput(deviceName, deviceWidth, deviceHeight)
             if (newValidationErrors.isEmpty()) {
                 onDeviceUpdate(
