@@ -1,6 +1,9 @@
 package com.alekso.dltstudio.uicomponents.dialogs
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
@@ -25,7 +28,9 @@ fun DesktopDialogWindow(
         state = state,
     ) {
         ThemeManager.AppTheme {
-            content()
+            Box(Modifier.fillMaxSize()) {
+                content()
+            }
         }
     }
 }
