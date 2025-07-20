@@ -5,7 +5,6 @@ import androidx.compose.foundation.LightDefaultContextMenuRepresentation
 import androidx.compose.foundation.LocalContextMenuRepresentation
 import androidx.compose.foundation.LocalScrollbarStyle
 import androidx.compose.foundation.ScrollbarStyle
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +39,7 @@ internal fun ThemeApplier(
             hoverColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.50f)
         )
 
-        val contextMenuRepresentation = if (isSystemInDarkTheme()) {
+        val contextMenuRepresentation = if (theme.isDark()) {
             DarkDefaultContextMenuRepresentation
         } else {
             LightDefaultContextMenuRepresentation
