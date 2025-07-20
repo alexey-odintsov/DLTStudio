@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltmessage.extendedheader.MessageType
 import com.alekso.dltmessage.extendedheader.MessageTypeInfo
@@ -32,6 +31,7 @@ import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.dltmessage.SampleData
+import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 
 
 class RemoveLogsDialogState(
@@ -46,7 +46,7 @@ fun RemoveLogsDialog(
     onFilterClicked: (Map<FilterParameter, FilterCriteria>) -> Unit,
     onDialogClosed: () -> Unit,
 ) {
-    DialogWindow(
+    DesktopDialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Removing logs",
         state = rememberDialogState(width = 400.dp, height = 320.dp)
