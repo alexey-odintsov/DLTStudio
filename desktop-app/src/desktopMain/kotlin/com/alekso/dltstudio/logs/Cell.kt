@@ -82,7 +82,7 @@ fun Cell(
                     fontWeight = FontWeight(400),
                     softWrap = true,
                     text = text,
-                    color = MaterialTheme.colorScheme.onPrimary,
+                    color = AppTheme.colors.onLogRow,
                 )
             }
         } else {
