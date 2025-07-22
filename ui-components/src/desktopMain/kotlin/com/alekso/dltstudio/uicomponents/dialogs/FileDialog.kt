@@ -6,6 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import javax.swing.JFileChooser
+import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
 
@@ -30,33 +31,35 @@ fun FileDialog(dialogState: FileDialogState) {
     LaunchedEffect(dialogState.visible) {
         if (dialogState.visible) {
             launch(Dispatchers.IO) {
-                try {
-                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-                } catch (_: Exception) {}
+                SwingUtilities.invokeLater {
+                    try {
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+                    } catch (_: Exception) { }
 
-                val fileChooser = JFileChooser(FileSystemView.getFileSystemView()).apply {
-                    currentDirectory = dialogState.directory
-                    dialogTitle = dialogState.title
-                    fileSelectionMode = JFileChooser.FILES_ONLY
-                    isAcceptAllFileFilterUsed = true
-                    selectedFile = dialogState.file
-                    isMultiSelectionEnabled = dialogState.isMultiSelectionEnabled
-                }
-
-                val result = when (dialogState.operation) {
-                    DialogOperation.OPEN -> fileChooser.showOpenDialog(null)
-                    DialogOperation.SAVE -> fileChooser.showSaveDialog(null)
-                }
-
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    val selectedFiles = if (dialogState.isMultiSelectionEnabled) {
-                        fileChooser.selectedFiles.asList()
-                    } else {
-                        listOf(fileChooser.selectedFile)
+                    val fileChooser = JFileChooser(FileSystemView.getFileSystemView()).apply {
+                        currentDirectory = dialogState.directory
+                        dialogTitle = dialogState.title
+                        fileSelectionMode = JFileChooser.FILES_ONLY
+                        isAcceptAllFileFilterUsed = true
+                        selectedFile = dialogState.file
+                        isMultiSelectionEnabled = dialogState.isMultiSelectionEnabled
                     }
-                    dialogState.fileCallback(selectedFiles)
-                } else {
-                    dialogState.cancelCallback()
+
+                    val result = when (dialogState.operation) {
+                        DialogOperation.OPEN -> fileChooser.showOpenDialog(null)
+                        DialogOperation.SAVE -> fileChooser.showSaveDialog(null)
+                    }
+
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        val selectedFiles = if (dialogState.isMultiSelectionEnabled) {
+                            fileChooser.selectedFiles.asList()
+                        } else {
+                            listOf(fileChooser.selectedFile)
+                        }
+                        dialogState.fileCallback(selectedFiles)
+                    } else {
+                        dialogState.cancelCallback()
+                    }
                 }
             }
         }
