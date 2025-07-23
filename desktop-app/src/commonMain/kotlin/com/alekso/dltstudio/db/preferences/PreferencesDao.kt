@@ -22,7 +22,7 @@ interface PreferencesDao {
     @Upsert
     suspend fun addSearch(item: SearchEntity)
 
-    @Query("SELECT * FROM SearchEntity LIMIT $MAX_SEARCH_SUGGESTIONS")
+    @Query("SELECT * FROM SearchEntity ORDER BY id DESC LIMIT $MAX_SEARCH_SUGGESTIONS")
     fun getRecentSearchFlow(): Flow<List<SearchEntity>>
 
     @Query("DELETE FROM SearchEntity WHERE id NOT IN (SELECT id FROM SearchEntity ORDER BY id DESC LIMIT $MAX_SEARCH_SUGGESTIONS)")
