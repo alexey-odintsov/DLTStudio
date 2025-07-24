@@ -19,6 +19,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
+            implementation(project(":app-theme"))
             implementation(project(":logger"))
             implementation(project(":extraction"))
             implementation(project(":ui-components"))
@@ -29,7 +30,7 @@ kotlin {
             implementation(project(":charts"))
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(libs.kotlin.datetime)
             implementation(libs.kotlin.serializaion)

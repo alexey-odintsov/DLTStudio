@@ -21,6 +21,7 @@ dependencyResolutionManagement {
 include(":resources")
 include(":extraction")
 include(":desktop-app")
+include(":app-theme")
 include(":data-utils")
 include(":dlt-message")
 include(":dlt-parser")

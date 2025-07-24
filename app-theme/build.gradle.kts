@@ -9,28 +9,19 @@ kotlin {
 
     sourceSets {
         val desktopMain by getting
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-                implementation(libs.kotlin.coroutines.swing)
-            }
-        }
         commonMain.dependencies {
-            implementation(project(":app-theme"))
-            implementation(project(":logger"))
-            implementation(project(":ui-components"))
-            implementation(project(":plugins:contract"))
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material3)
             implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(libs.material.icons)
         }
 
         desktopMain.dependencies {
+            implementation(compose.material3)
             implementation(compose.desktop.currentOs)
         }
 
     }
 }
 
-task("testClasses")

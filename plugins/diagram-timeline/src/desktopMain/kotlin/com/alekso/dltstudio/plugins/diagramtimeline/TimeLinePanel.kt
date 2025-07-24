@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.Divider
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -119,7 +119,7 @@ fun TimeLinePanel(
             )
         }
 
-        Divider()
+        HorizontalDivider()
         VerticalSplitPane(splitPaneState = vSplitterState) {
             first(50.dp) {
                 ChartsList(
@@ -149,7 +149,7 @@ fun TimeLinePanel(
                         Modifier
                             .height(1.dp)
                             .fillMaxWidth()
-                            .background(MaterialTheme.colors.background)
+                            .background(MaterialTheme.colorScheme.background)
                     )
                 }
                 handle {
