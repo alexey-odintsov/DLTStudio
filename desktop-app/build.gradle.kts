@@ -65,7 +65,7 @@ compose.desktop {
         jvmArgs += listOf("-Xmx8G")
 
         nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "com.alekso.dltstudio"
             packageVersion = "1.0.0"
         }
