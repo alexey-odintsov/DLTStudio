@@ -5,40 +5,88 @@
 # This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
 
-name: Gradle Package MacOS
+name: Build and Release Artifacts
 
 on:
   release:
     types: [created]
 
+permissions:
+  contents: write
+
 jobs:
-  build:
-
+  build-macos:
     runs-on: macos-latest
-    permissions:
-      contents: read
-      packages: write
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 21
-      uses: actions/setup-java@v4
-      with:
-        java-version: '21'
-        distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+      - uses: actions/checkout@v4
 
-#    - name: Setup Gradle
-#      uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
 
-    - name: Build with Gradle
-      run: ./gradlew packageDmg
+      - name: Build .dmg
+        run: ./gradlew packageDmg
 
-    # The USERNAME and TOKEN need to correspond to the credentials environment variables used in
-    # the publishing section of your build.gradle
-    - name: Publish to GitHub Packages
-      run: ./gradlew publish
-      env:
-        USERNAME: ${{ github.actor }}
-        TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Find generated files
+        run: find build -type f
+
+      - name: Upload .dmg to GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: desktop-app/build/compose/binaries/main/dmg/*.dmg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build .msi and .exe
+        run: |
+          ./gradlew packageMsi
+          ./gradlew packageExe
+
+      - name: Find generated files
+        run: Get-ChildItem -Recurse build | Format-List FullName
+
+      - name: Upload .msi and .exe to GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            desktop-app/build/compose/binaries/main/msi/*.msi
+            desktop-app/build/compose/binaries/main/exe/*.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Build .deb
+        run: ./gradlew packageDeb
+
+      - name: Find generated files
+        run: find build -type f
+
+      - name: Upload .deb to GitHub release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: desktop-app/build/compose/binaries/main/deb/*.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
