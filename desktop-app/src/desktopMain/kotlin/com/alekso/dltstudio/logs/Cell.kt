@@ -7,7 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -20,8 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.LocalLogsTextStyle
 import com.alekso.dltstudio.LocalSettingsUI
+import com.alekso.dltstudio.theme.AppTheme
 import com.alekso.dltstudio.utils.ColorSerializer
 import kotlinx.serialization.Serializable
 
@@ -50,8 +51,8 @@ fun Cell(
     content: (@Composable () -> Unit)? = null,
 ) {
     val color = if (cellStyle != null) {
-        cellStyle.textColor ?: Color.Unspecified
-    } else Color.Unspecified
+        cellStyle.textColor ?: AppTheme.colors.onLogRow
+    } else AppTheme.colors.onLogRow
 
     if (content != null) {
         Box(modifier = modifier) {
@@ -81,7 +82,7 @@ fun Cell(
                     fontWeight = FontWeight(400),
                     softWrap = true,
                     text = text,
-                    color = Color.White,
+                    color = AppTheme.colors.onLogRow,
                 )
             }
         } else {
@@ -90,7 +91,7 @@ fun Cell(
                     modifier = Modifier.padding(end = 1.dp).then(modifier),
                     textAlign = textAlign,
                     fontSize = LocalSettingsUI.current.fontSize.sp,
-                    lineHeight = LocalLogsTextStyle.current.lineHeight,
+                    lineHeight = LocalSettingsUI.current.lineHeight.sp,
                     fontFamily = LocalSettingsUI.current.fontFamily,
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight(if (isHeader) 600 else 400),
@@ -104,7 +105,7 @@ fun Cell(
                     maxLines = 1,
                     textAlign = textAlign,
                     fontSize = LocalSettingsUI.current.fontSize.sp,
-                    lineHeight = LocalLogsTextStyle.current.lineHeight,
+                    lineHeight = LocalSettingsUI.current.lineHeight.sp,
                     fontFamily = LocalSettingsUI.current.fontFamily,
                     fontStyle = FontStyle.Normal,
                     overflow = TextOverflow.Ellipsis,

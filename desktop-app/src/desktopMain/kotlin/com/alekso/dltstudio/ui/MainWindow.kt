@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -70,7 +70,7 @@ fun MainWindow(
             // PluginPanel as this parameter to renderPanel is unstable, so we marked PluginPanel as Stable
             (mainViewModel.panels[tabIndex]).renderPanel(modifier = Modifier.weight(1f))
         }
-        Divider()
+        HorizontalDivider()
         val messagesSize = DependencyManager.provideMessageRepository().getMessages().size
         val statusText = if (messagesSize > 0) {
             "Messages: ${"%,d".format(messagesSize)}"

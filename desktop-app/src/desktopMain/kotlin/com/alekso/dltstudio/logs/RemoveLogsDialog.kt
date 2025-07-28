@@ -9,9 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -19,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltmessage.extendedheader.MessageType
 import com.alekso.dltmessage.extendedheader.MessageTypeInfo
@@ -31,6 +31,7 @@ import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.dltmessage.SampleData
+import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 
 
 class RemoveLogsDialogState(
@@ -45,7 +46,7 @@ fun RemoveLogsDialog(
     onFilterClicked: (Map<FilterParameter, FilterCriteria>) -> Unit,
     onDialogClosed: () -> Unit,
 ) {
-    DialogWindow(
+    DesktopDialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Removing logs",
         state = rememberDialogState(width = 400.dp, height = 320.dp)
@@ -102,7 +103,7 @@ fun RemoveLogsDialogPanel(
     ) {
 
         Row {
-            val items = mutableListOf("Any")
+            val items = mutableStateListOf("Any")
             items.addAll(MessageType.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filters[FilterParameter.MessageType]?.value }
@@ -122,7 +123,7 @@ fun RemoveLogsDialogPanel(
         }
 
         Row {
-            val items = mutableListOf("Any")
+            val items = mutableStateListOf("Any")
             items.addAll(MessageTypeInfo.entries.map { it.name })
             var initialSelection =
                 items.indexOfFirst { it == filters[FilterParameter.MessageTypeInfo]?.value }
@@ -181,7 +182,7 @@ fun RemoveLogsDialogPanel(
             )
         }
 
-        val items = mutableListOf<String>()
+        val items = mutableStateListOf<String>()
         items.addAll(TextCriteria.entries.map { it.name })
         var initialSelection = items.indexOfFirst { it == payloadCriteria?.name }
         if (initialSelection == -1) initialSelection = 0

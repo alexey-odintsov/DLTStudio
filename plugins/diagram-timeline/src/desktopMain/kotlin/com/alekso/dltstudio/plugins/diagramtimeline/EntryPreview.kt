@@ -12,11 +12,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.charts.model.ChartEntry
@@ -29,7 +29,7 @@ fun EntryPreview(selectedEntry: ChartEntry<LogMessage>?) {
     val logMessage = selectedEntry?.data
     if (selectedEntry != null) {
         val scrollState = rememberScrollState()
-        Box(Modifier.fillMaxSize().background(Color.White)) {
+        Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
             SelectionContainer {
                 Column(Modifier.verticalScroll(scrollState).fillMaxSize()) {
                     Text(text = "Value: ${selectedEntry.getText()}", modifier = padding)
