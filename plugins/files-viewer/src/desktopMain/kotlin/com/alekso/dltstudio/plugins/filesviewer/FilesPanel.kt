@@ -1,7 +1,6 @@
 package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -133,7 +132,7 @@ fun FileItem(
     i: String, name: String, size: String, date: String, isHeader: Boolean = false
 ) {
     Row(
-        modifier.background(Color(0xFFEEEEEE))
+        modifier
             .padding(bottom = 1.dp)
             .background(AppTheme.colors.logRow)
             .height(IntrinsicSize.Max)
