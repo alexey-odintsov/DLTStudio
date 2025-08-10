@@ -57,7 +57,7 @@ class SystemTheme(
     val onErrorContainerLight = Color(0xFF93000A)
 
     // surface & outline
-    val backgroundLight = Color(0xFFF9F9FF) // ?
+    val backgroundLight = Color(0xFFFFFFFF) // ?
     val onBackgroundLight = Color(0xFF191C20)
 
     val surfaceLight = Color(0xFFF3F4F4) // background
@@ -72,7 +72,7 @@ class SystemTheme(
     val inverseOnSurfaceLight = Color(0xFFF0F0F7)
     val inversePrimaryLight = Color(0xFFAAC7FF)
     val surfaceDimLight = Color(0xFFD9D9E0)
-    val surfaceBrightLight = Color(0xFFF9F9FF)
+    val surfaceBrightLight = Color(0xFFFFFFFF)
 
     val surfaceContainerLowestLight = Color(0xFFFFFFFF)
     val surfaceContainerLowLight = Color(0xFFF3F3FA)
