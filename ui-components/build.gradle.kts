@@ -16,6 +16,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
+            implementation(project(":app-theme"))
             implementation(project(":logger"))
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -26,6 +27,7 @@ kotlin {
 
         desktopMain.dependencies {
             implementation(compose.material3)
+            implementation(compose.materialIconsExtended)
             implementation(compose.desktop.currentOs)
         }
 

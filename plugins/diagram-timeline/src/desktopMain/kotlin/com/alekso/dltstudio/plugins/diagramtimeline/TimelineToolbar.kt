@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,15 +9,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -30,8 +34,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.HorizontalDivider
 import com.alekso.dltstudio.uicomponents.ImageButton
 import com.alekso.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
@@ -98,10 +103,11 @@ fun TimelineToolbar(
                     Res.drawable.icon_stop
                 },
                 title = "Analyze timeline",
-                onClick = callbacks::onAnalyzeClicked
+                onClick = callbacks::onAnalyzeClicked,
+                tintable = false
             )
         }
-        HorizontalDivider(modifier = Modifier.fillMaxHeight().width(1.dp))
+        VerticalDivider()
 
         Tooltip(text = "Move offset to the left") {
             ImageButton(
@@ -151,7 +157,8 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_color_filters,
                 title = "Timeline filters",
-                onClick = callbacks::onTimelineFiltersClicked
+                onClick = callbacks::onTimelineFiltersClicked,
+                tintable = false,
             )
         }
 
@@ -166,41 +173,62 @@ fun TimelineToolbar(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.width(200.dp)
+                    modifier = Modifier.wrapContentSize().background(MaterialTheme.colorScheme.background)
                 ) {
                     recentFiltersFiles.forEachIndexed { index, s ->
-                        DropdownMenuItem(onClick = {
-                            expanded = false
-                            callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
-                        }) {
-                            Text(text = s.fileName, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                        }
+                        DropdownMenuItem(
+                            text = {
+                                Text(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    text = s.fileName,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            },
+                            onClick = {
+                                expanded = false
+                                callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
+                            }
+                        )
                     }
                 }
             }
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onLoadFilterClicked
+            modifier = Modifier, onClick = callbacks::onLoadFilterClicked
         ) {
             Text("Load")
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onSaveFilterClicked
+            modifier = Modifier, onClick = callbacks::onSaveFilterClicked
         ) {
             Text("Save")
         }
 
         CustomButton(
-            modifier = Modifier.heightIn(max = 24.dp), onClick = callbacks::onClearFilterClicked
+            modifier = Modifier, onClick = callbacks::onClearFilterClicked
         ) {
             Text("Clear")
         }
     }
 }
 
+
 @Preview
+@Composable
+fun PreviewLogsToolbarTheme() {
+    Column {
+        ThemeManager.CustomTheme(SystemTheme(true)) {
+            PreviewTimelineToolbar()
+        }
+        ThemeManager.CustomTheme(SystemTheme(false)) {
+            PreviewTimelineToolbar()
+        }
+    }
+}
+
 @Composable
 fun PreviewTimelineToolbar() {
     Column {
@@ -213,6 +241,6 @@ fun PreviewTimelineToolbar() {
             ),
             currentFilterFile = null
         )
-        Divider()
+        HorizontalDivider(Modifier.fillMaxWidth().height(1.dp))
     }
 }

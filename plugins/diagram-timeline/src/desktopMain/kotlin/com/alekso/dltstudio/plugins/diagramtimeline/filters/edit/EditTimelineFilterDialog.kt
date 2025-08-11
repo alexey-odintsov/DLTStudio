@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
@@ -23,6 +23,8 @@ import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
+import com.alekso.dltstudio.theme.AppTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.dltstudio.uicomponents.TabsPanel
@@ -55,13 +57,15 @@ fun EditTimelineFilterDialog(
         title = if (filterIndex >= 0) "Edit Timeline Filter" else "Add new Timeline filter",
         state = rememberDialogState(width = 700.dp, height = 600.dp)
     ) {
-        EditTimelineFilterPanel(
-            dialogViewModel,
-            timelineFilter,
-            filterIndex,
-            onFilterUpdate,
-            onDialogClosed,
-        )
+        ThemeManager.AppTheme {
+            EditTimelineFilterPanel(
+                dialogViewModel,
+                timelineFilter,
+                filterIndex,
+                onFilterUpdate,
+                onDialogClosed,
+            )
+        }
     }
 }
 

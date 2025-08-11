@@ -2,8 +2,8 @@ package com.alekso.dltstudio.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.sp
 fun Panel(modifier: Modifier = Modifier, title: String, content: @Composable () -> Unit) {
     Column(modifier = modifier) {
         Header(text = title)
-        Divider()
+        HorizontalDivider()
         content()
     }
 }

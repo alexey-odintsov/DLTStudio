@@ -6,11 +6,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Divider
-import androidx.compose.material.Text
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.font.FontFamily
@@ -62,7 +63,7 @@ fun DevicePreviewView(
             val currentDevice = virtualDevices[currentDeviceIndex]
             CustomDropDown(
                 modifier = Modifier.width(200.dp).padding(horizontal = 4.dp),
-                items = virtualDevices.map { device -> "${device.name}: ${device.width}x${device.height}" },
+                items = virtualDevices.map { device -> "${device.name}: ${device.width}x${device.height}" }.toMutableStateList(),
                 initialSelectedIndex = currentDeviceIndex,
                 onItemsSelected = onDeviceSelected
             )

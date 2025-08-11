@@ -1,19 +1,17 @@
 package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.ui.Panel
-import com.alekso.dltmessage.SampleData
 
 @Composable
 fun LogsListPanel(
@@ -35,7 +33,7 @@ fun LogsListPanel(
         title = "Messages"
     ) {
         LazyScrollable(
-            Modifier.fillMaxSize().background(Color.LightGray),
+            Modifier.fillMaxSize(),
             columnParams,
             messages,
             colorFilters,

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +22,7 @@ import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialog
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialogState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
 import com.alekso.dltstudio.uicomponents.ImageButton
@@ -50,26 +51,32 @@ fun TimelineFiltersDialog(
         title = "Timeline Filters",
         state = rememberDialogState(width = 500.dp, height = 500.dp)
     ) {
-        val editDialogState = remember { mutableStateOf(EditTimelineFilterDialogState(false)) }
+        ThemeManager.AppTheme {
+            val editDialogState = remember { mutableStateOf(EditTimelineFilterDialogState(false)) }
 
-        if (editDialogState.value.visible) {
-            EditTimelineFilterDialog(
-                visible = editDialogState.value.visible,
-                onDialogClosed = { editDialogState.value = EditTimelineFilterDialogState(false) },
-                timelineFilter = editDialogState.value.filter,
-                filterIndex = editDialogState.value.filterIndex,
-                onFilterUpdate = { i, filter ->
-                    editDialogState.value.filter = filter
-                    callbacks.onTimelineFilterUpdate(i, filter)
-                }
+            if (editDialogState.value.visible) {
+                EditTimelineFilterDialog(
+                    visible = editDialogState.value.visible,
+                    onDialogClosed = {
+                        editDialogState.value = EditTimelineFilterDialogState(false)
+                    },
+                    timelineFilter = editDialogState.value.filter,
+                    filterIndex = editDialogState.value.filterIndex,
+                    onFilterUpdate = { i, filter ->
+                        editDialogState.value.filter = filter
+                        callbacks.onTimelineFilterUpdate(i, filter)
+                    }
+                )
+            }
+
+            ColorFiltersPanel(
+                timelineFilters,
+                { i, filter ->
+                    editDialogState.value = EditTimelineFilterDialogState(true, filter, i)
+                },
+                callbacks,
             )
         }
-
-        ColorFiltersPanel(
-            timelineFilters,
-            { i, filter -> editDialogState.value = EditTimelineFilterDialogState(true, filter, i) },
-            callbacks,
-        )
     }
 }
 
@@ -88,12 +95,14 @@ fun ColorFiltersPanel(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
-                    ImageButton(modifier = Modifier.size(28.dp),
+                    ImageButton(
+                        modifier = Modifier.size(28.dp),
                         icon = Res.drawable.icon_up,
                         title = "Move Up",
                         onClick = { callbacks.onTimelineFilterMove(i, -1) })
 
-                    ImageButton(modifier = Modifier.size(28.dp),
+                    ImageButton(
+                        modifier = Modifier.size(28.dp),
                         icon = Res.drawable.icon_down,
                         title = "Move Down",
                         onClick = { callbacks.onTimelineFilterMove(i, 1) })
@@ -119,12 +128,14 @@ fun ColorFiltersPanel(
                         )
                     }
 
-                    ImageButton(modifier = Modifier.size(28.dp),
+                    ImageButton(
+                        modifier = Modifier.size(28.dp),
                         icon = Res.drawable.icon_edit,
                         title = "Edit",
                         onClick = { onEditFilterClick(i, filter) })
 
-                    ImageButton(modifier = Modifier.size(28.dp),
+                    ImageButton(
+                        modifier = Modifier.size(28.dp),
                         icon = Res.drawable.icon_delete,
                         title = "Delete",
                         onClick = { callbacks.onTimelineFilterDelete(i) })

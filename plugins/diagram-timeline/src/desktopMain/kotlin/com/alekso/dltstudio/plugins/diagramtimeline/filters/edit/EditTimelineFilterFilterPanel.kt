@@ -2,11 +2,12 @@ package com.alekso.dltstudio.plugins.diagramtimeline.filters.edit
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,6 +16,8 @@ import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
 
@@ -29,7 +32,7 @@ fun EditTimelineFilterFilterPanel(
     Row {
         Text(modifier = colNameStyle.width(COL_NAME_SIZE_DP), text = "Message Type")
         CustomDropDown(
-            modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+            modifier = Modifier.width(COL_VALUE),
             items = viewModel.messageTypeItems,
             initialSelectedIndex = viewModel.messageTypeSelectionIndex,
             onItemsSelected = viewModel::onMessageTypeChanged
@@ -39,7 +42,7 @@ fun EditTimelineFilterFilterPanel(
     Row {
         Text(modifier = colNameStyle.width(COL_NAME_SIZE_DP), text = "Message Type Info")
         CustomDropDown(
-            modifier = Modifier.width(COL_VALUE).padding(horizontal = 4.dp),
+            modifier = Modifier.width(COL_VALUE),
             items = viewModel.messageTypeInfoItems,
             initialSelectedIndex = viewModel.messageTypeInfoSelectionIndex,
             onItemsSelected = viewModel::onMessageTypeInfoChanged
@@ -84,6 +87,20 @@ fun EditTimelineFilterFilterPanel(
                 viewModel.sessionId = it
             }
         )
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewEditTimelineFilterFilterPanelThemes() {
+    Column(modifier = Modifier.padding(4.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        ThemeManager.CustomTheme(SystemTheme(isDark = false)) {
+            PreviewEditTimelineFilterFilterPanel()
+        }
+        ThemeManager.CustomTheme(SystemTheme(isDark = true)) {
+            PreviewEditTimelineFilterFilterPanel()
+        }
     }
 }
 

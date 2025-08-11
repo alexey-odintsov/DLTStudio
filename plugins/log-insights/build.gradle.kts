@@ -23,7 +23,7 @@ kotlin {
             implementation(project(":dlt-message"))
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
         }
 

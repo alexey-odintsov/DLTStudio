@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.material.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -141,7 +141,7 @@ internal fun ChartsList(
             ) {
                 items(panels.size) { i ->
                     if (i > 0) {
-                        Divider(Modifier.padding(2.dp))
+                        HorizontalDivider(Modifier.padding(2.dp))
                     }
                     panels[i].invoke()
                 }

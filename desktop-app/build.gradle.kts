@@ -16,6 +16,7 @@ kotlin {
         val desktopMain by getting
 
         commonMain.dependencies {
+            implementation(project(":app-theme"))
             implementation(project(":resources"))
             implementation(project(":logger"))
             implementation(project(":data-utils"))
@@ -28,7 +29,7 @@ kotlin {
             implementation(project(":plugins:predefined-plugins"))
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(libs.compose.splitpane)
             implementation(compose.components.resources)
