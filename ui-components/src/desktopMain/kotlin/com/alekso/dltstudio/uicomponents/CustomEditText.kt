@@ -66,7 +66,7 @@ fun CustomEditText(
     interactionSource: MutableInteractionSource? = null,
     shape: Shape = RoundedCornerShape(4.dp),
     colors: TextFieldColors = OutlinedTextFieldDefaults.colors(),
-    contentPadding: PaddingValues = PaddingValues(4.dp)
+    contentPadding: PaddingValues = PaddingValues(horizontal = 4.dp, vertical = 2.dp)
 ) {
     @Suppress("NAME_SHADOWING")
     val interactionSource = interactionSource ?: remember { MutableInteractionSource() }
