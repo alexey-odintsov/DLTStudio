@@ -129,8 +129,8 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
                     Log.e(e.toString())
                 }
             },
-            minLines = 1,
-            maxLines = 3,
+            minLines = 4,
+            maxLines = 5,
             textStyle = TextStyle.Default.copy(fontFamily = FontFamily.Monospace)
         )
     }
@@ -149,7 +149,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
             onValueChange = {
                 viewModel.testPayload = it
             },
-            minLines = 1,
+            minLines = 2,
             maxLines = 10,
             textStyle = TextStyle.Default.copy(fontFamily = FontFamily.Monospace)
         )
