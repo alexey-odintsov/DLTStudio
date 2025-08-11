@@ -18,22 +18,30 @@ class MessagesRepositoryImpl : MessagesRepository {
     private var searchResults = mutableStateListOf<LogMessage>()
     private val selectedMessage = mutableStateOf<LogMessage?>(null)
 
-    override fun clearMessages() {
-        logMessages.clear()
-        clearSearchResults()
+    override suspend fun clearMessages() {
+        withContext(Main) {
+            logMessages.clear()
+            clearSearchResults()
+        }
     }
 
-    private fun clearSearchResults() {
-        searchResults.clear()
+    private suspend fun clearSearchResults() {
+        withContext(Main) {
+            searchResults.clear()
+        }
     }
 
-    override fun storeMessages(logMessages: List<LogMessage>) {
-        this.logMessages.clear()
-        this.logMessages.addAll(logMessages)
+    override suspend fun storeMessages(messages: List<LogMessage>) {
+        withContext(Main) {
+            logMessages.clear()
+            logMessages.addAll(messages)
+        }
     }
 
-    private fun addSearchResult(logMessages: LogMessage, index: Int) {
-        searchResults.add(logMessages)
+    private suspend fun addSearchResult(logMessages: LogMessage, index: Int) {
+        withContext(Main) {
+            searchResults.add(logMessages)
+        }
     }
 
     override fun getMessages(): SnapshotStateList<LogMessage> {
