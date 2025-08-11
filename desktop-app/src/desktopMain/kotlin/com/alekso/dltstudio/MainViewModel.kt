@@ -441,8 +441,8 @@ class MainViewModel(
             pluginManager.notifyLogsChanged()
         }
         parseJob?.cancel()
-        clearMessages()
         parseJob = viewModelScope.launch(IO) {
+            clearMessages()
             LogMessage.resetCounter()
             messagesRepository.storeMessages(
                 dltParser.read(
@@ -474,8 +474,10 @@ class MainViewModel(
         settingsDialogState = false
     }
 
-    private fun clearMessages() {
-        messagesRepository.clearMessages()
+    private suspend fun clearMessages() {
+        withContext(Main) {
+            messagesRepository.clearMessages()
+        }
     }
 
 
