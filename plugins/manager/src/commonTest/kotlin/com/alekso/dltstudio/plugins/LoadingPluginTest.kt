@@ -17,8 +17,8 @@ class PluginTest {
     fun `Test Loading Jar test plugin`() {
         val messagesProvider = object : MessagesRepository {
             private val messages = mutableStateListOf<LogMessage>()
-            override fun clearMessages() = Unit
-            override fun storeMessages(logMessages: List<LogMessage>) = Unit
+            override suspend fun clearMessages() = Unit
+            override suspend fun storeMessages(messages: List<LogMessage>) = Unit
             override fun getMessages(): SnapshotStateList<LogMessage> = messages
             override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
             override fun getSelectedMessage(): State<LogMessage?> = mutableStateOf(null)

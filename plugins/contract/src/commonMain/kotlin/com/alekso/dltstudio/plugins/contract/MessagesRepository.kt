@@ -5,8 +5,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.contract.LogMessage
 
 interface MessagesRepository {
-    fun clearMessages()
-    fun storeMessages(logMessages: List<LogMessage>)
+    suspend fun clearMessages()
+    suspend fun storeMessages(messages: List<LogMessage>)
     fun getMessages(): SnapshotStateList<LogMessage>
     fun getSearchResults(): SnapshotStateList<LogMessage>
     fun getSelectedMessage(): State<LogMessage?>
