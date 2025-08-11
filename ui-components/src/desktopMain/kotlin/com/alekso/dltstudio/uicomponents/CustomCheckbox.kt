@@ -4,21 +4,19 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CheckboxColors
-import androidx.compose.material.CheckboxDefaults
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.LocalMinimumInteractiveComponentEnforcement
-import androidx.compose.material.TriStateCheckbox
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalMinimumInteractiveComponentEnforcement
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CustomCheckbox(
     checked: Boolean,
@@ -26,16 +24,15 @@ fun CustomCheckbox(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    colors: CheckboxColors = CheckboxDefaults.colors(checkedColor = Color.Blue)
+    colors: CheckboxColors = CheckboxDefaults.colors()
 ) {
     CompositionLocalProvider(
         // disable 48dp padding (minimumInteractiveComponentSize)
         LocalMinimumInteractiveComponentEnforcement provides false,
     ) {
-
-        TriStateCheckbox(
-            state = ToggleableState(checked),
-            onClick = if (onCheckedChange != null) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = if (onCheckedChange != null) {
                 { onCheckedChange(!checked) }
             } else null,
             interactionSource = interactionSource,
