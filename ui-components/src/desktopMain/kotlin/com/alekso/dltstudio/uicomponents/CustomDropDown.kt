@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.uicomponents
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,7 +46,9 @@ fun CustomDropDown(
     var selectedIndex by remember { mutableStateOf(initialSelectedIndex) }
 
     Box(
-        modifier = modifier.border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+        modifier = modifier
+            .border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Row(
             modifier = Modifier.clickable(onClick = { expanded = true }),
@@ -52,7 +56,7 @@ fun CustomDropDown(
         ) {
             Text(
                 items[selectedIndex],
-                modifier = Modifier.weight(1f).padding(horizontal = 4.dp),
+                modifier = Modifier.padding(horizontal = 4.dp).weight(1f),
                 maxLines = 1
             )
             Icon(
