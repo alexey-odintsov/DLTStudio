@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -124,8 +124,9 @@ fun <T> Chart(
             val xDp = with(density) { localCursorPosition.x.toDp() }
             val yDp = with(density) { localCursorPosition.y.toDp() }
             Text(
-                hoveredEntry.getText(),
-                Modifier.absoluteOffset(xDp, yDp - 20.dp).background(Color.White)
+                text = hoveredEntry.getText(),
+                color = if (style == ChartStyle.Default) Color.Black else Color.White,
+                modifier = Modifier.absoluteOffset(xDp, yDp - 20.dp).background(if (style == ChartStyle.Default) Color.White else Color.Black)
             )
         }
     }
