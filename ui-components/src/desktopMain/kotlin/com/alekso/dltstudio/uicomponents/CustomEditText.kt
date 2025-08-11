@@ -104,7 +104,8 @@ fun CustomEditText(
                     .defaultMinSize(
                         minWidth = OutlinedTextFieldDefaults.MinWidth,
                         minHeight = 24.dp
-                    ),
+                    )
+                    .background(MaterialTheme.colorScheme.background),
             onValueChange = onValueChange,
             enabled = enabled,
             readOnly = readOnly,

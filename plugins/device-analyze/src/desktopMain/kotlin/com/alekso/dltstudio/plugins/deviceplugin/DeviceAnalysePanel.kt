@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,6 +30,7 @@ import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
+import com.alekso.dltstudio.uicomponents.CustomEditText
 
 @Composable
 fun DeviceAnalysePanel(
@@ -69,7 +69,7 @@ fun DeviceAnalysePanel(
                 )
             }
             Row {
-                OutlinedTextField(
+                CustomEditText(
                     modifier = Modifier.padding(4.dp).weight(1f)
                         .background(MaterialTheme.colorScheme.background),
                     value = cmd,
@@ -92,7 +92,7 @@ fun DeviceAnalysePanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             SelectionContainer {
-                OutlinedTextField(
+                CustomEditText(
                     readOnly = true,
                     modifier = Modifier.padding(horizontal = 4.dp).fillMaxSize(),
                     value = responseState.joinToString("\n"),

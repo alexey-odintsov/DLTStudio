@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -27,6 +26,7 @@ import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelinePreviewFactory
 import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomDropDown
+import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.logger.Log
 
 private val COL_VALUE = 250.dp
@@ -113,7 +113,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
     Column {
         Text(modifier = colNameStyle, text = "Extraction regexp:")
 
-        OutlinedTextField(
+        CustomEditText(
             modifier = Modifier.wrapContentHeight(Alignment.Top).fillMaxWidth(),
             value = viewModel.extractPattern ?: "",
             onValueChange = {
@@ -143,7 +143,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        OutlinedTextField(
+        CustomEditText(
             modifier = Modifier.fillMaxWidth().align(Alignment.Top),
             value = viewModel.testPayload ?: "",
             onValueChange = {
