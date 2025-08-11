@@ -114,9 +114,11 @@ fun EditColorFilterPanel(
 
     Column(
         Modifier.fillMaxSize().padding(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Column(Modifier.weight(1f)) {
+        Column(
+            Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(modifier = colNameStyle, text = "Name")
                 CustomEditText(
@@ -157,7 +159,7 @@ fun EditColorFilterPanel(
 
                 Text(modifier = colNameStyle, text = "Message Type")
                 CustomDropDown(
-                    modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                    modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                     items = items,
                     initialSelectedIndex = initialSelection,
                     onItemsSelected = { i ->
@@ -177,7 +179,7 @@ fun EditColorFilterPanel(
 
                 Text(modifier = colNameStyle, text = "Message Type Info")
                 CustomDropDown(
-                    modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                    modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                     items = items,
                     initialSelectedIndex = initialSelection,
                     onItemsSelected = { i ->
