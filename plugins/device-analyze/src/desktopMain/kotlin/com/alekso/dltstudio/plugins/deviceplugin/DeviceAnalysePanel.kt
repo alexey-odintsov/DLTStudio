@@ -2,14 +2,18 @@ package com.alekso.dltstudio.plugins.deviceplugin
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.theme.SystemTheme
@@ -62,7 +65,7 @@ fun DeviceAnalysePanel(
             Text(modifier = textStyle, text = "Command:")
             Row {
                 CustomDropDown(
-                    modifier = Modifier.padding(4.dp),//.padding(horizontal = 4.dp, vertical = 2.dp),
+                    modifier = Modifier.padding(4.dp),
                     items = predefinedCommands,
                     initialSelectedIndex = 0,
                     onItemsSelected = { index -> cmd = predefinedCommands[index] }
@@ -92,23 +95,16 @@ fun DeviceAnalysePanel(
 
         Row(verticalAlignment = Alignment.CenterVertically) {
             SelectionContainer {
-                CustomEditText(
-                    readOnly = true,
-                    modifier = Modifier.padding(horizontal = 4.dp).fillMaxSize(),
-                    value = responseState.joinToString("\n"),
-                    onValueChange = {},
-                    textStyle = TextStyle.Default.copy(fontFamily = FontFamily.Monospace)
+                Text(
+                    fontFamily = FontFamily.Monospace,
+                    modifier = Modifier.padding(4.dp).fillMaxSize()
+                        .border(1.dp, MaterialTheme.colorScheme.tertiary,  RoundedCornerShape(2.0.dp))
+                        .background(MaterialTheme.colorScheme.background)
+                        .height(100.dp).wrapContentHeight(Alignment.Top)
+                        .verticalScroll(scroll)
+                        .padding(horizontal = 4.dp),
+                    text = responseState.joinToString("\n")
                 )
-//                Text(
-//                    fontFamily = FontFamily.Monospace,
-//                    fontSize = 10.sp,
-//                    modifier = Modifier.padding(4.dp).fillMaxSize()
-//                        .border(1.dp, MaterialTheme.colorScheme.tertiary,  RoundedCornerShape(2.0.dp))
-//                        .background(MaterialTheme.colorScheme.surface)
-//                        .height(100.dp).wrapContentHeight(Alignment.Top)
-//                        .verticalScroll(scroll)
-//                        .padding(horizontal = 4.dp), text = responseState.joinToString("\n")
-//                )
             }
         }
     }
