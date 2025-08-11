@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
@@ -103,6 +104,7 @@ fun DeviceAnalysePanel(
                         .height(100.dp).wrapContentHeight(Alignment.Top)
                         .verticalScroll(scroll)
                         .padding(horizontal = 4.dp),
+                    fontSize = 12.sp,
                     text = responseState.joinToString("\n")
                 )
             }
