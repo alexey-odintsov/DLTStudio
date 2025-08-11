@@ -76,10 +76,10 @@ fun TextContent(text: String) {
             Box(Modifier) {
                 Text(
                     modifier = Modifier
+                        .background(MaterialTheme.colorScheme.background)
                         .padding(horizontal = 4.dp)
                         .verticalScroll(scrollState)
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.background),
+                        .fillMaxSize(),
                     text = text,
                     fontFamily = FontFamily.Monospace,
                     fontSize = 11.sp,
