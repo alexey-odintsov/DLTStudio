@@ -2,6 +2,7 @@ package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,6 +17,7 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -76,7 +78,8 @@ fun TextContent(text: String) {
                     modifier = Modifier
                         .padding(horizontal = 4.dp)
                         .verticalScroll(scrollState)
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.background),
                     text = text,
                     fontFamily = FontFamily.Monospace,
                     fontSize = 11.sp,
