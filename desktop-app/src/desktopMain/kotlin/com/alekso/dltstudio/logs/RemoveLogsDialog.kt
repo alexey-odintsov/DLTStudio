@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
@@ -21,16 +20,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
+import com.alekso.dltmessage.SampleData
 import com.alekso.dltmessage.extendedheader.MessageType
 import com.alekso.dltmessage.extendedheader.MessageTypeInfo
+import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria
-import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
-import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 
 
@@ -49,7 +48,7 @@ fun RemoveLogsDialog(
     DesktopDialogWindow(
         visible = visible, onCloseRequest = onDialogClosed,
         title = "Removing logs",
-        state = rememberDialogState(width = 400.dp, height = 320.dp)
+        state = rememberDialogState(width = 400.dp, height = 400.dp)
     ) {
         RemoveLogsDialogPanel(message, onFilterClicked, onDialogClosed)
     }
@@ -111,7 +110,7 @@ fun RemoveLogsDialogPanel(
 
             Text(modifier = colNameStyle, text = "Message Type")
             CustomDropDown(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 items = items,
                 initialSelectedIndex = initialSelection,
                 onItemsSelected = { i ->
@@ -131,7 +130,7 @@ fun RemoveLogsDialogPanel(
 
             Text(modifier = colNameStyle, text = "Message Type Info")
             CustomDropDown(
-                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP).padding(horizontal = 4.dp),
+                modifier = Modifier.width(SEARCH_INPUT_SIZE_DP),
                 items = items,
                 initialSelectedIndex = initialSelection,
                 onItemsSelected = { i ->
@@ -190,7 +189,7 @@ fun RemoveLogsDialogPanel(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(modifier = colNameStyle, text = "Payload")
             CustomDropDown(
-                modifier = Modifier.width(FILTER_TYPE).padding(horizontal = 4.dp),
+                modifier = Modifier.width(FILTER_TYPE),
                 items = items,
                 initialSelectedIndex = initialSelection,
                 onItemsSelected = { i ->
@@ -202,8 +201,8 @@ fun RemoveLogsDialogPanel(
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
             CustomEditText(
-                modifier = Modifier.fillMaxWidth().height(66.dp).align(Alignment.Top),
-                singleLine = false,
+                modifier = Modifier.fillMaxWidth().align(Alignment.Top),
+                minLines = 5,
                 value = payload ?: "", onValueChange = {
                     payload = it
                 }
