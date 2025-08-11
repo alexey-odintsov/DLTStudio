@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -171,7 +173,7 @@ fun TimelineToolbar(
                 DropdownMenu(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
-                    modifier = Modifier.wrapContentSize()
+                    modifier = Modifier.wrapContentSize().background(MaterialTheme.colorScheme.background)
                 ) {
                     recentFiltersFiles.forEachIndexed { index, s ->
                         DropdownMenuItem(

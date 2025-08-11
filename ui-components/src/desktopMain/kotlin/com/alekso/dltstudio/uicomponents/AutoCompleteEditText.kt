@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.uicomponents
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -64,7 +66,8 @@ fun AutoCompleteEditText(
         val filteringOptions = items.filter { it.contains(value, ignoreCase = true) }
         if (filteringOptions.isNotEmpty()) {
             DropdownMenu(
-                modifier = Modifier.focusable(false).fillMaxWidth().heightIn(0.dp, 200.dp),
+                modifier = Modifier.focusable(false).fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background).heightIn(0.dp, 200.dp),
                 expanded = expanded,
                 onDismissRequest = {
                     expanded = false
