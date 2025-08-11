@@ -68,7 +68,7 @@ fun CustomDropDown(
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.wrapContentSize()
+            modifier = Modifier.wrapContentSize().background(MaterialTheme.colorScheme.background)
         ) {
             items.forEachIndexed { index, s ->
                 DropdownMenuItem(
