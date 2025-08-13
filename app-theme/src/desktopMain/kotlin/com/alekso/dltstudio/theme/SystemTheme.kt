@@ -45,7 +45,7 @@ class SystemTheme(
     val onSecondaryContainerLight = Color(0xFF3E4759)
 
     // tertiary
-    val tertiaryLight = Color(0xFF5E621B)
+    val tertiaryLight = Color(0xFF1d47f0)
     val onTertiaryLight = Color(0xFFFFFFFF)
     val tertiaryContainerLight = Color(0xFFE4E892)
     val onTertiaryContainerLight = Color(0xFF464A02)
@@ -132,7 +132,7 @@ class SystemTheme(
     val onSecondaryDark = Color(0xFF283141)
     val secondaryContainerDark = Color(0xFF3E4759)
     val onSecondaryContainerDark = Color(0xFFDAE2F9)
-    val tertiaryDark = Color(0xFFC7CC79)
+    val tertiaryDark = Color(0xFF5373f5)
     val onTertiaryDark = Color(0xFF303300)
     val tertiaryContainerDark = Color(0xFF464A02)
     val onTertiaryContainerDark = Color(0xFFE4E892)
