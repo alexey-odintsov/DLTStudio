@@ -60,19 +60,21 @@ fun Cell(
         }
     } else {
         if (isComment) {
+            val commentColor = MaterialTheme.colorScheme.tertiary
+            val onCommentColor = MaterialTheme.colorScheme.onTertiary
             Box(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     modifier = Modifier
                         .wrapContentSize()
                         .padding(start = 4.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)
-                        .background(Color.Blue, shape = RoundedCornerShape(3.dp))
+                        .background(commentColor, shape = RoundedCornerShape(3.dp))
                         .padding(horizontal = 4.dp, vertical = 2.dp)
                         .drawBehind {
                             val path = Path()
                             path.moveTo(10f, 0f)
                             path.lineTo(20f, -10f)
                             path.lineTo(30f, 0f)
-                            drawPath(path, Color.Blue)
+                            drawPath(path, commentColor)
                             path.close()
                         },
                     textAlign = textAlign,
@@ -82,7 +84,7 @@ fun Cell(
                     fontWeight = FontWeight(400),
                     softWrap = true,
                     text = text,
-                    color = AppTheme.colors.onLogRow,
+                    color = onCommentColor,
                 )
             }
         } else {
