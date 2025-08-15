@@ -30,14 +30,14 @@ fun main() = application {
     Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
         Log.e("Uncaught exception occurred in $thread: $throwable\n${throwable.stackTraceToString()}")
     }
+    val mainViewModel = remember { DependencyManager.provideMainViewModel() }
     Window(
         onCloseRequest = {
             Log.d("Application closed")
             exitApplication()
-        }, title = "DLT Studio", state = WindowState(width = 1280.dp, height = 768.dp)
+        }, title = "DLT Studio ${mainViewModel.filesPath}", state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
         ThemeManager.AppTheme {
-            val mainViewModel = remember { DependencyManager.provideMainViewModel() }
             val settingsUI = mainViewModel.settingsUI.collectAsState()
             val settingsLogs = mainViewModel.settingsLogs.collectAsState()
             val settingsPlugins =

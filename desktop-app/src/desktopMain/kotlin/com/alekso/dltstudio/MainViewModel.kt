@@ -144,6 +144,7 @@ class MainViewModel(
         }
     }
 
+    var filesPath by mutableStateOf("")
     val panels = mutableStateListOf<PluginPanel>()
     val previewPanels = mutableStateListOf<PluginLogPreview>()
 
@@ -441,7 +442,14 @@ class MainViewModel(
             pluginManager.notifyLogsChanged()
         }
         parseJob?.cancel()
+        if (dltFiles.isEmpty()) return
+
         parseJob = viewModelScope.launch(IO) {
+            filesPath = if (dltFiles.size < 2) {
+                " – ${dltFiles[0].absolutePath}"
+            } else {
+                " – ${dltFiles[0].parentFile.absolutePath}/ ${dltFiles.size} file(s)"
+            }
             clearMessages()
             LogMessage.resetCounter()
             messagesRepository.storeMessages(
