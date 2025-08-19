@@ -9,15 +9,26 @@ import javax.swing.JFileChooser
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 enum class DialogOperation {
     OPEN,
     SAVE,
 }
 
+enum class FileTypeSelection {
+    FILES_ONLY,
+    DIRECTORIES_ONLY,
+    FILES_AND_DIRECTORIES
+}
+
+@OptIn(ExperimentalUuidApi::class)
 data class FileDialogState(
+    val uuid: String = Uuid.random().toString(),
     val operation: DialogOperation,
     val title: String,
+    val fileTypeSelection: FileTypeSelection = FileTypeSelection.FILES_ONLY,
     val visible: Boolean = false,
     val file: File? = null,
     val directory: File? = null,
@@ -28,18 +39,23 @@ data class FileDialogState(
 
 @Composable
 fun FileDialog(dialogState: FileDialogState) {
-    LaunchedEffect(dialogState.visible) {
+    LaunchedEffect(dialogState.uuid, dialogState.visible) {
         if (dialogState.visible) {
             launch(Dispatchers.IO) {
                 SwingUtilities.invokeLater {
                     try {
                         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-                    } catch (_: Exception) { }
+                    } catch (_: Exception) {
+                    }
 
                     val fileChooser = JFileChooser(FileSystemView.getFileSystemView()).apply {
                         currentDirectory = dialogState.directory
                         dialogTitle = dialogState.title
-                        fileSelectionMode = JFileChooser.FILES_ONLY
+                        fileSelectionMode = when (dialogState.fileTypeSelection) {
+                            FileTypeSelection.FILES_ONLY -> JFileChooser.FILES_ONLY
+                            FileTypeSelection.DIRECTORIES_ONLY -> JFileChooser.DIRECTORIES_ONLY
+                            FileTypeSelection.FILES_AND_DIRECTORIES -> JFileChooser.FILES_AND_DIRECTORIES
+                        }
                         isAcceptAllFileFilterUsed = true
                         selectedFile = dialogState.file
                         isMultiSelectionEnabled = dialogState.isMultiSelectionEnabled

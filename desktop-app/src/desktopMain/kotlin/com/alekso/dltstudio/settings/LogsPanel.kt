@@ -1,17 +1,20 @@
 package com.alekso.dltstudio.settings
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -23,6 +26,8 @@ import com.alekso.dltstudio.uicomponents.CustomDropDown
 @Composable
 fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
     var backendType = settingsLogs.backendType
+    var defaultLogsFolderPath = settingsLogs.defaultLogsFolderPath
+    var defaultColorFiltersFolderPath = settingsLogs.defaultColorFiltersFolderPath
     val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -66,9 +71,48 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
         CustomButton(
             modifier = paddingModifier,
             onClick = {
-            callbacks.onSettingsLogsUpdate(SettingsLogs(backendType))
-        }) {
+                callbacks.onSettingsLogsUpdate(
+                    SettingsLogs(
+                        backendType,
+                        defaultLogsFolderPath,
+                        defaultColorFiltersFolderPath
+                    )
+                )
+            }) {
             Text("Apply")
+        }
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = paddingModifier
+        ) {
+            Text("Default logs location")
+            Text(
+                modifier = Modifier.weight(1f)
+                    .background(Color.White),
+                text = defaultLogsFolderPath ?: ""
+            )
+            CustomButton(
+                onClick = { callbacks.onOpenDefaultLogsFolderClicked() }) {
+                Text("Choose...")
+            }
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = paddingModifier
+        ) {
+            Text("Default color filters location")
+            Text(
+                modifier = Modifier.weight(1f)
+                    .background(Color.White),
+                text = defaultColorFiltersFolderPath ?: ""
+            )
+            CustomButton(
+                onClick = { callbacks.onOpenDefaultColorFiltersFolderClicked() }) {
+                Text("Choose...")
+            }
         }
     }
 }

@@ -2,12 +2,20 @@ package com.alekso.dltstudio.model
 
 import com.alekso.dltmessage.PayloadStorageType
 import com.alekso.dltstudio.db.settings.SettingsLogsEntity
+import java.io.File
 
 data class SettingsLogs(
     val backendType: PayloadStorageType,
+    val defaultLogsFolderPath: String?,
+    val defaultColorFiltersFolderPath: String?,
 ) {
     companion object {
-        val Default = SettingsLogs(backendType = PayloadStorageType.Binary)
+        val Default = SettingsLogs(
+            backendType = PayloadStorageType.Binary,
+            defaultLogsFolderPath = null,
+            defaultColorFiltersFolderPath = null
+        )
+
         fun getBackendById(id: Int): PayloadStorageType {
             return PayloadStorageType.entries.firstOrNull { it.id == id }
                 ?: PayloadStorageType.Binary
@@ -18,10 +26,24 @@ data class SettingsLogs(
                 ?: Default.backendType.id
         }
     }
+
+    val defaultLogsFolder: File?
+        get() = defaultLogsFolderPath?.let { File(it) }
+
+    val defaultColorFiltersFolder: File?
+        get() = defaultColorFiltersFolderPath?.let { File(it) }
 }
 
 fun SettingsLogsEntity.toSettingsLogs(): SettingsLogs =
-    SettingsLogs(SettingsLogs.getBackendById(backendType))
+    SettingsLogs(
+        SettingsLogs.getBackendById(backendType),
+        defaultLogsFolderPath,
+        defaultColorFiltersFolderPath
+    )
 
 fun SettingsLogs.toSettingsLogsEntity(): SettingsLogsEntity =
-    SettingsLogsEntity(SettingsLogs.getIdByBackend(backendType))
+    SettingsLogsEntity(
+        SettingsLogs.getIdByBackend(backendType),
+        defaultLogsFolderPath,
+        defaultColorFiltersFolderPath
+    )
