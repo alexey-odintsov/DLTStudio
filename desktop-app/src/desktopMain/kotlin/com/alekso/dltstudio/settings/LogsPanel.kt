@@ -5,29 +5,42 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltmessage.PayloadStorageType
 import com.alekso.dltstudio.model.SettingsLogs
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
+
+
+@Composable
+private fun RowScope.selectedFileStyle() =
+    Modifier.weight(1f)
+        .heightIn(24.dp)
+        .align(Alignment.CenterVertically)
+        .background(MaterialTheme.colorScheme.background)
+        .padding(4.dp)
 
 @Composable
 fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
     var backendType = settingsLogs.backendType
-    var defaultLogsFolderPath = settingsLogs.defaultLogsFolderPath
-    var defaultColorFiltersFolderPath = settingsLogs.defaultColorFiltersFolderPath
+    val defaultLogsFolderPath = settingsLogs.defaultLogsFolderPath
+    val defaultColorFiltersFolderPath = settingsLogs.defaultColorFiltersFolderPath
     val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -87,10 +100,9 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = paddingModifier
         ) {
-            Text("Default logs location")
+            Text("Default logs location:")
             Text(
-                modifier = Modifier.weight(1f)
-                    .background(Color.White),
+                modifier = selectedFileStyle(),
                 text = defaultLogsFolderPath ?: ""
             )
             CustomButton(
@@ -103,10 +115,9 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = paddingModifier
         ) {
-            Text("Default color filters location")
+            Text("Default color filters location:")
             Text(
-                modifier = Modifier.weight(1f)
-                    .background(Color.White),
+                modifier = selectedFileStyle(),
                 text = defaultColorFiltersFolderPath ?: ""
             )
             CustomButton(
@@ -119,9 +130,22 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
 
 @Preview
 @Composable
+fun PreviewLogsPanelTheme() {
+    Column {
+        ThemeManager.CustomTheme(SystemTheme(true)) {
+            PreviewLogsPanel()
+        }
+        ThemeManager.CustomTheme(SystemTheme(false)) {
+            PreviewLogsPanel()
+        }
+    }
+}
+
+@Preview
+@Composable
 fun PreviewLogsPanel() {
     LogsPanel(
         callbacks = SettingsDialogCallbacks.Stub,
-        settingsLogs = SettingsLogs.Default
+        settingsLogs = SettingsLogs.Default.copy(defaultLogsFolderPath = "file/path/goes/here"),
     )
 }
