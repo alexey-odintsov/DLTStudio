@@ -6,8 +6,8 @@ import androidx.room.PrimaryKey
 @Entity
 data class SettingsLogsEntity(
     val backendType: Int,
-    val defaultLogsFolderPath: String?,
-    val defaultColorFiltersFolderPath: String?,
+    val defaultLogsFolderPath: String? = null,
+    val defaultColorFiltersFolderPath: String? = null,
     @PrimaryKey
     val id: Int = 0,
 )

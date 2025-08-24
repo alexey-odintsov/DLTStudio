@@ -120,8 +120,6 @@ fun PreviewSettingsDialog() {
         settingsUI = SettingsUI(12, FontFamily.Serif),
         settingsLogs = SettingsLogs(
             backendType = PayloadStorageType.Binary,
-            defaultLogsFolderPath = "",
-            defaultColorFiltersFolderPath = ""
         ),
         pluginsCallbacks = SettingsPluginsCallbacks.Stub,
         settingsPlugins = SettingsPlugins(pluginsState = emptyList()),

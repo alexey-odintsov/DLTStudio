@@ -6,14 +6,12 @@ import java.io.File
 
 data class SettingsLogs(
     val backendType: PayloadStorageType,
-    val defaultLogsFolderPath: String?,
-    val defaultColorFiltersFolderPath: String?,
+    val defaultLogsFolderPath: String? = null,
+    val defaultColorFiltersFolderPath: String? = null,
 ) {
     companion object {
         val Default = SettingsLogs(
             backendType = PayloadStorageType.Binary,
-            defaultLogsFolderPath = null,
-            defaultColorFiltersFolderPath = null
         )
 
         fun getBackendById(id: Int): PayloadStorageType {
