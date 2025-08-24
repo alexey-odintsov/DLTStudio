@@ -118,9 +118,7 @@ fun PreviewSettingsDialog() {
     SettingsPanel(
         callbacks = SettingsDialogCallbacks.Stub,
         settingsUI = SettingsUI(12, FontFamily.Serif),
-        settingsLogs = SettingsLogs(
-            backendType = PayloadStorageType.Binary,
-        ),
+        settingsLogs = SettingsLogs(backendType = PayloadStorageType.Binary,),
         pluginsCallbacks = SettingsPluginsCallbacks.Stub,
         settingsPlugins = SettingsPlugins(pluginsState = emptyList()),
     )

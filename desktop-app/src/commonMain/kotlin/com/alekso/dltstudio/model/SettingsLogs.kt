@@ -10,9 +10,7 @@ data class SettingsLogs(
     val defaultColorFiltersFolderPath: String? = null,
 ) {
     companion object {
-        val Default = SettingsLogs(
-            backendType = PayloadStorageType.Binary,
-        )
+        val Default = SettingsLogs(backendType = PayloadStorageType.Binary)
 
         fun getBackendById(id: Int): PayloadStorageType {
             return PayloadStorageType.entries.firstOrNull { it.id == id }
