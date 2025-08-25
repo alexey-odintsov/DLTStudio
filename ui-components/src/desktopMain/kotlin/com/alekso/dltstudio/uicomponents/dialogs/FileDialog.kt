@@ -9,7 +9,6 @@ import javax.swing.JFileChooser
 import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
-import kotlin.uuid.ExperimentalUuidApi
 
 enum class DialogOperation {
     OPEN,
@@ -22,7 +21,6 @@ enum class FileTypeSelection {
     FILES_AND_DIRECTORIES
 }
 
-@OptIn(ExperimentalUuidApi::class)
 data class FileDialogState(
     val operation: DialogOperation,
     val title: String,
