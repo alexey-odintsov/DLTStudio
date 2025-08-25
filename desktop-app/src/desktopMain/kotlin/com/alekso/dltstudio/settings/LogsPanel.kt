@@ -1,11 +1,16 @@
 package com.alekso.dltstudio.settings
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -17,12 +22,25 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltmessage.PayloadStorageType
 import com.alekso.dltstudio.model.SettingsLogs
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
+
+
+@Composable
+private fun RowScope.selectedFileStyle() =
+    Modifier.weight(1f)
+        .heightIn(24.dp)
+        .align(Alignment.CenterVertically)
+        .background(MaterialTheme.colorScheme.background)
+        .padding(4.dp)
 
 @Composable
 fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
     var backendType = settingsLogs.backendType
+    val defaultLogsFolderPath = settingsLogs.defaultLogsFolderPath
+    val defaultColorFiltersFolderPath = settingsLogs.defaultColorFiltersFolderPath
     val paddingModifier = remember { Modifier.padding(horizontal = 4.dp) }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -66,9 +84,59 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
         CustomButton(
             modifier = paddingModifier,
             onClick = {
-            callbacks.onSettingsLogsUpdate(SettingsLogs(backendType))
-        }) {
+                callbacks.onSettingsLogsUpdate(
+                    SettingsLogs(
+                        backendType,
+                        defaultLogsFolderPath,
+                        defaultColorFiltersFolderPath
+                    )
+                )
+            }) {
             Text("Apply")
+        }
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = paddingModifier
+        ) {
+            Text("Default logs location:")
+            Text(
+                modifier = selectedFileStyle(),
+                text = defaultLogsFolderPath ?: ""
+            )
+            CustomButton(
+                onClick = { callbacks.onOpenDefaultLogsFolderClicked() }) {
+                Text("Choose...")
+            }
+        }
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = paddingModifier
+        ) {
+            Text("Default color filters location:")
+            Text(
+                modifier = selectedFileStyle(),
+                text = defaultColorFiltersFolderPath ?: ""
+            )
+            CustomButton(
+                onClick = { callbacks.onOpenDefaultColorFiltersFolderClicked() }) {
+                Text("Choose...")
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewLogsPanelTheme() {
+    Column {
+        ThemeManager.CustomTheme(SystemTheme(true)) {
+            PreviewLogsPanel()
+        }
+        ThemeManager.CustomTheme(SystemTheme(false)) {
+            PreviewLogsPanel()
         }
     }
 }
@@ -78,6 +146,6 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
 fun PreviewLogsPanel() {
     LogsPanel(
         callbacks = SettingsDialogCallbacks.Stub,
-        settingsLogs = SettingsLogs.Default
+        settingsLogs = SettingsLogs.Default.copy(defaultLogsFolderPath = "file/path/goes/here"),
     )
 }

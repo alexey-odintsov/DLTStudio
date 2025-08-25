@@ -31,11 +31,15 @@ import org.jetbrains.compose.splitpane.SplitPaneState
 interface SettingsDialogCallbacks {
     fun onSettingsUIUpdate(settings: SettingsUI)
     fun onSettingsLogsUpdate(settings: SettingsLogs)
+    fun onOpenDefaultLogsFolderClicked()
+    fun onOpenDefaultColorFiltersFolderClicked()
 
     companion object {
         val Stub = object : SettingsDialogCallbacks {
             override fun onSettingsUIUpdate(settings: SettingsUI) = Unit
             override fun onSettingsLogsUpdate(settings: SettingsLogs) = Unit
+            override fun onOpenDefaultLogsFolderClicked() = Unit
+            override fun onOpenDefaultColorFiltersFolderClicked() = Unit
         }
     }
 }
@@ -114,7 +118,7 @@ fun PreviewSettingsDialog() {
     SettingsPanel(
         callbacks = SettingsDialogCallbacks.Stub,
         settingsUI = SettingsUI(12, FontFamily.Serif),
-        settingsLogs = SettingsLogs(backendType = PayloadStorageType.Binary),
+        settingsLogs = SettingsLogs(backendType = PayloadStorageType.Binary,),
         pluginsCallbacks = SettingsPluginsCallbacks.Stub,
         settingsPlugins = SettingsPlugins(pluginsState = emptyList()),
     )
