@@ -52,6 +52,7 @@ import com.alekso.dltstudio.settings.SettingsDialogCallbacks
 import com.alekso.dltstudio.settings.SettingsPluginsCallbacks
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
+import com.alekso.dltstudio.uicomponents.dialogs.FileTypeSelection
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
@@ -114,6 +115,46 @@ class MainViewModel(
                 settingsRepository.updateSettingsLogs(settings.toSettingsLogsEntity())
             }
         }
+
+        override fun onOpenDefaultLogsFolderClicked() {
+            fileDialogState = FileDialogState(
+                operation = DialogOperation.OPEN,
+                title = "Select default logs location",
+                visible = true,
+                directory = settingsLogs.value.defaultLogsFolder,
+                fileTypeSelection = FileTypeSelection.DIRECTORIES_ONLY,
+                fileCallback = { file ->
+                    viewModelScope.launch(IO) {
+                        settingsRepository.updateSettingsLogs(
+                            settingsLogs.value.copy(
+                                defaultLogsFolderPath = file.first().path
+                            ).toSettingsLogsEntity()
+                        )
+                    }
+                },
+                cancelCallback = ::closeFileDialog
+            )
+        }
+
+        override fun onOpenDefaultColorFiltersFolderClicked() {
+            fileDialogState = FileDialogState(
+                operation = DialogOperation.OPEN,
+                title = "Select default color filters location",
+                visible = true,
+                directory = settingsLogs.value.defaultColorFiltersFolder,
+                fileTypeSelection = FileTypeSelection.DIRECTORIES_ONLY,
+                fileCallback = { file ->
+                    viewModelScope.launch(IO) {
+                        settingsRepository.updateSettingsLogs(
+                            settingsLogs.value.copy(
+                                defaultColorFiltersFolderPath = file.first().path
+                            ).toSettingsLogsEntity()
+                        )
+                    }
+                },
+                cancelCallback = ::closeFileDialog
+            )
+        }
     }
 
     val settingsPluginsCallbacks: SettingsPluginsCallbacks = object : SettingsPluginsCallbacks {
@@ -144,6 +185,7 @@ class MainViewModel(
         }
     }
 
+    private var currentFolder: File? = null
     var filesPath by mutableStateOf("")
     val panels = mutableStateListOf<PluginPanel>()
     val previewPanels = mutableStateListOf<PluginLogPreview>()
@@ -156,7 +198,7 @@ class MainViewModel(
     val logsListState = LazyListState()
     val searchListState = LazyListState()
 
-    var logSelection by mutableStateOf(LogSelection(0, 0,))
+    var logSelection by mutableStateOf(LogSelection(0, 0))
         private set
 
 
@@ -341,6 +383,8 @@ class MainViewModel(
             fileDialogState = FileDialogState(
                 title = "Open DLT file(s)",
                 visible = true,
+                directory = currentFolder
+                    ?: settingsLogs.value.defaultLogsFolder,
                 isMultiSelectionEnabled = true,
                 operation = DialogOperation.OPEN,
                 fileCallback = { parseFile(it) },
@@ -352,6 +396,7 @@ class MainViewModel(
             fileDialogState = FileDialogState(
                 title = "Open filters",
                 visible = true,
+                directory = settingsLogs.value.defaultColorFiltersFolder,
                 operation = DialogOperation.OPEN,
                 fileCallback = { loadColorFilters(it[0]) },
                 cancelCallback = ::closeFileDialog
@@ -362,6 +407,7 @@ class MainViewModel(
             fileDialogState = FileDialogState(
                 title = "Save filters",
                 visible = true,
+                directory = settingsLogs.value.defaultColorFiltersFolder,
                 operation = DialogOperation.SAVE,
                 fileCallback = { saveColorFilters(it[0]) },
                 cancelCallback = ::closeFileDialog
@@ -450,6 +496,7 @@ class MainViewModel(
             } else {
                 " – ${dltFiles[0].parentFile.absolutePath}/ ${dltFiles.size} file(s)"
             }
+            currentFolder = dltFiles.first().parentFile
             clearMessages()
             LogMessage.resetCounter()
             messagesRepository.storeMessages(

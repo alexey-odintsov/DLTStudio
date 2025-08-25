@@ -15,9 +15,16 @@ enum class DialogOperation {
     SAVE,
 }
 
+enum class FileTypeSelection {
+    FILES_ONLY,
+    DIRECTORIES_ONLY,
+    FILES_AND_DIRECTORIES
+}
+
 data class FileDialogState(
     val operation: DialogOperation,
     val title: String,
+    val fileTypeSelection: FileTypeSelection = FileTypeSelection.FILES_ONLY,
     val visible: Boolean = false,
     val file: File? = null,
     val directory: File? = null,
@@ -28,18 +35,23 @@ data class FileDialogState(
 
 @Composable
 fun FileDialog(dialogState: FileDialogState) {
-    LaunchedEffect(dialogState.visible) {
+    LaunchedEffect(dialogState) {
         if (dialogState.visible) {
             launch(Dispatchers.IO) {
                 SwingUtilities.invokeLater {
                     try {
                         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-                    } catch (_: Exception) { }
+                    } catch (_: Exception) {
+                    }
 
                     val fileChooser = JFileChooser(FileSystemView.getFileSystemView()).apply {
                         currentDirectory = dialogState.directory
                         dialogTitle = dialogState.title
-                        fileSelectionMode = JFileChooser.FILES_ONLY
+                        fileSelectionMode = when (dialogState.fileTypeSelection) {
+                            FileTypeSelection.FILES_ONLY -> JFileChooser.FILES_ONLY
+                            FileTypeSelection.DIRECTORIES_ONLY -> JFileChooser.DIRECTORIES_ONLY
+                            FileTypeSelection.FILES_AND_DIRECTORIES -> JFileChooser.FILES_AND_DIRECTORIES
+                        }
                         isAcceptAllFileFilterUsed = true
                         selectedFile = dialogState.file
                         isMultiSelectionEnabled = dialogState.isMultiSelectionEnabled
