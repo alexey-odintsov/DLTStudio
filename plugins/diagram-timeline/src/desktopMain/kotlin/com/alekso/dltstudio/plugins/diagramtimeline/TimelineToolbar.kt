@@ -37,6 +37,8 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
+import com.alekso.dltstudio.uicomponents.CustomDropDownButton
+import com.alekso.dltstudio.uicomponents.DropDownItem
 import com.alekso.dltstudio.uicomponents.ImageButton
 import com.alekso.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
@@ -54,6 +56,7 @@ interface ToolbarCallbacks {
     fun onTimelineFiltersClicked()
     fun onLoadFilterClicked()
     fun onSaveFilterClicked()
+    fun onSaveFilterAsClicked()
     fun onClearFilterClicked()
     fun onRecentFilterClicked(path: String)
     fun onLeftClicked()
@@ -69,6 +72,7 @@ interface ToolbarCallbacks {
         override fun onTimelineFiltersClicked() = Unit
         override fun onLoadFilterClicked() = Unit
         override fun onSaveFilterClicked() = Unit
+        override fun onSaveFilterAsClicked() = Unit
         override fun onClearFilterClicked() = Unit
         override fun onRecentFilterClicked(path: String) = Unit
         override fun onLeftClicked() = Unit
@@ -201,11 +205,14 @@ fun TimelineToolbar(
             Text("Load")
         }
 
-        CustomButton(
-            modifier = Modifier, onClick = callbacks::onSaveFilterClicked
-        ) {
-            Text("Save")
-        }
+        CustomDropDownButton(
+            items = remember {
+                listOf(
+                    DropDownItem("Save", callbacks::onSaveFilterClicked),
+                    DropDownItem("Save As", callbacks::onSaveFilterAsClicked),
+                )
+            }
+        )
 
         CustomButton(
             modifier = Modifier, onClick = callbacks::onClearFilterClicked

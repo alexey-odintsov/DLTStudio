@@ -18,6 +18,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":app-theme"))
             implementation(project(":logger"))
+            implementation(project(":resources"))
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.ui)
