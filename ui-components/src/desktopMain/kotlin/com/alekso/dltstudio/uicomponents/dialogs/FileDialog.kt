@@ -25,7 +25,6 @@ enum class FileTypeSelection {
 
 @OptIn(ExperimentalUuidApi::class)
 data class FileDialogState(
-    val uuid: String = Uuid.random().toString(),
     val operation: DialogOperation,
     val title: String,
     val fileTypeSelection: FileTypeSelection = FileTypeSelection.FILES_ONLY,
@@ -39,7 +38,7 @@ data class FileDialogState(
 
 @Composable
 fun FileDialog(dialogState: FileDialogState) {
-    LaunchedEffect(dialogState.uuid, dialogState.visible) {
+    LaunchedEffect(dialogState) {
         if (dialogState.visible) {
             launch(Dispatchers.IO) {
                 SwingUtilities.invokeLater {

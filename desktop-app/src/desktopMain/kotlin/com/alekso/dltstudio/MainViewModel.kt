@@ -497,9 +497,6 @@ class MainViewModel(
                 " – ${dltFiles[0].parentFile.absolutePath}/ ${dltFiles.size} file(s)"
             }
             currentFolder = dltFiles.first().parentFile
-            while (currentFolder?.isDirectory == false) {
-                currentFolder = currentFolder!!.parentFile
-            }
             clearMessages()
             LogMessage.resetCounter()
             messagesRepository.storeMessages(
