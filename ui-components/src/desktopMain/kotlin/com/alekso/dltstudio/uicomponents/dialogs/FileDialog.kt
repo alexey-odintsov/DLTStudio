@@ -10,7 +10,6 @@ import javax.swing.SwingUtilities
 import javax.swing.UIManager
 import javax.swing.filechooser.FileSystemView
 import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 enum class DialogOperation {
     OPEN,
