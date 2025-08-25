@@ -110,6 +110,12 @@ class TimelineViewModel(
         }
 
         override fun onSaveFilterClicked() {
+            currentFilterFile?.let { fileEntry ->
+                saveTimeLineFilters(File(fileEntry.path))
+            }
+        }
+
+        override fun onSaveFilterAsClicked() {
             fileDialogState = FileDialogState(
                 title = "Save filter",
                 visible = true,
