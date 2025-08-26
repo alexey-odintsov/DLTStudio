@@ -2,6 +2,7 @@ package com.alekso.dltstudio.uicomponents
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -95,7 +96,7 @@ fun PreviewCustomDropDownButtonTheme() {
 
 @Composable
 fun PreviewCustomDropDownButton() {
-    Row {
+    Row(Modifier.padding(4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
         CustomDropDownButton(items = listOf(DropDownItem("Save", {}), DropDownItem("Save As", {})))
         CustomDropDownButton(items = listOf(DropDownItem("A", {}), DropDownItem("B", {})))
     }
