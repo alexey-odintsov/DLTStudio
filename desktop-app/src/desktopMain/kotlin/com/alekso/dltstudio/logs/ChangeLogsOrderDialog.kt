@@ -5,20 +5,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.LogsOrder
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.launch
 
 data class ChangeLogsOrderDialogState(
     val visible: Boolean,
@@ -30,9 +27,10 @@ data class ChangeLogsOrderDialogState(
 
 @Composable
 fun ChangeLogsOrderDialog(
-    messagesRepository: MessagesRepository,
     state: ChangeLogsOrderDialogState,
     onDialogClosed: () -> Unit,
+    logsOrder: LogsOrder,
+    onLogsOrderChanged: (newOrder: LogsOrder) -> Unit,
 ) {
     DesktopDialogWindow(
         visible = state.visible,
@@ -41,35 +39,25 @@ fun ChangeLogsOrderDialog(
         state = rememberDialogState(width = 400.dp, height = 400.dp)
     ) {
         ChangeLogsOrderDialogPanel(
-            onApplyClicked = { method ->
-                CoroutineScope(IO).launch {
-                    when (method) {
-                        1 -> messagesRepository.storeMessages(
-                            messagesRepository.getMessages()
-                                .sortedBy { it.dltMessage.timeStampUs }) // todo: then by ECU time/Count
-
-                        else -> messagesRepository.storeMessages(
-                            messagesRepository.getMessages()
-                                .sortedBy { it.dltMessage.standardHeader.timeStamp }) // todo: then by Timestamp/Count
-                    }
-                }
-            }
+            logsOrder = logsOrder,
+            onApplyClicked = onLogsOrderChanged
         )
     }
 }
 
 @Composable
-fun ChangeLogsOrderDialogPanel(onApplyClicked: (Int) -> Unit) {
-    var selectedMethod by rememberSaveable { mutableStateOf(0) }
+fun ChangeLogsOrderDialogPanel(onApplyClicked: (LogsOrder) -> Unit, logsOrder: LogsOrder) {
+    var selectedMethod by remember { mutableStateOf(logsOrder) }
 
     Column {
         Text("Change logs order")
         CustomDropDown(
             modifier = Modifier,
-            items = mutableStateListOf("Timestamp", "ECU Time", "Mixed"),
-            initialSelectedIndex = 0,
+            items = LogsOrder.entries.map { it.name }.toMutableStateList(),
+            initialSelectedIndex = LogsOrder.entries.indexOf(logsOrder),
             onItemsSelected = { i ->
-                selectedMethod = i
+                println("Order #$i")
+                selectedMethod = LogsOrder.entries[i]
             }
         )
         CustomButton(onClick = {
@@ -83,5 +71,5 @@ fun ChangeLogsOrderDialogPanel(onApplyClicked: (Int) -> Unit) {
 @Preview
 @Composable
 fun PreviewChangeLogsOrderDialogPanel() {
-    ChangeLogsOrderDialogPanel(onApplyClicked = {})
+    ChangeLogsOrderDialogPanel(onApplyClicked = {}, logsOrder = LogsOrder.Timestamp)
 }

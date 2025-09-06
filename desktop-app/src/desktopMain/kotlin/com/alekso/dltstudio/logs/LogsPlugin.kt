@@ -34,9 +34,10 @@ class LogsPlugin(
     override fun renderPanel(modifier: Modifier) {
         if (viewModel.changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
-                messagesRepository = messagesRepository,
                 state = viewModel.changeOrderDialogState.value,
-                onDialogClosed = viewModel::onChangeOrderDialogStateClosed)
+                logsOrder = viewModel.logsOrder.value,
+                onDialogClosed = viewModel::onChangeOrderDialogStateClosed,
+                onLogsOrderChanged = viewModel::onLogsOrderChanged)
         }
 
         if (viewModel.colorFiltersDialogState.value) {
