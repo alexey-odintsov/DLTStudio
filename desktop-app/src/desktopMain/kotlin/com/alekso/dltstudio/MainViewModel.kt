@@ -14,6 +14,7 @@ import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.settings.PluginStateEntity
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
+import com.alekso.dltstudio.logs.ChangeLogsOrderDialogState
 import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.logs.RemoveLogsDialogState
@@ -193,6 +194,12 @@ class MainViewModel(
     private var _searchState = mutableStateOf<SearchState>(SearchState())
     val searchState: State<SearchState> = _searchState
 
+    private var _changeOrderDialogState = mutableStateOf(ChangeLogsOrderDialogState.Default)
+    val changeOrderDialogState: State<ChangeLogsOrderDialogState> = _changeOrderDialogState
+    fun onChangeOrderDialogStateClosed() {
+        _changeOrderDialogState.value = _changeOrderDialogState.value.copy(visible = false)
+    }
+
     private var searchJob: Job? = null
 
     val logsListState = LazyListState()
@@ -272,6 +279,10 @@ class MainViewModel(
 
         override fun onColorFiltersClicked() {
             colorFiltersDialogState.value = true
+        }
+
+        override fun onChangeOrderClicked() {
+            _changeOrderDialogState.value = _changeOrderDialogState.value.copy(visible = true)
         }
 
         override fun onTimeZoneChanged(timeZoneName: String) {

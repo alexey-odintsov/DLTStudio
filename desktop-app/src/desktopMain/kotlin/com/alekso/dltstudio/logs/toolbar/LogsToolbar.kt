@@ -33,6 +33,7 @@ import com.alekso.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters
 import dltstudio.resources.icon_comments
+import dltstudio.resources.icon_down
 import dltstudio.resources.icon_e
 import dltstudio.resources.icon_f
 import dltstudio.resources.icon_marked_logs
@@ -104,6 +105,16 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_color_filters,
                 title = "Color filters",
                 onClick = callbacks::onColorFiltersClicked,
+                tintable = false,
+            )
+        }
+        VerticalDivider(Modifier.height(32.dp).width(1.dp))
+        Tooltip(text = "Change order") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_down,
+                title = "Change order",
+                onClick = callbacks::onChangeOrderClicked,
                 tintable = false,
             )
         }
