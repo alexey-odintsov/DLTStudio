@@ -12,6 +12,7 @@ interface LogsToolbarCallbacks {
     fun updateToolbarWrapContentCheck(checked: Boolean)
     fun onSearchUseRegexChanged(checked: Boolean)
     fun onColorFiltersClicked()
+    fun onChangeOrderClicked()
     fun onTimeZoneChanged(timeZoneName: String)
 
     companion object {
@@ -25,6 +26,7 @@ interface LogsToolbarCallbacks {
             override fun updateToolbarWrapContentCheck(checked: Boolean) = Unit
             override fun onSearchUseRegexChanged(checked: Boolean) = Unit
             override fun onColorFiltersClicked() = Unit
+            override fun onChangeOrderClicked() = Unit
             override fun onTimeZoneChanged(timeZoneName: String) = Unit
         }
     }

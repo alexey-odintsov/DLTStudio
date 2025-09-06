@@ -9,11 +9,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
+import com.alekso.dltstudio.com.alekso.dltstudio.logs.LogsOrder
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
 import com.alekso.dltstudio.db.settings.PluginStateEntity
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
+import com.alekso.dltstudio.logs.ChangeLogsOrderDialogState
 import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.logs.RemoveLogsDialogState
@@ -193,6 +195,29 @@ class MainViewModel(
     private var _searchState = mutableStateOf<SearchState>(SearchState())
     val searchState: State<SearchState> = _searchState
 
+    var logsOrder = mutableStateOf(LogsOrder.Timestamp)
+    private var _changeOrderDialogState = mutableStateOf(ChangeLogsOrderDialogState.Default)
+    val changeOrderDialogState: State<ChangeLogsOrderDialogState> = _changeOrderDialogState
+
+    fun onLogsOrderChanged(newOrder: LogsOrder) {
+        viewModelScope.launch(IO) {
+            logsOrder.value = newOrder
+            when (newOrder) {
+                LogsOrder.Timestamp -> messagesRepository.storeMessages(
+                    messagesRepository.getMessages()
+                        .sortedBy { it.dltMessage.timeStampUs }) // todo: then by ECU time/Count
+
+                else -> messagesRepository.storeMessages(
+                    messagesRepository.getMessages()
+                        .sortedBy { it.dltMessage.standardHeader.timeStamp }) // todo: then by Timestamp/Count
+            }
+        }
+    }
+
+    fun onChangeOrderDialogStateClosed() {
+        _changeOrderDialogState.value = _changeOrderDialogState.value.copy(visible = false)
+    }
+
     private var searchJob: Job? = null
 
     val logsListState = LazyListState()
@@ -272,6 +297,10 @@ class MainViewModel(
 
         override fun onColorFiltersClicked() {
             colorFiltersDialogState.value = true
+        }
+
+        override fun onChangeOrderClicked() {
+            _changeOrderDialogState.value = _changeOrderDialogState.value.copy(visible = true)
         }
 
         override fun onTimeZoneChanged(timeZoneName: String) {
