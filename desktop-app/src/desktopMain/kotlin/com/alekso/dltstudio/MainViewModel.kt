@@ -203,7 +203,7 @@ class MainViewModel(
         viewModelScope.launch(IO) {
             logsOrder.value = newOrder
             when (newOrder) {
-                LogsOrder.EcuTime -> messagesRepository.storeMessages(
+                LogsOrder.Timestamp -> messagesRepository.storeMessages(
                     messagesRepository.getMessages()
                         .sortedBy { it.dltMessage.timeStampUs }) // todo: then by ECU time/Count
 

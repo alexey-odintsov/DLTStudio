@@ -1,7 +1,9 @@
 package com.alekso.dltstudio.logs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.com.alekso.dltstudio.logs.LogsOrder
+import com.alekso.dltstudio.theme.SystemTheme
+import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
@@ -49,14 +53,13 @@ fun ChangeLogsOrderDialog(
 fun ChangeLogsOrderDialogPanel(onApplyClicked: (LogsOrder) -> Unit, logsOrder: LogsOrder) {
     var selectedMethod by remember { mutableStateOf(logsOrder) }
 
-    Column {
+    Column(Modifier.padding(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text("Change logs order")
         CustomDropDown(
             modifier = Modifier,
             items = LogsOrder.entries.map { it.name }.toMutableStateList(),
             initialSelectedIndex = LogsOrder.entries.indexOf(logsOrder),
             onItemsSelected = { i ->
-                println("Order #$i")
                 selectedMethod = LogsOrder.entries[i]
             }
         )
@@ -71,5 +74,12 @@ fun ChangeLogsOrderDialogPanel(onApplyClicked: (LogsOrder) -> Unit, logsOrder: L
 @Preview
 @Composable
 fun PreviewChangeLogsOrderDialogPanel() {
-    ChangeLogsOrderDialogPanel(onApplyClicked = {}, logsOrder = LogsOrder.Timestamp)
+    Column {
+        ThemeManager.CustomTheme(SystemTheme(true)) {
+            ChangeLogsOrderDialogPanel(onApplyClicked = {}, logsOrder = LogsOrder.Timestamp)
+        }
+        ThemeManager.CustomTheme(SystemTheme(false)) {
+            ChangeLogsOrderDialogPanel(onApplyClicked = {}, logsOrder = LogsOrder.Timestamp)
+        }
+    }
 }
