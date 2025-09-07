@@ -14,7 +14,6 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltstudio.com.alekso.dltstudio.logs.LogsOrder
 import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton

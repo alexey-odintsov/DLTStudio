@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
-import com.alekso.dltstudio.com.alekso.dltstudio.logs.LogsOrder
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
 import com.alekso.dltstudio.db.preferences.SearchEntity
@@ -17,6 +16,7 @@ import com.alekso.dltstudio.db.settings.PluginStateEntity
 import com.alekso.dltstudio.db.settings.SettingsRepositoryImpl
 import com.alekso.dltstudio.logs.ChangeLogsOrderDialogState
 import com.alekso.dltstudio.logs.ColumnsContextMenuCallbacks
+import com.alekso.dltstudio.logs.LogsOrder
 import com.alekso.dltstudio.logs.LogsPlugin
 import com.alekso.dltstudio.logs.RemoveLogsDialogState
 import com.alekso.dltstudio.logs.RowContextMenuCallbacks
