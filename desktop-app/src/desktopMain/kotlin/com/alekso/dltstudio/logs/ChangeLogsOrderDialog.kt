@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
@@ -39,7 +40,7 @@ fun ChangeLogsOrderDialog(
         visible = state.visible,
         onCloseRequest = onDialogClosed,
         title = "Change logs order",
-        state = rememberDialogState(width = 400.dp, height = 400.dp)
+        state = rememberDialogState(width = 300.dp, height = 140.dp)
     ) {
         ChangeLogsOrderDialogPanel(
             logsOrder = logsOrder,
@@ -64,7 +65,7 @@ fun ChangeLogsOrderDialogPanel(onApplyClicked: (LogsOrder) -> Unit, logsOrder: L
         )
         CustomButton(onClick = {
             onApplyClicked(selectedMethod)
-        }) {
+        }, Modifier.align(Alignment.CenterHorizontally)) {
             Text("Apply")
         }
     }
