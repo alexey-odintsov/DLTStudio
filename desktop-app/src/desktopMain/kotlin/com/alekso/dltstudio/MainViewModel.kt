@@ -200,16 +200,20 @@ class MainViewModel(
     val changeOrderDialogState: State<ChangeLogsOrderDialogState> = _changeOrderDialogState
 
     fun onLogsOrderChanged(newOrder: LogsOrder) {
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(Default) {
             logsOrder.value = newOrder
             when (newOrder) {
                 LogsOrder.Timestamp -> messagesRepository.storeMessages(
                     messagesRepository.getMessages()
-                        .sortedBy { it.dltMessage.timeStampUs }) // todo: then by ECU time/Count
+                        .sortedBy { it.dltMessage.standardHeader.messageCounter }
+                        .sortedBy { it.dltMessage.timeStampUs }
+                )
 
                 else -> messagesRepository.storeMessages(
                     messagesRepository.getMessages()
-                        .sortedBy { it.dltMessage.standardHeader.timeStamp }) // todo: then by Timestamp/Count
+                        .sortedBy { it.dltMessage.standardHeader.messageCounter }
+                        .sortedBy { it.dltMessage.standardHeader.timeStamp }
+                )
             }
         }
     }
