@@ -32,6 +32,14 @@ class LogsPlugin(
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
     override fun renderPanel(modifier: Modifier) {
+        if (viewModel.changeOrderDialogState.value.visible) {
+            ChangeLogsOrderDialog(
+                state = viewModel.changeOrderDialogState.value,
+                logsOrder = viewModel.logsOrder.value,
+                onDialogClosed = viewModel::onChangeOrderDialogStateClosed,
+                onLogsOrderChanged = viewModel::onLogsOrderChanged)
+        }
+
         if (viewModel.colorFiltersDialogState.value) {
             ColorFiltersDialog(
                 visible = viewModel.colorFiltersDialogState.value,
