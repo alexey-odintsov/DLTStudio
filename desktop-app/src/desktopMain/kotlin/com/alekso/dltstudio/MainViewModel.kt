@@ -314,6 +314,14 @@ class MainViewModel(
                 // parsing will fail while typing timeZoneName
             }
         }
+
+        override fun onPrevMarkedLog() {
+            messagesRepository.selectPrevMarkedLog()
+        }
+
+        override fun onNextMarkedLog() {
+            messagesRepository.selectNextMarkedLog()
+        }
     }
 
 

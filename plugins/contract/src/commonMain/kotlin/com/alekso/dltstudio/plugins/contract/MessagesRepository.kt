@@ -25,6 +25,9 @@ interface MessagesRepository {
      */
     fun toggleMark(id: Int)
 
+    fun selectPrevMarkedLog()
+    fun selectNextMarkedLog()
+
     /**
      * Remove messages and search results by a predicate
      * @param progress - removing progress callback

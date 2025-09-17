@@ -14,6 +14,8 @@ interface LogsToolbarCallbacks {
     fun onColorFiltersClicked()
     fun onChangeOrderClicked()
     fun onTimeZoneChanged(timeZoneName: String)
+    fun onPrevMarkedLog()
+    fun onNextMarkedLog()
 
     companion object {
         val Stub = object : LogsToolbarCallbacks {
@@ -28,6 +30,8 @@ interface LogsToolbarCallbacks {
             override fun onColorFiltersClicked() = Unit
             override fun onChangeOrderClicked() = Unit
             override fun onTimeZoneChanged(timeZoneName: String) = Unit
+            override fun onPrevMarkedLog() = Unit
+            override fun onNextMarkedLog() = Unit
         }
     }
 }

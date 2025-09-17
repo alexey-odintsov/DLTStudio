@@ -35,8 +35,10 @@ import dltstudio.resources.icon_color_filters
 import dltstudio.resources.icon_comments
 import dltstudio.resources.icon_e
 import dltstudio.resources.icon_f
+import dltstudio.resources.icon_left
 import dltstudio.resources.icon_marked_logs
 import dltstudio.resources.icon_regex
+import dltstudio.resources.icon_right
 import dltstudio.resources.icon_search
 import dltstudio.resources.icon_search_marks
 import dltstudio.resources.icon_sort
@@ -134,6 +136,32 @@ fun LogsToolbar(
                 tintable = false,
             )
         }
+
+        Tooltip(text = "Prev marked log") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_left,
+                title = "Prev marked log",
+                onClick = {
+                    callbacks.onPrevMarkedLog()
+                },
+                tintable = false,
+            )
+        }
+
+        Tooltip(text = "Next marked log") {
+            ImageButton(
+                modifier = Modifier.size(32.dp),
+                icon = Res.drawable.icon_right,
+                title = "Next marked log",
+                onClick = {
+                    callbacks.onNextMarkedLog()
+                },
+                tintable = false,
+            )
+        }
+
+        VerticalDivider(Modifier.height(32.dp).width(1.dp))
         Tooltip(text = "Show marked logs along with search results") {
             ToggleImageButton(
                 checkedState = state.toolbarSearchWithMarkedChecked,

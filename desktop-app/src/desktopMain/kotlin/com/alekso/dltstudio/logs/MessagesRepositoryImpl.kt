@@ -143,4 +143,12 @@ class MessagesRepositoryImpl : MessagesRepository {
         markedItems.clear()
     }
 
+    override fun selectPrevMarkedLog() {
+        TODO("Not yet implemented")
+    }
+
+    override fun selectNextMarkedLog() {
+        TODO("Not yet implemented")
+    }
+
 }
