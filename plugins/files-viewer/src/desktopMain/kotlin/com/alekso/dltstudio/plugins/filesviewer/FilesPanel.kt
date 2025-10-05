@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -34,7 +36,11 @@ import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.HorizontalSplitPane
+import org.jetbrains.compose.splitpane.rememberSplitPaneState
 
+@OptIn(ExperimentalSplitPaneApi::class)
 @Composable
 fun FilesPanel(
     analyzeState: FilesState,
@@ -86,43 +92,82 @@ fun FilesPanel(
             Text("Files will be shown here..")
         } else {
             val listState = rememberLazyListState()
-            Box(Modifier.weight(1f)) {
-                LazyColumn(
-                    Modifier.fillMaxSize(),
-                    state = listState
-                ) {
-                    stickyHeader {
-                        FileItem(
-                            isHeader = true,
-                            i = "#",
-                            name = "Name",
-                            size = "Size",
-                            date = "Date created"
+            val splitterState = rememberSplitPaneState(0.65f)
+
+            HorizontalSplitPane(
+                splitPaneState = splitterState
+            ) {
+                first(20.dp) {
+                    FilesList(files, onFileEntryClicked, listState)
+                }
+                second(20.dp) {
+                    Text("")
+                }
+                splitter {
+                    visiblePart {
+                        Box(
+                            Modifier
+                                .width(1.dp)
+                                .fillMaxHeight()
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                         )
                     }
-                    itemsIndexed(
-                        items = files,
-                        key = { _, key -> key.serialNumber },
-                        contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
-                        FileItem(
-                            Modifier.combinedClickable(
-                                onClick = {},
-                                onDoubleClick = { onFileEntryClicked(fileEntry) }),
-                            i = i.toString(),
-                            name = fileEntry.name,
-                            size = LocalFormatter.current.formatSizeHuman(fileEntry.size),
-                            date = fileEntry.creationDate
+
+                    handle {
+                        Box(
+                            Modifier
+                                .markAsHandle()
+                                .width(4.dp)
+                                .fillMaxHeight()
                         )
                     }
                 }
-                VerticalScrollbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(
-                        scrollState = listState
-                    )
+            }
+        }
+    }
+}
+
+@Composable
+fun FilesList(
+    files: SnapshotStateList<FileEntry>,
+    onFileEntryClicked: (FileEntry) -> Unit,
+    listState: LazyListState
+) {
+    Box(Modifier.fillMaxSize()) {
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            state = listState
+        ) {
+            stickyHeader {
+                FileItem(
+                    isHeader = true,
+                    i = "#",
+                    name = "Name",
+                    size = "Size",
+                    date = "Date created"
+                )
+            }
+            itemsIndexed(
+                items = files,
+                key = { _, key -> key.serialNumber },
+                contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
+                FileItem(
+                    Modifier.combinedClickable(
+                        onClick = {},
+                        onDoubleClick = { onFileEntryClicked(fileEntry) }),
+                    i = i.toString(),
+                    name = fileEntry.name,
+                    size = LocalFormatter.current.formatSizeHuman(fileEntry.size),
+                    date = fileEntry.creationDate
                 )
             }
         }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(
+                scrollState = listState
+            )
+        )
     }
 }
 
