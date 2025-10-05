@@ -140,13 +140,34 @@ fun FilesList(
             state = listState
         ) {
             stickyHeader {
-                FileItem(
-                    isHeader = true,
-                    i = "#",
-                    name = "Name",
-                    size = "Size",
-                    date = "Date created"
-                )
+                Row(
+                    Modifier
+                        .padding(bottom = 1.dp)
+                        .background(AppTheme.colors.logRow)
+                        .height(IntrinsicSize.Max)
+                ) {
+                    TableTextCell(
+                        text = "#",
+                        modifier = Modifier.width(30.dp).padding(2.dp),
+                    )
+                    TableDivider()
+                    TableTextCell(
+                        text = "Name",
+                        modifier = Modifier.weight(1f).padding(2.dp),
+                    )
+                    TableDivider()
+                    TableTextCell(
+                        text = "Size",
+                        modifier = Modifier.width(80.dp).padding(2.dp),
+                        textAlign = TextAlign.Right,
+                    )
+                    TableDivider()
+                    TableTextCell(
+                        text = "Date created",
+                        modifier = Modifier.width(200.dp).padding(2.dp),
+                        textAlign = TextAlign.Right,
+                    )
+                }
             }
             itemsIndexed(
                 items = files,
@@ -157,9 +178,7 @@ fun FilesList(
                         onClick = { onFileEntryClicked(fileEntry) },
                     ),
                     i = i.toString(),
-                    name = fileEntry.name,
-                    size = LocalFormatter.current.formatSizeHuman(fileEntry.size),
-                    date = fileEntry.creationDate,
+                    fileEntry = fileEntry,
                     isSelected = preview?.entry == fileEntry,
                 )
             }
@@ -176,9 +195,14 @@ fun FilesList(
 @Composable
 fun FileItem(
     modifier: Modifier = Modifier,
-    i: String, name: String, size: String, date: String, isHeader: Boolean = false,
+    i: String,
+    fileEntry: FileEntry,
     isSelected: Boolean = false,
 ) {
+    val sizeText = LocalFormatter.current.formatSizeHuman(fileEntry.size)
+    val date = fileEntry.creationDate
+    val isValid = fileEntry.isComplete()
+
     Row(
         modifier
             .padding(bottom = 1.dp)
@@ -188,26 +212,23 @@ fun FileItem(
         TableTextCell(
             text = i,
             modifier = Modifier.width(30.dp).padding(2.dp),
-            isHeader = isHeader,
         )
         TableDivider()
         TableTextCell(
-            text = name,
+            text = fileEntry.name,
             modifier = Modifier.weight(1f).padding(2.dp),
-            isHeader = isHeader,
         )
         TableDivider()
         TableTextCell(
-            text = size,
+            text = if (isValid) sizeText else "$sizeText (${fileEntry.getContent()?.size})",
             modifier = Modifier.width(80.dp).padding(2.dp),
-            isHeader = isHeader,
             textAlign = TextAlign.Right,
+            textColor = if (isValid) Color.Unspecified else MaterialTheme.colorScheme.error
         )
         TableDivider()
         TableTextCell(
             text = date,
             modifier = Modifier.width(200.dp).padding(2.dp),
-            isHeader = isHeader,
             textAlign = TextAlign.Right,
         )
     }
