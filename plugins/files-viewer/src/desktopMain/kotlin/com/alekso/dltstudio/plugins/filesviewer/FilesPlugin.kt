@@ -53,7 +53,6 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 analyzeState = viewModel.analyzeState.value,
                 files = viewModel.filesEntries,
                 previewState = viewModel.previewState,
-                onPreviewDialogClosed = viewModel::closePreviewDialog,
                 onSearchButtonClicked = {
                     viewModel.startFilesSearch(messagesRepository.getMessages())
                 },

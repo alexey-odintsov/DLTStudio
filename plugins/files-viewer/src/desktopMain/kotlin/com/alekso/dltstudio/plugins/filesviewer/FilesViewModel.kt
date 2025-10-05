@@ -140,21 +140,17 @@ class FilesViewModel(
 
                 else -> {
                     _previewState.value = FilePreviewState(entry = entry)
-                    fileDialogState = FileDialogState(
-                        title = "Save file",
-                        visible = true,
-                        operation = DialogOperation.SAVE,
-                        file = File(entry.name),
-                        fileCallback = { saveFile(it[0]) },
-                        cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
-                    )
+//                    fileDialogState = FileDialogState(
+//                        title = "Save file",
+//                        visible = true,
+//                        operation = DialogOperation.SAVE,
+//                        file = File(entry.name),
+//                        fileCallback = { saveFile(it[0]) },
+//                        cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+//                    )
                 }
             }
         }
-    }
-
-    fun closePreviewDialog() {
-        _previewState.value = null
     }
 
     private fun saveFile(file: File) {
@@ -170,8 +166,6 @@ class FilesViewModel(
                 }
             } catch (e: Exception) {
                 Log.e("Failed to save file: $e")
-            } finally {
-                closePreviewDialog()
             }
         }
     }

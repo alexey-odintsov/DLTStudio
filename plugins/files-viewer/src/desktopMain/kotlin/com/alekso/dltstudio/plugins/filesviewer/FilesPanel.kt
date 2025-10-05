@@ -1,9 +1,10 @@
 package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.onClick
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -46,31 +48,9 @@ fun FilesPanel(
     analyzeState: FilesState,
     files: SnapshotStateList<FileEntry>,
     previewState: State<PreviewState?>,
-    onPreviewDialogClosed: () -> Unit,
     onSearchButtonClicked: () -> Unit,
     onFileEntryClicked: (FileEntry) -> Unit,
 ) {
-
-    when (val state = previewState.value) {
-        is TextPreviewState -> {
-            TextPreviewDialog(
-                visible = true,
-                onDialogClosed = onPreviewDialogClosed,
-                fileEntry = state.entry,
-            )
-        }
-
-        is ImagePreviewState -> {
-            ImagePreviewDialog(
-                visible = true,
-                onDialogClosed = onPreviewDialogClosed,
-                fileEntry = state.entry,
-                imageBitmap = state.imageBitmap,
-            )
-        }
-
-        else -> {}
-    }
 
     Column(Modifier.padding(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -98,10 +78,10 @@ fun FilesPanel(
                 splitPaneState = splitterState
             ) {
                 first(20.dp) {
-                    FilesList(files, onFileEntryClicked, listState)
+                    FilesList(files, onFileEntryClicked, listState, previewState.value)
                 }
                 second(20.dp) {
-                    Text("")
+                    FilePreview(previewState.value)
                 }
                 splitter {
                     visiblePart {
@@ -128,10 +108,31 @@ fun FilesPanel(
 }
 
 @Composable
+private fun FilePreview(
+    previewState: PreviewState?,
+) {
+    when (val state = previewState) {
+        is TextPreviewState -> {
+            TextContent(String(state.entry.getContent() ?: byteArrayOf()))
+        }
+
+        is ImagePreviewState -> {
+            Column(Modifier.fillMaxSize()) {
+                Image(bitmap = state.imageBitmap, contentDescription = "")
+            }
+        }
+
+        else -> {}
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
 fun FilesList(
     files: SnapshotStateList<FileEntry>,
     onFileEntryClicked: (FileEntry) -> Unit,
-    listState: LazyListState
+    listState: LazyListState,
+    preview: PreviewState?
 ) {
     Box(Modifier.fillMaxSize()) {
         LazyColumn(
@@ -152,13 +153,14 @@ fun FilesList(
                 key = { _, key -> key.serialNumber },
                 contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
                 FileItem(
-                    Modifier.combinedClickable(
-                        onClick = {},
-                        onDoubleClick = { onFileEntryClicked(fileEntry) }),
+                    Modifier.onClick(
+                        onClick = { onFileEntryClicked(fileEntry) },
+                    ),
                     i = i.toString(),
                     name = fileEntry.name,
                     size = LocalFormatter.current.formatSizeHuman(fileEntry.size),
-                    date = fileEntry.creationDate
+                    date = fileEntry.creationDate,
+                    isSelected = preview?.entry == fileEntry,
                 )
             }
         }
@@ -174,12 +176,13 @@ fun FilesList(
 @Composable
 fun FileItem(
     modifier: Modifier = Modifier,
-    i: String, name: String, size: String, date: String, isHeader: Boolean = false
+    i: String, name: String, size: String, date: String, isHeader: Boolean = false,
+    isSelected: Boolean = false,
 ) {
     Row(
         modifier
             .padding(bottom = 1.dp)
-            .background(AppTheme.colors.logRow)
+            .background(if (isSelected) MaterialTheme.colorScheme.secondary else AppTheme.colors.logRow)
             .height(IntrinsicSize.Max)
     ) {
         TableTextCell(
@@ -228,7 +231,6 @@ fun PreviewFilesPanel() {
                     FileEntry(name = "some screenshot.png", size = 456643),
                 ),
                 mutableStateOf<PreviewState?>(null),
-                {},
                 {},
                 {},
             )
