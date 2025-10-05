@@ -2,7 +2,6 @@ package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -113,18 +112,19 @@ private fun FilePreview(
 ) {
     when (val state = previewState) {
         is TextPreviewState -> {
-            TextContent(String(state.entry.getContent() ?: byteArrayOf()))
+            TextContent(state, state.saveCallback)
         }
 
         is ImagePreviewState -> {
-            Column(Modifier.fillMaxSize()) {
-                Image(bitmap = state.imageBitmap, contentDescription = "")
-            }
+            ImageFilePreview(state)
         }
 
-        else -> {}
+        is FilePreviewState -> {
+            OtherFilePreview(state)
+        }
     }
 }
+
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable

@@ -31,6 +31,7 @@ enum class FilesState {
 abstract class PreviewState(
     open val type: Type = Type.None,
     open val entry: FileEntry? = null,
+    open val saveCallback: (entry: FileEntry) -> Unit = {}
 ) {
     enum class Type {
         None,
@@ -39,9 +40,22 @@ abstract class PreviewState(
     }
 }
 
-data class TextPreviewState(override val entry: FileEntry) : PreviewState(Type.Text, entry)
-data class FilePreviewState(override val entry: FileEntry) : PreviewState(Type.None, entry)
-data class ImagePreviewState(override val entry: FileEntry, val imageBitmap: ImageBitmap) :
+data class TextPreviewState(
+    override val entry: FileEntry,
+    override val saveCallback: (entry: FileEntry) -> Unit
+) :
+    PreviewState(Type.Text, entry)
+
+data class FilePreviewState(
+    override val entry: FileEntry,
+    override val saveCallback: (entry: FileEntry) -> Unit
+) : PreviewState(Type.None, entry)
+
+data class ImagePreviewState(
+    override val entry: FileEntry,
+    val imageBitmap: ImageBitmap,
+    override val saveCallback: (entry: FileEntry) -> Unit
+) :
     PreviewState(Type.Image, entry)
 
 
@@ -129,28 +143,34 @@ class FilesViewModel(
                     if (bytes != null) {
                         _previewState.value = ImagePreviewState(
                             entry = entry,
-                            imageBitmap = bytes.decodeToImageBitmap()
+                            imageBitmap = bytes.decodeToImageBitmap(),
+                            saveCallback = ::onSaveFileEntry
                         )
                     }
                 }
 
                 "txt" -> {
-                    _previewState.value = TextPreviewState(entry = entry)
+                    _previewState.value =
+                        TextPreviewState(entry = entry, saveCallback = ::onSaveFileEntry)
                 }
 
                 else -> {
-                    _previewState.value = FilePreviewState(entry = entry)
-//                    fileDialogState = FileDialogState(
-//                        title = "Save file",
-//                        visible = true,
-//                        operation = DialogOperation.SAVE,
-//                        file = File(entry.name),
-//                        fileCallback = { saveFile(it[0]) },
-//                        cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
-//                    )
+                    _previewState.value =
+                        FilePreviewState(entry = entry, saveCallback = ::onSaveFileEntry)
                 }
             }
         }
+    }
+
+    private fun onSaveFileEntry(fileEntry: FileEntry) {
+        fileDialogState = FileDialogState(
+            title = "Save file",
+            visible = true,
+            operation = DialogOperation.SAVE,
+            file = File(fileEntry.name),
+            fileCallback = { saveFile(it[0]) },
+            cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
+        )
     }
 
     private fun saveFile(file: File) {
@@ -158,12 +178,10 @@ class FilesViewModel(
         viewModelScope.launch(IO) {
             try {
                 val fileEntry = _previewState.value
-                if (fileEntry is FilePreviewState) {
-                    fileEntry.entry.getContent()?.let {
-                        file.outputStream().write(it)
-                    }
-                    println("Saving entry to ${file.absolutePath}")
+                fileEntry?.entry?.getContent()?.let {
+                    file.outputStream().write(it)
                 }
+                println("Saving entry to ${file.absolutePath}")
             } catch (e: Exception) {
                 Log.e("Failed to save file: $e")
             }
