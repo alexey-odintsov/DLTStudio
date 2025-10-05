@@ -91,6 +91,7 @@ class FilesViewModel(
 
     private fun cleanup() {
         filesEntries.clear()
+        _previewState.value = null
     }
 
     fun startFilesSearch(logMessages: List<LogMessage>) {
@@ -167,7 +168,7 @@ class FilesViewModel(
             title = "Save file",
             visible = true,
             operation = DialogOperation.SAVE,
-            file = File(fileEntry.name),
+            file = File(fileEntry.getFileName()),
             fileCallback = { saveFile(it[0]) },
             cancelCallback = { fileDialogState = fileDialogState.copy(visible = false) }
         )

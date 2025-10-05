@@ -49,6 +49,8 @@ data class FileEntry(
     fun getExtension(): String {
         return name.substringAfterLast(".")
     }
+
+    fun getFileName(): String = name.substringAfterLast("/")
 }
 
 /**
