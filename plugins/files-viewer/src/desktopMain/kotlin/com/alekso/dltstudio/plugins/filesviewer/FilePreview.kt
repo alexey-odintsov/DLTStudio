@@ -37,7 +37,7 @@ import dltstudio.resources.icon_down
 
 
 @Composable
-fun TextContent(state: TextPreviewState, onSaveClicked: (entry: FileEntry) -> Unit) {
+fun TextFilePreview(state: TextPreviewState, onSaveClicked: (entry: FileEntry) -> Unit) {
     val text =  String(state.entry.getContent() ?: byteArrayOf())
 
     Column {
@@ -96,15 +96,6 @@ fun ImageFilePreview(state: ImagePreviewState) {
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            val clipboardManager = LocalClipboardManager.current
-            ImageButton(
-                modifier = Modifier.size(32.dp),
-                icon = Res.drawable.icon_copy,
-                title = "Copy image",
-                onClick = {
-//                    clipboardManager.setText(AnnotatedString(text))
-                }
-            )
             ImageButton(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_down,

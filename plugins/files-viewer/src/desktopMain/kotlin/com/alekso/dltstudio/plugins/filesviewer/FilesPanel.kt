@@ -112,7 +112,7 @@ private fun FilePreview(
 ) {
     when (val state = previewState) {
         is TextPreviewState -> {
-            TextContent(state, state.saveCallback)
+            TextFilePreview(state, state.saveCallback)
         }
 
         is ImagePreviewState -> {
