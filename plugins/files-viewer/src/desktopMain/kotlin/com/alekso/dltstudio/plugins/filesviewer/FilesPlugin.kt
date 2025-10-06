@@ -20,7 +20,7 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
 
     override fun pluginName(): String = "Files Viewer Plugin"
     override fun pluginDirectoryName(): String = "files-plugin"
-    override fun pluginVersion(): String = "1.0.0"
+    override fun pluginVersion(): String = "1.1.0"
     override fun pluginClassName(): String = FilesPlugin::class.simpleName.toString()
     override fun author(): String = "Alexey Odintsov"
     override fun pluginLink(): String? = null
