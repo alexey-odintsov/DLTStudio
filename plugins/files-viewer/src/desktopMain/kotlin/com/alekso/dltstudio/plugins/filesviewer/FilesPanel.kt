@@ -1,9 +1,9 @@
 package com.alekso.dltstudio.plugins.filesviewer
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -14,9 +14,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.onClick
 import androidx.compose.foundation.rememberScrollbarAdapter
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -34,37 +37,19 @@ import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
+import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
+import org.jetbrains.compose.splitpane.HorizontalSplitPane
+import org.jetbrains.compose.splitpane.rememberSplitPaneState
 
+@OptIn(ExperimentalSplitPaneApi::class)
 @Composable
 fun FilesPanel(
     analyzeState: FilesState,
     files: SnapshotStateList<FileEntry>,
     previewState: State<PreviewState?>,
-    onPreviewDialogClosed: () -> Unit,
     onSearchButtonClicked: () -> Unit,
     onFileEntryClicked: (FileEntry) -> Unit,
 ) {
-
-    when (val state = previewState.value) {
-        is TextPreviewState -> {
-            TextPreviewDialog(
-                visible = true,
-                onDialogClosed = onPreviewDialogClosed,
-                fileEntry = state.entry,
-            )
-        }
-
-        is ImagePreviewState -> {
-            ImagePreviewDialog(
-                visible = true,
-                onDialogClosed = onPreviewDialogClosed,
-                fileEntry = state.entry,
-                imageBitmap = state.imageBitmap,
-            )
-        }
-
-        else -> {}
-    }
 
     Column(Modifier.padding(4.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -86,80 +71,164 @@ fun FilesPanel(
             Text("Files will be shown here..")
         } else {
             val listState = rememberLazyListState()
-            Box(Modifier.weight(1f)) {
-                LazyColumn(
-                    Modifier.fillMaxSize(),
-                    state = listState
-                ) {
-                    stickyHeader {
-                        FileItem(
-                            isHeader = true,
-                            i = "#",
-                            name = "Name",
-                            size = "Size",
-                            date = "Date created"
+            val splitterState = rememberSplitPaneState(0.65f)
+
+            HorizontalSplitPane(
+                splitPaneState = splitterState
+            ) {
+                first(20.dp) {
+                    FilesList(files, onFileEntryClicked, listState, previewState.value)
+                }
+                second(20.dp) {
+                    FilePreview(previewState.value)
+                }
+                splitter {
+                    visiblePart {
+                        Box(
+                            Modifier
+                                .width(1.dp)
+                                .fillMaxHeight()
+                                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))
                         )
                     }
-                    itemsIndexed(
-                        items = files,
-                        key = { _, key -> key.serialNumber },
-                        contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
-                        FileItem(
-                            Modifier.combinedClickable(
-                                onClick = {},
-                                onDoubleClick = { onFileEntryClicked(fileEntry) }),
-                            i = i.toString(),
-                            name = fileEntry.name,
-                            size = LocalFormatter.current.formatSizeHuman(fileEntry.size),
-                            date = fileEntry.creationDate
+
+                    handle {
+                        Box(
+                            Modifier
+                                .markAsHandle()
+                                .width(4.dp)
+                                .fillMaxHeight()
                         )
                     }
                 }
-                VerticalScrollbar(
-                    modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
-                    adapter = rememberScrollbarAdapter(
-                        scrollState = listState
-                    )
-                )
             }
         }
     }
 }
 
 @Composable
+private fun FilePreview(
+    previewState: PreviewState?,
+) {
+    when (val state = previewState) {
+        is TextPreviewState -> {
+            TextFilePreview(state, state.saveCallback)
+        }
+
+        is ImagePreviewState -> {
+            ImageFilePreview(state)
+        }
+
+        is FilePreviewState -> {
+            OtherFilePreview(state)
+        }
+    }
+}
+
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun FilesList(
+    files: SnapshotStateList<FileEntry>,
+    onFileEntryClicked: (FileEntry) -> Unit,
+    listState: LazyListState,
+    preview: PreviewState?
+) {
+    Box(Modifier.fillMaxSize()) {
+        LazyColumn(
+            Modifier.fillMaxSize(),
+            state = listState
+        ) {
+            stickyHeader {
+                Row(
+                    Modifier
+                        .padding(bottom = 1.dp)
+                        .background(AppTheme.colors.logRow)
+                        .height(IntrinsicSize.Max)
+                ) {
+                    TableTextCell(
+                        text = "#",
+                        modifier = Modifier.width(30.dp).padding(2.dp),
+                    )
+                    TableDivider()
+                    TableTextCell(
+                        text = "Name",
+                        modifier = Modifier.weight(1f).padding(2.dp),
+                    )
+                    TableDivider()
+                    TableTextCell(
+                        text = "Size",
+                        modifier = Modifier.width(80.dp).padding(2.dp),
+                        textAlign = TextAlign.Right,
+                    )
+                    TableDivider()
+                    TableTextCell(
+                        text = "Date created",
+                        modifier = Modifier.width(200.dp).padding(2.dp),
+                        textAlign = TextAlign.Right,
+                    )
+                }
+            }
+            itemsIndexed(
+                items = files,
+                key = { _, key -> key.serialNumber },
+                contentType = { _, _ -> FileEntry::class }) { i, fileEntry ->
+                FileItem(
+                    Modifier.onClick(
+                        onClick = { onFileEntryClicked(fileEntry) },
+                    ),
+                    i = i.toString(),
+                    fileEntry = fileEntry,
+                    isSelected = preview?.entry == fileEntry,
+                )
+            }
+        }
+        VerticalScrollbar(
+            modifier = Modifier.align(Alignment.CenterEnd).fillMaxHeight(),
+            adapter = rememberScrollbarAdapter(
+                scrollState = listState
+            )
+        )
+    }
+}
+
+@Composable
 fun FileItem(
     modifier: Modifier = Modifier,
-    i: String, name: String, size: String, date: String, isHeader: Boolean = false
+    i: String,
+    fileEntry: FileEntry,
+    isSelected: Boolean = false,
 ) {
+    val sizeText = LocalFormatter.current.formatSizeHuman(fileEntry.size)
+    val date = fileEntry.creationDate
+    val isValid = fileEntry.isComplete()
+
     Row(
         modifier
             .padding(bottom = 1.dp)
-            .background(AppTheme.colors.logRow)
+            .background(if (isSelected) MaterialTheme.colorScheme.secondary else AppTheme.colors.logRow)
             .height(IntrinsicSize.Max)
     ) {
         TableTextCell(
             text = i,
             modifier = Modifier.width(30.dp).padding(2.dp),
-            isHeader = isHeader,
         )
         TableDivider()
         TableTextCell(
-            text = name,
+            text = fileEntry.name,
             modifier = Modifier.weight(1f).padding(2.dp),
-            isHeader = isHeader,
         )
         TableDivider()
         TableTextCell(
-            text = size,
+            text = if (isValid) sizeText else "$sizeText (${fileEntry.getContent()?.size})",
             modifier = Modifier.width(80.dp).padding(2.dp),
-            isHeader = isHeader,
             textAlign = TextAlign.Right,
+            textColor = if (isValid) Color.Unspecified else MaterialTheme.colorScheme.error
         )
         TableDivider()
         TableTextCell(
             text = date,
             modifier = Modifier.width(200.dp).padding(2.dp),
-            isHeader = isHeader,
             textAlign = TextAlign.Right,
         )
     }
@@ -183,7 +252,6 @@ fun PreviewFilesPanel() {
                     FileEntry(name = "some screenshot.png", size = 456643),
                 ),
                 mutableStateOf<PreviewState?>(null),
-                {},
                 {},
                 {},
             )
