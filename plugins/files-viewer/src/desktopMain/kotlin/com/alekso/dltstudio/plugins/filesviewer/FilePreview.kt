@@ -33,7 +33,7 @@ import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.ImageButton
 import dltstudio.resources.Res
 import dltstudio.resources.icon_copy
-import dltstudio.resources.icon_down
+import dltstudio.resources.icon_download
 
 
 @Composable
@@ -56,7 +56,7 @@ fun TextFilePreview(state: TextPreviewState, onSaveClicked: (entry: FileEntry) -
             )
             ImageButton(
                 modifier = Modifier.size(32.dp),
-                icon = Res.drawable.icon_down,
+                icon = Res.drawable.icon_download,
                 title = "Save file",
                 onClick = {
                     onSaveClicked(state.entry)
@@ -98,7 +98,7 @@ fun ImageFilePreview(state: ImagePreviewState) {
         ) {
             ImageButton(
                 modifier = Modifier.size(32.dp),
-                icon = Res.drawable.icon_down,
+                icon = Res.drawable.icon_download,
                 title = "Save file",
                 onClick = { state.saveCallback(state.entry) }
             )
@@ -117,7 +117,7 @@ fun OtherFilePreview(state: FilePreviewState) {
         ) {
             ImageButton(
                 modifier = Modifier.size(32.dp),
-                icon = Res.drawable.icon_down,
+                icon = Res.drawable.icon_download,
                 title = "Save file",
                 onClick = { state.saveCallback(state.entry) }
             )
