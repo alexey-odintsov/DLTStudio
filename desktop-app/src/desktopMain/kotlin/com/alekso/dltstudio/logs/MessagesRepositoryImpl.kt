@@ -17,6 +17,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     private val logMessages = mutableStateListOf<LogMessage>()
     private var searchResults = mutableStateListOf<LogMessage>()
     private val selectedMessage = mutableStateOf<LogMessage?>(null)
+    val markedItems = mutableStateListOf<Int>()
 
     override suspend fun clearMessages() {
         withContext(Main) {
@@ -46,6 +47,10 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     override fun getMessages(): SnapshotStateList<LogMessage> {
         return logMessages
+    }
+
+    override fun getMarkedIds(): SnapshotStateList<Int> {
+        return markedItems
     }
 
     override suspend fun removeMessages(
@@ -126,19 +131,16 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun toggleMark(id: Int) {
-        val index = logMessages.indexOfFirst { it.id == id }
-        if (index > -1) {
-            val currentMark = logMessages[index].marked
-            val updatedMessage = logMessages[index].copy(marked = !currentMark)
-            logMessages[index] = updatedMessage
-            if (selectedMessage.value?.id == id) {
-                selectedMessage.value = updatedMessage
-            }
-            val searchIndex = searchResults.indexOfFirst { it.id == id }
-            if (searchIndex > -1) {
-                searchResults[searchIndex] = updatedMessage
-            }
+        if (markedItems.contains(id)) {
+            markedItems.remove(id)
+        } else {
+            markedItems.add(id)
+            markedItems.sort()
         }
+    }
+
+    override fun clearMarks() {
+        markedItems.clear()
     }
 
 }

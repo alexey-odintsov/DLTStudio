@@ -20,6 +20,7 @@ class PluginTest {
             override suspend fun clearMessages() = Unit
             override suspend fun storeMessages(messages: List<LogMessage>) = Unit
             override fun getMessages(): SnapshotStateList<LogMessage> = messages
+            override fun getMarkedIds(): SnapshotStateList<Int> = mutableStateListOf()
             override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
             override fun getSelectedMessage(): State<LogMessage?> = mutableStateOf(null)
             override fun updateLogComment(id: Int, comment: String?) = Unit
@@ -35,6 +36,7 @@ class PluginTest {
             ): Long = 0L
 
             override fun selectMessage(key: Int)  = Unit
+            override fun clearMarks() = Unit
         }
         val pluginManager = PluginManager(
             "${File("").absolutePath}/plugins/",

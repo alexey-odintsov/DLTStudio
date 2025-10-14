@@ -26,6 +26,7 @@ interface RowContextMenuCallbacks {
 fun RowContextMenu(
     i: Int,
     message: LogMessage,
+    marked: Boolean,
     rowContent: String,
     rowContextMenuCallbacks: RowContextMenuCallbacks,
     content: @Composable () -> Unit
@@ -35,7 +36,7 @@ fun RowContextMenu(
         ContextMenuItem("Copy") {
             clipboardManager.setText(AnnotatedString(rowContent))
         },
-        ContextMenuItem(if (message.marked) "Unmark" else "Mark") {
+        ContextMenuItem(if (marked) "Unmark" else "Mark") {
             rowContextMenuCallbacks.onMarkClicked(
                 i,
                 message

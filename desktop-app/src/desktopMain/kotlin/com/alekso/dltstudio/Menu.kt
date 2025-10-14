@@ -14,6 +14,7 @@ interface MainMenuCallbacks {
     fun onOpenFiltersClicked()
     fun onSaveColorFilterClicked()
     fun onRecentColorFilterClicked(file: File)
+    fun onRemoveAllMarksClicked()
 }
 
 @Composable
@@ -49,6 +50,11 @@ fun FrameWindowScope.MainMenu(
             })
             Item("Clear", onClick = {
                 callbacks.onClearColorFiltersClicked()
+            })
+        }
+        Menu("Logs") {
+            Item("Remove all marks ", onClick = {
+                callbacks.onRemoveAllMarksClicked()
             })
         }
     }

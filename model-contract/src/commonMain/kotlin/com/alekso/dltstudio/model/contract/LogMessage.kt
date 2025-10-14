@@ -14,7 +14,6 @@ data class LogMessage(
      * Unique persistent key to identify message between sessions.
      */
     val key: String = "$id",
-    val marked: Boolean = false,
     val comment: String? = null,
 ) {
     fun getMessageText(): String {
