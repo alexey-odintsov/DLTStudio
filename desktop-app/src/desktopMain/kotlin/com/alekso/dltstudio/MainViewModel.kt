@@ -312,7 +312,7 @@ class MainViewModel(
         override fun onTimeZoneChanged(timeZoneName: String) {
             try {
                 formatter.setTimeZone(TimeZone.of(timeZoneName))
-            } catch (ignored: Exception) {
+            } catch (_: Exception) {
                 // parsing will fail while typing timeZoneName
             }
         }
@@ -451,6 +451,10 @@ class MainViewModel(
 
         override fun onRecentColorFilterClicked(file: File) {
             loadColorFilters(file)
+        }
+
+        override fun onRemoveAllMarksClicked() {
+            messagesRepository.clearMarks()
         }
     }
 
@@ -725,7 +729,7 @@ class MainViewModel(
             val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
 
             val duration = messagesRepository.searchMessages(onProgressChanged) {
-                matchSearch(searchType, searchRegex, searchText, it)
+                matchSearch(searchType, searchRegex, searchText, it, messagesRepository.getMarkedIds())
             }
 
             _searchState.value = _searchState.value.copy(
@@ -739,7 +743,8 @@ class MainViewModel(
         searchType: SearchType,
         searchRegex: Regex?,
         searchText: String,
-        logMessage: LogMessage
+        logMessage: LogMessage,
+        markedIds: SnapshotStateList<Int>,
     ): Boolean {
         val payload = logMessage.getMessageText()
         return when (searchType) {
@@ -750,11 +755,11 @@ class MainViewModel(
             }
 
             SearchType.MarkedRows -> {
-                logMessage.marked
+                logMessage.id in markedIds
             }
 
             SearchType.TextAndMarkedRows -> {
-                logMessage.marked || ((searchRegex != null && searchRegex.containsMatchIn(
+                logMessage.id in markedIds || ((searchRegex != null && searchRegex.containsMatchIn(
                     payload
                 )) || (payload.contains(searchText)))
             }

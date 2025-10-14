@@ -24,6 +24,7 @@ fun SearchResultsPanel(
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
+    markedIds: SnapshotStateList<Int>,
 ) {
     Panel(
         modifier = modifier,
@@ -32,16 +33,17 @@ fun SearchResultsPanel(
         LazyScrollable(
             Modifier.fillMaxSize(),
             columnParams = columnParams,
-            searchResult,
-            colorFilters,
+            logMessages = searchResult,
+            colorFilters = colorFilters,
             selectedRow = searchResultSelectedRow,
             onRowSelected = onSearchRowSelected,
             listState = searchListState,
             wrapContent = wrapContent,
-            showComments = showComments,
             rowContextMenuCallbacks = rowContextMenuCallbacks,
             columnsContextMenuCallbacks = columnsContextMenuCallbacks,
+            showComments = showComments,
             onColumnResized = onColumnResized,
+            markedIds = markedIds,
         )
     }
 

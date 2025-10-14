@@ -68,6 +68,7 @@ class LogsPlugin(
                 previewPanels = viewModel.previewPanels,
                 columnParams = viewModel.columnParams,
                 logMessages = messagesRepository.getMessages(),
+                markedIds = messagesRepository.getMarkedIds(),
                 searchState = viewModel.searchState.value,
                 searchAutoComplete = viewModel.searchAutocomplete,
                 searchResult = messagesRepository.getSearchResults(),
