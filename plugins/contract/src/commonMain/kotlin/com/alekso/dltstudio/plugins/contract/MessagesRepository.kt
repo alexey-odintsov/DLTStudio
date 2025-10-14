@@ -35,6 +35,7 @@ interface MessagesRepository {
      * @return Duration of the operation
      */
     suspend fun removeMessages(progress: (Float) -> Unit, predicate: (LogMessage) -> Boolean): Long
+    suspend fun removeMessage(logMessage: LogMessage)
 
     /**
      * Applies search filter

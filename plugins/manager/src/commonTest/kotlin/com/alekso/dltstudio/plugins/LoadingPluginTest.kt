@@ -30,6 +30,8 @@ class PluginTest {
                 predicate: (LogMessage) -> Boolean
             ): Long = 0L
 
+            override suspend fun removeMessage(logMessage: LogMessage) = Unit
+
             override suspend fun searchMessages(
                 progress: (Float) -> Unit,
                 predicate: (LogMessage) -> Boolean

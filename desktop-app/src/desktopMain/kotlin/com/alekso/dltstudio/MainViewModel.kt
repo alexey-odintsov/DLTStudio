@@ -185,6 +185,8 @@ class MainViewModel(
         override fun onRemoveDialogClicked(message: LogMessage) {
             removeLogsDialogState.value = RemoveLogsDialogState(true, message)
         }
+
+        override fun onRemoveMessageClicked(message: LogMessage) = removeMessage(message)
     }
 
     private var currentFolder: File? = null
@@ -644,6 +646,12 @@ class MainViewModel(
                     checkTextCriteria(criteria, message.payloadText())
                 }
             }
+        }
+    }
+
+    private fun removeMessage(logMessage: LogMessage) {
+        viewModelScope.launch {
+            messagesRepository.removeMessage(logMessage)
         }
     }
 
