@@ -76,6 +76,11 @@ class MessagesRepositoryImpl : MessagesRepository {
         return duration + searchDuration
     }
 
+    override suspend fun removeMessage(logMessage: LogMessage) {
+        logMessages.removeIf { it.id == logMessage.id }
+        searchResults.removeIf { it.id == logMessage.id }
+    }
+
 
     override suspend fun searchMessages(
         progress: (Float) -> Unit,
