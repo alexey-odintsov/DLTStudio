@@ -18,6 +18,8 @@ class MessagesRepositoryImpl : MessagesRepository {
     private var searchResults = mutableStateListOf<LogMessage>()
     private val selectedMessage = mutableStateOf<LogMessage?>(null)
     val markedItems = mutableStateListOf<Int>()
+    var markedFocusedIndex: Int? = null
+
 
     override suspend fun clearMessages() {
         withContext(Main) {
@@ -144,11 +146,22 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun selectPrevMarkedLog() {
-        TODO("Not yet implemented")
+        markedFocusedIndex =
+            if (markedFocusedIndex != null && markedFocusedIndex!! < markedItems.size - 1) {
+                markedFocusedIndex!! + 1
+            } else {
+                0
+            }
+        selectMessage(logMessages.first { it.id == markedItems[markedFocusedIndex!!] }.id)
     }
 
     override fun selectNextMarkedLog() {
-        TODO("Not yet implemented")
+        markedFocusedIndex = if (markedFocusedIndex != null && markedFocusedIndex!! > 0) {
+            markedFocusedIndex!! - 1
+        } else {
+            markedItems.size - 1
+        }
+        selectMessage(logMessages.first { it.id == markedItems[markedFocusedIndex!!] }.id)
     }
 
 }

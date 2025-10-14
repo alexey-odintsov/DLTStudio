@@ -317,10 +317,26 @@ class MainViewModel(
 
         override fun onPrevMarkedLog() {
             messagesRepository.selectPrevMarkedLog()
+            viewModelScope.launch {
+                val id = messagesRepository.getSelectedMessage().value?.id
+                if (id != null) {
+                    val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
+                    logsListState.scrollToItem(index)
+                    selectLogRow(index, id)
+                }
+            }
         }
 
         override fun onNextMarkedLog() {
             messagesRepository.selectNextMarkedLog()
+            viewModelScope.launch {
+                val id = messagesRepository.getSelectedMessage().value?.id
+                if (id != null) {
+                    val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
+                    logsListState.scrollToItem(index)
+                    selectLogRow(index, id)
+                }
+            }
         }
     }
 
