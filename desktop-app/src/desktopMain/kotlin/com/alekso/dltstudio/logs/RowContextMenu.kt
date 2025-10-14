@@ -12,12 +12,14 @@ interface RowContextMenuCallbacks {
     fun onMarkClicked(i: Int, message: LogMessage)
     fun onRemoveClicked(context: LogRemoveContext, filter: String)
     fun onRemoveDialogClicked(message: LogMessage)
+    fun onRemoveMessageClicked(message: LogMessage)
 
     companion object {
         val Stub = object : RowContextMenuCallbacks {
             override fun onMarkClicked(i: Int, message: LogMessage) = Unit
             override fun onRemoveClicked(context: LogRemoveContext, filter: String) = Unit
             override fun onRemoveDialogClicked(message: LogMessage) = Unit
+            override fun onRemoveMessageClicked(message: LogMessage) = Unit
         }
     }
 }
@@ -76,6 +78,12 @@ fun RowContextMenu(
                 rowContextMenuCallbacks.onRemoveDialogClicked(message)
             })
     }
+
+    menuItems.add(
+        ContextMenuItem("Remove this message") {
+            rowContextMenuCallbacks.onRemoveMessageClicked(message)
+        }
+    )
 
     message.dltMessage.timeStampUs.let {
         menuItems.add(ContextMenuItem("Remove rows before") {
