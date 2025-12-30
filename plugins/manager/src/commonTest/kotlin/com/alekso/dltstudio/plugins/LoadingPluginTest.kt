@@ -21,6 +21,7 @@ class PluginTest {
             override suspend fun storeMessages(messages: List<LogMessage>) = Unit
             override fun getMessages(): SnapshotStateList<LogMessage> = messages
             override fun getMarkedIds(): SnapshotStateList<Int> = mutableStateListOf()
+            override fun getFocusedMarkedIdIndex(): State<Int?> = mutableStateOf(null)
             override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
             override fun getSelectedMessage(): State<LogMessage?> = mutableStateOf(null)
             override fun updateLogComment(id: Int, comment: String?) = Unit

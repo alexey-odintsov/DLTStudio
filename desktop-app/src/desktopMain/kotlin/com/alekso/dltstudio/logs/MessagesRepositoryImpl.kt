@@ -1,8 +1,10 @@
 package com.alekso.dltstudio.com.alekso.dltstudio.logs
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -17,8 +19,8 @@ class MessagesRepositoryImpl : MessagesRepository {
     private val logMessages = mutableStateListOf<LogMessage>()
     private var searchResults = mutableStateListOf<LogMessage>()
     private val selectedMessage = mutableStateOf<LogMessage?>(null)
-    val markedItems = mutableStateListOf<Int>()
-    var markedFocusedIndex: Int? = null
+    val markedItemsIds = mutableStateListOf<Int>()
+    var focusedMarkedIdIndex = mutableStateOf<Int?>(null)
 
 
     override suspend fun clearMessages() {
@@ -52,7 +54,11 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun getMarkedIds(): SnapshotStateList<Int> {
-        return markedItems
+        return markedItemsIds
+    }
+
+    override fun getFocusedMarkedIdIndex(): State<Int?> {
+        return focusedMarkedIdIndex
     }
 
     override suspend fun removeMessages(
@@ -86,7 +92,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     override suspend fun removeMessage(logMessage: LogMessage) {
         logMessages.removeIf { it.id == logMessage.id }
         searchResults.removeIf { it.id == logMessage.id }
-        markedItems.removeIf { it == logMessage.id }
+        markedItemsIds.remove(logMessage.id)
     }
 
 
@@ -109,8 +115,8 @@ class MessagesRepositoryImpl : MessagesRepository {
         return duration
     }
 
-    override fun selectMessage(key: Int) {
-        val message = logMessages.firstOrNull { it.id == key }
+    override fun selectMessage(id: Int) {
+        val message = logMessages.firstOrNull { it.id == id }
         selectedMessage.value = message
     }
 
@@ -139,35 +145,52 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun toggleMark(id: Int) {
-        if (markedItems.contains(id)) {
-            markedItems.remove(id)
+        if (markedItemsIds.contains(id)) {
+            markedItemsIds.remove(id)
         } else {
-            markedItems.add(id)
-            markedItems.sort()
+            markedItemsIds.add(id)
+            markedItemsIds.sort()
         }
     }
 
     override fun clearMarks() {
-        markedItems.clear()
+        markedItemsIds.clear()
     }
 
     override fun selectPrevMarkedLog() {
-        markedFocusedIndex =
-            if (markedFocusedIndex != null && markedFocusedIndex!! < markedItems.size - 1) {
-                markedFocusedIndex!! + 1
+        if (markedItemsIds.isEmpty()) return
+        var index = focusedMarkedIdIndex.value
+        focusedMarkedIdIndex.value = if (index == null) {
+            0
+        } else {
+            if (index > 0) {
+                index - 1
             } else {
-                0
+                markedItemsIds.size - 1
             }
-        selectMessage(logMessages.first { it.id == markedItems[markedFocusedIndex!!] }.id)
+        }
+        index = focusedMarkedIdIndex.value
+        if (index != null) {
+            selectMessage(markedItemsIds[index])
+        }
     }
 
     override fun selectNextMarkedLog() {
-        markedFocusedIndex = if (markedFocusedIndex != null && markedFocusedIndex!! > 0) {
-            markedFocusedIndex!! - 1
+        if (markedItemsIds.isEmpty()) return
+        var index = focusedMarkedIdIndex.value
+        focusedMarkedIdIndex.value = if (index == null) {
+            0
         } else {
-            markedItems.size - 1
+            if (index < markedItemsIds.size - 1) {
+                index + 1
+            } else {
+                0
+            }
         }
-        selectMessage(logMessages.first { it.id == markedItems[markedFocusedIndex!!] }.id)
+        index = focusedMarkedIdIndex.value
+        if (index != null) {
+            selectMessage(markedItemsIds[index])
+        }
     }
 
 }

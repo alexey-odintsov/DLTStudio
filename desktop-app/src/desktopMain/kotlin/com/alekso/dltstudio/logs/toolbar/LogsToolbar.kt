@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -54,6 +55,8 @@ fun LogsToolbar(
     searchState: SearchState,
     searchAutoComplete: SnapshotStateList<String>,
     callbacks: LogsToolbarCallbacks,
+    focusedBookmarkId: Int?,
+    markedIds: SnapshotStateList<Int>,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Tooltip(text = "Toggle fatal logs highlight") {
@@ -147,6 +150,14 @@ fun LogsToolbar(
                 },
                 tintable = false,
             )
+        }
+
+        if (markedIds.isEmpty()) {
+            Text("-/-")
+        } else if (focusedBookmarkId == null) {
+            Text("-/${markedIds.size}")
+        } else {
+            Text("${focusedBookmarkId+1}/${markedIds.size}")
         }
 
         Tooltip(text = "Next marked log") {
@@ -254,5 +265,7 @@ fun PreviewLogsToolbar() {
         searchState = SearchState(searchText = "Search text"),
         searchAutoComplete = mutableStateListOf(),
         callbacks = LogsToolbarCallbacks.Stub,
+        focusedBookmarkId = null,
+        markedIds = mutableStateListOf()
     )
 }

@@ -77,6 +77,7 @@ fun LogsPanel(
     logSelection: LogSelection,
     selectedMessage: LogMessage?,
     markedIds: SnapshotStateList<Int>,
+    focusedBookmarkId: Int?,
 ) {
 
     Column(modifier = modifier) {
@@ -85,6 +86,8 @@ fun LogsPanel(
             searchState,
             searchAutoComplete,
             callbacks = logsToolbarCallbacks,
+            focusedBookmarkId = focusedBookmarkId,
+            markedIds = markedIds,
         )
 
         Divider()
@@ -230,5 +233,6 @@ fun PreviewLogsPanel() {
         logSelection = LogSelection(0, 0),
         selectedMessage = null,
         markedIds = mutableStateListOf(),
+        focusedBookmarkId = null,
     )
 }

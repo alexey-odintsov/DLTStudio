@@ -9,6 +9,7 @@ interface MessagesRepository {
     suspend fun storeMessages(messages: List<LogMessage>)
     fun getMessages(): SnapshotStateList<LogMessage>
     fun getMarkedIds(): SnapshotStateList<Int>
+    fun getFocusedMarkedIdIndex(): State<Int?>
     fun getSearchResults(): SnapshotStateList<LogMessage>
     fun getSelectedMessage(): State<LogMessage?>
 
