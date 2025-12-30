@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
@@ -28,6 +30,7 @@ fun LogsListPanel(
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
     markedIds: SnapshotStateList<Int>,
+    comments: SnapshotStateMap<Int, String>,
 ) {
     Panel(
         modifier = modifier,
@@ -47,6 +50,7 @@ fun LogsListPanel(
             columnsContextMenuCallbacks = columnsContextMenuCallbacks,
             showComments = showComments,
             onColumnResized = onColumnResized,
+            comments = comments,
         )
     }
 }
@@ -57,7 +61,7 @@ fun PreviewLogsListPanel() {
     val list = SnapshotStateList<LogMessage>()
     list.addAll(
         SampleData.getSampleDltMessages(20)
-            .map { LogMessage(dltMessage = it, comment = "Test comment") })
+            .map { LogMessage(dltMessage = it) })
 
     LogsListPanel(
         modifier = Modifier.fillMaxSize(),
@@ -72,6 +76,7 @@ fun PreviewLogsListPanel() {
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         showComments = true,
         markedIds = mutableStateListOf(),
+        comments = mutableStateMapOf(),
         onColumnResized = { _, _ -> },
     )
 }

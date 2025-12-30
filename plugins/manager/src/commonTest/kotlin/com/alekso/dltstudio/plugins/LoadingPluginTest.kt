@@ -2,8 +2,10 @@ package com.alekso.dltstudio.plugins
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
@@ -25,6 +27,8 @@ class PluginTest {
             override fun getSearchResults(): SnapshotStateList<LogMessage> = mutableStateListOf()
             override fun getSelectedMessage(): State<LogMessage?> = mutableStateOf(null)
             override fun updateLogComment(id: Int, comment: String?) = Unit
+            override fun getComments(): SnapshotStateMap<Int, String> = mutableStateMapOf()
+
             override fun toggleMark(id: Int) = Unit
             override fun selectPrevMarkedLog() = Unit
             override fun selectNextMarkedLog() = Unit

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -43,12 +44,13 @@ import dltstudio.resources.icon_copy
 fun LogInfoView(
     modifier: Modifier = Modifier,
     logMessage: LogMessage?,
+    comment: String?,
     onCommentUpdated: (LogMessage, String?) -> Unit = { _, _ -> },
 ) {
     if (logMessage == null) return
 
     val paddingModifier = Modifier.padding(start = 4.dp, end = 4.dp)
-    var comment by remember(key1 = logMessage) { mutableStateOf(logMessage.comment) }
+    var comment by remember(key1 = logMessage) { mutableStateOf(comment) }
 
     Column(modifier = modifier.fillMaxHeight()) {
         logMessage.dltMessage.let {
@@ -92,7 +94,7 @@ fun LogInfoView(
                                 if (comment.isNullOrEmpty()) null else comment
                             )
                         }) {
-                        Text(text = if (logMessage.comment != null) "Update" else "Add")
+                        Text(text = if (comment != null) "Update" else "Add")
                     }
                 }
                 VerticalScrollbar(
@@ -157,7 +159,8 @@ fun PreviewLogSimplifiedInfoView() {
             payloadText = "TestView[2797]: onGlobalFocusChanged: oldFocus:com.ui.custom.ProgressBarFrameLayout{f5e8f76 VFE...CL. ......ID 2298,22-2835,709 #7f090453 app:id/theme_container aid=1073741849}, newFocus:com.android.car.ui.FocusParkingView{736743f VFED..... .F...... 0,0-1,1 #7f090194 app:id/focus_parking_view aid=1073741832} {bounds:Rect(0, 0 - 342, 240),hasBoundsTransaction,}",
         )
         LogInfoView(
-            modifier = Modifier.height(250.dp).fillMaxWidth(),
+            modifier = Modifier.fillMaxSize(),
+            comment = "Comment",
             logMessage = LogMessage(dltMessage),
         )
     }

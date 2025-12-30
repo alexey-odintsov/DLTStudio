@@ -2,6 +2,7 @@ package com.alekso.dltstudio.plugins.contract
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.model.contract.LogMessage
 
 interface MessagesRepository {
@@ -19,6 +20,7 @@ interface MessagesRepository {
      * @param comment - comment to set. null to remove comment.
      */
     fun updateLogComment(id: Int, comment: String?)
+    fun getComments(): SnapshotStateMap<Int, String>
 
     /**
      * Toggle bookmark

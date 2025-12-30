@@ -91,6 +91,7 @@ class LogsPlugin(
                 columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
                 onColumnResized = viewModel::onColumnResized,
                 focusedBookmarkId = messagesRepository.getFocusedMarkedIdIndex().value,
+                comments = messagesRepository.getComments(),
             )
         }
     }

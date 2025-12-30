@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
 import com.alekso.dltstudio.model.ColumnParams
@@ -25,6 +26,7 @@ fun SearchResultsPanel(
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
     markedIds: SnapshotStateList<Int>,
+    comments: SnapshotStateMap<Int, String>,
 ) {
     Panel(
         modifier = modifier,
@@ -44,6 +46,7 @@ fun SearchResultsPanel(
             showComments = showComments,
             onColumnResized = onColumnResized,
             markedIds = markedIds,
+            comments = comments,
         )
     }
 
