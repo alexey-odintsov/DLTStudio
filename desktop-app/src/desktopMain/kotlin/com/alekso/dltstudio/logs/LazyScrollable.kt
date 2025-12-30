@@ -47,6 +47,7 @@ fun LazyScrollable(
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
+    markedIds: SnapshotStateList<Int>,
 ) {
     Column(modifier = modifier) {
 
@@ -129,6 +130,7 @@ fun LazyScrollable(
                     RowContextMenu(
                         i = i,
                         message = logMessage,
+                        marked = logMessage.id in markedIds,
                         rowContent = "$index $sTime $sTimeOffset $sEcuId $sSessionId $sApplicationId $sContextId $sContent",
                         rowContextMenuCallbacks = rowContextMenuCallbacks,
                     ) {
@@ -169,7 +171,7 @@ fun LazyScrollable(
                             cellStyle = cellStyle,
                             logTypeIndicator = logTypeIndicator,
                             wrapContent = wrapContent,
-                            marked = logMessage.marked,
+                            marked = logMessage.id in markedIds,
                             comment = logMessage.comment,
                             showComments = showComments,
                             onColumnResized = onColumnResized,

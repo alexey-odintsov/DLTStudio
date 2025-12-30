@@ -27,16 +27,18 @@ fun LogsListPanel(
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
+    markedIds: SnapshotStateList<Int>,
 ) {
     Panel(
         modifier = modifier,
         title = "Messages"
     ) {
         LazyScrollable(
-            Modifier.fillMaxSize(),
-            columnParams,
-            messages,
-            colorFilters,
+            modifier = Modifier.fillMaxSize(),
+            columnParams = columnParams,
+            logMessages = messages,
+            markedIds = markedIds,
+            colorFilters = colorFilters,
             selectedRow = selectedRow,
             onRowSelected = onLogsRowSelected,
             listState = logsListState,
@@ -55,7 +57,7 @@ fun PreviewLogsListPanel() {
     val list = SnapshotStateList<LogMessage>()
     list.addAll(
         SampleData.getSampleDltMessages(20)
-            .map { LogMessage(dltMessage = it, marked = true, comment = "Test comment") })
+            .map { LogMessage(dltMessage = it, comment = "Test comment") })
 
     LogsListPanel(
         modifier = Modifier.fillMaxSize(),
@@ -69,6 +71,7 @@ fun PreviewLogsListPanel() {
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         showComments = true,
-        onColumnResized = { _, _ -> }
+        markedIds = mutableStateListOf(),
+        onColumnResized = { _, _ -> },
     )
 }

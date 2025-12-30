@@ -76,6 +76,8 @@ fun LogsPanel(
     onColumnResized: (String, Float) -> Unit,
     logSelection: LogSelection,
     selectedMessage: LogMessage?,
+    markedIds: SnapshotStateList<Int>,
+    focusedBookmarkId: Int?,
 ) {
 
     Column(modifier = modifier) {
@@ -84,6 +86,8 @@ fun LogsPanel(
             searchState,
             searchAutoComplete,
             callbacks = logsToolbarCallbacks,
+            focusedBookmarkId = focusedBookmarkId,
+            markedIds = markedIds,
         )
 
         Divider()
@@ -108,10 +112,11 @@ fun LogsPanel(
                 ) {
                     first(20.dp) {
                         LogsListPanel(
-                            Modifier.fillMaxSize(),
-                            columnParams,
-                            logMessages,
-                            mergedFilters,
+                            modifier = Modifier.fillMaxSize(),
+                            columnParams = columnParams,
+                            messages = logMessages,
+                            markedIds = markedIds,
+                            colorFilters = mergedFilters,
                             selectedRow = logSelection.logsIndex,
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
@@ -165,6 +170,7 @@ fun LogsPanel(
                     rowContextMenuCallbacks = rowContextMenuCallbacks,
                     columnsContextMenuCallbacks = columnsContextMenuCallbacks,
                     onColumnResized = onColumnResized,
+                    markedIds = markedIds,
                 )
             }
             splitter {
@@ -226,5 +232,7 @@ fun PreviewLogsPanel() {
         onColumnResized = { _, _ -> },
         logSelection = LogSelection(0, 0),
         selectedMessage = null,
+        markedIds = mutableStateListOf(),
+        focusedBookmarkId = null,
     )
 }

@@ -68,6 +68,7 @@ class LogsPlugin(
                 previewPanels = viewModel.previewPanels,
                 columnParams = viewModel.columnParams,
                 logMessages = messagesRepository.getMessages(),
+                markedIds = messagesRepository.getMarkedIds(),
                 searchState = viewModel.searchState.value,
                 searchAutoComplete = viewModel.searchAutocomplete,
                 searchResult = messagesRepository.getSearchResults(),
@@ -89,6 +90,7 @@ class LogsPlugin(
                 rowContextMenuCallbacks = viewModel.rowContextMenuCallbacks,
                 columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
                 onColumnResized = viewModel::onColumnResized,
+                focusedBookmarkId = messagesRepository.getFocusedMarkedIdIndex().value,
             )
         }
     }

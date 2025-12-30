@@ -8,6 +8,8 @@ interface MessagesRepository {
     suspend fun clearMessages()
     suspend fun storeMessages(messages: List<LogMessage>)
     fun getMessages(): SnapshotStateList<LogMessage>
+    fun getMarkedIds(): SnapshotStateList<Int>
+    fun getFocusedMarkedIdIndex(): State<Int?>
     fun getSearchResults(): SnapshotStateList<LogMessage>
     fun getSelectedMessage(): State<LogMessage?>
 
@@ -23,6 +25,9 @@ interface MessagesRepository {
      * @param id - id of the message to toggle
      */
     fun toggleMark(id: Int)
+
+    fun selectPrevMarkedLog()
+    fun selectNextMarkedLog()
 
     /**
      * Remove messages and search results by a predicate
@@ -41,4 +46,5 @@ interface MessagesRepository {
      * */
     suspend fun searchMessages(progress: (Float) -> Unit, predicate: (LogMessage) -> Boolean): Long
     fun selectMessage(key: Int)
+    fun clearMarks()
 }
