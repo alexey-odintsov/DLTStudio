@@ -70,6 +70,8 @@ class MessagesRepositoryImpl : MessagesRepository {
             val shouldRemove = predicate(logMessage)
             if (!shouldRemove) {
                 filtered.add(logMessage)
+            } else {
+                markedItemsIds.remove(logMessage.id)
             }
         }
         withContext(Main) {
