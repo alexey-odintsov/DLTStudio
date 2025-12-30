@@ -41,7 +41,7 @@ class PluginTest {
                 predicate: (LogMessage) -> Boolean
             ): Long = 0L
 
-            override fun selectMessage(key: Int)  = Unit
+            override fun selectMessage(id: Int)  = Unit
             override fun clearMarks() = Unit
         }
         val pluginManager = PluginManager(
