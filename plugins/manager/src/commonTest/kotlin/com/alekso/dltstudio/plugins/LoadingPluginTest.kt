@@ -25,6 +25,9 @@ class PluginTest {
             override fun getSelectedMessage(): State<LogMessage?> = mutableStateOf(null)
             override fun updateLogComment(id: Int, comment: String?) = Unit
             override fun toggleMark(id: Int) = Unit
+            override fun selectPrevMarkedLog() = Unit
+            override fun selectNextMarkedLog() = Unit
+
             override suspend fun removeMessages(
                 progress: (Float) -> Unit,
                 predicate: (LogMessage) -> Boolean
