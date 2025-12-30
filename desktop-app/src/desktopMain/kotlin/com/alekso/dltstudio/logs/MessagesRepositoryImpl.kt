@@ -86,6 +86,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     override suspend fun removeMessage(logMessage: LogMessage) {
         logMessages.removeIf { it.id == logMessage.id }
         searchResults.removeIf { it.id == logMessage.id }
+        markedItems.removeIf { it == logMessage.id }
     }
 
 
@@ -109,7 +110,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun selectMessage(key: Int) {
-        val message = logMessages.first { it.id == key }
+        val message = logMessages.firstOrNull { it.id == key }
         selectedMessage.value = message
     }
 
