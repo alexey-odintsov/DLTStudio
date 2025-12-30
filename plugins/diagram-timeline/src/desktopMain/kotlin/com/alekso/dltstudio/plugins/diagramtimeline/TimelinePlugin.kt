@@ -92,6 +92,8 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 onEntrySelected = viewModel::onEntrySelected,
                 onEntryHovered = viewModel::onEntryHovered,
                 vSplitterState = viewModel.vSplitterState,
+                markedIds = messagesRepository.getMarkedIds(),
+                onEntryMarkToggle = messagesRepository::toggleMark,
             )
         }
     }

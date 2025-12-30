@@ -14,7 +14,9 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -78,6 +80,7 @@ fun LogsPanel(
     selectedMessage: LogMessage?,
     markedIds: SnapshotStateList<Int>,
     focusedBookmarkId: Int?,
+    comments: SnapshotStateMap<Int, String>,
 ) {
 
     Column(modifier = modifier) {
@@ -125,6 +128,7 @@ fun LogsPanel(
                             rowContextMenuCallbacks = rowContextMenuCallbacks,
                             columnsContextMenuCallbacks = columnsContextMenuCallbacks,
                             onColumnResized = onColumnResized,
+                            comments = comments,
                         )
                     }
                     second(20.dp) {
@@ -171,6 +175,7 @@ fun LogsPanel(
                     columnsContextMenuCallbacks = columnsContextMenuCallbacks,
                     onColumnResized = onColumnResized,
                     markedIds = markedIds,
+                    comments = comments,
                 )
             }
             splitter {
@@ -234,5 +239,6 @@ fun PreviewLogsPanel() {
         selectedMessage = null,
         markedIds = mutableStateListOf(),
         focusedBookmarkId = null,
+        comments = mutableStateMapOf(),
     )
 }

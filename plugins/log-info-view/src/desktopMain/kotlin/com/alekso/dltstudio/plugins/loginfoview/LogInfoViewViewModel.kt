@@ -14,6 +14,8 @@ class LogInfoViewViewModel(
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
+
+
     fun onCommentUpdated(logMessage: LogMessage, comment: String?) {
         viewModelScope.launch(IO) {
             messagesRepository.updateLogComment(logMessage.id, comment)

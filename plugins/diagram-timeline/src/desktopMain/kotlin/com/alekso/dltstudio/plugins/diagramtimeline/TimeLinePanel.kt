@@ -73,6 +73,8 @@ fun TimeLinePanel(
     onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)? = null,
     onEntryHovered: ((ChartEntry<LogMessage>?) -> Unit)? = null,
     vSplitterState: SplitPaneState,
+    markedIds: SnapshotStateList<Int>,
+    onEntryMarkToggle: (Int) -> Unit,
 ) {
     Column(modifier = modifier.onKeyEvent { e ->
         if (e.type == KeyEventType.KeyDown) {
@@ -141,7 +143,11 @@ fun TimeLinePanel(
                 )
             }
             second(20.dp) {
-                EntryPreview(selectedEntry)
+                EntryPreview(
+                    selectedEntry,
+                    markedIds.contains(selectedEntry?.data?.id),
+                    onEntryMarkToggle
+                )
             }
             splitter {
                 visiblePart {
@@ -166,7 +172,6 @@ fun TimeLinePanel(
         }
     }
 }
-
 
 
 @Composable
@@ -200,21 +205,23 @@ fun PreviewTimeline() {
     }
     TimeLinePanel(
         Modifier.fillMaxWidth().height(600.dp),
-        analyzeState = AnalyzeState.IDLE,
-        listState = rememberLazyListState(),
-        timelineFilters = mutableStateListOf(),
         timeTotal = TimeFrame(20000L, 300000L),
         timeFrame = TimeFrame(20000L, 300000L),
+        listState = rememberLazyListState(),
+        analyzeState = AnalyzeState.IDLE,
+        timelineFilters = mutableStateListOf(),
+        filtersDialogState = false,
         entriesMap = mutableStateMapOf(),
         highlightedKeysMap = mutableStateMapOf(),
         filtersDialogCallbacks = callbacks,
         retrieveEntriesForFilter = { i -> EventsChartData() },
         legendSize = 250f,
         recentFiltersFiles = mutableStateListOf(),
-        toolbarCallbacks = ToolbarCallbacks.Stub,
-        filtersDialogState = false,
-        onCloseFiltersDialog = {},
         currentFilterFile = null,
-        vSplitterState = SplitPaneState(1f, false)
+        toolbarCallbacks = ToolbarCallbacks.Stub,
+        onCloseFiltersDialog = {},
+        vSplitterState = SplitPaneState(1f, false),
+        markedIds = mutableStateListOf(),
+        onEntryMarkToggle = {},
     )
 }

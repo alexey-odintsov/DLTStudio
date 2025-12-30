@@ -3,9 +3,11 @@ package com.alekso.dltstudio.com.alekso.dltstudio.logs
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
@@ -21,6 +23,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     private val selectedMessage = mutableStateOf<LogMessage?>(null)
     val markedItemsIds = mutableStateListOf<Int>()
     var focusedMarkedIdIndex = mutableStateOf<Int?>(null)
+    private val comments = mutableStateMapOf<Int, String>()
 
 
     override suspend fun clearMessages() {
@@ -72,6 +75,7 @@ class MessagesRepositoryImpl : MessagesRepository {
                 filtered.add(logMessage)
             } else {
                 markedItemsIds.remove(logMessage.id)
+                comments.remove(logMessage.id)
             }
         }
         withContext(Main) {
@@ -95,6 +99,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         logMessages.removeIf { it.id == logMessage.id }
         searchResults.removeIf { it.id == logMessage.id }
         markedItemsIds.remove(logMessage.id)
+        comments.remove(logMessage.id)
     }
 
 
@@ -132,22 +137,19 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun updateLogComment(id: Int, comment: String?) {
-        val index = logMessages.indexOfFirst { it.id == id }
-        if (index > -1) {
-            val updatedMessage = logMessages[index].copy(comment = comment)
-            logMessages[index] = updatedMessage
-            if (selectedMessage.value?.id == id) {
-                selectedMessage.value = updatedMessage
+        if (comment?.isNotEmpty() == true) {
+            comments[id] = comment
+            if (!markedItemsIds.contains(id)) {
+                markedItemsIds.add(id)
+                markedItemsIds.sort()
             }
-            val searchIndex = searchResults.indexOfFirst { it.id == id }
-            if (searchIndex > -1) {
-                searchResults[searchIndex] = updatedMessage
-            }
+        } else {
+            comments.remove(id)
         }
-        if (comment?.isNotEmpty() == true && !markedItemsIds.contains(id)) {
-            markedItemsIds.add(id)
-            markedItemsIds.sort()
-        }
+    }
+
+    override fun getComments(): SnapshotStateMap<Int, String> {
+        return comments
     }
 
     override fun toggleMark(id: Int) {

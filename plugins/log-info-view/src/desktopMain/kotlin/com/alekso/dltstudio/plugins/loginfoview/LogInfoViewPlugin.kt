@@ -17,6 +17,7 @@ val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview, FormatterConsumer {
     private lateinit var viewModel: LogInfoViewViewModel
     private lateinit var formatter: Formatter
+    private lateinit var messagesRepository: MessagesRepository
 
     override fun pluginName(): String = "Log info view"
     override fun pluginDirectoryName(): String = "log-info-view"
@@ -32,6 +33,7 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview, FormatterConsumer {
         onProgressUpdate: (Float) -> Unit,
         pluginFilesPath: String,
     ) {
+        this.messagesRepository = messagesRepository
         viewModel = LogInfoViewViewModel(messagesRepository)
     }
 
@@ -42,7 +44,12 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview, FormatterConsumer {
     @Composable
     override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
         CompositionLocalProvider(LocalFormatter provides formatter) {
-            LogInfoView(modifier, logMessage, onCommentUpdated = viewModel::onCommentUpdated)
+            LogInfoView(
+                modifier = modifier,
+                logMessage = logMessage,
+                comment = messagesRepository.getComments()[logMessage?.id],
+                onCommentUpdated = viewModel::onCommentUpdated,
+            )
         }
     }
 
