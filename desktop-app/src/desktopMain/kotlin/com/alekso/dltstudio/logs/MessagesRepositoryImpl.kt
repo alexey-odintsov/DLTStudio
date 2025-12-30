@@ -144,6 +144,10 @@ class MessagesRepositoryImpl : MessagesRepository {
                 searchResults[searchIndex] = updatedMessage
             }
         }
+        if (comment?.isNotEmpty() == true && !markedItemsIds.contains(id)) {
+            markedItemsIds.add(id)
+            markedItemsIds.sort()
+        }
     }
 
     override fun toggleMark(id: Int) {

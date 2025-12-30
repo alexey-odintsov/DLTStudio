@@ -45,6 +45,6 @@ interface MessagesRepository {
      * @return Duration of the operation
      * */
     suspend fun searchMessages(progress: (Float) -> Unit, predicate: (LogMessage) -> Boolean): Long
-    fun selectMessage(key: Int)
+    fun selectMessage(id: Int)
     fun clearMarks()
 }
