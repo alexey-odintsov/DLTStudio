@@ -28,7 +28,11 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     override suspend fun clearMessages() {
         withContext(Main) {
+            comments.clear()
+            markedItemsIds.clear()
             logMessages.clear()
+            focusedMarkedIdIndex.value = null
+            selectedMessage.value = null
             clearSearchResults()
         }
     }
