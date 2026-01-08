@@ -325,6 +325,10 @@ class MainViewModel(
                     val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
+                    val searchIndex = messagesRepository.getSearchResults().indexOfFirst { it.id == id }
+                    if (searchIndex > 0) {
+                        searchListState.scrollToItem(searchIndex)
+                    }
                 }
             }
         }
@@ -337,6 +341,10 @@ class MainViewModel(
                     val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
+                    val searchIndex = messagesRepository.getSearchResults().indexOfFirst { it.id == id }
+                    if (searchIndex > 0) {
+                        searchListState.scrollToItem(searchIndex)
+                    }
                 }
             }
         }
