@@ -25,8 +25,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alekso.dltstudio.uicomponents.ColorPalette
@@ -42,15 +40,20 @@ fun VirtualDevicePreview(
     val textMeasurer = rememberTextMeasurer()
 
     Column(modifier = modifier.background(MaterialTheme.colorScheme.background).fillMaxSize()) {
+
         deviceViews?.forEachIndexed { i, view ->
+            val viewText = when (view) {
+                is RectView -> "$i: ${view.rect} ${view.id}"
+                is PointerView -> "$i: x:${view.x}, y:${view.y}"
+                else -> ""
+            }
             Text(
                 modifier = Modifier.padding(start = 2.dp, end = 2.dp),
-                text = "$i: ${view.rect} ${view.id}",
+                text = viewText,
                 fontFamily = FontFamily.Monospace,
                 fontSize = 11.sp,
             )
         }
-
         Row(modifier = Modifier.fillMaxWidth().weight(1f).clipToBounds()) {
             Canvas(
                 modifier = Modifier
@@ -70,7 +73,25 @@ fun VirtualDevicePreview(
                 renderVirtualDevice(deviceSize, rectStyle, scale)
                 deviceViews?.forEachIndexed { i, view ->
                     val color = ColorPalette.getColor(i)
-                    renderRectView(i, view, rectStyle, textMeasurer, color, scale)
+                    when (view) {
+                        is RectView -> renderRectView(
+                            i,
+                            view,
+                            rectStyle,
+                            textMeasurer,
+                            color,
+                            scale
+                        )
+
+                        is PointerView -> renderPointerView(
+                            i,
+                            view,
+                            rectStyle,
+                            textMeasurer,
+                            color,
+                            scale
+                        )
+                    }
                 }
             }
         }
@@ -98,19 +119,14 @@ private fun DrawScope.renderVirtualDevice(
 
 private fun DrawScope.renderRectView(
     i: Int,
-    view: DeviceView,
+    view: RectView,
     rectStyle: Stroke,
     textMeasurer: TextMeasurer,
     color: Color,
     scale: Float
 ) {
-    val text = "$i: ${view.id ?: "unknown id"}"
     val textStyle = TextStyle(color = color, fontSize = 10.sp)
-    val textResult = textMeasurer.measure(
-        text, style = textStyle, constraints = Constraints.fixedWidth(
-            width = (view.rect.width * scale).toInt(),
-        ), maxLines = 5, overflow = TextOverflow.Ellipsis
-    )
+    val textResult = textMeasurer.measure("$i", style = textStyle)
 
     drawRect(
         color,
@@ -121,9 +137,33 @@ private fun DrawScope.renderRectView(
     drawText(
         textResult,
         topLeft = Offset(
-            1.dp.toPx() +
-                    (view.rect.left + view.rect.width / 2f) * scale - textResult.size.width / 2f,
-            (view.rect.top + view.rect.height / 2f) * scale - textResult.size.height / 2f
+            (view.rect.left + 6.dp.toPx())  * scale,
+            (view.rect.top + 10.dp.toPx()) * scale
+        ),
+    )
+}
+
+private fun DrawScope.renderPointerView(
+    i: Int,
+    view: PointerView,
+    rectStyle: Stroke,
+    textMeasurer: TextMeasurer,
+    color: Color,
+    scale: Float
+) {
+    val textStyle = TextStyle(color = color, fontSize = 10.sp)
+    val textResult = textMeasurer.measure("$i", style = textStyle)
+    drawCircle(
+        color,
+        radius = 10.dp.toPx() * scale,
+        Offset(view.x, view.y) * scale,
+        style = rectStyle
+    )
+    drawText(
+        textResult,
+        topLeft = Offset(
+            (view.x + 6.dp.toPx())  * scale,
+            (view.y + 10.dp.toPx()) * scale
         ),
     )
 }
@@ -135,12 +175,13 @@ fun PreviewVirtualDevicePreview() {
         modifier = Modifier.fillMaxSize(),
         deviceSize = Size(2600f, 900f),
         deviceViews = listOf(
-            DeviceView(Rect(10f, 50f, 295f, 290f), id = "Left rect long name goes here again"),
-            DeviceView(
+            RectView(Rect(10f, 50f, 295f, 290f), id = "Left rect long name goes here again"),
+            RectView(
                 Rect(110f, 150f, 295f, 290f),
                 id = "Many many many many many many many lines. Second line goes here. Third line goes here. Fourth line goes here."
             ),
-            DeviceView(Rect(305f, 50f, 590f, 290f)),
+            RectView(Rect(305f, 50f, 590f, 290f)),
+            PointerView(325f, 150f),
         )
     )
 }

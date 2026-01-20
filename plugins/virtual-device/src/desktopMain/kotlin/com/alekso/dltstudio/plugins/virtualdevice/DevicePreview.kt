@@ -41,7 +41,7 @@ fun DevicePreviewView(
             Header(
                 modifier = paddingModifier, text = "Device Preview for #${logMessage.id}:"
             )
-            deviceViews = DeviceView.parse(message.payloadText())
+            deviceViews = DeviceViewParser().parse(message.payloadText())
             if (deviceViews.isNullOrEmpty()) {
                 Text(
                     modifier = Modifier.padding(start = 2.dp, end = 2.dp),
