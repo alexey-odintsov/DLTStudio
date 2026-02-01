@@ -62,6 +62,8 @@ import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -496,6 +498,16 @@ class MainViewModel(
 
 
     init {
+        viewModelScope.launch(Default) {
+            while (true) {
+                ensureActive()
+                delay(1000)
+                val memoryUsage =
+                    Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()
+                println("Memory usage: $memoryUsage bytes")
+            }
+        }
+
         val logsPlugin = LogsPlugin(
             viewModel = this,
             messagesRepository = DependencyManager.provideMessageRepository(),
