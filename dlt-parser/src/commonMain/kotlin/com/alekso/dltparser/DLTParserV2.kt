@@ -38,6 +38,15 @@ class DLTParserV2() : DLTParser {
         Log.d("Init parser ${this.javaClass.simpleName}")
     }
 
+    class StringPool {
+        private val pool = HashMap<String, String>(1000)
+
+        fun intern(value: String): String {
+            return pool.getOrPut(value) { value }
+        }
+    }
+    val stringPool = StringPool()
+
     /**
      * https://www.autosar.org/fileadmin/standards/R20-11/FO/AUTOSAR_PRS_LogAndTraceProtocol.pdf
      * https://www.autosar.org/fileadmin/standards/R22-11/FO/AUTOSAR_PRS_LogAndTraceProtocol.pdf - Header Type for protocol version "2"
@@ -256,7 +265,7 @@ class DLTParserV2() : DLTParser {
         val headerType = parseStandardHeaderType(stream.readByte())
         val messageCounter = stream.readUnsignedByte().toUByte()
         val length = stream.readUnsignedShort().toUShort()
-        val ecuId = if (headerType.withEcuId) stream.readString(4) else null
+        val ecuId = if (headerType.withEcuId) stringPool.intern(stream.readString(4)) else null
         val sessionId = if (headerType.withSessionId) stream.readInt() else null
         val timeStamp = if (headerType.withTimestamp) stream.readInt().toUInt() else null
 
@@ -308,8 +317,8 @@ class DLTParserV2() : DLTParser {
         }
         val messageInfo = parseMessageInfo(stream.readByte())
         val argumentsCount = stream.readUnsignedByte().toUByte()
-        val applicationId = stream.readString(4)
-        val contextId = stream.readString(4)
+        val applicationId = stringPool.intern(stream.readString(4))
+        val contextId = stringPool.intern(stream.readString(4))
 
         if (DEBUG_LOG) {
             println(
