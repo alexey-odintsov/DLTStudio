@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,6 +42,7 @@ fun MainWindow(
 ) {
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }
+    val messages = mainViewModel.messages.collectAsState()
 
     Column(
         modifier = Modifier.dragAndDropTarget(
@@ -71,7 +73,7 @@ fun MainWindow(
             (mainViewModel.panels[tabIndex]).renderPanel(modifier = Modifier.weight(1f))
         }
         HorizontalDivider()
-        val messagesSize = DependencyManager.provideMessageRepository().getMessages().size
+        val messagesSize = messages.value.size
         val statusText = if (messagesSize > 0) {
             "Messages: ${"%,d".format(messagesSize)}"
         } else {

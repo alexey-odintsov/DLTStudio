@@ -55,7 +55,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 fun LogsPanel(
     modifier: Modifier = Modifier,
     columnParams: SnapshotStateList<ColumnParams>,
-    logMessages: SnapshotStateList<LogMessage>,
+    logMessages: List<LogMessage>,
     previewPanels: SnapshotStateList<PluginLogPreview>,
     // search
     searchState: SearchState,

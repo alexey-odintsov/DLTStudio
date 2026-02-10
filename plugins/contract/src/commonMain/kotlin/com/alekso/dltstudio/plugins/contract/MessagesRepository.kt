@@ -4,11 +4,12 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.model.contract.LogMessage
+import kotlinx.coroutines.flow.StateFlow
 
 interface MessagesRepository {
     suspend fun clearMessages()
     suspend fun storeMessages(messages: List<LogMessage>)
-    fun getMessages(): SnapshotStateList<LogMessage>
+    fun getMessages(): StateFlow<List<LogMessage>>
     fun getMarkedIds(): SnapshotStateList<Int>
     fun getFocusedMarkedIdIndex(): State<Int?>
     fun getSearchResults(): SnapshotStateList<LogMessage>

@@ -2,6 +2,7 @@ package com.alekso.dltstudio
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -107,6 +108,8 @@ class MainViewModel(
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
+    val messages = messagesRepository.getMessages()
+
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
             viewModelScope.launch(IO) {
@@ -208,13 +211,13 @@ class MainViewModel(
             logsOrder.value = newOrder
             when (newOrder) {
                 LogsOrder.Timestamp -> messagesRepository.storeMessages(
-                    messagesRepository.getMessages()
+                    messages.value
                         .sortedBy { it.dltMessage.standardHeader.messageCounter }
                         .sortedBy { it.dltMessage.timeStampUs }
                 )
 
                 else -> messagesRepository.storeMessages(
-                    messagesRepository.getMessages()
+                    messages.value
                         .sortedBy { it.dltMessage.standardHeader.messageCounter }
                         .sortedBy { it.dltMessage.standardHeader.timeStamp }
                 )
@@ -324,7 +327,7 @@ class MainViewModel(
             viewModelScope.launch {
                 val id = messagesRepository.getSelectedMessage().value?.id
                 if (id != null) {
-                    val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
+                    val index = messages.value.indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
                     val searchIndex = messagesRepository.getSearchResults().indexOfFirst { it.id == id }
@@ -340,7 +343,7 @@ class MainViewModel(
             viewModelScope.launch {
                 val id = messagesRepository.getSelectedMessage().value?.id
                 if (id != null) {
-                    val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
+                    val index = messages.value.indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
                     val searchIndex = messagesRepository.getSearchResults().indexOfFirst { it.id == id }
@@ -744,7 +747,7 @@ class MainViewModel(
     private suspend fun selectSearchRow(listIndex: Int, id: Int) {
         if (logSelection.searchIndex == listIndex) { // simulate second click
             try {
-                val index = messagesRepository.getMessages().indexOfFirst { it.id == id }
+                val index = messages.value.indexOfFirst { it.id == id }
                 selectLogRow(index, id)
                 logsListState.scrollToItem(index)
             } catch (e: Exception) {

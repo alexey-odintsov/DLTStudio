@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,6 +33,8 @@ class LogsPlugin(
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
     override fun renderPanel(modifier: Modifier) {
+        val messages = messagesRepository.getMessages().collectAsState()
+
         if (viewModel.changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
                 state = viewModel.changeOrderDialogState.value,
@@ -60,14 +63,14 @@ class LogsPlugin(
             )
         }
 
-        if (messagesRepository.getMessages().isEmpty()) {
+        if (messages.value.isEmpty()) {
             NoLogsStub()
         } else {
             LogsPanel(
                 modifier = modifier,
                 previewPanels = viewModel.previewPanels,
                 columnParams = viewModel.columnParams,
-                logMessages = messagesRepository.getMessages(),
+                logMessages = messages.value,
                 markedIds = messagesRepository.getMarkedIds(),
                 searchState = viewModel.searchState.value,
                 searchAutoComplete = viewModel.searchAutocomplete,

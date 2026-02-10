@@ -19,7 +19,7 @@ import com.alekso.dltstudio.ui.Panel
 fun LogsListPanel(
     modifier: Modifier = Modifier,
     columnParams: SnapshotStateList<ColumnParams>,
-    messages: SnapshotStateList<LogMessage>,
+    messages: List<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
     logsListState: LazyListState,

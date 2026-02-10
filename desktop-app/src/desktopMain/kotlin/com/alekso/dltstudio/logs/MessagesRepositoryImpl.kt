@@ -1,11 +1,9 @@
 package com.alekso.dltstudio.com.alekso.dltstudio.logs
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.extraction.forEachWithProgress
@@ -14,11 +12,14 @@ import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 
 class MessagesRepositoryImpl : MessagesRepository {
 
-    private val logMessages = mutableStateListOf<LogMessage>()
+    private val logMessages = MutableStateFlow<List<LogMessage>>(emptyList())
     private var searchResults = mutableStateListOf<LogMessage>()
     private val selectedMessage = mutableStateOf<LogMessage?>(null)
     val markedItemsIds = mutableStateListOf<Int>()
@@ -30,7 +31,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         withContext(Main) {
             comments.clear()
             markedItemsIds.clear()
-            logMessages.clear()
+            logMessages.value = emptyList()
             focusedMarkedIdIndex.value = null
             selectedMessage.value = null
             clearSearchResults()
@@ -44,10 +45,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override suspend fun storeMessages(messages: List<LogMessage>) {
-        withContext(Main) {
-            logMessages.clear()
-            logMessages.addAll(messages)
-        }
+        logMessages.value = messages
     }
 
     private suspend fun addSearchResult(logMessages: LogMessage, index: Int) {
@@ -56,7 +54,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         }
     }
 
-    override fun getMessages(): SnapshotStateList<LogMessage> {
+    override fun getMessages(): StateFlow<List<LogMessage>> {
         return logMessages
     }
 
@@ -73,7 +71,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         predicate: (LogMessage) -> Boolean
     ): Long {
         val filtered = mutableListOf<LogMessage>()
-        val duration = forEachWithProgress(logMessages, progress) { i, logMessage ->
+        val duration = forEachWithProgress(logMessages.value, progress) { i, logMessage ->
             val shouldRemove = predicate(logMessage)
             if (!shouldRemove) {
                 filtered.add(logMessage)
@@ -100,7 +98,9 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override suspend fun removeMessage(logMessage: LogMessage) {
-        logMessages.removeIf { it.id == logMessage.id }
+        logMessages.update {
+            it.toMutableList().apply { removeIf { it.id == logMessage.id } }
+        }
         searchResults.removeIf { it.id == logMessage.id }
         markedItemsIds.remove(logMessage.id)
         comments.remove(logMessage.id)
@@ -113,7 +113,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     ): Long {
         clearSearchResults()
 
-        val duration = forEachWithProgress(logMessages, progress) { i, logMessage ->
+        val duration = forEachWithProgress(logMessages.value, progress) { i, logMessage ->
             currentCoroutineContext().ensureActive()
 
             val match = predicate(logMessage)
@@ -127,7 +127,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun selectMessage(id: Int) {
-        val message = logMessages.firstOrNull { it.id == id }
+        val message = logMessages.value.firstOrNull { it.id == id }
         selectedMessage.value = message
     }
 
