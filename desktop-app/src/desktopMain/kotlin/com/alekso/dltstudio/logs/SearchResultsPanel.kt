@@ -13,7 +13,7 @@ import com.alekso.dltstudio.ui.Panel
 @Composable
 fun SearchResultsPanel(
     modifier: Modifier = Modifier,
-    columnParams: SnapshotStateList<ColumnParams>,
+    columnParams: List<ColumnParams>,
     searchResult: List<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     searchResultSelectedRow: Int,

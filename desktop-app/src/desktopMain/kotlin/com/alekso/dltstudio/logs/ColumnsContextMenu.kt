@@ -3,7 +3,6 @@ package com.alekso.dltstudio.logs
 import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.model.Column
 import com.alekso.dltstudio.model.ColumnParams
 
@@ -21,7 +20,7 @@ interface ColumnsContextMenuCallbacks {
 
 @Composable
 fun ColumnsContextMenu(
-    columnParams: SnapshotStateList<ColumnParams>,
+    columnParams: List<ColumnParams>,
     rowContextMenuCallbacks: ColumnsContextMenuCallbacks,
     content: @Composable () -> Unit
 ) {

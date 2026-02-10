@@ -36,7 +36,7 @@ import com.alekso.dltstudio.model.contract.LogMessage
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
-    columnParams: SnapshotStateList<ColumnParams>,
+    columnParams: List<ColumnParams>,
     logMessages: List<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,

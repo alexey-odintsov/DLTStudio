@@ -53,7 +53,7 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    columnParams: SnapshotStateList<ColumnParams>,
+    columnParams: List<ColumnParams>,
     logMessages: List<LogMessage>,
     previewPanels: SnapshotStateList<PluginLogPreview>,
     // search
@@ -208,7 +208,7 @@ fun PreviewLogsPanel() {
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
-        columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
+        columnParams = ColumnParams.DefaultParams,
         logMessages = list,
         previewPanels = mutableStateListOf(),
         searchState = SearchState(searchText = "Search text"),

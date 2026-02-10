@@ -17,7 +17,7 @@ import com.alekso.dltstudio.ui.Panel
 @Composable
 fun LogsListPanel(
     modifier: Modifier = Modifier,
-    columnParams: SnapshotStateList<ColumnParams>,
+    columnParams: List<ColumnParams>,
     messages: List<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
