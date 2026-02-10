@@ -12,7 +12,7 @@ interface MessagesRepository {
     fun getMessages(): StateFlow<List<LogMessage>>
     fun getMarkedIds(): SnapshotStateList<Int>
     fun getFocusedMarkedIdIndex(): State<Int?>
-    fun getSearchResults(): SnapshotStateList<LogMessage>
+    fun getSearchResults(): StateFlow<List<LogMessage>>
     fun getSelectedMessage(): State<LogMessage?>
 
     /**

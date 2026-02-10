@@ -59,7 +59,7 @@ fun LogsPanel(
     previewPanels: SnapshotStateList<PluginLogPreview>,
     // search
     searchState: SearchState,
-    searchResult: SnapshotStateList<LogMessage>,
+    searchResult: List<LogMessage>,
     searchAutoComplete: SnapshotStateList<String>,
     // color filters
     colorFilters: SnapshotStateList<ColorFilter>,

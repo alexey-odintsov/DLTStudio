@@ -2,7 +2,6 @@ package com.alekso.dltstudio
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -109,6 +108,7 @@ class MainViewModel(
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
     val messages = messagesRepository.getMessages()
+    val getSearchResults = messagesRepository.getSearchResults()
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -330,7 +330,7 @@ class MainViewModel(
                     val index = messages.value.indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
-                    val searchIndex = messagesRepository.getSearchResults().indexOfFirst { it.id == id }
+                    val searchIndex = getSearchResults.value.indexOfFirst { it.id == id }
                     if (searchIndex > 0) {
                         searchListState.scrollToItem(searchIndex)
                     }
@@ -346,7 +346,7 @@ class MainViewModel(
                     val index = messages.value.indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
-                    val searchIndex = messagesRepository.getSearchResults().indexOfFirst { it.id == id }
+                    val searchIndex = getSearchResults.value.indexOfFirst { it.id == id }
                     if (searchIndex > 0) {
                         searchListState.scrollToItem(searchIndex)
                     }

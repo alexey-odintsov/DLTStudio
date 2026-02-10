@@ -20,7 +20,7 @@ import kotlinx.coroutines.withContext
 class MessagesRepositoryImpl : MessagesRepository {
 
     private val logMessages = MutableStateFlow<List<LogMessage>>(emptyList())
-    private var searchResults = mutableStateListOf<LogMessage>()
+    private var searchResults = MutableStateFlow<List<LogMessage>>(emptyList())
     private val selectedMessage = mutableStateOf<LogMessage?>(null)
     val markedItemsIds = mutableStateListOf<Int>()
     var focusedMarkedIdIndex = mutableStateOf<Int?>(null)
@@ -39,20 +39,13 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     private suspend fun clearSearchResults() {
-        withContext(Main) {
-            searchResults.clear()
-        }
+        searchResults.value = emptyList()
     }
 
     override suspend fun storeMessages(messages: List<LogMessage>) {
         logMessages.value = messages
     }
 
-    private suspend fun addSearchResult(logMessages: LogMessage, index: Int) {
-        withContext(Main) {
-            searchResults.add(logMessages)
-        }
-    }
 
     override fun getMessages(): StateFlow<List<LogMessage>> {
         return logMessages
@@ -84,16 +77,13 @@ class MessagesRepositoryImpl : MessagesRepository {
             storeMessages(filtered)
         }
         val searchFiltered = mutableListOf<LogMessage>()
-        val searchDuration = forEachWithProgress(searchResults, progress) { i, logMessage ->
+        val searchDuration = forEachWithProgress(searchResults.value, progress) { i, logMessage ->
             val shouldRemove = predicate(logMessage)
             if (!shouldRemove) {
                 searchFiltered.add(logMessage)
             }
         }
-        withContext(Main) {
-            searchResults.clear()
-            searchResults.addAll(searchFiltered)
-        }
+        searchResults.value = searchFiltered
         return duration + searchDuration
     }
 
@@ -101,7 +91,9 @@ class MessagesRepositoryImpl : MessagesRepository {
         logMessages.update {
             it.toMutableList().apply { removeIf { it.id == logMessage.id } }
         }
-        searchResults.removeIf { it.id == logMessage.id }
+        searchResults.update {
+            it.toMutableList().apply { removeIf { it.id == logMessage.id } }
+        }
         markedItemsIds.remove(logMessage.id)
         comments.remove(logMessage.id)
     }
@@ -112,17 +104,18 @@ class MessagesRepositoryImpl : MessagesRepository {
         predicate: (LogMessage) -> Boolean
     ): Long {
         clearSearchResults()
+        val newResults = mutableListOf<LogMessage>()
 
         val duration = forEachWithProgress(logMessages.value, progress) { i, logMessage ->
             currentCoroutineContext().ensureActive()
 
             val match = predicate(logMessage)
             if (match) {
-                withContext(Main) {
-                    addSearchResult(logMessage, i)
-                }
+                newResults.add(logMessage)
             }
         }
+        searchResults.value = newResults
+
         return duration
     }
 
@@ -132,7 +125,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
 
-    override fun getSearchResults(): SnapshotStateList<LogMessage> {
+    override fun getSearchResults(): StateFlow<List<LogMessage>> {
         return searchResults
     }
 
