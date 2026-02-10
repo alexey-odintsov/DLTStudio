@@ -1,10 +1,8 @@
 package com.alekso.dltstudio.com.alekso.dltstudio.logs
 
 import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -22,7 +20,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     private val logMessages = MutableStateFlow<List<LogMessage>>(emptyList())
     private var searchResults = MutableStateFlow<List<LogMessage>>(emptyList())
     private val selectedMessage = MutableStateFlow<LogMessage?>(null)
-    val markedItemsIds = mutableStateListOf<Int>()
+    val markedItemsIds = MutableStateFlow<List<Int>>(emptyList())
     var focusedMarkedIdIndex = mutableStateOf<Int?>(null)
     private val comments = mutableStateMapOf<Int, String>()
 
@@ -30,7 +28,7 @@ class MessagesRepositoryImpl : MessagesRepository {
     override suspend fun clearMessages() {
         withContext(Main) {
             comments.clear()
-            markedItemsIds.clear()
+            markedItemsIds.value = emptyList()
             logMessages.value = emptyList()
             focusedMarkedIdIndex.value = null
             selectedMessage.value = null
@@ -51,7 +49,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         return logMessages
     }
 
-    override fun getMarkedIds(): SnapshotStateList<Int> {
+    override fun getMarkedIds(): StateFlow<List<Int>> {
         return markedItemsIds
     }
 
@@ -69,7 +67,9 @@ class MessagesRepositoryImpl : MessagesRepository {
             if (!shouldRemove) {
                 filtered.add(logMessage)
             } else {
-                markedItemsIds.remove(logMessage.id)
+                markedItemsIds.update {
+                    it.toMutableList().apply { removeIf { it == logMessage.id } }
+                }
                 comments.remove(logMessage.id)
             }
         }
@@ -94,7 +94,9 @@ class MessagesRepositoryImpl : MessagesRepository {
         searchResults.update {
             it.toMutableList().apply { removeIf { it.id == logMessage.id } }
         }
-        markedItemsIds.remove(logMessage.id)
+        markedItemsIds.update {
+            it.toMutableList().apply { removeIf { it == logMessage.id } }
+        }
         comments.remove(logMessage.id)
     }
 
@@ -137,9 +139,13 @@ class MessagesRepositoryImpl : MessagesRepository {
     override fun updateLogComment(id: Int, comment: String?) {
         if (comment?.isNotEmpty() == true) {
             comments[id] = comment
-            if (!markedItemsIds.contains(id)) {
-                markedItemsIds.add(id)
-                markedItemsIds.sort()
+            if (!markedItemsIds.value.contains(id)) {
+                markedItemsIds.update {
+                    it.toMutableList().apply {
+                        add(id)
+                        sort()
+                    }
+                }
             }
         } else {
             comments.remove(id)
@@ -151,20 +157,28 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun toggleMark(id: Int) {
-        if (markedItemsIds.contains(id)) {
-            markedItemsIds.remove(id)
+        if (markedItemsIds.value.contains(id)) {
+            markedItemsIds.update {
+                it.toMutableList().apply {
+                    remove(id)
+                }
+            }
         } else {
-            markedItemsIds.add(id)
-            markedItemsIds.sort()
+            markedItemsIds.update {
+                it.toMutableList().apply {
+                    add(id)
+                    sort()
+                }
+            }
         }
     }
 
     override fun clearMarks() {
-        markedItemsIds.clear()
+        markedItemsIds.value = emptyList()
     }
 
     override fun selectPrevMarkedLog() {
-        if (markedItemsIds.isEmpty()) return
+        if (markedItemsIds.value.isEmpty()) return
         var index = focusedMarkedIdIndex.value
         focusedMarkedIdIndex.value = if (index == null) {
             0
@@ -172,22 +186,22 @@ class MessagesRepositoryImpl : MessagesRepository {
             if (index > 0) {
                 index - 1
             } else {
-                markedItemsIds.size - 1
+                markedItemsIds.value.size - 1
             }
         }
         index = focusedMarkedIdIndex.value
         if (index != null) {
-            selectMessage(markedItemsIds[index])
+            selectMessage(markedItemsIds.value[index])
         }
     }
 
     override fun selectNextMarkedLog() {
-        if (markedItemsIds.isEmpty()) return
+        if (markedItemsIds.value.isEmpty()) return
         var index = focusedMarkedIdIndex.value
         focusedMarkedIdIndex.value = if (index == null) {
             0
         } else {
-            if (index < markedItemsIds.size - 1) {
+            if (index < markedItemsIds.value.size - 1) {
                 index + 1
             } else {
                 0
@@ -195,7 +209,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         }
         index = focusedMarkedIdIndex.value
         if (index != null) {
-            selectMessage(markedItemsIds[index])
+            selectMessage(markedItemsIds.value[index])
         }
     }
 

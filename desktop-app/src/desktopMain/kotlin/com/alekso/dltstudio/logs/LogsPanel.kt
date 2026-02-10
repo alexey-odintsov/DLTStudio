@@ -78,7 +78,7 @@ fun LogsPanel(
     onColumnResized: (String, Float) -> Unit,
     logSelection: LogSelection,
     selectedMessage: LogMessage?,
-    markedIds: SnapshotStateList<Int>,
+    markedIds: List<Int>,
     focusedBookmarkId: Int?,
     comments: SnapshotStateMap<Int, String>,
 ) {

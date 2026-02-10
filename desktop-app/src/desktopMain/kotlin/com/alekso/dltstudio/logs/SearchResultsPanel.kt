@@ -25,7 +25,7 @@ fun SearchResultsPanel(
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
-    markedIds: SnapshotStateList<Int>,
+    markedIds: List<Int>,
     comments: SnapshotStateMap<Int, String>,
 ) {
     Panel(

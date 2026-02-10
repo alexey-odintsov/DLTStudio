@@ -109,6 +109,7 @@ class MainViewModel(
 
     val messages = messagesRepository.getMessages()
     val getSearchResults = messagesRepository.getSearchResults()
+    val markedIds = messagesRepository.getMarkedIds()
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -776,7 +777,7 @@ class MainViewModel(
             val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
 
             val duration = messagesRepository.searchMessages(onProgressChanged) {
-                matchSearch(searchType, searchRegex, searchText, it, messagesRepository.getMarkedIds())
+                matchSearch(searchType, searchRegex, searchText, it, markedIds.value)
             }
 
             _searchState.value = _searchState.value.copy(
@@ -791,7 +792,7 @@ class MainViewModel(
         searchRegex: Regex?,
         searchText: String,
         logMessage: LogMessage,
-        markedIds: SnapshotStateList<Int>,
+        markedIds: List<Int>,
     ): Boolean {
         val payload = logMessage.getMessageText()
         return when (searchType) {

@@ -35,6 +35,7 @@ class LogsPlugin(
     override fun renderPanel(modifier: Modifier) {
         val messages = messagesRepository.getMessages().collectAsState()
         val searchResults = messagesRepository.getSearchResults().collectAsState()
+        val markedIds = messagesRepository.getMarkedIds().collectAsState()
 
         if (viewModel.changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
@@ -72,7 +73,7 @@ class LogsPlugin(
                 previewPanels = viewModel.previewPanels,
                 columnParams = viewModel.columnParams,
                 logMessages = messages.value,
-                markedIds = messagesRepository.getMarkedIds(),
+                markedIds = markedIds.value,
                 searchState = viewModel.searchState.value,
                 searchAutoComplete = viewModel.searchAutocomplete,
                 searchResult = searchResults.value,

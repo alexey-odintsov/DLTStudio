@@ -63,6 +63,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     @Composable
     override fun renderPanel(modifier: Modifier) {
         val analyzeState by viewModel.analyzeState.collectAsState()
+        val markedIds = messagesRepository.getMarkedIds().collectAsState()
 
         CompositionLocalProvider(LocalFormatter provides formatter) {
             if (viewModel.fileDialogState.visible) {
@@ -92,7 +93,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 onEntrySelected = viewModel::onEntrySelected,
                 onEntryHovered = viewModel::onEntryHovered,
                 vSplitterState = viewModel.vSplitterState,
-                markedIds = messagesRepository.getMarkedIds(),
+                markedIds = markedIds.value,
                 onEntryMarkToggle = messagesRepository::toggleMark,
             )
         }

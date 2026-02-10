@@ -56,7 +56,7 @@ fun LogsToolbar(
     searchAutoComplete: SnapshotStateList<String>,
     callbacks: LogsToolbarCallbacks,
     focusedBookmarkId: Int?,
-    markedIds: SnapshotStateList<Int>,
+    markedIds: List<Int>,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Tooltip(text = "Toggle fatal logs highlight") {

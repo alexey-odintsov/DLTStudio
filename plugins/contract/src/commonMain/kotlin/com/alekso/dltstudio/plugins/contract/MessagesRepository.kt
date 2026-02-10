@@ -10,7 +10,7 @@ interface MessagesRepository {
     suspend fun clearMessages()
     suspend fun storeMessages(messages: List<LogMessage>)
     fun getMessages(): StateFlow<List<LogMessage>>
-    fun getMarkedIds(): SnapshotStateList<Int>
+    fun getMarkedIds(): StateFlow<List<Int>>
     fun getFocusedMarkedIdIndex(): State<Int?>
     fun getSearchResults(): StateFlow<List<LogMessage>>
     fun getSelectedMessage(): StateFlow<LogMessage?>
