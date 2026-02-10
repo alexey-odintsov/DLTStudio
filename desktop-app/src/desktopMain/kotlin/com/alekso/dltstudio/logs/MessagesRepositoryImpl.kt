@@ -21,7 +21,7 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     private val logMessages = MutableStateFlow<List<LogMessage>>(emptyList())
     private var searchResults = MutableStateFlow<List<LogMessage>>(emptyList())
-    private val selectedMessage = mutableStateOf<LogMessage?>(null)
+    private val selectedMessage = MutableStateFlow<LogMessage?>(null)
     val markedItemsIds = mutableStateListOf<Int>()
     var focusedMarkedIdIndex = mutableStateOf<Int?>(null)
     private val comments = mutableStateMapOf<Int, String>()
@@ -112,6 +112,7 @@ class MessagesRepositoryImpl : MessagesRepository {
             val match = predicate(logMessage)
             if (match) {
                 newResults.add(logMessage)
+                // todo: emit search results with debouncing
             }
         }
         searchResults.value = newResults
@@ -129,7 +130,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         return searchResults
     }
 
-    override fun getSelectedMessage(): State<LogMessage?> {
+    override fun getSelectedMessage(): StateFlow<LogMessage?> {
         return selectedMessage
     }
 
