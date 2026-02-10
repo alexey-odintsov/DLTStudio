@@ -2,6 +2,7 @@ package com.alekso.dltstudio.plugins.loginfoview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.Formatter
@@ -43,11 +44,13 @@ class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview, FormatterConsumer {
 
     @Composable
     override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
+        val comments = messagesRepository.getComments().collectAsState()
+
         CompositionLocalProvider(LocalFormatter provides formatter) {
             LogInfoView(
                 modifier = modifier,
                 logMessage = logMessage,
-                comment = messagesRepository.getComments()[logMessage?.id],
+                comment = comments.value[logMessage?.id],
                 onCommentUpdated = viewModel::onCommentUpdated,
             )
         }

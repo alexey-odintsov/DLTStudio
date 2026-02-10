@@ -1,8 +1,5 @@
 package com.alekso.dltstudio.com.alekso.dltstudio.logs
 
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
@@ -21,13 +18,13 @@ class MessagesRepositoryImpl : MessagesRepository {
     private var searchResults = MutableStateFlow<List<LogMessage>>(emptyList())
     private val selectedMessage = MutableStateFlow<LogMessage?>(null)
     val markedItemsIds = MutableStateFlow<List<Int>>(emptyList())
-    var focusedMarkedIdIndex = mutableStateOf<Int?>(null)
-    private val comments = mutableStateMapOf<Int, String>()
+    var focusedMarkedIdIndex = MutableStateFlow<Int?>(null)
+    private val comments = MutableStateFlow<Map<Int, String>>(emptyMap())
 
 
     override suspend fun clearMessages() {
         withContext(Main) {
-            comments.clear()
+            comments.value = emptyMap()
             markedItemsIds.value = emptyList()
             logMessages.value = emptyList()
             focusedMarkedIdIndex.value = null
@@ -53,7 +50,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         return markedItemsIds
     }
 
-    override fun getFocusedMarkedIdIndex(): State<Int?> {
+    override fun getFocusedMarkedIdIndex(): StateFlow<Int?> {
         return focusedMarkedIdIndex
     }
 
@@ -70,12 +67,14 @@ class MessagesRepositoryImpl : MessagesRepository {
                 markedItemsIds.update {
                     it.toMutableList().apply { removeIf { it == logMessage.id } }
                 }
-                comments.remove(logMessage.id)
+                comments.update {
+                    it.toMutableMap().apply {
+                        remove(logMessage.id)
+                    }
+                }
             }
         }
-        withContext(Main) {
-            storeMessages(filtered)
-        }
+        storeMessages(filtered)
         val searchFiltered = mutableListOf<LogMessage>()
         val searchDuration = forEachWithProgress(searchResults.value, progress) { i, logMessage ->
             val shouldRemove = predicate(logMessage)
@@ -97,7 +96,11 @@ class MessagesRepositoryImpl : MessagesRepository {
         markedItemsIds.update {
             it.toMutableList().apply { removeIf { it == logMessage.id } }
         }
-        comments.remove(logMessage.id)
+        comments.update {
+            it.toMutableMap().apply {
+                remove(logMessage.id)
+            }
+        }
     }
 
 
@@ -138,7 +141,11 @@ class MessagesRepositoryImpl : MessagesRepository {
 
     override fun updateLogComment(id: Int, comment: String?) {
         if (comment?.isNotEmpty() == true) {
-            comments[id] = comment
+            comments.update {
+                it.toMutableMap().apply {
+                    put(id, comment)
+                }
+            }
             if (!markedItemsIds.value.contains(id)) {
                 markedItemsIds.update {
                     it.toMutableList().apply {
@@ -148,11 +155,15 @@ class MessagesRepositoryImpl : MessagesRepository {
                 }
             }
         } else {
-            comments.remove(id)
+            comments.update {
+                it.toMutableMap().apply {
+                    remove(id)
+                }
+            }
         }
     }
 
-    override fun getComments(): SnapshotStateMap<Int, String> {
+    override fun getComments(): StateFlow<Map<Int, String>> {
         return comments
     }
 

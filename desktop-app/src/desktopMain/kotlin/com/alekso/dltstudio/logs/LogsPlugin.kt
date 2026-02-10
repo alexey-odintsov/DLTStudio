@@ -36,6 +36,8 @@ class LogsPlugin(
         val messages = messagesRepository.getMessages().collectAsState()
         val searchResults = messagesRepository.getSearchResults().collectAsState()
         val markedIds = messagesRepository.getMarkedIds().collectAsState()
+        val focusedMarkedIdIndex = messagesRepository.getFocusedMarkedIdIndex().collectAsState()
+        val comments = messagesRepository.getComments().collectAsState()
 
         if (viewModel.changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
@@ -95,8 +97,8 @@ class LogsPlugin(
                 rowContextMenuCallbacks = viewModel.rowContextMenuCallbacks,
                 columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
                 onColumnResized = viewModel::onColumnResized,
-                focusedBookmarkId = messagesRepository.getFocusedMarkedIdIndex().value,
-                comments = messagesRepository.getComments(),
+                focusedBookmarkId = focusedMarkedIdIndex.value,
+                comments = comments.value,
             )
         }
     }

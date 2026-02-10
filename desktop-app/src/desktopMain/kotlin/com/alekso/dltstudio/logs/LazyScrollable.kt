@@ -16,7 +16,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -49,7 +48,7 @@ fun LazyScrollable(
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
     markedIds: List<Int>,
-    comments: SnapshotStateMap<Int, String>,
+    comments: Map<Int, String>,
 ) {
     Column(modifier = modifier) {
 

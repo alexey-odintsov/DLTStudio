@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
@@ -30,7 +29,7 @@ fun LogsListPanel(
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
     markedIds: List<Int>,
-    comments: SnapshotStateMap<Int, String>,
+    comments: Map<Int, String>,
 ) {
     Panel(
         modifier = modifier,

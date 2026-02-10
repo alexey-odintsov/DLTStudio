@@ -10,13 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -80,9 +79,8 @@ fun LogsPanel(
     selectedMessage: LogMessage?,
     markedIds: List<Int>,
     focusedBookmarkId: Int?,
-    comments: SnapshotStateMap<Int, String>,
+    comments: Map<Int, String>,
 ) {
-
     Column(modifier = modifier) {
         LogsToolbar(
             logsToolbarState,
@@ -93,7 +91,7 @@ fun LogsPanel(
             markedIds = markedIds,
         )
 
-        Divider()
+        HorizontalDivider()
         // TODO: Move to viewModel
         val mergedFilters = mutableStateListOf<ColorFilter>()
         mergedFilters.addAll(colorFilters)
@@ -230,8 +228,8 @@ fun PreviewLogsPanel() {
         hSplitterState = SplitPaneState(0.8f, true),
         logsListState = LazyListState(),
         searchListState = LazyListState(),
-        onLogsRowSelected = { i, r -> },
-        onSearchRowSelected = { i, r -> },
+        onLogsRowSelected = { _, _ -> },
+        onSearchRowSelected = { _, _ -> },
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         onColumnResized = { _, _ -> },
