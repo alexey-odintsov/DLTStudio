@@ -61,7 +61,7 @@ fun LogsPanel(
     searchResult: List<LogMessage>,
     searchAutoComplete: SnapshotStateList<String>,
     // color filters
-    colorFilters: SnapshotStateList<ColorFilter>,
+    colorFilters: List<ColorFilter>,
     // toolbar
     logsToolbarState: LogsToolbarState,
     logsToolbarCallbacks: LogsToolbarCallbacks,

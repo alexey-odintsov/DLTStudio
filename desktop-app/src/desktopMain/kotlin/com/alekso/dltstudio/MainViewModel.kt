@@ -72,6 +72,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlinx.datetime.TimeZone
@@ -110,6 +111,9 @@ class MainViewModel(
     val messages = messagesRepository.getMessages()
     val getSearchResults = messagesRepository.getSearchResults()
     val markedIds = messagesRepository.getMarkedIds()
+
+    private val colorFilters = MutableStateFlow<List<ColorFilter>>(emptyList())
+    public fun getColorFilters(): StateFlow<List<ColorFilter>> = colorFilters
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -597,12 +601,12 @@ class MainViewModel(
 
 
     fun clearColorFilters() {
-        colorFilters.clear()
+        colorFilters.value = emptyList()
     }
 
     fun saveColorFilters(file: File) {
         viewModelScope.launch {
-            ColorFilterManager().saveToFile(colorFilters, file)
+            ColorFilterManager().saveToFile(colorFilters.value, file)
             preferencesRepository.addNewRecentColorFilter(
                 RecentColorFilterFileEntry(
                     file.name,
@@ -714,10 +718,10 @@ class MainViewModel(
     }
 
     private fun loadColorFilters(file: File) {
-        colorFilters.clear()
-        viewModelScope.launch {
+        colorFilters.value = emptyList()
+        viewModelScope.launch(IO) {
             ColorFilterManager().loadFromFile(file)?.let {
-                colorFilters.addAll(it)
+                colorFilters.value = it
             }
             preferencesRepository.addNewRecentColorFilter(
                 RecentColorFilterFileEntry(
@@ -814,27 +818,41 @@ class MainViewModel(
         }
     }
 
-    val colorFilters = mutableStateListOf<ColorFilter>()
 
     val colorFiltersDialogCallbacks = object : ColorFiltersDialogCallbacks {
         override fun onColorFilterUpdate(position: Int, filter: ColorFilter) {
             Log.d("onFilterUpdate $position $filter")
-            if (position < 0 || position > colorFilters.size) {
-                colorFilters.add(filter)
-            } else colorFilters[position] = filter
+            if (position < 0 || position > colorFilters.value.size) {
+                colorFilters.update {
+                    it.toMutableList().apply {
+                        add(filter)
+                    }
+                }
+            } else {
+                colorFilters.update {
+                    it.toMutableList().apply {
+                        set(position, filter)
+                    }
+                }
+            }
         }
 
         override fun onColorFilterDelete(position: Int) {
-            colorFilters.removeAt(position)
+            colorFilters.update {
+                it.toMutableList().apply { removeAt(position) }
+            }
         }
 
         override fun onColorFilterMove(index: Int, offset: Int) {
-            if (index + offset in 0..<colorFilters.size) {
-                val temp = colorFilters[index]
-                colorFilters[index] = colorFilters[index + offset]
-                colorFilters[index + offset] = temp
+            if (index + offset in 0..<colorFilters.value.size) {
+                colorFilters.update {
+                    it.toMutableList().apply {
+                        val temp = this[index]
+                        this[index] = this[index + offset]
+                        this[index + offset] = temp
+                    }
+                }
             }
-
         }
     }
 

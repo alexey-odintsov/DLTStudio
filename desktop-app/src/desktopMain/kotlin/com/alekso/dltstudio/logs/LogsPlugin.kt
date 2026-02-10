@@ -38,6 +38,7 @@ class LogsPlugin(
         val markedIds = messagesRepository.getMarkedIds().collectAsState()
         val focusedMarkedIdIndex = messagesRepository.getFocusedMarkedIdIndex().collectAsState()
         val comments = messagesRepository.getComments().collectAsState()
+        val colorFilters = viewModel.getColorFilters().collectAsState()
 
         if (viewModel.changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
@@ -51,7 +52,7 @@ class LogsPlugin(
             ColorFiltersDialog(
                 visible = viewModel.colorFiltersDialogState.value,
                 onDialogClosed = { viewModel.colorFiltersDialogState.value = false },
-                colorFilters = viewModel.colorFilters,
+                colorFilters = colorFilters.value,
                 callbacks = viewModel.colorFiltersDialogCallbacks,
             )
         }
@@ -79,7 +80,7 @@ class LogsPlugin(
                 searchState = viewModel.searchState.value,
                 searchAutoComplete = viewModel.searchAutocomplete,
                 searchResult = searchResults.value,
-                colorFilters = viewModel.colorFilters,
+                colorFilters = colorFilters.value,
                 logsToolbarState = viewModel.logsToolbarState,
                 logsToolbarCallbacks = viewModel.logsToolbarCallbacks,
                 vSplitterState = viewModel.vSplitterState,
