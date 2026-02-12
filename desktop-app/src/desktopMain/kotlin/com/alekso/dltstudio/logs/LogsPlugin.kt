@@ -42,6 +42,7 @@ class LogsPlugin(
         val previewPanels = viewModel.previewPanels.collectAsState()
         val logSelection = viewModel.logSelection.collectAsState()
         val searchAutoComplete = viewModel.searchAutocomplete.collectAsState()
+        val selectedMessage = messagesRepository.getSelectedMessage().collectAsState()
 
         if (viewModel.changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
@@ -90,7 +91,7 @@ class LogsPlugin(
                 hSplitterState = viewModel.hSplitterState,
                 logsListState = viewModel.logsListState,
                 logSelection = logSelection.value,
-                selectedMessage = messagesRepository.getSelectedMessage().value,
+                selectedMessage = selectedMessage.value,
                 searchListState = viewModel.searchListState,
                 onLogsRowSelected = { i, r ->
                     viewModel.onLogsRowSelected(i, r)
