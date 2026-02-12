@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.com.alekso.dltstudio.logs
+package com.alekso.dltstudio.logs
 
 import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
