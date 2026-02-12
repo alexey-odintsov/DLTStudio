@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
