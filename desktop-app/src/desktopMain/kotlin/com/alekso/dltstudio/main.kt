@@ -42,6 +42,7 @@ fun main() = application {
         val settingsLogs = mainViewModel.settingsLogs.collectAsState()
         val settingsPlugins = mainViewModel.settingsPlugins.collectAsState(SettingsPlugins.Initial)
         val fileDialogState = mainViewModel.fileDialogState.collectAsState()
+        val recentColorFiltersFiles = mainViewModel.recentColorFiltersFiles.collectAsState()
 
         window.title = "DLT Studio ${filePath.value}"
         ThemeManager.AppTheme {
@@ -66,7 +67,7 @@ fun main() = application {
                 }
                 MainMenu(
                     mainViewModel.mainMenuCallbacks,
-                    mainViewModel.recentColorFiltersFiles,
+                    recentColorFiltersFiles.value,
                 )
                 MainWindow(mainViewModel)
             }

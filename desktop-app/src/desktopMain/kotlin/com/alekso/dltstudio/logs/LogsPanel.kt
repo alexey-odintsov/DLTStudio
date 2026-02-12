@@ -55,17 +55,13 @@ fun LogsPanel(
     modifier: Modifier = Modifier,
     columnParams: List<ColumnParams>,
     logMessages: List<LogMessage>,
-    previewPanels: SnapshotStateList<PluginLogPreview>,
-    // search
+    previewPanels: List<PluginLogPreview>,
     searchState: SearchState,
     searchResult: List<LogMessage>,
-    searchAutoComplete: SnapshotStateList<String>,
-    // color filters
+    searchAutoComplete: List<String>,
     colorFilters: List<ColorFilter>,
-    // toolbar
     logsToolbarState: LogsToolbarState,
     logsToolbarCallbacks: LogsToolbarCallbacks,
-    // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
     logsListState: LazyListState,

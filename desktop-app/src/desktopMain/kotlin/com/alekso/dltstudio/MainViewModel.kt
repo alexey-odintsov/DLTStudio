@@ -201,8 +201,8 @@ class MainViewModel(
 
     private var currentFolder: File? = null
     var filesPath = MutableStateFlow("")
-    val panels = mutableStateListOf<PluginPanel>()
-    val previewPanels = mutableStateListOf<PluginLogPreview>()
+    val panels = MutableStateFlow<List<PluginPanel>>(emptyList())
+    val previewPanels = MutableStateFlow<List<PluginLogPreview>>(emptyList())
 
     private var _searchState = mutableStateOf<SearchState>(SearchState())
     val searchState: State<SearchState> = _searchState
@@ -239,12 +239,12 @@ class MainViewModel(
     val logsListState = LazyListState()
     val searchListState = LazyListState()
 
-    var logSelection by mutableStateOf(LogSelection(0, 0))
+    var logSelection = MutableStateFlow(LogSelection(0, 0))
         private set
 
 
-    private val _searchAutocomplete = mutableStateListOf<String>()
-    val searchAutocomplete: SnapshotStateList<String>
+    private val _searchAutocomplete = MutableStateFlow<List<String>>(emptyList())
+    val searchAutocomplete: StateFlow<List<String>>
         get() = _searchAutocomplete
 
     fun onSearchClicked(searchType: SearchType, searchText: String) {
@@ -500,8 +500,8 @@ class MainViewModel(
         }
     }
 
-    private val _recentColorFiltersFiles = mutableStateListOf<RecentColorFilterFileEntry>()
-    val recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>
+    private val _recentColorFiltersFiles = MutableStateFlow<List<RecentColorFilterFileEntry>>(emptyList())
+    val recentColorFiltersFiles: StateFlow<List<RecentColorFilterFileEntry>>
         get() = _recentColorFiltersFiles
 
 
@@ -520,12 +520,11 @@ class MainViewModel(
             viewModel = this,
             messagesRepository = DependencyManager.provideMessageRepository(),
         )
-        panels.add(logsPlugin)
+        panels.value = listOf(logsPlugin)
 
         viewModelScope.launch {
             preferencesRepository.getRecentColorFilters().collectLatest {
-                _recentColorFiltersFiles.clear()
-                _recentColorFiltersFiles.addAll(it)
+                _recentColorFiltersFiles.value = it
             }
         }
 
@@ -538,19 +537,18 @@ class MainViewModel(
 
             pluginManager.loadPlugins()
             val loadedPanels = pluginManager.getPluginPanels()
-            withContext(Main) {
-                panels.addAll(loadedPanels)
+            panels.update {
+                it.toMutableList().apply {
+                    addAll(loadedPanels)
+                }
             }
             val loadedPreviewPanels = pluginManager.getPluginLogPreviews()
-            withContext(Main) {
-                previewPanels.addAll(loadedPreviewPanels)
-            }
+            previewPanels.value = loadedPreviewPanels
         }
 
         viewModelScope.launch(IO) {
             preferencesRepository.getRecentSearch().collectLatest {
-                _searchAutocomplete.clear()
-                _searchAutocomplete.addAll(it.map { it.value })
+                _searchAutocomplete.value = it.map { it.value }
             }
         }
 
@@ -740,7 +738,7 @@ class MainViewModel(
 
     private suspend fun selectLogRow(listIndex: Int, key: Int) {
         messagesRepository.selectMessage(key)
-        logSelection = logSelection.copy(logsIndex = listIndex)
+        logSelection.value = logSelection.value.copy(logsIndex = listIndex)
     }
 
     fun onSearchRowSelected(listIndex: Int, id: Int) {
@@ -750,7 +748,7 @@ class MainViewModel(
     }
 
     private suspend fun selectSearchRow(listIndex: Int, id: Int) {
-        if (logSelection.searchIndex == listIndex) { // simulate second click
+        if (logSelection.value.searchIndex == listIndex) { // simulate second click
             try {
                 val index = messages.value.indexOfFirst { it.id == id }
                 selectLogRow(index, id)
@@ -760,7 +758,7 @@ class MainViewModel(
             }
         } else {
             messagesRepository.selectMessage(id)
-            logSelection = logSelection.copy(searchIndex = listIndex)
+            logSelection.value = logSelection.value.copy(searchIndex = listIndex)
         }
     }
 

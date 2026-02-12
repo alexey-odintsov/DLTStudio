@@ -39,6 +39,9 @@ class LogsPlugin(
         val focusedMarkedIdIndex = messagesRepository.getFocusedMarkedIdIndex().collectAsState()
         val comments = messagesRepository.getComments().collectAsState()
         val colorFilters = viewModel.getColorFilters().collectAsState()
+        val previewPanels = viewModel.previewPanels.collectAsState()
+        val logSelection = viewModel.logSelection.collectAsState()
+        val searchAutoComplete = viewModel.searchAutocomplete.collectAsState()
 
         if (viewModel.changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
@@ -73,12 +76,12 @@ class LogsPlugin(
         } else {
             LogsPanel(
                 modifier = modifier,
-                previewPanels = viewModel.previewPanels,
+                previewPanels = previewPanels.value,
                 columnParams = viewModel.columnParams,
                 logMessages = messages.value,
                 markedIds = markedIds.value,
                 searchState = viewModel.searchState.value,
-                searchAutoComplete = viewModel.searchAutocomplete,
+                searchAutoComplete = searchAutoComplete.value,
                 searchResult = searchResults.value,
                 colorFilters = colorFilters.value,
                 logsToolbarState = viewModel.logsToolbarState,
@@ -86,7 +89,7 @@ class LogsPlugin(
                 vSplitterState = viewModel.vSplitterState,
                 hSplitterState = viewModel.hSplitterState,
                 logsListState = viewModel.logsListState,
-                logSelection = viewModel.logSelection,
+                logSelection = logSelection.value,
                 selectedMessage = messagesRepository.getSelectedMessage().value,
                 searchListState = viewModel.searchListState,
                 onLogsRowSelected = { i, r ->

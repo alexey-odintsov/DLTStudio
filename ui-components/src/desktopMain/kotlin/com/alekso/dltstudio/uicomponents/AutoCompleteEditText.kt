@@ -17,7 +17,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.key
@@ -34,7 +33,7 @@ fun AutoCompleteEditText(
     modifier: Modifier = Modifier,
     singleLine: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    items: SnapshotStateList<String>,
+    items: List<String>,
     onEnterClicked: () -> Unit
 ) {
 
