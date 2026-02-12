@@ -130,7 +130,7 @@ internal fun ChartsList(
             }
         }
 
-        Box(modifier = Modifier.Companion.weight(1f)) {
+        Box(modifier = Modifier.weight(1f)) {
             LazyColumn(
                 Modifier.onPointerEvent(
                     eventType = PointerEventType.Move,
