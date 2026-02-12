@@ -1,10 +1,8 @@
 package com.alekso.dltstudio.plugins.virtualdevice
 
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.plugins.virtualdevice.db.VirtualDeviceEntity
 import com.alekso.dltstudio.plugins.virtualdevice.db.VirtualDeviceRepository
 import com.alekso.dltstudio.plugins.virtualdevice.db.toVirtualDevice
@@ -14,6 +12,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -28,15 +28,14 @@ class VirtualDeviceViewModel(
     var currentDeviceIndex by mutableStateOf(0)
         private set
 
-    private val _virtualDevices = mutableStateListOf<VirtualDevice>()
-    val virtualDevices: SnapshotStateList<VirtualDevice>
+    private val _virtualDevices = MutableStateFlow<List<VirtualDevice>>(emptyList())
+    val virtualDevices: StateFlow<List<VirtualDevice>>
         get() = _virtualDevices
 
     init {
         viewModelScope.launch(IO) {
             virtualDeviceRepository.getAllAsFlow().collectLatest {
-                _virtualDevices.clear()
-                _virtualDevices.addAll(it.map(VirtualDeviceEntity::toVirtualDevice))
+                _virtualDevices.value = it.map(VirtualDeviceEntity::toVirtualDevice)
             }
         }
     }

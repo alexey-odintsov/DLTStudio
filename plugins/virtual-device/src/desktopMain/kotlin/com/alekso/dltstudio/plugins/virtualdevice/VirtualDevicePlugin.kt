@@ -1,6 +1,7 @@
 package com.alekso.dltstudio.plugins.virtualdevice
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
@@ -43,11 +44,13 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
 
     @Composable
     override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
+        val virtualDevices = viewModel.virtualDevices.collectAsState()
+
         if (viewModel.devicePreviewDialogState) {
             VirtualDevicesDialog(
                 visible = viewModel.devicePreviewDialogState,
                 onDialogClosed = { viewModel.devicePreviewDialogState = false },
-                virtualDevices = viewModel.virtualDevices,
+                virtualDevices = virtualDevices.value,
                 onVirtualDeviceUpdate = { device -> viewModel.onVirtualDeviceUpdate(device) },
                 onVirtualDeviceDelete = { device -> viewModel.onVirtualDeviceDelete(device) },
             )
@@ -55,7 +58,7 @@ class VirtualDevicePlugin : DLTStudioPlugin, PluginLogPreview {
         DevicePreviewView(
             modifier = modifier,
             currentDeviceIndex = viewModel.currentDeviceIndex,
-            virtualDevices = viewModel.virtualDevices,
+            virtualDevices = virtualDevices.value,
             logMessage = logMessage,
             onShowVirtualDeviceClicked = {
                 viewModel.devicePreviewDialogState = true
