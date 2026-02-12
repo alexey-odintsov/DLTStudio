@@ -129,7 +129,7 @@ class MainViewModel(
         }
 
         override fun onOpenDefaultLogsFolderClicked() {
-            fileDialogState = FileDialogState(
+            fileDialogState.value = FileDialogState(
                 operation = DialogOperation.OPEN,
                 title = "Select default logs location",
                 visible = true,
@@ -149,7 +149,7 @@ class MainViewModel(
         }
 
         override fun onOpenDefaultColorFiltersFolderClicked() {
-            fileDialogState = FileDialogState(
+            fileDialogState.value = FileDialogState(
                 operation = DialogOperation.OPEN,
                 title = "Select default color filters location",
                 visible = true,
@@ -200,7 +200,7 @@ class MainViewModel(
     }
 
     private var currentFolder: File? = null
-    var filesPath by mutableStateOf("")
+    var filesPath = MutableStateFlow("")
     val panels = mutableStateListOf<PluginPanel>()
     val previewPanels = mutableStateListOf<PluginLogPreview>()
 
@@ -396,7 +396,7 @@ class MainViewModel(
         }
     }
 
-    var fileDialogState by mutableStateOf(
+    var fileDialogState = MutableStateFlow(
         FileDialogState(
             title = "Save file",
             operation = DialogOperation.SAVE,
@@ -406,7 +406,7 @@ class MainViewModel(
     )
 
     private fun closeFileDialog() {
-        fileDialogState = fileDialogState.copy(visible = false)
+        fileDialogState.value = fileDialogState.value.copy(visible = false)
     }
 
     var settingsDialogState by mutableStateOf(false)
@@ -457,7 +457,7 @@ class MainViewModel(
         }
 
         override fun onOpenFileClicked() {
-            fileDialogState = FileDialogState(
+            fileDialogState.value = FileDialogState(
                 title = "Open DLT file(s)",
                 visible = true,
                 directory = currentFolder
@@ -470,7 +470,7 @@ class MainViewModel(
         }
 
         override fun onOpenFiltersClicked() {
-            fileDialogState = FileDialogState(
+            fileDialogState.value = FileDialogState(
                 title = "Open filters",
                 visible = true,
                 directory = settingsLogs.value.defaultColorFiltersFolder,
@@ -481,7 +481,7 @@ class MainViewModel(
         }
 
         override fun onSaveColorFilterClicked() {
-            fileDialogState = FileDialogState(
+            fileDialogState.value = FileDialogState(
                 title = "Save filters",
                 visible = true,
                 directory = settingsLogs.value.defaultColorFiltersFolder,
@@ -582,7 +582,7 @@ class MainViewModel(
         if (dltFiles.isEmpty()) return
 
         parseJob = viewModelScope.launch(IO) {
-            filesPath = if (dltFiles.size < 2) {
+            filesPath.value = if (dltFiles.size < 2) {
                 " – ${dltFiles[0].absolutePath}"
             } else {
                 " – ${dltFiles[0].parentFile.absolutePath}/ ${dltFiles.size} file(s)"

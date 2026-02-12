@@ -1,6 +1,5 @@
 package com.alekso.dltstudio.com.alekso.dltstudio.logs
 
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
