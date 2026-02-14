@@ -14,8 +14,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -200,17 +198,17 @@ fun LogsPanel(
 @Preview
 @Composable
 fun PreviewLogsPanel() {
-    val list = SnapshotStateList<LogMessage>()
+    val list = mutableListOf<LogMessage>()
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
         columnParams = ColumnParams.DefaultParams,
         logMessages = list,
-        previewPanels = mutableStateListOf(),
+        previewPanels = emptyList(),
         searchState = SearchState(searchText = "Search text"),
-        searchResult = SnapshotStateList(),
-        searchAutoComplete = mutableStateListOf(),
-        colorFilters = SnapshotStateList(),
+        searchResult = emptyList(),
+        searchAutoComplete = emptyList(),
+        colorFilters = emptyList(),
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
@@ -231,8 +229,8 @@ fun PreviewLogsPanel() {
         onColumnResized = { _, _ -> },
         logSelection = LogSelection(0, 0),
         selectedMessage = null,
-        markedIds = mutableStateListOf(),
+        markedIds = emptyList(),
         focusedBookmarkId = null,
-        comments = mutableStateMapOf(),
+        comments = emptyMap(),
     )
 }
