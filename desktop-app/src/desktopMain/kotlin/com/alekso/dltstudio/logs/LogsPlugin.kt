@@ -43,32 +43,38 @@ class LogsPlugin(
         val logSelection = viewModel.logSelection.collectAsState()
         val searchAutoComplete = viewModel.searchAutocomplete.collectAsState()
         val selectedMessage = messagesRepository.getSelectedMessage().collectAsState()
+        val columnParams = viewModel.columnParams.collectAsState()
+        val logsToolbarState = viewModel.logsToolbarState.collectAsState()
+        val colorFiltersDialogState = viewModel.colorFiltersDialogState.collectAsState()
+        val removeLogsDialogState = viewModel.removeLogsDialogState.collectAsState()
+        val changeOrderDialogState = viewModel.changeOrderDialogState.collectAsState()
+        val logsOrder = viewModel.logsOrder.collectAsState()
+        val searchState = viewModel.searchState.collectAsState()
 
-        if (viewModel.changeOrderDialogState.value.visible) {
+
+        if (changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
-                state = viewModel.changeOrderDialogState.value,
-                logsOrder = viewModel.logsOrder.value,
+                state = changeOrderDialogState.value,
+                logsOrder = logsOrder.value,
                 onDialogClosed = viewModel::onChangeOrderDialogStateClosed,
                 onLogsOrderChanged = viewModel::onLogsOrderChanged)
         }
 
-        if (viewModel.colorFiltersDialogState.value) {
+        if (colorFiltersDialogState.value) {
             ColorFiltersDialog(
-                visible = viewModel.colorFiltersDialogState.value,
-                onDialogClosed = { viewModel.colorFiltersDialogState.value = false },
+                visible = colorFiltersDialogState.value,
+                onDialogClosed = viewModel::closeColorFiltersDialog,
                 colorFilters = colorFilters.value,
                 callbacks = viewModel.colorFiltersDialogCallbacks,
             )
         }
 
-        if (viewModel.removeLogsDialogState.value.visible) {
+        if (removeLogsDialogState.value.visible) {
             RemoveLogsDialog(
-                visible = viewModel.removeLogsDialogState.value.visible,
-                message = viewModel.removeLogsDialogState.value.message,
-                onDialogClosed = {
-                    viewModel.removeLogsDialogState.value = RemoveLogsDialogState(false)
-                },
-                onFilterClicked = { f -> viewModel.removeMessagesByFilters(f) },
+                visible = removeLogsDialogState.value.visible,
+                message = removeLogsDialogState.value.message,
+                onDialogClosed = viewModel::closeRemoveLogsDialog,
+                onFilterClicked = viewModel::removeMessagesByFilters,
             )
         }
 
@@ -78,14 +84,14 @@ class LogsPlugin(
             LogsPanel(
                 modifier = modifier,
                 previewPanels = previewPanels.value,
-                columnParams = viewModel.columnParams,
+                columnParams = columnParams.value,
                 logMessages = messages.value,
                 markedIds = markedIds.value,
-                searchState = viewModel.searchState.value,
+                searchState = searchState.value,
                 searchAutoComplete = searchAutoComplete.value,
                 searchResult = searchResults.value,
                 colorFilters = colorFilters.value,
-                logsToolbarState = viewModel.logsToolbarState,
+                logsToolbarState = logsToolbarState.value,
                 logsToolbarCallbacks = viewModel.logsToolbarCallbacks,
                 vSplitterState = viewModel.vSplitterState,
                 hSplitterState = viewModel.hSplitterState,
@@ -93,12 +99,8 @@ class LogsPlugin(
                 logSelection = logSelection.value,
                 selectedMessage = selectedMessage.value,
                 searchListState = viewModel.searchListState,
-                onLogsRowSelected = { i, r ->
-                    viewModel.onLogsRowSelected(i, r)
-                },
-                onSearchRowSelected = { i, r ->
-                    viewModel.onSearchRowSelected(i, r)
-                },
+                onLogsRowSelected = viewModel::onLogsRowSelected,
+                onSearchRowSelected = viewModel::onSearchRowSelected,
                 rowContextMenuCallbacks = viewModel.rowContextMenuCallbacks,
                 columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
                 onColumnResized = viewModel::onColumnResized,

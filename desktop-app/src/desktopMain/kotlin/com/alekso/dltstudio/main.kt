@@ -43,6 +43,7 @@ fun main() = application {
         val settingsPlugins = mainViewModel.settingsPlugins.collectAsState(SettingsPlugins.Initial)
         val fileDialogState = mainViewModel.fileDialogState.collectAsState()
         val recentColorFiltersFiles = mainViewModel.recentColorFiltersFiles.collectAsState()
+        val settingsDialogState = mainViewModel.settingsDialogState.collectAsState()
 
         window.title = "DLT Studio ${filePath.value}"
         ThemeManager.AppTheme {
@@ -50,9 +51,9 @@ fun main() = application {
                 LocalFormatter provides DependencyManager.provideFormatter(),
                 LocalSettingsUI provides settingsUI.value,
             ) {
-                if (mainViewModel.settingsDialogState) {
+                if (settingsDialogState.value) {
                     SettingsDialog(
-                        visible = mainViewModel.settingsDialogState,
+                        visible = settingsDialogState.value,
                         onDialogClosed = { mainViewModel.closeSettingsDialog() },
                         settingsUI = LocalSettingsUI.current,
                         settingsLogs = settingsLogs.value,

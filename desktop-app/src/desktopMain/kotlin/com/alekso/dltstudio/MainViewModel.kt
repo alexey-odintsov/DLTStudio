@@ -1,11 +1,6 @@
 package com.alekso.dltstudio
 
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.db.preferences.PreferencesRepository
@@ -95,6 +90,7 @@ data class LogSelection(
     val searchIndex: Int,
 )
 
+@OptIn(ExperimentalSplitPaneApi::class)
 class MainViewModel(
     private val dltParser: DLTParser,
     private val messagesRepository: MessagesRepository,
@@ -112,7 +108,7 @@ class MainViewModel(
     val markedIds = messagesRepository.getMarkedIds()
 
     private val colorFilters = MutableStateFlow<List<ColorFilter>>(emptyList())
-    public fun getColorFilters(): StateFlow<List<ColorFilter>> = colorFilters
+    fun getColorFilters(): StateFlow<List<ColorFilter>> = colorFilters
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -203,12 +199,12 @@ class MainViewModel(
     val panels = MutableStateFlow<List<PluginPanel>>(emptyList())
     val previewPanels = MutableStateFlow<List<PluginLogPreview>>(emptyList())
 
-    private var _searchState = mutableStateOf<SearchState>(SearchState())
-    val searchState: State<SearchState> = _searchState
+    private var _searchState = MutableStateFlow(SearchState())
+    val searchState: StateFlow<SearchState> = _searchState
 
-    var logsOrder = mutableStateOf(LogsOrder.Timestamp)
-    private var _changeOrderDialogState = mutableStateOf(ChangeLogsOrderDialogState.Default)
-    val changeOrderDialogState: State<ChangeLogsOrderDialogState> = _changeOrderDialogState
+    var logsOrder = MutableStateFlow(LogsOrder.Timestamp)
+    private var _changeOrderDialogState = MutableStateFlow(ChangeLogsOrderDialogState.Default)
+    val changeOrderDialogState: StateFlow<ChangeLogsOrderDialogState> = _changeOrderDialogState
 
     fun onLogsOrderChanged(newOrder: LogsOrder) {
         viewModelScope.launch(Default) {
@@ -253,13 +249,10 @@ class MainViewModel(
         }
     }
 
-    @OptIn(ExperimentalSplitPaneApi::class)
     val vSplitterState = SplitPaneState(0.8f, true)
-
-    @OptIn(ExperimentalSplitPaneApi::class)
     val hSplitterState = SplitPaneState(0.78f, true)
-    val colorFiltersDialogState = mutableStateOf(false)
-    var logsToolbarState by mutableStateOf(
+    val colorFiltersDialogState = MutableStateFlow(false)
+    var logsToolbarState = MutableStateFlow(
         LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
@@ -270,9 +263,13 @@ class MainViewModel(
         )
     )
 
+    fun closeColorFiltersDialog() {
+        colorFiltersDialogState.value = false
+    }
+
     val logsToolbarCallbacks = object : LogsToolbarCallbacks {
         override fun onSearchButtonClicked(searchType: SearchType, text: String) {
-            if (logsToolbarState.toolbarSearchWithMarkedChecked && searchType == SearchType.Text) {
+            if (logsToolbarState.value.toolbarSearchWithMarkedChecked && searchType == SearchType.Text) {
                 onSearchClicked(SearchType.TextAndMarkedRows, text)
             } else {
                 onSearchClicked(searchType, text)
@@ -280,30 +277,33 @@ class MainViewModel(
         }
 
         override fun updateToolbarFatalCheck(checked: Boolean) {
-            logsToolbarState = LogsToolbarState.updateToolbarFatalCheck(logsToolbarState, checked)
+            logsToolbarState.value =
+                LogsToolbarState.updateToolbarFatalCheck(logsToolbarState.value, checked)
         }
 
         override fun updateToolbarErrorCheck(checked: Boolean) {
-            logsToolbarState = LogsToolbarState.updateToolbarErrorCheck(logsToolbarState, checked)
+            logsToolbarState.value =
+                LogsToolbarState.updateToolbarErrorCheck(logsToolbarState.value, checked)
         }
 
         override fun updateToolbarWarningCheck(checked: Boolean) {
-            logsToolbarState = LogsToolbarState.updateToolbarWarnCheck(logsToolbarState, checked)
+            logsToolbarState.value =
+                LogsToolbarState.updateToolbarWarnCheck(logsToolbarState.value, checked)
         }
 
         override fun updateToolbarCommentsCheck(checked: Boolean) {
-            logsToolbarState =
-                LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState, checked)
+            logsToolbarState.value =
+                LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState.value, checked)
         }
 
         override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
-            logsToolbarState =
-                LogsToolbarState.updateToolbarSearchWithMarkedCheck(logsToolbarState, checked)
+            logsToolbarState.value =
+                LogsToolbarState.updateToolbarSearchWithMarkedCheck(logsToolbarState.value, checked)
         }
 
         override fun updateToolbarWrapContentCheck(checked: Boolean) {
-            logsToolbarState =
-                LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState, checked)
+            logsToolbarState.value =
+                LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState.value, checked)
         }
 
         override fun onSearchUseRegexChanged(checked: Boolean) {
@@ -360,7 +360,7 @@ class MainViewModel(
     }
 
 
-    val previewPlugins = mutableStateListOf<PluginLogPreview>()
+    val previewPlugins = MutableStateFlow<List<PluginLogPreview>>(emptyList())
     private fun stopSearch() {
         searchJob?.cancel()
         _searchState.value = _searchState.value.copy(
@@ -368,19 +368,21 @@ class MainViewModel(
         )
     }
 
-    val removeLogsDialogState = mutableStateOf(
+    val removeLogsDialogState = MutableStateFlow(
         RemoveLogsDialogState(
             visible = false, message = null
         )
     )
 
-    internal val columnParams = mutableStateListOf<ColumnParams>(
-        *ColumnParams.DefaultParams.toTypedArray()
-    )
+    fun closeRemoveLogsDialog() {
+        removeLogsDialogState.value = RemoveLogsDialogState(false)
+    }
+
+    internal val columnParams = MutableStateFlow(ColumnParams.DefaultParams)
     val columnsContextMenuCallbacks = object : ColumnsContextMenuCallbacks {
         override fun onToggleColumnVisibility(key: Column, checked: Boolean) {
-            val index = columnParams.indexOfFirst { it.column == key }
-            val updatedColumnParams = columnParams[index].copy(visible = checked)
+            val index = columnParams.value.indexOfFirst { it.column == key }
+            val updatedColumnParams = columnParams.value[index].copy(visible = checked)
             viewModelScope.launch(IO) {
                 preferencesRepository.updateColumnParams(updatedColumnParams)
             }
@@ -389,8 +391,7 @@ class MainViewModel(
         override fun onResetParams() {
             viewModelScope.launch(IO) {
                 preferencesRepository.resetColumnsParams()
-                columnParams.clear()
-                columnParams.addAll(ColumnParams.DefaultParams)
+                columnParams.value = ColumnParams.DefaultParams
             }
         }
     }
@@ -408,7 +409,7 @@ class MainViewModel(
         fileDialogState.value = fileDialogState.value.copy(visible = false)
     }
 
-    var settingsDialogState by mutableStateOf(false)
+    var settingsDialogState = MutableStateFlow(false)
 
     val settingsUI: StateFlow<SettingsUI> =
         settingsRepository.getSettingsUIFlow().mapNotNull { it?.toSettingsUI() }.stateIn(
@@ -452,7 +453,7 @@ class MainViewModel(
         }
 
         override fun onSettingsClicked() {
-            settingsDialogState = true
+            settingsDialogState.value = true
         }
 
         override fun onOpenFileClicked() {
@@ -499,7 +500,8 @@ class MainViewModel(
         }
     }
 
-    private val _recentColorFiltersFiles = MutableStateFlow<List<RecentColorFilterFileEntry>>(emptyList())
+    private val _recentColorFiltersFiles =
+        MutableStateFlow<List<RecentColorFilterFileEntry>>(emptyList())
     val recentColorFiltersFiles: StateFlow<List<RecentColorFilterFileEntry>>
         get() = _recentColorFiltersFiles
 
@@ -546,19 +548,23 @@ class MainViewModel(
         }
 
         viewModelScope.launch(IO) {
-            preferencesRepository.getRecentSearch().collectLatest {
-                _searchAutocomplete.value = it.map { it.value }
+            preferencesRepository.getRecentSearch().collectLatest { list ->
+                _searchAutocomplete.value = list.map { it.value }
             }
         }
 
         viewModelScope.launch(IO) {
             preferencesRepository.getColumnParams().collectLatest { params ->
                 params.forEach { param ->
-                    val index = columnParams.indexOfFirst { it.column.name == param.key }
+                    val index = columnParams.value.indexOfFirst { it.column.name == param.key }
                     if (index >= 0) {
-                        columnParams[index] = columnParams[index].copy(
-                            visible = param.visible, size = param.size
-                        )
+                        columnParams.update {
+                            it.toMutableList().apply {
+                                this[index] = columnParams.value[index].copy(
+                                    visible = param.visible, size = param.size
+                                )
+                            }
+                        }
                     }
                 }
             }
@@ -566,8 +572,7 @@ class MainViewModel(
 
         viewModelScope.launch(Default) {
             val logPreviewPlugins = pluginManager.getPluginLogPreviews()
-            previewPlugins.clear()
-            previewPlugins.addAll(logPreviewPlugins)
+            previewPlugins.value = logPreviewPlugins
         }
     }
 
@@ -614,7 +619,7 @@ class MainViewModel(
     }
 
     fun closeSettingsDialog() {
-        settingsDialogState = false
+        settingsDialogState.value = false
     }
 
     private suspend fun clearMessages() {
@@ -625,11 +630,15 @@ class MainViewModel(
 
 
     fun onColumnResized(columnKey: String, delta: Float) {
-        val index = columnParams.indexOfFirst { it.column.name == columnKey }
+        val index = columnParams.value.indexOfFirst { it.column.name == columnKey }
         if (index >= 0) {
-            val params = columnParams[index]
+            val params = columnParams.value[index]
             val newSize = max(params.size + delta, ColumnParams.MIN_SIZE)
-            columnParams[index] = params.copy(size = newSize)
+            columnParams.update {
+                it.toMutableList().apply {
+                    this[index] = params.copy(size = newSize)
+                }
+            }
         }
     }
 
@@ -735,7 +744,7 @@ class MainViewModel(
         }
     }
 
-    private suspend fun selectLogRow(listIndex: Int, key: Int) {
+    private fun selectLogRow(listIndex: Int, key: Int) {
         messagesRepository.selectMessage(key)
         logSelection.value = logSelection.value.copy(logsIndex = listIndex)
     }
