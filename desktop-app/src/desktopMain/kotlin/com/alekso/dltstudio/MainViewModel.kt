@@ -104,7 +104,7 @@ class MainViewModel(
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
 
     val messages = messagesRepository.getMessages()
-    val getSearchResults = messagesRepository.getSearchResults()
+    val searchResults = messagesRepository.getSearchResults()
     val markedIds = messagesRepository.getMarkedIds()
 
     private val colorFilters = MutableStateFlow<List<ColorFilter>>(emptyList())
@@ -334,7 +334,7 @@ class MainViewModel(
                     val index = messages.value.indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
-                    val searchIndex = getSearchResults.value.indexOfFirst { it.id == id }
+                    val searchIndex = searchResults.value.indexOfFirst { it.id == id }
                     if (searchIndex > 0) {
                         searchListState.scrollToItem(searchIndex)
                     }
@@ -350,7 +350,7 @@ class MainViewModel(
                     val index = messages.value.indexOfFirst { it.id == id }
                     logsListState.scrollToItem(index)
                     selectLogRow(index, id)
-                    val searchIndex = getSearchResults.value.indexOfFirst { it.id == id }
+                    val searchIndex = searchResults.value.indexOfFirst { it.id == id }
                     if (searchIndex > 0) {
                         searchListState.scrollToItem(searchIndex)
                     }
