@@ -32,7 +32,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         }
     }
 
-    private suspend fun clearSearchResults() {
+    private fun clearSearchResults() {
         searchResults.value = emptyList()
     }
 
@@ -58,7 +58,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         predicate: (LogMessage) -> Boolean
     ): Long {
         val filtered = mutableListOf<LogMessage>()
-        val duration = forEachWithProgress(logMessages.value, progress) { i, logMessage ->
+        val duration = forEachWithProgress(logMessages.value, progress) { _, logMessage ->
             val shouldRemove = predicate(logMessage)
             if (!shouldRemove) {
                 filtered.add(logMessage)
@@ -75,7 +75,7 @@ class MessagesRepositoryImpl : MessagesRepository {
         }
         storeMessages(filtered)
         val searchFiltered = mutableListOf<LogMessage>()
-        val searchDuration = forEachWithProgress(searchResults.value, progress) { i, logMessage ->
+        val searchDuration = forEachWithProgress(searchResults.value, progress) { _, logMessage ->
             val shouldRemove = predicate(logMessage)
             if (!shouldRemove) {
                 searchFiltered.add(logMessage)
@@ -109,14 +109,20 @@ class MessagesRepositoryImpl : MessagesRepository {
     ): Long {
         clearSearchResults()
         val newResults = mutableListOf<LogMessage>()
+        val start = System.currentTimeMillis()
+        var prevTs = start
 
-        val duration = forEachWithProgress(logMessages.value, progress) { i, logMessage ->
+        val duration = forEachWithProgress(logMessages.value, progress) { _, logMessage ->
             currentCoroutineContext().ensureActive()
 
             val match = predicate(logMessage)
             if (match) {
                 newResults.add(logMessage)
-                // todo: emit search results with debouncing
+            }
+            val nowTs = System.currentTimeMillis()
+            if (nowTs - prevTs > 100) {
+                prevTs = nowTs
+                searchResults.value = newResults.toList()
             }
         }
         searchResults.value = newResults
