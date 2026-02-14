@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -35,7 +34,7 @@ import dltstudio.resources.icon_edit
 fun VirtualDevicesDialog(
     visible: Boolean,
     onDialogClosed: () -> Unit,
-    virtualDevices: SnapshotStateList<VirtualDevice>,
+    virtualDevices: List<VirtualDevice>,
     onVirtualDeviceUpdate: (VirtualDevice) -> Unit,
     onVirtualDeviceDelete: (VirtualDevice) -> Unit,
 ) {
@@ -75,13 +74,13 @@ fun VirtualDevicesDialog(
 @Composable
 fun VirtualDevicesPanel(
     modifier: Modifier,
-    items: SnapshotStateList<VirtualDevice>,
+    items: List<VirtualDevice>,
     onEditItemClick: (VirtualDevice) -> Unit,
     onItemDelete: (VirtualDevice) -> Unit,
 ) {
     Column(modifier = modifier.fillMaxSize().padding(4.dp)) {
         LazyColumn(Modifier.weight(1f).fillMaxWidth()) {
-            itemsIndexed(items = items, key = { i, it -> it.id }) { i, item ->
+            itemsIndexed(items = items, key = { i, it -> it.id }) { _, item ->
                 Row(
                     Modifier.padding(horizontal = 4.dp, vertical = 0.dp),
                     verticalAlignment = Alignment.CenterVertically

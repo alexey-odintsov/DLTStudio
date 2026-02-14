@@ -37,20 +37,23 @@ fun main() = application {
         }, state = WindowState(width = 1280.dp, height = 768.dp)
     ) {
         val mainViewModel = remember { DependencyManager.provideMainViewModel() }
-        window.title = "DLT Studio ${mainViewModel.filesPath}"
+        val filePath = mainViewModel.filesPath.collectAsState()
+        val settingsUI = mainViewModel.settingsUI.collectAsState()
+        val settingsLogs = mainViewModel.settingsLogs.collectAsState()
+        val settingsPlugins = mainViewModel.settingsPlugins.collectAsState(SettingsPlugins.Initial)
+        val fileDialogState = mainViewModel.fileDialogState.collectAsState()
+        val recentColorFiltersFiles = mainViewModel.recentColorFiltersFiles.collectAsState()
+        val settingsDialogState = mainViewModel.settingsDialogState.collectAsState()
+
+        window.title = "DLT Studio ${filePath.value}"
         ThemeManager.AppTheme {
-            val settingsUI = mainViewModel.settingsUI.collectAsState()
-            val settingsLogs = mainViewModel.settingsLogs.collectAsState()
-            val settingsPlugins =
-                mainViewModel.settingsPlugins.collectAsState(SettingsPlugins.Initial)
             CompositionLocalProvider(
                 LocalFormatter provides DependencyManager.provideFormatter(),
                 LocalSettingsUI provides settingsUI.value,
             ) {
-
-                if (mainViewModel.settingsDialogState) {
+                if (settingsDialogState.value) {
                     SettingsDialog(
-                        visible = mainViewModel.settingsDialogState,
+                        visible = settingsDialogState.value,
                         onDialogClosed = { mainViewModel.closeSettingsDialog() },
                         settingsUI = LocalSettingsUI.current,
                         settingsLogs = settingsLogs.value,
@@ -60,12 +63,12 @@ fun main() = application {
                     )
                 }
 
-                if (mainViewModel.fileDialogState.visible) {
-                    FileDialog(mainViewModel.fileDialogState)
+                if (fileDialogState.value.visible) {
+                    FileDialog(fileDialogState.value)
                 }
                 MainMenu(
                     mainViewModel.mainMenuCallbacks,
-                    mainViewModel.recentColorFiltersFiles,
+                    recentColorFiltersFiles.value,
                 )
                 MainWindow(mainViewModel)
             }

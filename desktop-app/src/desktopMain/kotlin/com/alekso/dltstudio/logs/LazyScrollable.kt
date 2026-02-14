@@ -16,7 +16,6 @@ import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -37,8 +36,8 @@ import com.alekso.dltstudio.model.contract.LogMessage
 @Composable
 fun LazyScrollable(
     modifier: Modifier,
-    columnParams: SnapshotStateList<ColumnParams>,
-    logMessages: SnapshotStateList<LogMessage>,
+    columnParams: List<ColumnParams>,
+    logMessages: List<LogMessage>,
     colorFilters: SnapshotStateList<ColorFilter>,
     selectedRow: Int,
     onRowSelected: (Int, Int) -> Unit,
@@ -48,8 +47,8 @@ fun LazyScrollable(
     columnsContextMenuCallbacks: ColumnsContextMenuCallbacks,
     showComments: Boolean,
     onColumnResized: (String, Float) -> Unit,
-    markedIds: SnapshotStateList<Int>,
-    comments: SnapshotStateMap<Int, String>,
+    markedIds: List<Int>,
+    comments: Map<Int, String>,
 ) {
     Column(modifier = modifier) {
 

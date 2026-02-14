@@ -1,7 +1,8 @@
 package com.alekso.dltstudio.plugins.loginsights
 
-import androidx.compose.runtime.mutableStateListOf
 import com.alekso.dltstudio.model.contract.LogMessage
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 internal data class CompiledRule(
     val regex: Regex,
@@ -9,8 +10,8 @@ internal data class CompiledRule(
 )
 
 class InsightsRepository {
-    private val insightRules = mutableStateListOf<LogInsightRule>()
-    private val compiledRules = mutableMapOf<String, CompiledRule>()
+    private val insightRules = MutableStateFlow<List<LogInsightRule>>(emptyList())
+    private val compiledRules = MutableStateFlow<Map<String, CompiledRule>>(emptyMap())
     private val extractGroupRegex = "\\?<(.*?)>".toRegex()
 
     init {
@@ -18,11 +19,10 @@ class InsightsRepository {
     }
 
     private fun loadInsights() {
-        insightRules.clear()
-        compiledRules.clear()
+        compiledRules.value = emptyMap()
 
         // todo: load insights from persistent storage
-        insightRules.addAll(
+        insightRules.value =
             listOf(
                 LogInsightRule(
                     "TimeStamp",
@@ -45,21 +45,24 @@ class InsightsRepository {
                     "System\\[(?<pid>\\d+)\\]:\\s?A resource failed to call (?<info>.*)\\. "
                 ),
             )
-        )
 
         // Compile rules
-        insightRules.forEach {
+        insightRules.value.forEach {rule ->
             val groupsNames =
-                extractGroupRegex.findAll(it.pattern).map { it.groups[1]?.value }.filterNotNull()
+                extractGroupRegex.findAll(rule.pattern).map { it.groups[1]?.value }.filterNotNull()
                     .toList()
-            compiledRules[it.name] = CompiledRule(it.pattern.toRegex(), groupsNames)
+            compiledRules.update {
+                it.toMutableMap().apply {
+                    this[rule.name] = CompiledRule(rule.pattern.toRegex(), groupsNames)
+                }
+            }
         }
     }
 
     fun findInsight(logMessage: LogMessage): List<LogInsight> {
         val insights = mutableListOf<LogInsight>()
-        insightRules.forEach { rule ->
-            val compiledRule = compiledRules[rule.name]
+        insightRules.value.forEach { rule ->
+            val compiledRule = compiledRules.value[rule.name]
             val text = logMessage.dltMessage.payloadText()
             if (compiledRule != null && text.contains(compiledRule.regex)) {
                 val matches = compiledRule.regex.find(text)!!
@@ -71,7 +74,7 @@ class InsightsRepository {
 
     private fun fillInsightText(rule: LogInsightRule, matches: MatchResult): String {
         var result = rule.template
-        compiledRules[rule.name]?.groupNames?.forEach { groupName ->
+        compiledRules.value[rule.name]?.groupNames?.forEach { groupName ->
             result = result.replace("{$groupName}", matches.groups[groupName]?.value ?: "")
         }
         return result

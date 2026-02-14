@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.PointerIcon
@@ -37,12 +36,11 @@ import org.jetbrains.compose.resources.painterResource
 import java.awt.Cursor
 
 
-
 @Composable
 @Preview
 fun LogRow(
     modifier: Modifier,
-    columnParams: SnapshotStateList<ColumnParams>,
+    columnParams: List<ColumnParams>,
     isSelected: Boolean,
     index: String,
     datetime: String,

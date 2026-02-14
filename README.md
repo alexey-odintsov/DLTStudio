@@ -27,13 +27,13 @@ Timeline filters
   - Logs word wrapping
   - Apply time zone to logs
   - Logs removal based on criteria (App, Context, Ecu, Session, everything before/after)
-  - Virtual device preview - renders rectanles of your views in virtual devices. 
+  - Virtual device preview - renders rectangles of your views in virtual devices. 
 - Timeline screen
   - Zoomable and movable timeline
   - Define your custom rules to extract data from logs and represent it as diagrams.
   - Export and import timeline rules.
 - Plugins system
-  - Write your own plugins and use them whithin the app (as source code or jar file) - do whatever you want with logs.
+  - Write your own plugins and use them within the app (as source code or jar file) - do whatever you want with logs.
   - File plugin example - extracts files attached to logs. Preview text and images, other files can be saved as files.
   - Device analyze plugin example - execute different predefined adb commands and see results.
 

@@ -10,7 +10,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import com.alekso.dltmessage.SampleData
@@ -24,9 +23,9 @@ import com.alekso.dltstudio.uicomponents.TabsPanel
 fun LogPreviewPanel(
     modifier: Modifier,
     logMessage: LogMessage?,
-    previewPanels: SnapshotStateList<PluginLogPreview>,
+    previewPanels: List<PluginLogPreview>,
 ) {
-    if (previewPanels.size < 1) return
+    if (previewPanels.isEmpty()) return
 
     var tabIndex by remember { mutableStateOf(0) }
     val tabClickListener: (Int) -> Unit = { i -> tabIndex = i }

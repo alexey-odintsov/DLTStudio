@@ -1,7 +1,6 @@
 package com.alekso.dltstudio
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
 import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
@@ -20,7 +19,7 @@ interface MainMenuCallbacks {
 @Composable
 fun FrameWindowScope.MainMenu(
     callbacks: MainMenuCallbacks,
-    recentColorFiltersFiles: SnapshotStateList<RecentColorFilterFileEntry>,
+    recentColorFiltersFiles: List<RecentColorFilterFileEntry>,
 ) {
     MenuBar {
         Menu("File") {

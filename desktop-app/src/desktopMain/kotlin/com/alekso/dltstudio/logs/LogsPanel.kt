@@ -10,13 +10,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -54,19 +51,15 @@ private fun Modifier.cursorForVerticalResize(): Modifier =
 @Composable
 fun LogsPanel(
     modifier: Modifier = Modifier,
-    columnParams: SnapshotStateList<ColumnParams>,
-    logMessages: SnapshotStateList<LogMessage>,
-    previewPanels: SnapshotStateList<PluginLogPreview>,
-    // search
+    columnParams: List<ColumnParams>,
+    logMessages: List<LogMessage>,
+    previewPanels: List<PluginLogPreview>,
     searchState: SearchState,
-    searchResult: SnapshotStateList<LogMessage>,
-    searchAutoComplete: SnapshotStateList<String>,
-    // color filters
-    colorFilters: SnapshotStateList<ColorFilter>,
-    // toolbar
+    searchResult: List<LogMessage>,
+    searchAutoComplete: List<String>,
+    colorFilters: List<ColorFilter>,
     logsToolbarState: LogsToolbarState,
     logsToolbarCallbacks: LogsToolbarCallbacks,
-    // split bar
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
     logsListState: LazyListState,
@@ -78,11 +71,10 @@ fun LogsPanel(
     onColumnResized: (String, Float) -> Unit,
     logSelection: LogSelection,
     selectedMessage: LogMessage?,
-    markedIds: SnapshotStateList<Int>,
+    markedIds: List<Int>,
     focusedBookmarkId: Int?,
-    comments: SnapshotStateMap<Int, String>,
+    comments: Map<Int, String>,
 ) {
-
     Column(modifier = modifier) {
         LogsToolbar(
             logsToolbarState,
@@ -93,7 +85,7 @@ fun LogsPanel(
             markedIds = markedIds,
         )
 
-        Divider()
+        HorizontalDivider()
         // TODO: Move to viewModel
         val mergedFilters = mutableStateListOf<ColorFilter>()
         mergedFilters.addAll(colorFilters)
@@ -206,17 +198,17 @@ fun LogsPanel(
 @Preview
 @Composable
 fun PreviewLogsPanel() {
-    val list = SnapshotStateList<LogMessage>()
+    val list = mutableListOf<LogMessage>()
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(
         Modifier.fillMaxSize(),
-        columnParams = mutableStateListOf(*ColumnParams.DefaultParams.toTypedArray()),
+        columnParams = ColumnParams.DefaultParams,
         logMessages = list,
-        previewPanels = mutableStateListOf(),
+        previewPanels = emptyList(),
         searchState = SearchState(searchText = "Search text"),
-        searchResult = SnapshotStateList(),
-        searchAutoComplete = mutableStateListOf(),
-        colorFilters = SnapshotStateList(),
+        searchResult = emptyList(),
+        searchAutoComplete = emptyList(),
+        colorFilters = emptyList(),
         logsToolbarState = LogsToolbarState(
             toolbarFatalChecked = true,
             toolbarErrorChecked = true,
@@ -230,15 +222,15 @@ fun PreviewLogsPanel() {
         hSplitterState = SplitPaneState(0.8f, true),
         logsListState = LazyListState(),
         searchListState = LazyListState(),
-        onLogsRowSelected = { i, r -> },
-        onSearchRowSelected = { i, r -> },
+        onLogsRowSelected = { _, _ -> },
+        onSearchRowSelected = { _, _ -> },
         rowContextMenuCallbacks = RowContextMenuCallbacks.Stub,
         columnsContextMenuCallbacks = ColumnsContextMenuCallbacks.Stub,
         onColumnResized = { _, _ -> },
         logSelection = LogSelection(0, 0),
         selectedMessage = null,
-        markedIds = mutableStateListOf(),
+        markedIds = emptyList(),
         focusedBookmarkId = null,
-        comments = mutableStateMapOf(),
+        comments = emptyMap(),
     )
 }

@@ -6,11 +6,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
@@ -27,7 +26,7 @@ import com.alekso.dltstudio.uicomponents.CustomDropDown
 @Composable
 fun DevicePreviewView(
     modifier: Modifier = Modifier,
-    virtualDevices: SnapshotStateList<VirtualDevice>,
+    virtualDevices: List<VirtualDevice>,
     logMessage: LogMessage?,
     onShowVirtualDeviceClicked: () -> Unit = {},
     onDeviceSelected: (Int) -> Unit,
@@ -95,7 +94,7 @@ fun Header(modifier: Modifier = Modifier, text: String) {
         fontSize = 11.sp,
         text = text
     )
-    Divider()
+    HorizontalDivider()
 }
 
 @Preview

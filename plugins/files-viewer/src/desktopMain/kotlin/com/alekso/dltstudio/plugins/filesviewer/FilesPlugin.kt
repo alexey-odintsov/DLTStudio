@@ -54,7 +54,7 @@ class FilesPlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 files = viewModel.filesEntries,
                 previewState = viewModel.previewState,
                 onSearchButtonClicked = {
-                    viewModel.startFilesSearch(messagesRepository.getMessages())
+                    viewModel.startFilesSearch(messagesRepository.getMessages().value)
                 },
                 onFileEntryClicked = viewModel::onFileClicked
             )

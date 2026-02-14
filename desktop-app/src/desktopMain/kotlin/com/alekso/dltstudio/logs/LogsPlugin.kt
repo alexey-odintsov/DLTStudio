@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,66 +33,79 @@ class LogsPlugin(
     @OptIn(ExperimentalSplitPaneApi::class)
     @Composable
     override fun renderPanel(modifier: Modifier) {
-        if (viewModel.changeOrderDialogState.value.visible) {
+        val messages = messagesRepository.getMessages().collectAsState()
+        val searchResults = messagesRepository.getSearchResults().collectAsState()
+        val markedIds = messagesRepository.getMarkedIds().collectAsState()
+        val focusedMarkedIdIndex = messagesRepository.getFocusedMarkedIdIndex().collectAsState()
+        val comments = messagesRepository.getComments().collectAsState()
+        val colorFilters = viewModel.getColorFilters().collectAsState()
+        val previewPanels = viewModel.previewPanels.collectAsState()
+        val logSelection = viewModel.logSelection.collectAsState()
+        val searchAutoComplete = viewModel.searchAutocomplete.collectAsState()
+        val selectedMessage = messagesRepository.getSelectedMessage().collectAsState()
+        val columnParams = viewModel.columnParams.collectAsState()
+        val logsToolbarState = viewModel.logsToolbarState.collectAsState()
+        val colorFiltersDialogState = viewModel.colorFiltersDialogState.collectAsState()
+        val removeLogsDialogState = viewModel.removeLogsDialogState.collectAsState()
+        val changeOrderDialogState = viewModel.changeOrderDialogState.collectAsState()
+        val logsOrder = viewModel.logsOrder.collectAsState()
+        val searchState = viewModel.searchState.collectAsState()
+
+
+        if (changeOrderDialogState.value.visible) {
             ChangeLogsOrderDialog(
-                state = viewModel.changeOrderDialogState.value,
-                logsOrder = viewModel.logsOrder.value,
+                state = changeOrderDialogState.value,
+                logsOrder = logsOrder.value,
                 onDialogClosed = viewModel::onChangeOrderDialogStateClosed,
                 onLogsOrderChanged = viewModel::onLogsOrderChanged)
         }
 
-        if (viewModel.colorFiltersDialogState.value) {
+        if (colorFiltersDialogState.value) {
             ColorFiltersDialog(
-                visible = viewModel.colorFiltersDialogState.value,
-                onDialogClosed = { viewModel.colorFiltersDialogState.value = false },
-                colorFilters = viewModel.colorFilters,
+                visible = colorFiltersDialogState.value,
+                onDialogClosed = viewModel::closeColorFiltersDialog,
+                colorFilters = colorFilters.value,
                 callbacks = viewModel.colorFiltersDialogCallbacks,
             )
         }
 
-        if (viewModel.removeLogsDialogState.value.visible) {
+        if (removeLogsDialogState.value.visible) {
             RemoveLogsDialog(
-                visible = viewModel.removeLogsDialogState.value.visible,
-                message = viewModel.removeLogsDialogState.value.message,
-                onDialogClosed = {
-                    viewModel.removeLogsDialogState.value = RemoveLogsDialogState(false)
-                },
-                onFilterClicked = { f -> viewModel.removeMessagesByFilters(f) },
+                visible = removeLogsDialogState.value.visible,
+                message = removeLogsDialogState.value.message,
+                onDialogClosed = viewModel::closeRemoveLogsDialog,
+                onFilterClicked = viewModel::removeMessagesByFilters,
             )
         }
 
-        if (messagesRepository.getMessages().isEmpty()) {
+        if (messages.value.isEmpty()) {
             NoLogsStub()
         } else {
             LogsPanel(
                 modifier = modifier,
-                previewPanels = viewModel.previewPanels,
-                columnParams = viewModel.columnParams,
-                logMessages = messagesRepository.getMessages(),
-                markedIds = messagesRepository.getMarkedIds(),
-                searchState = viewModel.searchState.value,
-                searchAutoComplete = viewModel.searchAutocomplete,
-                searchResult = messagesRepository.getSearchResults(),
-                colorFilters = viewModel.colorFilters,
-                logsToolbarState = viewModel.logsToolbarState,
+                previewPanels = previewPanels.value,
+                columnParams = columnParams.value,
+                logMessages = messages.value,
+                markedIds = markedIds.value,
+                searchState = searchState.value,
+                searchAutoComplete = searchAutoComplete.value,
+                searchResult = searchResults.value,
+                colorFilters = colorFilters.value,
+                logsToolbarState = logsToolbarState.value,
                 logsToolbarCallbacks = viewModel.logsToolbarCallbacks,
                 vSplitterState = viewModel.vSplitterState,
                 hSplitterState = viewModel.hSplitterState,
                 logsListState = viewModel.logsListState,
-                logSelection = viewModel.logSelection,
-                selectedMessage = messagesRepository.getSelectedMessage().value,
+                logSelection = logSelection.value,
+                selectedMessage = selectedMessage.value,
                 searchListState = viewModel.searchListState,
-                onLogsRowSelected = { i, r ->
-                    viewModel.onLogsRowSelected(i, r)
-                },
-                onSearchRowSelected = { i, r ->
-                    viewModel.onSearchRowSelected(i, r)
-                },
+                onLogsRowSelected = viewModel::onLogsRowSelected,
+                onSearchRowSelected = viewModel::onSearchRowSelected,
                 rowContextMenuCallbacks = viewModel.rowContextMenuCallbacks,
                 columnsContextMenuCallbacks = viewModel.columnsContextMenuCallbacks,
                 onColumnResized = viewModel::onColumnResized,
-                focusedBookmarkId = messagesRepository.getFocusedMarkedIdIndex().value,
-                comments = messagesRepository.getComments(),
+                focusedBookmarkId = focusedMarkedIdIndex.value,
+                comments = comments.value,
             )
         }
     }

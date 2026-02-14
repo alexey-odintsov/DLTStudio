@@ -16,7 +16,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,10 +52,10 @@ import kotlinx.datetime.TimeZone
 fun LogsToolbar(
     state: LogsToolbarState,
     searchState: SearchState,
-    searchAutoComplete: SnapshotStateList<String>,
+    searchAutoComplete: List<String>,
     callbacks: LogsToolbarCallbacks,
     focusedBookmarkId: Int?,
-    markedIds: SnapshotStateList<Int>,
+    markedIds: List<Int>,
 ) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Tooltip(text = "Toggle fatal logs highlight") {

@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.alekso.dltstudio.charts.model.ChartData
 import com.alekso.dltstudio.charts.model.ChartEntry
 import com.alekso.dltstudio.charts.model.ChartKey
@@ -56,6 +55,8 @@ class TimelineViewModel(
     private val viewModelJob = SupervisorJob()
     private val viewModelScope = CoroutineScope(Main + viewModelJob)
     private var analyzeJob: Job? = null
+
+    val messages = messagesRepository.getMessages()
 
     var timeFrame by mutableStateOf(TimeFrame(0L, 1L))
     var timeTotal by mutableStateOf(TimeFrame(0L, 1L))
@@ -174,7 +175,7 @@ class TimelineViewModel(
 
     private fun startAnalyzing() {
         when (_analyzeState.value) {
-            AnalyzeState.IDLE -> startAnalyzing(messagesRepository.getMessages())
+            AnalyzeState.IDLE -> startAnalyzing(messages.value)
             AnalyzeState.ANALYZING -> stopAnalyzing()
         }
     }
@@ -189,7 +190,7 @@ class TimelineViewModel(
         highlightedKeysMap.clear()
     }
 
-    private fun startAnalyzing(dltMessages: SnapshotStateList<LogMessage>) {
+    private fun startAnalyzing(dltMessages: List<LogMessage>) {
         cleanup()
         _analyzeState.value = AnalyzeState.ANALYZING
         analyzeJob = viewModelScope.launch(Dispatchers.Default) {

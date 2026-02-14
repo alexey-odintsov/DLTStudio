@@ -118,9 +118,7 @@ fun DeviceAnalysePanel(
 fun PreviewDeviceAnalysePanel() {
     Column {
         ThemeManager.CustomTheme(SystemTheme(false)) {
-            Surface(
-
-            ) {
+            Surface {
                 Text("Text")
             }
         }
