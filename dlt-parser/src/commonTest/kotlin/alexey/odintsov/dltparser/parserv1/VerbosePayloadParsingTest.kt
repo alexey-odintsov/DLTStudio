@@ -1,10 +1,10 @@
-package com.alekso.dltparser.tests.parserv1
+package alexey.odintsov.dltparser.parserv1
 
 import alexey.odintsov.datautils.Endian
 import alexey.odintsov.datautils.readInt
-import com.alekso.dltmessage.verbosepayload.Argument
-import com.alekso.dltmessage.verbosepayload.TypeInfo
-import com.alekso.dltmessage.verbosepayload.VerbosePayload
+import alexey.odintsov.dltmessage.verbosepayload.Argument
+import alexey.odintsov.dltmessage.verbosepayload.TypeInfo
+import alexey.odintsov.dltmessage.verbosepayload.VerbosePayload
 import org.junit.Assert
 import org.junit.Test
 

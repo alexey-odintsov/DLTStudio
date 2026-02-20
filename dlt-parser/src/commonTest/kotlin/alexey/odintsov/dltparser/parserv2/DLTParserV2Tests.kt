@@ -1,12 +1,12 @@
-package com.alekso.dltparser.tests.parserv2
+package alexey.odintsov.dltparser.parserv2
 
-import com.alekso.dltparser.DLTParserV2
-import com.alekso.dltparser.ParserInputStream
-import com.alekso.dltmessage.PayloadStorageType
+import alexey.odintsov.dltmessage.PayloadStorageType
+import alexey.odintsov.dltparser.DLTParserV2
+import alexey.odintsov.dltparser.ParserInputStream
+import alexey.odintsov.dltparser.testdata.TestData
 import org.junit.Assert
 import org.junit.Ignore
 import org.junit.Test
-import com.alekso.dltparser.tests.testdata.TestData
 
 class DLTParserV2Tests {
     val payloadStorageType = PayloadStorageType.Plain

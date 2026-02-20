@@ -35,7 +35,7 @@ import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.settings.SettingsDialogCallbacks
 import alexey.odintsov.dltstudio.settings.SettingsPluginsCallbacks
 import androidx.compose.foundation.lazy.LazyListState
-import com.alekso.dltparser.DLTParser
+import alexey.odintsov.dltparser.DLTParser
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter

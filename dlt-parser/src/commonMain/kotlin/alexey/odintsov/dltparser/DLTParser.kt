@@ -1,4 +1,4 @@
-package com.alekso.dltparser
+package alexey.odintsov.dltparser
 
 import alexey.odintsov.datautils.Endian
 import alexey.odintsov.dltmessage.DLTMessage

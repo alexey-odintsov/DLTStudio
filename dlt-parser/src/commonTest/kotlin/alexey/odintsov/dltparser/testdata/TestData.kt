@@ -1,12 +1,12 @@
-package com.alekso.dltparser.tests.testdata
+package alexey.odintsov.dltparser.testdata
 
-import com.alekso.dltmessage.PlainDLTMessage
-import com.alekso.dltmessage.extendedheader.ExtendedHeader
+import alexey.odintsov.dltmessage.PlainDLTMessage
+import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
 import alexey.odintsov.dltmessage.extendedheader.MessageInfo
-import com.alekso.dltmessage.extendedheader.MessageType
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
-import com.alekso.dltmessage.standardheader.HeaderType
-import com.alekso.dltmessage.standardheader.StandardHeader
+import alexey.odintsov.dltmessage.extendedheader.MessageType
+import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
+import alexey.odintsov.dltmessage.standardheader.HeaderType
+import alexey.odintsov.dltmessage.standardheader.StandardHeader
 
 object TestData {
 

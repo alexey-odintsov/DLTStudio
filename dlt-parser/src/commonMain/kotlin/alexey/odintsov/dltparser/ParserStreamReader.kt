@@ -1,4 +1,4 @@
-package com.alekso.dltparser
+package alexey.odintsov.dltparser
 
 import java.io.DataInput
 import java.io.DataInputStream

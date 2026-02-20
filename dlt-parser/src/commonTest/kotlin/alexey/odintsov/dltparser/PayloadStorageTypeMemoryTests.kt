@@ -1,7 +1,6 @@
-package com.alekso.dltparser.tests
+package alexey.odintsov.dltparser
 
-import com.alekso.dltmessage.PayloadStorageType
-import com.alekso.dltparser.DLTParserV2
+import alexey.odintsov.dltmessage.PayloadStorageType
 import kotlinx.coroutines.runBlocking
 import org.junit.Ignore
 import org.junit.Test

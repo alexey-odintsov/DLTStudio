@@ -9,7 +9,7 @@ import alexey.odintsov.dltstudio.db.settings.SettingsRepositoryImpl
 import alexey.odintsov.dltstudio.logs.MessagesRepositoryImpl
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import com.alekso.dltparser.DLTParserV2
+import alexey.odintsov.dltparser.DLTParserV2
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.manager.PluginManager
