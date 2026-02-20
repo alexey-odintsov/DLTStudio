@@ -1,6 +1,5 @@
 package alexey.odintsov.dltstudio.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun StatusBar(modifier: Modifier = Modifier, progress: Float, statusText: String) {
@@ -62,7 +62,7 @@ fun StatusBar(modifier: Modifier = Modifier, progress: Float, statusText: String
 
 @Preview
 @Composable
-fun PreviewStatusBarInProgress() {
+private fun PreviewStatusBarInProgress() {
     val modifier = Modifier
     val text = "/user/test/file.dlt"
     Box(Modifier.fillMaxSize().background(Color.Black)) {

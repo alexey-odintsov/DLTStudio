@@ -1,7 +1,10 @@
 package alexey.odintsov.dltstudio.plugins.virtualdevice
 
 import alexey.odintsov.dltmessage.SampleData
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.virtualdevice.model.VirtualDevice
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,12 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.plugins.virtualdevice.model.VirtualDevice
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
 
 @Composable
 fun DevicePreviewView(
@@ -99,7 +99,7 @@ fun Header(modifier: Modifier = Modifier, text: String) {
 
 @Preview
 @Composable
-fun PreviewEmptyDevicePreview() {
+private fun PreviewEmptyDevicePreview() {
     DevicePreviewView(
         modifier = Modifier.fillMaxSize(),
         virtualDevices = mutableStateListOf(VirtualDevice(0, "Test", 3300, 900)),
@@ -111,7 +111,7 @@ fun PreviewEmptyDevicePreview() {
 
 @Preview
 @Composable
-fun PreviewDevicePreview() {
+private fun PreviewDevicePreview() {
     val dltMessage = SampleData.create(
         payloadText = "TestView[2797]: onGlobalFocusChanged: oldFocus:com.ui.custom.ProgressBarFrameLayout{f5e8f76 VFE...CL. ......ID 2298,22-2835,709 #7f090453 app:id/theme_container aid=1073741849}, newFocus:com.android.car.ui.FocusParkingView{736743f VFED..... .F...... 0,0-1,1 #7f090194 app:id/focus_parking_view aid=1073741832} {bounds:Rect(0, 0 - 342, 240),hasBoundsTransaction,}"
     )

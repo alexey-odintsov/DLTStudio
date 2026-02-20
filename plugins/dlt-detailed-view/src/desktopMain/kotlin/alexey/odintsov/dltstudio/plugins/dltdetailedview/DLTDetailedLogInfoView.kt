@@ -1,6 +1,11 @@
 package alexey.odintsov.dltstudio.plugins.dltdetailedview
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.datautils.toBinary
+import alexey.odintsov.datautils.toHex
+import alexey.odintsov.dltmessage.SampleData
+import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,13 +16,8 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.datautils.toBinary
-import alexey.odintsov.datautils.toHex
-import alexey.odintsov.dltmessage.SampleData
-import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
 
 @Composable
 fun DLTDetailedInfoView(
@@ -212,7 +212,7 @@ fun DLTDetailedInfoView(
 
 @Preview
 @Composable
-fun PreviewDLTDetailedInfoView() {
+private fun PreviewDLTDetailedInfoView() {
     DLTDetailedInfoView(
         logMessage = LogMessage(SampleData.create(payloadText = "Test message")),
     )

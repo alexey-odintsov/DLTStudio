@@ -1,6 +1,14 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDownButton
+import alexey.odintsov.dltstudio.uicomponents.DropDownItem
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,16 +39,8 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDownButton
-import alexey.odintsov.dltstudio.uicomponents.DropDownItem
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters
 import dltstudio.resources.icon_fit
@@ -225,7 +225,7 @@ fun TimelineToolbar(
 
 @Preview
 @Composable
-fun PreviewLogsToolbarTheme() {
+private fun PreviewLogsToolbarTheme() {
     Column {
         ThemeManager.CustomTheme(SystemTheme(true)) {
             PreviewTimelineToolbar()
@@ -237,7 +237,7 @@ fun PreviewLogsToolbarTheme() {
 }
 
 @Composable
-fun PreviewTimelineToolbar() {
+private fun PreviewTimelineToolbar() {
     Column {
         TimelineToolbar(
             analyzeState = AnalyzeState.ANALYZING,

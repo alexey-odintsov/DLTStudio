@@ -1,11 +1,11 @@
 [versions]
-compose-plugin = "1.8.1" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
+compose-plugin = "1.10.1" # https://github.com/JetBrains/compose-multiplatform/blob/master/CHANGELOG.md
 junit = "4.13.2"
-kotlin = "2.0.0"
+kotlin = "2.2.21"
 coroutines = "1.8.1"
 androidx-room = "2.7.0"
 sqlite = "2.5.0-SNAPSHOT"
-ksp = "2.0.0-1.0.23"
+ksp = "2.2.21-2.0.5"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -16,7 +16,7 @@ material-icons = { group = "org.jetbrains.compose.material", name = "material-ic
 #kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlin-coroutines-swing = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-swing", version.ref = "coroutines" }
 kotlin-serializaion = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version = "1.7.3" }
-kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.6.1" }
+kotlin-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version = "0.7.1" }
 
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }

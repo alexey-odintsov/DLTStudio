@@ -1,6 +1,6 @@
 package alexey.odintsov.dltstudio.plugins.virtualdevice
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.uicomponents.ColorPalette
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -25,9 +25,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.uicomponents.ColorPalette
 import kotlin.math.max
 import kotlin.math.min
 
@@ -170,7 +170,7 @@ private fun DrawScope.renderPointerView(
 
 @Preview
 @Composable
-fun PreviewVirtualDevicePreview() {
+private fun PreviewVirtualDevicePreview() {
     VirtualDevicePreview(
         modifier = Modifier.fillMaxSize(),
         deviceSize = Size(2600f, 900f),

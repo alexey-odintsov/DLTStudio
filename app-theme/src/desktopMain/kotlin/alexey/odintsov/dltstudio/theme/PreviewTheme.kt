@@ -1,6 +1,5 @@
 package alexey.odintsov.dltstudio.theme
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +40,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 
@@ -273,7 +273,7 @@ fun PreviewComponents(isDark: Boolean) {
 
 @Preview
 @Composable
-fun PreviewDarkAndLightTheme() {
+private fun PreviewDarkAndLightTheme() {
     Row(Modifier.fillMaxSize()) {
         Box(Modifier.weight(1f)) {
             PreviewComponents(isDark = true)
@@ -286,7 +286,7 @@ fun PreviewDarkAndLightTheme() {
 
 @Preview
 @Composable
-fun PreviewDarkAndLightColors() {
+private fun PreviewDarkAndLightColors() {
     Row(Modifier.fillMaxSize().background(color = Color.DarkGray)) {
         PreviewColors(isDark = true)
         PreviewColors(isDark = false)

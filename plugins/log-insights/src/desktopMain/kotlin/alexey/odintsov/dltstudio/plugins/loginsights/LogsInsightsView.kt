@@ -2,7 +2,7 @@ package alexey.odintsov.dltstudio.plugins.loginsights
 
 
 import alexey.odintsov.dltmessage.SampleData
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -21,9 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
 
 @Composable
 fun LogInsightsView(
@@ -100,7 +100,7 @@ fun Header(modifier: Modifier = Modifier, text: String) {
         fontSize = 11.sp,
         text = text
     )
-    Divider()
+    HorizontalDivider()
 }
 
 @Composable
@@ -115,7 +115,7 @@ fun MonoText(modifier: Modifier = Modifier, text: String) {
 
 @Preview
 @Composable
-fun PreviewLogInsightsView() {
+private fun PreviewLogInsightsView() {
     LogInsightsView(
         Modifier,
         LogMessage(SampleData.create(payloadText = "Choreographer[4476]: Skipped 36 frames!  The application may be doing too much work on its main thread.")),
@@ -127,7 +127,7 @@ fun PreviewLogInsightsView() {
 
 @Preview
 @Composable
-fun PreviewLogInsightsViewNoInsights() {
+private fun PreviewLogInsightsViewNoInsights() {
     LogInsightsView(
         Modifier,
         LogMessage(SampleData.create(payloadText = "Choreographer[4476]: Skipped 36 frames!  The application may be doing too much work on its main thread.")),

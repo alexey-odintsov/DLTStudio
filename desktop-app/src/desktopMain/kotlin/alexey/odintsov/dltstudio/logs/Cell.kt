@@ -1,7 +1,6 @@
 package alexey.odintsov.dltstudio.logs
 
 import alexey.odintsov.dltstudio.LocalSettingsUI
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +38,6 @@ data class CellStyle(
 }
 
 @Composable
-@Preview
 fun Cell(
     modifier: Modifier = Modifier,
     textAlign: TextAlign = TextAlign.Left,

@@ -3,7 +3,8 @@ package alexey.odintsov.dltstudio.logs
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
 import alexey.odintsov.dltstudio.model.ColumnParams
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.ui.Panel
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -11,8 +12,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.ui.Panel
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LogsListPanel(
@@ -56,7 +56,7 @@ fun LogsListPanel(
 
 @Preview
 @Composable
-fun PreviewLogsListPanel() {
+private fun PreviewLogsListPanel() {
     val list = SnapshotStateList<LogMessage>()
     list.addAll(
         SampleData.getSampleDltMessages(20)

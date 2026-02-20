@@ -2,7 +2,14 @@ package alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit
 
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.ExtractorChecker
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.graph.TimelinePreviewFactory
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.logger.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,15 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.graph.TimelinePreviewFactory
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.logger.Log
 
 private val COL_VALUE = 250.dp
 private val COL_PATTERN = 400.dp
@@ -164,7 +164,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
 
 @Preview
 @Composable
-fun PreviewEditTimelineFilterExtractPanel() {
+private fun PreviewEditTimelineFilterExtractPanel() {
     ThemeManager.CustomTheme(SystemTheme(true)) {
         val filter = TimelineFilter(
             name = "CPU Usage by PID", enabled = true,

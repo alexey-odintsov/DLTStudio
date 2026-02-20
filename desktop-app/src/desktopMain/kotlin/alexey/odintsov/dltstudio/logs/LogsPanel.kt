@@ -12,7 +12,6 @@ import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbar
 import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarState
 import alexey.odintsov.dltstudio.model.ColumnParams
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,6 +33,7 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
+import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
@@ -197,7 +197,7 @@ fun LogsPanel(
 @OptIn(ExperimentalSplitPaneApi::class)
 @Preview
 @Composable
-fun PreviewLogsPanel() {
+private fun PreviewLogsPanel() {
     val list = mutableListOf<LogMessage>()
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     LogsPanel(

@@ -6,7 +6,12 @@ import alexey.odintsov.dltstudio.charts.model.ChartEntry
 import alexey.odintsov.dltstudio.charts.model.ChartKey
 import alexey.odintsov.dltstudio.charts.model.EventsChartData
 import alexey.odintsov.dltstudio.charts.model.TimeFrame
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialog
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
@@ -35,13 +40,8 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialog
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import org.jetbrains.compose.splitpane.VerticalSplitPane
@@ -195,7 +195,7 @@ fun LegendResizer(
 @OptIn(ExperimentalSplitPaneApi::class)
 @Preview
 @Composable
-fun PreviewTimeline() {
+private fun PreviewTimeline() {
     val list = SnapshotStateList<LogMessage>()
     list.addAll(SampleData.getSampleDltMessages(20).map { LogMessage(it) })
     val callbacks = object : TimelineFiltersDialogCallbacks {
@@ -214,7 +214,7 @@ fun PreviewTimeline() {
         entriesMap = mutableStateMapOf(),
         highlightedKeysMap = mutableStateMapOf(),
         filtersDialogCallbacks = callbacks,
-        retrieveEntriesForFilter = { i -> EventsChartData() },
+        retrieveEntriesForFilter = { _ -> EventsChartData() },
         legendSize = 250f,
         recentFiltersFiles = mutableStateListOf(),
         currentFilterFile = null,

@@ -1,7 +1,12 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit
 
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,15 +23,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 
 
 class EditTimelineFilterDialogState(
@@ -120,7 +120,7 @@ fun EditTimelineFilterPanel(
 
 @Preview
 @Composable
-fun PreviewEditTimelineFilterDialog() {
+private fun PreviewEditTimelineFilterDialog() {
     val filter = TimelineFilter(
         name = "CPU Usage by PID", enabled = true,
         filters = mutableMapOf(),
@@ -132,7 +132,7 @@ fun PreviewEditTimelineFilterDialog() {
 
     Column(Modifier.background(Color(238, 238, 238))) {
         EditTimelineFilterPanel(
-            EditTimelineFilterViewModel(0, filter, { i, f -> }, {}),
+            EditTimelineFilterViewModel(0, filter, { _, _ -> }, {}),
             filter,
             0,
             { _, _ -> },

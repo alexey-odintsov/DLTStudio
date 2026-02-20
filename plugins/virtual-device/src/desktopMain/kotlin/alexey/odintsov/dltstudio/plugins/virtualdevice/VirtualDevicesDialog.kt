@@ -1,6 +1,9 @@
 package alexey.odintsov.dltstudio.plugins.virtualdevice
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.plugins.virtualdevice.model.VirtualDevice
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,12 +22,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import alexey.odintsov.dltstudio.plugins.virtualdevice.model.VirtualDevice
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_edit
@@ -132,7 +132,7 @@ fun VirtualDevicesPanel(
 
 @Preview
 @Composable
-fun PreviewVirtualDevicesDialog() {
+private fun PreviewVirtualDevicesDialog() {
     val virtualDevices = mutableStateListOf(
         VirtualDevice(1, "Square", width = 1500, height = 1500),
         VirtualDevice(2, "Wide", width = 2000, height = 900),

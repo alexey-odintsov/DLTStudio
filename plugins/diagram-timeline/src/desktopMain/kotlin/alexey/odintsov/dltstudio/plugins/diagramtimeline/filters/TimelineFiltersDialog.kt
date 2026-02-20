@@ -4,7 +4,10 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialog
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialogState
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,13 +22,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_down
@@ -155,7 +155,7 @@ fun ColorFiltersPanel(
 
 @Preview
 @Composable
-fun PreviewTimelineFiltersDialog() {
+private fun PreviewTimelineFiltersDialog() {
     val colorFilters = mutableListOf(
         TimelineFilter(
             name = "CPU Usage by PID", enabled = true,

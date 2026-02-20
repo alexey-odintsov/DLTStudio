@@ -8,7 +8,8 @@ import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
 import alexey.odintsov.dltstudio.charts.model.MinMaxEntry
 import alexey.odintsov.dltstudio.charts.model.StringKey
 import alexey.odintsov.dltstudio.charts.ui.ChartPalette
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -33,10 +34,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
-import kotlinx.datetime.Clock
 
 @Composable
 fun TimelineLegend(
@@ -99,8 +98,8 @@ fun TimelineLegend(
 
 @Preview
 @Composable
-fun PreviewTimeLineLegend() {
-    val ts = Clock.System.now().toEpochMilliseconds() * 1000L
+private fun PreviewTimeLineLegend() {
+    val ts = System.currentTimeMillis() * 1000L
 
     val entries = EventsChartData<LogMessage>()
     entries.addEntry(StringKey("app1"), EventEntry(ts, "ANR", null))

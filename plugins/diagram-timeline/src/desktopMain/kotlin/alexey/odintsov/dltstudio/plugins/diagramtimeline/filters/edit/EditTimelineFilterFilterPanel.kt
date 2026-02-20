@@ -1,7 +1,12 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit
 
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -13,13 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 
 private val COL_NAME_SIZE_DP = 150.dp
 private val COL_VALUE = 250.dp
@@ -93,7 +93,7 @@ fun EditTimelineFilterFilterPanel(
 
 @Preview
 @Composable
-fun PreviewEditTimelineFilterFilterPanelThemes() {
+private fun PreviewEditTimelineFilterFilterPanelThemes() {
     Column(modifier = Modifier.padding(4.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         ThemeManager.CustomTheme(SystemTheme(isDark = false)) {
             PreviewEditTimelineFilterFilterPanel()
@@ -106,7 +106,7 @@ fun PreviewEditTimelineFilterFilterPanelThemes() {
 
 @Preview
 @Composable
-fun PreviewEditTimelineFilterFilterPanel() {
+private fun PreviewEditTimelineFilterFilterPanel() {
     val filter = TimelineFilter(
         name = "CPU Usage by PID", enabled = true,
         filters = mutableMapOf(),
@@ -118,7 +118,7 @@ fun PreviewEditTimelineFilterFilterPanel() {
 
     Column(Modifier.background(Color(238, 238, 238))) {
         EditTimelineFilterFilterPanel(
-            EditTimelineFilterViewModel(0, filter, {i, f ->}, {})
+            EditTimelineFilterViewModel(0, filter, {_, _ ->}, {})
         )
     }
 }

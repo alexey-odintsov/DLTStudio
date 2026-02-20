@@ -1,7 +1,13 @@
 package alexey.odintsov.dltstudio.logs.colorfilters
 
 import alexey.odintsov.dltstudio.logs.CellStyle
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,15 +26,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
-import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
-import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_down
@@ -154,7 +154,7 @@ fun ColorFiltersPanel(
 
 @Preview
 @Composable
-fun PreviewColorFiltersDialog() {
+private fun PreviewColorFiltersDialog() {
     val colorFilters = mutableListOf(
         ColorFilter("Filter1", mapOf(), CellStyle(backgroundColor = Color.Yellow)),
         ColorFilter("Memory", mapOf(), CellStyle(backgroundColor = Color.Green)),

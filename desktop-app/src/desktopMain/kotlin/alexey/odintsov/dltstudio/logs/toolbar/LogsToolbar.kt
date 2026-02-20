@@ -3,7 +3,6 @@ package alexey.odintsov.dltstudio.logs.toolbar
 import alexey.odintsov.dltstudio.LocalFormatter
 import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.search.SearchType
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -30,6 +29,7 @@ import alexey.odintsov.dltstudio.uicomponents.AutoCompleteEditText
 import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import alexey.odintsov.dltstudio.uicomponents.ToggleImageButton
 import alexey.odintsov.dltstudio.uicomponents.Tooltip
+import androidx.compose.ui.tooling.preview.Preview
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters
 import dltstudio.resources.icon_comments
@@ -239,7 +239,7 @@ fun LogsToolbar(
 
 @Preview
 @Composable
-fun PreviewLogsToolbarTheme() {
+private fun PreviewLogsToolbarTheme() {
     Column {
         ThemeManager.CustomTheme(SystemTheme(true)) {
             PreviewLogsToolbar()
@@ -251,7 +251,7 @@ fun PreviewLogsToolbarTheme() {
 }
 
 @Composable
-fun PreviewLogsToolbar() {
+private fun PreviewLogsToolbar() {
     LogsToolbar(
         state = LogsToolbarState(
             toolbarFatalChecked = true,

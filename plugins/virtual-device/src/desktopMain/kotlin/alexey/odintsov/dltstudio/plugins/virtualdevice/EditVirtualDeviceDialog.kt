@@ -1,6 +1,9 @@
 package alexey.odintsov.dltstudio.plugins.virtualdevice
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.plugins.virtualdevice.model.VirtualDevice
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,12 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import alexey.odintsov.dltstudio.plugins.virtualdevice.model.VirtualDevice
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 
 
 class EditVirtualDeviceDialogState(
@@ -164,7 +164,7 @@ fun validateInput(name: String, width: String, height: String): List<String> {
 
 @Preview
 @Composable
-fun PreviewEditTimelineFilterDialog() {
+private fun PreviewEditTimelineFilterDialog() {
     Column(Modifier.background(Color(238, 238, 238))) {
         EditVirtualDevicePanel(
             device = VirtualDevice(1, "Test device", 500, 500),
