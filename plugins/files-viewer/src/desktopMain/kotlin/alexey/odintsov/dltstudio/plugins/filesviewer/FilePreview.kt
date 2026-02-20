@@ -1,6 +1,8 @@
 package alexey.odintsov.dltstudio.plugins.filesviewer
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -26,11 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import dltstudio.resources.Res
 import dltstudio.resources.icon_copy
 import dltstudio.resources.icon_download
@@ -129,7 +129,7 @@ fun OtherFilePreview(state: FilePreviewState) {
 
 @Preview
 @Composable
-fun PreviewTextContent() {
+private fun PreviewTextContent() {
     ThemeManager.CustomTheme(theme = SystemTheme(true)) {
         Box(Modifier) {
 //            TextContent(TextPreviewState(FileEntry("This is a text file content.. This is a text file content.. This is a text file content.. ", { _->}))

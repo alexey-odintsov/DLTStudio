@@ -1,6 +1,7 @@
 package alexey.odintsov.dltstudio.uicomponents
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -32,9 +33,8 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 
 @Composable
 fun CustomButton(
@@ -90,7 +90,7 @@ fun CustomButton(
 
 @Preview
 @Composable
-fun PreviewCustomButton() {
+private fun PreviewCustomButton() {
     Row {
         ThemeManager.CustomTheme(SystemTheme(true)) {
             PreviewButtonWithParameters()
@@ -102,7 +102,7 @@ fun PreviewCustomButton() {
 }
 
 @Composable
-fun PreviewButtonWithParameters() {
+private fun PreviewButtonWithParameters() {
     Column(Modifier.padding(4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(Modifier.padding(4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             CustomButton(onClick = {}) {

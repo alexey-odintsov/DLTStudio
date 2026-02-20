@@ -1,7 +1,6 @@
 package alexey.odintsov.dltstudio.settings
 
 import alexey.odintsov.dltmessage.PayloadStorageType
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +25,7 @@ import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.uicomponents.CustomButton
 import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable
@@ -130,7 +130,7 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
 
 @Preview
 @Composable
-fun PreviewLogsPanelTheme() {
+private fun PreviewLogsPanelTheme() {
     Column {
         ThemeManager.CustomTheme(SystemTheme(true)) {
             PreviewLogsPanel()
@@ -143,7 +143,7 @@ fun PreviewLogsPanelTheme() {
 
 @Preview
 @Composable
-fun PreviewLogsPanel() {
+private fun PreviewLogsPanel() {
     LogsPanel(
         callbacks = SettingsDialogCallbacks.Stub,
         settingsLogs = SettingsLogs.Default.copy(defaultLogsFolderPath = "file/path/goes/here"),

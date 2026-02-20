@@ -1,6 +1,5 @@
 package alexey.odintsov.dltstudio.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Box
@@ -26,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.MainViewModel
 import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.uicomponents.TabsPanel
+import androidx.compose.ui.tooling.preview.Preview
 import java.io.File
 import java.net.URI
 
@@ -35,7 +35,6 @@ import java.net.URI
     ExperimentalFoundationApi::class
 )
 @Composable
-@Preview
 fun MainWindow(
     mainViewModel: MainViewModel,
 ) {
@@ -85,7 +84,7 @@ fun MainWindow(
 
 @Preview
 @Composable
-fun PreviewMainWindow() {
+private fun PreviewMainWindow() {
     Box(modifier = Modifier.width(400.dp).height(500.dp)) {
         MainWindow(DependencyManager.provideMainViewModel())
     }

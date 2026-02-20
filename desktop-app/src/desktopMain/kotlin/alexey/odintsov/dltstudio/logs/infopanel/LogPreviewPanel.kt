@@ -1,7 +1,11 @@
 package alexey.odintsov.dltstudio.logs.infopanel
 
 import alexey.odintsov.dltmessage.SampleData
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,11 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.TabsPanel
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LogPreviewPanel(
@@ -48,7 +48,7 @@ fun LogPreviewPanel(
 
 @Preview
 @Composable
-fun PreviewLogPreview() {
+private fun PreviewLogPreview() {
     ThemeManager.CustomTheme(SystemTheme(true)) {
         val dltMessage = LogMessage(SampleData.getSampleDltMessages(1)[0])
         LogPreviewPanel(

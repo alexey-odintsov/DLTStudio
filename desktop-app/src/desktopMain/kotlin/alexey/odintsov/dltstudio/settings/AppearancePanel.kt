@@ -1,6 +1,10 @@
 package alexey.odintsov.dltstudio.settings
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.SettingsUI
+import alexey.odintsov.dltstudio.model.SupportedFontFamilies
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,12 +20,8 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.model.SettingsUI
-import alexey.odintsov.dltstudio.model.SupportedFontFamilies
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 
 @Composable
 fun AppearancePanel(
@@ -72,7 +72,7 @@ fun AppearancePanel(
 
 @Preview
 @Composable
-fun PreviewAppearancePanel() {
+private fun PreviewAppearancePanel() {
     Column {
         AppearancePanel(
             settingsUI = SettingsUI.Default,

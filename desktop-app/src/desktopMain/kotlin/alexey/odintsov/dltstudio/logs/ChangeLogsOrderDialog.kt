@@ -1,6 +1,5 @@
 package alexey.odintsov.dltstudio.logs
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -20,6 +19,7 @@ import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.uicomponents.CustomButton
 import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
 import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import androidx.compose.ui.tooling.preview.Preview
 
 data class ChangeLogsOrderDialogState(
     val visible: Boolean,
@@ -73,7 +73,7 @@ fun ChangeLogsOrderDialogPanel(onApplyClicked: (LogsOrder) -> Unit, logsOrder: L
 
 @Preview
 @Composable
-fun PreviewChangeLogsOrderDialogPanel() {
+private fun PreviewChangeLogsOrderDialogPanel() {
     Column {
         ThemeManager.CustomTheme(SystemTheme(true)) {
             ChangeLogsOrderDialogPanel(onApplyClicked = {}, logsOrder = LogsOrder.Timestamp)

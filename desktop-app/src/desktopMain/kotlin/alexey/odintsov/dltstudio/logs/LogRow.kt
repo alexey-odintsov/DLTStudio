@@ -2,7 +2,6 @@ package alexey.odintsov.dltstudio.logs
 
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterFatal
 import alexey.odintsov.dltstudio.model.ColumnParams
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -30,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.theme.AppTheme
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
+import androidx.compose.ui.tooling.preview.Preview
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource
@@ -37,7 +37,6 @@ import java.awt.Cursor
 
 
 @Composable
-@Preview
 fun LogRow(
     modifier: Modifier,
     columnParams: List<ColumnParams>,
@@ -311,7 +310,7 @@ fun RowDivider() {
 
 @Preview
 @Composable
-fun LogRowPreview() {
+private fun LogRowPreview() {
     ThemeManager.CustomTheme(SystemTheme(isDark = true)) {
         val contents = listOf(
             listOf("Content", null),

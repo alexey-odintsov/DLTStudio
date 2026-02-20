@@ -1,6 +1,7 @@
 package alexey.odintsov.dltstudio.uicomponents
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -17,9 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 
 
 @Composable
@@ -67,7 +67,7 @@ private fun Tab(title: String, index: Int, selected: Boolean, callback: (Int) ->
 
 @Preview
 @Composable
-fun PreviewHorizontalTabs() {
+private fun PreviewHorizontalTabs() {
     Column {
         TabsPanel(
             1,
@@ -85,7 +85,7 @@ fun PreviewHorizontalTabs() {
 
 @Preview
 @Composable
-fun PreviewVerticalTabs() {
+private fun PreviewVerticalTabs() {
     Column {
         ThemeManager.CustomTheme(SystemTheme(true)) {
             TabsPanel(1, mutableStateListOf("Logs", "CPU", "Memory"), { _ -> }, vertical = false)

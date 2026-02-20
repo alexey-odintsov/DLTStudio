@@ -3,7 +3,6 @@ package alexey.odintsov.dltstudio.logs.colorfilters
 import alexey.odintsov.dltmessage.extendedheader.MessageType
 import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import alexey.odintsov.dltstudio.logs.CellStyle
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,6 +35,7 @@ import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 import alexey.odintsov.dltstudio.uicomponents.dialogs.ColorPickerDialog
 import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import alexey.odintsov.logger.Log
+import androidx.compose.ui.tooling.preview.Preview
 
 
 class EditDialogState(
@@ -300,7 +300,7 @@ fun EditColorFilterPanel(
 
 @Preview
 @Composable
-fun PreviewEditColorFilterDialog() {
+private fun PreviewEditColorFilterDialog() {
     val filter = ColorFilter(
         "SIP",
         mapOf(FilterParameter.ContextId to FilterCriteria("TC", TextCriteria.PlainText)),

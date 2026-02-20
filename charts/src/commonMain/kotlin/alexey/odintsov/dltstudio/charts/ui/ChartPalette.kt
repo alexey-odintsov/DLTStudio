@@ -1,6 +1,5 @@
 package alexey.odintsov.dltstudio.charts.ui
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.random.Random
@@ -263,9 +263,9 @@ object ChartPalette {
 
 @Preview
 @Composable
-fun PreviewDefaultChartPalette() {
+private fun PreviewDefaultChartPalette() {
     Column(Modifier.fillMaxSize().background(ChartStyle.Default.backgroundColor)) {
-        ChartPalette.lightPalette.forEachIndexed { i, c ->
+        ChartPalette.lightPalette.forEachIndexed { _, c ->
             PreviewColor(c)
         }
     }
@@ -273,9 +273,9 @@ fun PreviewDefaultChartPalette() {
 
 @Preview
 @Composable
-fun PreviewDarkChartPalette() {
+private fun PreviewDarkChartPalette() {
     Column(Modifier.fillMaxSize().background(ChartStyle.Dark.backgroundColor)) {
-        ChartPalette.darkPalette.forEachIndexed { i, c ->
+        ChartPalette.darkPalette.forEachIndexed { _, c ->
             PreviewColor(c)
         }
     }

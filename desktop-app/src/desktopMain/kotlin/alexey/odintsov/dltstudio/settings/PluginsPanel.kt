@@ -1,6 +1,5 @@
 package alexey.odintsov.dltstudio.settings
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +41,7 @@ import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.uicomponents.table.TableDivider
 import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
+import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import org.jetbrains.compose.splitpane.VerticalSplitPane
@@ -226,7 +226,7 @@ fun PluginItem(
 @OptIn(ExperimentalSplitPaneApi::class)
 @Preview
 @Composable
-fun PreviewPluginsPanel() {
+private fun PreviewPluginsPanel() {
     val selectedPlugin = "VirtualDevicePlugin"
     val pluginsState = listOf(PluginState(selectedPlugin, true))
 

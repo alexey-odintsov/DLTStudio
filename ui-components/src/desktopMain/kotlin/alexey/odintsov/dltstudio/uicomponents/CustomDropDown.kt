@@ -1,6 +1,7 @@
 package alexey.odintsov.dltstudio.uicomponents
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,9 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 
 @Composable
 fun CustomDropDown(
@@ -93,7 +93,7 @@ fun CustomDropDown(
 
 @Preview
 @Composable
-fun PreviewCustomDropDownThemes() {
+private fun PreviewCustomDropDownThemes() {
     Column(modifier = Modifier.padding(4.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
         ThemeManager.CustomTheme(SystemTheme(isDark = false)) {
             PreviewCustomDropDown()
@@ -106,7 +106,7 @@ fun PreviewCustomDropDownThemes() {
 
 @Preview
 @Composable
-fun PreviewCustomDropDown() {
+private fun PreviewCustomDropDown() {
     Column {
         CustomDropDown(
             modifier = Modifier.width(200.dp),

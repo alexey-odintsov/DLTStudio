@@ -18,16 +18,16 @@ import alexey.odintsov.dltstudio.charts.model.TimeFrame
 import alexey.odintsov.dltstudio.charts.ui.Chart
 import alexey.odintsov.dltstudio.charts.ui.ChartStyle
 import alexey.odintsov.dltstudio.charts.ui.ChartType
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
 
 private val timeFrame = TimeFrame(0L, 5_000_000L)
 
@@ -117,7 +117,7 @@ object TimelinePreviewFactory {
 
 @Preview
 @Composable
-fun PreviewDiagramPreviews() {
+private fun PreviewDiagramPreviews() {
     Box {
         TimelinePreviewFactory.getPreview(
             DiagramType.MinMaxValue,

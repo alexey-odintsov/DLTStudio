@@ -2,7 +2,6 @@ package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
 import alexey.odintsov.dltstudio.charts.model.TimeFrame
 import alexey.odintsov.dltstudio.charts.ui.calculateX
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,9 +17,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.datetime.Clock
 
 @Composable
 fun TimeRuler(
@@ -127,8 +126,8 @@ private fun calculateStepUs(usPerPx: Float): Long {
 
 @Preview
 @Composable
-fun PreviewTimeRuler() {
-    val ts = Clock.System.now().toEpochMilliseconds() * 1000L
+private fun PreviewTimeRuler() {
+    val ts = System.currentTimeMillis() * 1000L
     val frame1us = TimeFrame(ts, ts + 1L)
     val frame1ms = TimeFrame(ts, ts + 1_000L)
     val frame1sec = TimeFrame(ts, ts + 1_000_000L)

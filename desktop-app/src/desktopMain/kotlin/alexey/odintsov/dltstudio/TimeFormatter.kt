@@ -1,16 +1,18 @@
 package alexey.odintsov.dltstudio
 
+import alexey.odintsov.dltstudio.model.contract.Formatter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import alexey.odintsov.dltstudio.model.contract.Formatter
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeFormat
 import kotlinx.datetime.format.byUnicodePattern
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
+
 
 private const val DATE_TIME_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSSSS"
 private const val TIME_FORMAT = "HH:mm:ss.SSS"
@@ -43,6 +45,7 @@ class AppFormatter : Formatter {
 
     override fun getTimeZone(): TimeZone = _timeZone
 
+    @OptIn(ExperimentalTime::class)
     private fun format(formatter: DateTimeFormat<LocalDateTime>, timeStampUs: Long): String {
         val instant =
             Instant.fromEpochSeconds(timeStampUs / 1_000_000L, (timeStampUs % 1_000_000L) * 1000L)

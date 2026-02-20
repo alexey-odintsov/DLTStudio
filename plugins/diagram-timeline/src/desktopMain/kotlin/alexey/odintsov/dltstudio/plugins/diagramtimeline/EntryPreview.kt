@@ -3,7 +3,7 @@ package alexey.odintsov.dltstudio.plugins.diagramtimeline
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.charts.model.ChartEntry
 import alexey.odintsov.dltstudio.charts.model.EventEntry
-import androidx.compose.desktop.ui.tooling.preview.Preview
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -24,8 +24,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import dltstudio.resources.icon_unmark
@@ -88,11 +88,11 @@ fun EntryPreview(
 
 @Preview
 @Composable
-fun PreviewEntryPreview() {
+private fun PreviewEntryPreview() {
     val dltMessage = SampleData.create(123L, payloadText = "Test message content")
     Column {
         EntryPreview(
-            EventEntry<LogMessage>(23423423L, "test", LogMessage(dltMessage)),
+            EventEntry(23423423L, "test", LogMessage(dltMessage)),
             entryMarked = true,
             onEntryMarkToggle = {}
         )
