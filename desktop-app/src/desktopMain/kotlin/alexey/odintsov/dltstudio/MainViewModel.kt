@@ -1,5 +1,6 @@
 package alexey.odintsov.dltstudio
 
+import alexey.odintsov.dltmessage.DLTMessage
 import alexey.odintsov.dltstudio.db.preferences.PreferencesRepository
 import alexey.odintsov.dltstudio.db.preferences.RecentColorFilterFileEntry
 import alexey.odintsov.dltstudio.db.preferences.SearchEntity
@@ -34,7 +35,6 @@ import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.settings.SettingsDialogCallbacks
 import alexey.odintsov.dltstudio.settings.SettingsPluginsCallbacks
 import androidx.compose.foundation.lazy.LazyListState
-import com.alekso.dltmessage.DLTMessage
 import com.alekso.dltparser.DLTParser
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria

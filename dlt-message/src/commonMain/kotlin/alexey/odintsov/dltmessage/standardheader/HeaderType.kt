@@ -1,4 +1,4 @@
-package com.alekso.dltmessage.standardheader
+package alexey.odintsov.dltmessage.standardheader
 
 data class HeaderType(
     val originalByte: Byte,

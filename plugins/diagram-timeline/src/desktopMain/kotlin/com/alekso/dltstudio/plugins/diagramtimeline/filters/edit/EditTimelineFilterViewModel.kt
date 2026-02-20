@@ -1,11 +1,11 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.edit
 
+import alexey.odintsov.dltmessage.extendedheader.MessageType
+import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.alekso.dltmessage.extendedheader.MessageType
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria

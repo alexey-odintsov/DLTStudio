@@ -1,6 +1,6 @@
 package alexey.odintsov.dltstudio.model
 
-import com.alekso.dltmessage.PayloadStorageType
+import alexey.odintsov.dltmessage.PayloadStorageType
 import alexey.odintsov.dltstudio.db.settings.SettingsLogsEntity
 import java.io.File
 

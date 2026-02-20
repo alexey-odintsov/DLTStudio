@@ -1,11 +1,6 @@
-package com.alekso.dltmessage
+package alexey.odintsov.dltmessage
 
-import com.alekso.dltmessage.extendedheader.ExtendedHeader
-import com.alekso.dltmessage.extendedheader.MessageInfo
-import com.alekso.dltmessage.extendedheader.MessageType
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
-import com.alekso.dltmessage.standardheader.HeaderType
-import com.alekso.dltmessage.standardheader.StandardHeader
+import alexey.odintsov.dltmessage.extendedheader.MessageInfo
 
 object SampleData {
     fun getSampleDltMessages(size: Int): List<DLTMessage> {
@@ -24,8 +19,8 @@ object SampleData {
 
     fun create(
         timeStampUs: Long = System.currentTimeMillis() * 1000,
-        messageType: MessageType = MessageType.DLT_TYPE_LOG,
-        messageTypeInfo: MessageTypeInfo = MessageTypeInfo.DLT_LOG_DEBUG,
+        messageType: alexey.odintsov.dltmessage.extendedheader.MessageType = alexey.odintsov.dltmessage.extendedheader.MessageType.DLT_TYPE_LOG,
+        messageTypeInfo: alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo = alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo.DLT_LOG_DEBUG,
         ecuId: String? = "ECU1",
         applicationId: String = "APP1",
         contextId: String = "CTX1",
@@ -35,8 +30,8 @@ object SampleData {
     ): DLTMessage {
         return PlainDLTMessage(
             timeStampUs = timeStampUs,
-            standardHeader = StandardHeader(
-                HeaderType(
+            standardHeader = _root_ide_package_.alexey.odintsov.dltmessage.standardheader.StandardHeader(
+                _root_ide_package_.alexey.odintsov.dltmessage.standardheader.HeaderType(
                     originalByte = 0.toByte(),
                     useExtendedHeader = true,
                     payloadBigEndian = true,
@@ -50,7 +45,7 @@ object SampleData {
                 messageCounter = 1U,
                 length = 1U
             ),
-            extendedHeader = ExtendedHeader(
+            extendedHeader = _root_ide_package_.alexey.odintsov.dltmessage.extendedheader.ExtendedHeader(
                 messageInfo = MessageInfo(
                     originalByte = 0.toByte(),
                     verbose = true,

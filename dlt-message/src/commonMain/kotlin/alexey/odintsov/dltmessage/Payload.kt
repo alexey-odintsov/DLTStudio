@@ -1,4 +1,4 @@
-package com.alekso.dltmessage
+package alexey.odintsov.dltmessage
 
 interface Payload {
     fun getSize(): Int

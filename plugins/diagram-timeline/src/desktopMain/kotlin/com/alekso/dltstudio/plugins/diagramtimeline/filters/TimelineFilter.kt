@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters
 
-import com.alekso.dltmessage.DLTMessage
+import alexey.odintsov.dltmessage.DLTMessage
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria

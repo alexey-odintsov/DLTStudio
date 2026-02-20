@@ -1,5 +1,6 @@
 package alexey.odintsov.dltstudio.logs.infopanel
 
+import alexey.odintsov.dltmessage.SampleData
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
-import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import alexey.odintsov.dltstudio.theme.SystemTheme

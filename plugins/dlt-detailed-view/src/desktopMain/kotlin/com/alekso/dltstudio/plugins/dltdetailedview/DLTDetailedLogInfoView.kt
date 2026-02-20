@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.datautils.toBinary
 import alexey.odintsov.datautils.toHex
-import com.alekso.dltmessage.SampleData
-import com.alekso.dltmessage.extendedheader.ExtendedHeader
+import alexey.odintsov.dltmessage.SampleData
+import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 

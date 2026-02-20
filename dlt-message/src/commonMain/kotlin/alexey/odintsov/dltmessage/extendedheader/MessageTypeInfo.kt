@@ -1,4 +1,4 @@
-package com.alekso.dltmessage.extendedheader
+package alexey.odintsov.dltmessage.extendedheader
 
 enum class MessageTypeInfo {
     DLT_LOG_FATAL,

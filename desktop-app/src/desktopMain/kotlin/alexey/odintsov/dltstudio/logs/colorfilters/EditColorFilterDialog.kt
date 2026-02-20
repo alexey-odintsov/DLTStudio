@@ -1,5 +1,7 @@
 package alexey.odintsov.dltstudio.logs.colorfilters
 
+import alexey.odintsov.dltmessage.extendedheader.MessageType
+import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import alexey.odintsov.dltstudio.logs.CellStyle
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
@@ -25,8 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltmessage.extendedheader.MessageType
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria

@@ -1,5 +1,6 @@
 package alexey.odintsov.dltstudio.logs
 
+import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.LogSelection
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterError
@@ -31,7 +32,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
-import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi

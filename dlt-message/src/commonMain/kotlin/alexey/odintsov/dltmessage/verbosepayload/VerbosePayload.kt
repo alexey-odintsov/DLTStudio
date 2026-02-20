@@ -1,15 +1,14 @@
-package com.alekso.dltmessage.verbosepayload
+package alexey.odintsov.dltmessage.verbosepayload
 
 import alexey.odintsov.datautils.Endian
 import alexey.odintsov.datautils.readInt
 import alexey.odintsov.datautils.readUShort
-import com.alekso.dltmessage.Payload
 import com.alekso.logger.Log
 
 
 data class VerbosePayload(
     val arguments: List<Argument>
-) : Payload {
+) : alexey.odintsov.dltmessage.Payload {
 
     override fun getSize(): Int {
         var size = 0

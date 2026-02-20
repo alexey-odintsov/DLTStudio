@@ -1,18 +1,12 @@
-package com.alekso.dltmessage
+package alexey.odintsov.dltmessage
 
 import alexey.odintsov.datautils.Endian
 import alexey.odintsov.datautils.readInt
-import com.alekso.dltmessage.extendedheader.ExtendedHeader
-import com.alekso.dltmessage.extendedheader.MessageType
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
-import com.alekso.dltmessage.nonverbosepayload.NonVerbosePayload
-import com.alekso.dltmessage.standardheader.StandardHeader
-import com.alekso.dltmessage.verbosepayload.VerbosePayload
 
 data class BinaryDLTMessage(
     override val timeStampUs: Long,
-    override val standardHeader: StandardHeader,
-    override val extendedHeader: ExtendedHeader?,
+    override val standardHeader: alexey.odintsov.dltmessage.standardheader.StandardHeader,
+    override val extendedHeader: alexey.odintsov.dltmessage.extendedheader.ExtendedHeader?,
     val payload: ByteArray?,
 ) : DLTMessage(timeStampUs, standardHeader, extendedHeader) {
     override fun payloadText(): String = if (payload != null) parsePayload(payload) else ""
@@ -25,18 +19,18 @@ data class BinaryDLTMessage(
             val payloadEndian =
                 if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
             if (extendedHeader?.messageInfo?.verbose == true) {
-                val payload = VerbosePayload.parse(
+                val payload = alexey.odintsov.dltmessage.verbosepayload.VerbosePayload.parse(
                     payloadBytes,
                     extendedHeader.argumentsCount.toInt(),
                     payloadEndian
                 )
                 return payload.asText()
 
-            } else if (extendedHeader?.messageInfo?.messageType == MessageType.DLT_TYPE_CONTROL) {
+            } else if (extendedHeader?.messageInfo?.messageType == alexey.odintsov.dltmessage.extendedheader.MessageType.DLT_TYPE_CONTROL) {
                 val messageId: Int = payloadBytes.readInt(0, payloadEndian)
                 var response: Int? = null
                 var payloadOffset: Int = ControlMessagePayload.CONTROL_MESSAGE_ID_SIZE_BYTES
-                if (extendedHeader.messageInfo.messageTypeInfo == MessageTypeInfo.DLT_CONTROL_RESPONSE) {
+                if (extendedHeader.messageInfo.messageTypeInfo == alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo.DLT_CONTROL_RESPONSE) {
                     response = payloadBytes[4].toInt()
                     payloadOffset += ControlMessagePayload.CONTROL_MESSAGE_RESPONSE_SIZE_BYTES
                 }
@@ -47,9 +41,9 @@ data class BinaryDLTMessage(
                 ).asText()
             } else {
                 val messageId: UInt = payloadBytes.readInt(0, Endian.LITTLE).toUInt()
-                val payloadOffset: Int = NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
+                val payloadOffset: Int = alexey.odintsov.dltmessage.nonverbosepayload.NonVerbosePayload.MESSAGE_ID_SIZE_BYTES
 
-                return NonVerbosePayload(
+                return _root_ide_package_.alexey.odintsov.dltmessage.nonverbosepayload.NonVerbosePayload(
                     messageId,
                     payloadBytes.copyOfRange(payloadOffset, payloadBytes.size)
                 ).asText()

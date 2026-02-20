@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters
 
-import com.alekso.dltmessage.SampleData
+import alexey.odintsov.dltmessage.SampleData
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor

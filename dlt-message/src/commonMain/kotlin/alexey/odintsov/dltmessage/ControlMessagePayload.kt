@@ -1,4 +1,4 @@
-package com.alekso.dltmessage
+package alexey.odintsov.dltmessage
 
 import alexey.odintsov.datautils.toHex
 

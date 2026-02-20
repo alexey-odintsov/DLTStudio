@@ -1,9 +1,9 @@
 package alexey.odintsov.dltstudio.logs.colorfilters
 
+import alexey.odintsov.dltmessage.DLTMessage
+import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import alexey.odintsov.dltstudio.logs.CellStyle
 import androidx.compose.ui.graphics.Color
-import com.alekso.dltmessage.DLTMessage
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria

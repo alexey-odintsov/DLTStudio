@@ -1,4 +1,4 @@
-package com.alekso.dltmessage.verbosepayload
+package alexey.odintsov.dltmessage.verbosepayload
 
 import alexey.odintsov.datautils.Endian
 import alexey.odintsov.datautils.readInt

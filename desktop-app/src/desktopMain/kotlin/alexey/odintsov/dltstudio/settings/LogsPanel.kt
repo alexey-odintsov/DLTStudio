@@ -1,5 +1,6 @@
 package alexey.odintsov.dltstudio.settings
 
+import alexey.odintsov.dltmessage.PayloadStorageType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltmessage.PayloadStorageType
 import alexey.odintsov.dltstudio.model.SettingsLogs
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager

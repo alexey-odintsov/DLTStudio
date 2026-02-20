@@ -1,5 +1,6 @@
 package alexey.odintsov.dltstudio.logs
 
+import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
 import alexey.odintsov.dltstudio.model.ColumnParams
 import androidx.compose.desktop.ui.tooling.preview.Preview
@@ -10,7 +11,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.ui.Panel
 

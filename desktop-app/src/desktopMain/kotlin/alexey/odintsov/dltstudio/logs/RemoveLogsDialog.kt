@@ -1,5 +1,8 @@
 package alexey.odintsov.dltstudio.logs
 
+import alexey.odintsov.dltmessage.SampleData
+import alexey.odintsov.dltmessage.extendedheader.MessageType
+import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -20,9 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltmessage.SampleData
-import com.alekso.dltmessage.extendedheader.MessageType
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter

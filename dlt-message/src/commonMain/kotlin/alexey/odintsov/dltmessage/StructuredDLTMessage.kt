@@ -1,13 +1,10 @@
-package com.alekso.dltmessage
-
-import com.alekso.dltmessage.extendedheader.ExtendedHeader
-import com.alekso.dltmessage.standardheader.StandardHeader
+package alexey.odintsov.dltmessage
 
 
 data class StructuredDLTMessage(
     override val timeStampUs: Long,
-    override val standardHeader: StandardHeader,
-    override val extendedHeader: ExtendedHeader?,
+    override val standardHeader: alexey.odintsov.dltmessage.standardheader.StandardHeader,
+    override val extendedHeader: alexey.odintsov.dltmessage.extendedheader.ExtendedHeader?,
     val payload: Payload?,
 ) : DLTMessage(timeStampUs, standardHeader, extendedHeader) {
 

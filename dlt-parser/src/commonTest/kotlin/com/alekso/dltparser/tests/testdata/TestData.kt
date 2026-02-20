@@ -2,7 +2,7 @@ package com.alekso.dltparser.tests.testdata
 
 import com.alekso.dltmessage.PlainDLTMessage
 import com.alekso.dltmessage.extendedheader.ExtendedHeader
-import com.alekso.dltmessage.extendedheader.MessageInfo
+import alexey.odintsov.dltmessage.extendedheader.MessageInfo
 import com.alekso.dltmessage.extendedheader.MessageType
 import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 import com.alekso.dltmessage.standardheader.HeaderType

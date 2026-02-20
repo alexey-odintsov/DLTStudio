@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.plugins.filesviewer
 
+import alexey.odintsov.dltmessage.DLTMessage
 import androidx.compose.runtime.mutableStateMapOf
-import com.alekso.dltmessage.DLTMessage
 
 
 data class FileEntry(

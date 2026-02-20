@@ -1,9 +1,9 @@
 package alexey.odintsov.dltstudio.logs
 
+import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterError
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterFatal
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterWarn
-import com.alekso.dltmessage.extendedheader.MessageTypeInfo
 
 data class LogTypeIndicator(
     val logTypeSymbol: String = "",

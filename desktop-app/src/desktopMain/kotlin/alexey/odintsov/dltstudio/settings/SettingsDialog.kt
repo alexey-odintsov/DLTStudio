@@ -1,5 +1,6 @@
 package alexey.odintsov.dltstudio.settings
 
+import alexey.odintsov.dltmessage.PayloadStorageType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +18,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltmessage.PayloadStorageType
 import alexey.odintsov.dltstudio.model.PluginState
 import alexey.odintsov.dltstudio.model.SettingsLogs
 import alexey.odintsov.dltstudio.model.SettingsPlugins
