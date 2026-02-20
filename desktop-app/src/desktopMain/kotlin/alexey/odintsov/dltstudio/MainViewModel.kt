@@ -44,8 +44,8 @@ import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
 import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
 import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
-import com.alekso.dltstudio.plugins.manager.PluginManager
-import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
+import alexey.odintsov.dltstudio.plugins.manager.PluginManager
+import alexey.odintsov.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
 import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.dltstudio.uicomponents.dialogs.FileTypeSelection
