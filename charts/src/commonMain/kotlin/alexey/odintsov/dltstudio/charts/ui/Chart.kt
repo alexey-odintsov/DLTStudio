@@ -1,5 +1,15 @@
-package com.alekso.dltstudio.charts.ui
+package alexey.odintsov.dltstudio.charts.ui
 
+import alexey.odintsov.dltstudio.charts.model.ChartData
+import alexey.odintsov.dltstudio.charts.model.ChartEntry
+import alexey.odintsov.dltstudio.charts.model.ChartKey
+import alexey.odintsov.dltstudio.charts.model.DurationChartData
+import alexey.odintsov.dltstudio.charts.model.EventsChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
+import alexey.odintsov.dltstudio.charts.model.PercentageChartData
+import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
+import alexey.odintsov.dltstudio.charts.model.StateChartData
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -29,16 +39,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.charts.model.ChartData
-import com.alekso.dltstudio.charts.model.ChartEntry
-import com.alekso.dltstudio.charts.model.ChartKey
-import com.alekso.dltstudio.charts.model.DurationChartData
-import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.MinMaxChartData
-import com.alekso.dltstudio.charts.model.PercentageChartData
-import com.alekso.dltstudio.charts.model.SingleStateChartData
-import com.alekso.dltstudio.charts.model.StateChartData
-import com.alekso.dltstudio.charts.model.TimeFrame
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable

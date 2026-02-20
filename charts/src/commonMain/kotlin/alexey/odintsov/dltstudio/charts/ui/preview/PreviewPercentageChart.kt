@@ -1,5 +1,12 @@
-package com.alekso.dltstudio.charts.ui.preview
+package alexey.odintsov.dltstudio.charts.ui.preview
 
+import alexey.odintsov.dltstudio.charts.model.PercentageChartData
+import alexey.odintsov.dltstudio.charts.model.PercentageEntry
+import alexey.odintsov.dltstudio.charts.model.StringKey
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
+import alexey.odintsov.dltstudio.charts.ui.Chart
+import alexey.odintsov.dltstudio.charts.ui.ChartStyle
+import alexey.odintsov.dltstudio.charts.ui.ChartType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,13 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.charts.model.PercentageChartData
-import com.alekso.dltstudio.charts.model.PercentageEntry
-import com.alekso.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.charts.model.TimeFrame
-import com.alekso.dltstudio.charts.ui.Chart
-import com.alekso.dltstudio.charts.ui.ChartStyle
-import com.alekso.dltstudio.charts.ui.ChartType
 import kotlinx.datetime.Clock
 
 @Preview

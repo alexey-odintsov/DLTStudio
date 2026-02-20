@@ -1,5 +1,12 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.dltstudio.charts.model.ChartData
+import alexey.odintsov.dltstudio.charts.model.ChartEntry
+import alexey.odintsov.dltstudio.charts.model.ChartKey
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
+import alexey.odintsov.dltstudio.charts.ui.Chart
+import alexey.odintsov.dltstudio.charts.ui.ChartType
+import alexey.odintsov.dltstudio.charts.ui.calculateTimestamp
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
@@ -39,13 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.charts.model.ChartData
-import com.alekso.dltstudio.charts.model.ChartEntry
-import com.alekso.dltstudio.charts.model.ChartKey
-import com.alekso.dltstudio.charts.model.TimeFrame
-import com.alekso.dltstudio.charts.ui.Chart
-import com.alekso.dltstudio.charts.ui.ChartType
-import com.alekso.dltstudio.charts.ui.calculateTimestamp
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 

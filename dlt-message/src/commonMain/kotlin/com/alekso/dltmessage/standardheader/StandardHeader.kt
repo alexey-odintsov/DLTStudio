@@ -46,8 +46,8 @@ data class StandardHeader(
     companion object {
         fun getSize(file: RandomAccessFile): Int {
             val headerType = file.readByte()
-            val messageCounter = file.readUnsignedByte().toUByte()
-            val length = file.readUnsignedShort().toUShort()
+            file.readUnsignedByte().toUByte()
+            file.readUnsignedShort().toUShort()
             val withEcuId = withEcuId(headerType)
             val withSessionId = withSessionId(headerType)
             val withTimestamp = withTimestamp(headerType)

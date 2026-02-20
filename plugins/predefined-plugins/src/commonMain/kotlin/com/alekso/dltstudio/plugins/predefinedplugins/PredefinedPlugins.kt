@@ -9,7 +9,7 @@ import com.alekso.dltstudio.plugins.dltdetailedview.DLTDetailedViewPlugin
 import com.alekso.dltstudio.plugins.loginfoview.LogInfoViewPlugin
 import com.alekso.dltstudio.plugins.loginsights.LogInsightsPlugin
 
-public var predefinedPlugins = listOf<DLTStudioPlugin>(
+var predefinedPlugins = listOf<DLTStudioPlugin>(
     TimelinePlugin(),
     FilesPlugin(),
     DeviceAnalyzePlugin(),

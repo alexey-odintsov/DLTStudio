@@ -1,6 +1,7 @@
-package com.alekso.dltstudio.charts.ui
+package alexey.odintsov.dltstudio.charts.ui
 
-import com.alekso.dltstudio.charts.model.TimeFrame
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
+
 
 internal fun getSteps(minValue: Float, maxValue: Float, seriesCount: Int): List<String> {
     val result = mutableListOf<String>()

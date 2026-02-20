@@ -1,5 +1,10 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.dltstudio.charts.model.ChartData
+import alexey.odintsov.dltstudio.charts.model.ChartEntry
+import alexey.odintsov.dltstudio.charts.model.ChartKey
+import alexey.odintsov.dltstudio.charts.model.EventsChartData
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -31,11 +36,6 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import com.alekso.dltmessage.SampleData
-import com.alekso.dltstudio.charts.model.ChartData
-import com.alekso.dltstudio.charts.model.ChartEntry
-import com.alekso.dltstudio.charts.model.ChartKey
-import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.TimeFrame
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState

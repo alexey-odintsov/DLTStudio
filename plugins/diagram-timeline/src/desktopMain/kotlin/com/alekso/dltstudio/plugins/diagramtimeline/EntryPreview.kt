@@ -1,5 +1,7 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.dltstudio.charts.model.ChartEntry
+import alexey.odintsov.dltstudio.charts.model.EventEntry
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
@@ -23,8 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.alekso.dltmessage.SampleData
-import com.alekso.dltstudio.charts.model.ChartEntry
-import com.alekso.dltstudio.charts.model.EventEntry
 import com.alekso.dltstudio.model.contract.LogMessage
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark

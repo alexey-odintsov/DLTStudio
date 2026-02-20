@@ -15,7 +15,7 @@ private val defaultPattens = listOf(
 class DeviceViewParser(
     private val patterns: List<Regex> = defaultPattens,
 ) {
-    fun parse(text: String): List<DeviceView>? {
+    fun parse(text: String): List<DeviceView> {
         val list = mutableListOf<DeviceView>()
         patterns.forEach { pattern ->
             val viewMatches = pattern.findAll(text)

@@ -1,12 +1,12 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
-import com.alekso.dltstudio.charts.model.ChartData
-import com.alekso.dltstudio.charts.model.DurationChartData
-import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.MinMaxChartData
-import com.alekso.dltstudio.charts.model.PercentageChartData
-import com.alekso.dltstudio.charts.model.SingleStateChartData
-import com.alekso.dltstudio.charts.model.StateChartData
+import alexey.odintsov.dltstudio.charts.model.ChartData
+import alexey.odintsov.dltstudio.charts.model.DurationChartData
+import alexey.odintsov.dltstudio.charts.model.EventsChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
+import alexey.odintsov.dltstudio.charts.model.PercentageChartData
+import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
+import alexey.odintsov.dltstudio.charts.model.StateChartData
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractorParam
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param

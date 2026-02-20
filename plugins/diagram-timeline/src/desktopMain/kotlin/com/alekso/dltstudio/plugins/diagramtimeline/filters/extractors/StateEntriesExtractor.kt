@@ -1,8 +1,8 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import com.alekso.dltstudio.charts.model.StateChartData
-import com.alekso.dltstudio.charts.model.StateEntry
-import com.alekso.dltstudio.charts.model.StringKey
+import alexey.odintsov.dltstudio.charts.model.StateChartData
+import alexey.odintsov.dltstudio.charts.model.StateEntry
+import alexey.odintsov.dltstudio.charts.model.StringKey
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType

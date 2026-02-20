@@ -1,5 +1,12 @@
-package com.alekso.dltstudio.charts.ui.preview
+package alexey.odintsov.dltstudio.charts.ui.preview
 
+import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxEntry
+import alexey.odintsov.dltstudio.charts.model.StringKey
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
+import alexey.odintsov.dltstudio.charts.ui.Chart
+import alexey.odintsov.dltstudio.charts.ui.ChartStyle
+import alexey.odintsov.dltstudio.charts.ui.ChartType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,13 +19,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.charts.model.MinMaxChartData
-import com.alekso.dltstudio.charts.model.MinMaxEntry
-import com.alekso.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.charts.model.TimeFrame
-import com.alekso.dltstudio.charts.ui.Chart
-import com.alekso.dltstudio.charts.ui.ChartStyle
-import com.alekso.dltstudio.charts.ui.ChartType
 import kotlinx.datetime.Clock
 
 @Preview
@@ -30,7 +30,7 @@ fun PreviewMinMaxChart() {
     val service1 = StringKey("service1")
 
     val chartData = MinMaxChartData<String>()
-    chartData.addEntry(app1, MinMaxEntry(now + 100_000L,0f, ""))
+    chartData.addEntry(app1, MinMaxEntry(now + 100_000L, 0f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 200_000L,100f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 300_000L,200f, ""))
     chartData.addEntry(app1, MinMaxEntry(now + 400_000L,300f, ""))

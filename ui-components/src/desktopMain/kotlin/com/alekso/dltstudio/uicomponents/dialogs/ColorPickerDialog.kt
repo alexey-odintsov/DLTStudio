@@ -431,7 +431,7 @@ private fun ColorSlider(
         Box(
             modifier = Modifier
                 .offset {
-                    val thumbRadiusPx = sliderHeight.toPx() / 2
+                    sliderHeight.toPx() / 2
                     val travelableWidthPx = containerSize.width - sliderHeight.toPx()
                     val thumbPositionRatio = (value - range.start) / (range.endInclusive - range.start)
                     val thumbPositionPx = (thumbPositionRatio * travelableWidthPx)

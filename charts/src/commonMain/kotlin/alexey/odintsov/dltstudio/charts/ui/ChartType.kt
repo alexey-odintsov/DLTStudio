@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.charts.ui
+package alexey.odintsov.dltstudio.charts.ui
 
 internal enum class SeriesType {
     ByValue,

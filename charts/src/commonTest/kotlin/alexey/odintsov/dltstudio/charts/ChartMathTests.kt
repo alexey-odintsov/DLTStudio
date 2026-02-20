@@ -1,9 +1,8 @@
-package com.alekso.dltstudio.charts
+package alexey.odintsov.dltstudio.charts
 
-import com.alekso.dltstudio.charts.ui.getSteps
+import alexey.odintsov.dltstudio.charts.ui.getSteps
 import kotlin.test.Test
 import kotlin.test.assertContentEquals
-
 
 class ChartMathTests {
     @Test

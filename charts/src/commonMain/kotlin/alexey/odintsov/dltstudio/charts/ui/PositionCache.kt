@@ -1,8 +1,8 @@
-package com.alekso.dltstudio.charts.ui
+package alexey.odintsov.dltstudio.charts.ui
 
+import alexey.odintsov.dltstudio.charts.model.ChartEntry
+import alexey.odintsov.dltstudio.charts.model.ChartKey
 import androidx.compose.ui.geometry.Offset
-import com.alekso.dltstudio.charts.model.ChartEntry
-import com.alekso.dltstudio.charts.model.ChartKey
 import kotlin.math.hypot
 
 class PositionCache<T> {

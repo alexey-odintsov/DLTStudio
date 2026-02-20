@@ -1,5 +1,7 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
+import alexey.odintsov.dltstudio.charts.ui.calculateX
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
@@ -18,8 +20,6 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.charts.model.TimeFrame
-import com.alekso.dltstudio.charts.ui.calculateX
 import kotlinx.datetime.Clock
 
 @Composable

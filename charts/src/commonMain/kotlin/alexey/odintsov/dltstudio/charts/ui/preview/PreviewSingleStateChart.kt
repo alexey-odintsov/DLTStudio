@@ -1,5 +1,12 @@
-package com.alekso.dltstudio.charts.ui.preview
+package alexey.odintsov.dltstudio.charts.ui.preview
 
+import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
+import alexey.odintsov.dltstudio.charts.model.SingleStateEntry
+import alexey.odintsov.dltstudio.charts.model.StringKey
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
+import alexey.odintsov.dltstudio.charts.ui.Chart
+import alexey.odintsov.dltstudio.charts.ui.ChartStyle
+import alexey.odintsov.dltstudio.charts.ui.ChartType
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -12,29 +19,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.charts.model.DurationChartData
-import com.alekso.dltstudio.charts.model.DurationEntry
-import com.alekso.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.charts.model.TimeFrame
-import com.alekso.dltstudio.charts.ui.Chart
-import com.alekso.dltstudio.charts.ui.ChartStyle
-import com.alekso.dltstudio.charts.ui.ChartType
 import kotlinx.datetime.Clock
 
 @Preview
 @Composable
-fun PreviewDurationChart() {
+fun PreviewSingleStateChart() {
     val now = Clock.System.now().toEpochMilliseconds() * 1000L
     val app1 = StringKey("app1")
     val app2 = StringKey("app2")
-    val app3 = StringKey("app3")
+    val service1 = StringKey("service1")
 
-    val chartData = DurationChartData<String>()
-    chartData.addEntry(app1, DurationEntry(now + 500_000L, "start", end = null, ""))
-    chartData.addEntry(app1, DurationEntry(now + 900_000L, null, end = "stop", ""))
-    chartData.addEntry(app1, DurationEntry(now + 1_000_000L, null, end = "stop", ""))
-    chartData.addEntry(app2, DurationEntry(now + 1_200_000L, begin = "start", end = null, ""))
-    chartData.addEntry(app3, DurationEntry(now + 900_000L, begin = null, end = "stop", ""))
+    val chartData = SingleStateChartData<String>()
+    chartData.addEntry(app1, SingleStateEntry(now + 500_000L, "ON_CREATE", ""))
+    chartData.addEntry(app1, SingleStateEntry(now + 700_000L, "ON_START", ""))
+    chartData.addEntry(app2, SingleStateEntry(now + 900_000L, "ON_CREATE", ""))
+    chartData.addEntry(app1, SingleStateEntry(now + 1_200_000L, "ON_RESUME", ""))
+    chartData.addEntry(app2, SingleStateEntry(now + 1_400_000L, "ON_START", ""))
+    chartData.addEntry(app1, SingleStateEntry(now + 1_600_000L, "ON_PAUSE", ""))
+    chartData.addEntry(service1, SingleStateEntry(now + 1_800_000L, "ON_CREATE", ""))
 
     Column(Modifier.fillMaxSize().background(Color.LightGray)) {
         Chart(
@@ -45,7 +47,7 @@ fun PreviewDurationChart() {
             entries = chartData,
             onDragged = {},
             labelsCount = 4,
-            type = ChartType.Duration,
+            type = ChartType.SingleState,
             highlightedKey = app2,
         )
         Spacer(Modifier.size(4.dp))
@@ -56,7 +58,7 @@ fun PreviewDurationChart() {
             timeFrame = TimeFrame(now, now + 2_000_000L),
             entries = chartData,
             onDragged = {},
-            type = ChartType.Duration,
+            type = ChartType.SingleState,
             highlightedKey = app2,
         )
     }

@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.charts.model
+package alexey.odintsov.dltstudio.charts.model
 
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.mutableStateMapOf

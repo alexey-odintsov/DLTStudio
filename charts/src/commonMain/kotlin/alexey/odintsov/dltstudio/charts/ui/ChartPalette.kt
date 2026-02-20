@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.charts.ui
+package alexey.odintsov.dltstudio.charts.ui
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background

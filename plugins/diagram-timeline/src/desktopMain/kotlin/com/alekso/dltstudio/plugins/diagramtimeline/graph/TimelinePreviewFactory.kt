@@ -1,5 +1,24 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.graph
 
+import alexey.odintsov.dltstudio.charts.model.ChartData
+import alexey.odintsov.dltstudio.charts.model.DurationChartData
+import alexey.odintsov.dltstudio.charts.model.DurationEntry
+import alexey.odintsov.dltstudio.charts.model.EventEntry
+import alexey.odintsov.dltstudio.charts.model.EventsChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxEntry
+import alexey.odintsov.dltstudio.charts.model.PercentageChartData
+import alexey.odintsov.dltstudio.charts.model.PercentageEntry
+import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
+import alexey.odintsov.dltstudio.charts.model.SingleStateEntry
+import alexey.odintsov.dltstudio.charts.model.StateChartData
+import alexey.odintsov.dltstudio.charts.model.StateEntry
+import alexey.odintsov.dltstudio.charts.model.StringKey
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
+import alexey.odintsov.dltstudio.charts.ui.Chart
+import alexey.odintsov.dltstudio.charts.ui.ChartStyle
+import alexey.odintsov.dltstudio.charts.ui.ChartType
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -7,27 +26,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.charts.model.ChartData
-import com.alekso.dltstudio.charts.model.DurationChartData
-import com.alekso.dltstudio.charts.model.DurationEntry
-import com.alekso.dltstudio.charts.model.EventEntry
-import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.MinMaxChartData
-import com.alekso.dltstudio.charts.model.MinMaxEntry
-import com.alekso.dltstudio.charts.model.PercentageChartData
-import com.alekso.dltstudio.charts.model.PercentageEntry
-import com.alekso.dltstudio.charts.model.SingleStateChartData
-import com.alekso.dltstudio.charts.model.SingleStateEntry
-import com.alekso.dltstudio.charts.model.StateChartData
-import com.alekso.dltstudio.charts.model.StateEntry
-import com.alekso.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.charts.model.TimeFrame
-import com.alekso.dltstudio.charts.ui.Chart
-import com.alekso.dltstudio.charts.ui.ChartStyle
-import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
-import alexey.odintsov.dltstudio.theme.ThemeManager
 
 private val timeFrame = TimeFrame(0L, 5_000_000L)
 

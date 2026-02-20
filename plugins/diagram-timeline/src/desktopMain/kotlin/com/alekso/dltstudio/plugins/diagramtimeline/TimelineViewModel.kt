@@ -1,21 +1,22 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.dltstudio.charts.model.ChartData
+import alexey.odintsov.dltstudio.charts.model.ChartEntry
+import alexey.odintsov.dltstudio.charts.model.ChartKey
+import alexey.odintsov.dltstudio.charts.model.DurationChartData
+import alexey.odintsov.dltstudio.charts.model.EventsChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
+import alexey.odintsov.dltstudio.charts.model.PercentageChartData
+import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
+import alexey.odintsov.dltstudio.charts.model.StateChartData
+import alexey.odintsov.dltstudio.charts.model.TimeFrame
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.alekso.dltstudio.charts.model.ChartData
-import com.alekso.dltstudio.charts.model.ChartEntry
-import com.alekso.dltstudio.charts.model.ChartKey
-import com.alekso.dltstudio.charts.model.DurationChartData
-import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.MinMaxChartData
-import com.alekso.dltstudio.charts.model.PercentageChartData
-import com.alekso.dltstudio.charts.model.SingleStateChartData
-import com.alekso.dltstudio.charts.model.StateChartData
-import com.alekso.dltstudio.charts.model.TimeFrame
+
 import com.alekso.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository

@@ -1,5 +1,13 @@
 package com.alekso.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.dltstudio.charts.model.ChartData
+import alexey.odintsov.dltstudio.charts.model.ChartKey
+import alexey.odintsov.dltstudio.charts.model.EventEntry
+import alexey.odintsov.dltstudio.charts.model.EventsChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
+import alexey.odintsov.dltstudio.charts.model.MinMaxEntry
+import alexey.odintsov.dltstudio.charts.model.StringKey
+import alexey.odintsov.dltstudio.charts.ui.ChartPalette
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -26,14 +34,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.charts.model.ChartData
-import com.alekso.dltstudio.charts.model.ChartKey
-import com.alekso.dltstudio.charts.model.EventEntry
-import com.alekso.dltstudio.charts.model.EventsChartData
-import com.alekso.dltstudio.charts.model.MinMaxChartData
-import com.alekso.dltstudio.charts.model.MinMaxEntry
-import com.alekso.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.charts.ui.ChartPalette
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.Tooltip
 import kotlinx.datetime.Clock
