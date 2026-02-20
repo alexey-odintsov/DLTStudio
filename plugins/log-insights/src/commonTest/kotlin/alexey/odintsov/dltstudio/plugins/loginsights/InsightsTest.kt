@@ -1,5 +1,6 @@
 package alexey.odintsov.dltstudio.plugins.loginsights
 
+import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import org.junit.Test
 import kotlin.test.assertEquals
