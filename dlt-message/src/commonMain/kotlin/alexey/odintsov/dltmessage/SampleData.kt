@@ -1,6 +1,11 @@
 package alexey.odintsov.dltmessage
 
+import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
 import alexey.odintsov.dltmessage.extendedheader.MessageInfo
+import alexey.odintsov.dltmessage.extendedheader.MessageType
+import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
+import alexey.odintsov.dltmessage.standardheader.HeaderType
+import alexey.odintsov.dltmessage.standardheader.StandardHeader
 
 object SampleData {
     fun getSampleDltMessages(size: Int): List<DLTMessage> {
@@ -19,8 +24,8 @@ object SampleData {
 
     fun create(
         timeStampUs: Long = System.currentTimeMillis() * 1000,
-        messageType: alexey.odintsov.dltmessage.extendedheader.MessageType = alexey.odintsov.dltmessage.extendedheader.MessageType.DLT_TYPE_LOG,
-        messageTypeInfo: alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo = alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo.DLT_LOG_DEBUG,
+        messageType: MessageType = MessageType.DLT_TYPE_LOG,
+        messageTypeInfo: MessageTypeInfo = MessageTypeInfo.DLT_LOG_DEBUG,
         ecuId: String? = "ECU1",
         applicationId: String = "APP1",
         contextId: String = "CTX1",
@@ -30,8 +35,8 @@ object SampleData {
     ): DLTMessage {
         return PlainDLTMessage(
             timeStampUs = timeStampUs,
-            standardHeader = _root_ide_package_.alexey.odintsov.dltmessage.standardheader.StandardHeader(
-                _root_ide_package_.alexey.odintsov.dltmessage.standardheader.HeaderType(
+            standardHeader = StandardHeader(
+                HeaderType(
                     originalByte = 0.toByte(),
                     useExtendedHeader = true,
                     payloadBigEndian = true,
@@ -45,7 +50,7 @@ object SampleData {
                 messageCounter = 1U,
                 length = 1U
             ),
-            extendedHeader = _root_ide_package_.alexey.odintsov.dltmessage.extendedheader.ExtendedHeader(
+            extendedHeader = ExtendedHeader(
                 messageInfo = MessageInfo(
                     originalByte = 0.toByte(),
                     verbose = true,

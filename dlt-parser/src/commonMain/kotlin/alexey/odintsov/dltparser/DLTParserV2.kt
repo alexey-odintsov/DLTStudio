@@ -122,7 +122,7 @@ class DLTParserV2() : DLTParser {
         val timeStampSec = stream.readIntLittle()
         val microSeconds = stream.readIntLittle()
         val timeStampUs = timeStampSec * 1000000L + microSeconds
-        stream.readString(4) // don't remove it!
+        val ecuId = stream.readString(4) // don't remove it!
         i += DLTParser.DLT_HEADER_SIZE_BYTES
 
         val standardHeader = parseStandardHeader(stream)

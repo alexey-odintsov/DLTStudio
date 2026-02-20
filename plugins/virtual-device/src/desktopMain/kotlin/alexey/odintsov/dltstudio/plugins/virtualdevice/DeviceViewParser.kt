@@ -3,7 +3,6 @@ package alexey.odintsov.dltstudio.plugins.virtualdevice
 import androidx.compose.ui.geometry.Rect
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.text.get
 
 private val defaultPattens = listOf(
     Regex("""\{(?<id2>[a-z0-9]+)?\s?(?<flags1>[A-Z\.]+)?\s?(?<flags2>[A-Z\.]+)?\s?(?<left>\d+),(?<top>\d+)-(?<right>\d+),(?<down>\d+)\s?(?<id>#[a-f0-9]+)?\s?(?<resid>[a-zA-Z0-9\-\_]+:id/[a-zA-Z0-9\_\-]+)?\s?(?<aid>aid\=[0-9]+)?\}"""),

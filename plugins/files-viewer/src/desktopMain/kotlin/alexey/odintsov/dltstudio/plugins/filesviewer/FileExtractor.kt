@@ -2,7 +2,6 @@ package alexey.odintsov.dltstudio.plugins.filesviewer
 
 import alexey.odintsov.dltmessage.DLTMessage
 import androidx.compose.runtime.mutableStateMapOf
-import kotlin.text.get
 
 
 data class FileEntry(

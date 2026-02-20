@@ -1,5 +1,8 @@
 package alexey.odintsov.dltmessage
 
+import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
+import alexey.odintsov.dltmessage.standardheader.StandardHeader
+
 
 enum class PayloadStorageType(val id: Int) {
     Structured(0),
@@ -13,8 +16,8 @@ enum class PayloadStorageType(val id: Int) {
  */
 abstract class DLTMessage (
     open val timeStampUs: Long,
-    open val standardHeader: alexey.odintsov.dltmessage.standardheader.StandardHeader,
-    open val extendedHeader: alexey.odintsov.dltmessage.extendedheader.ExtendedHeader?,
+    open val standardHeader: StandardHeader,
+    open val extendedHeader: ExtendedHeader?,
 ) {
     /**
      * Payload textual representation - is used by search and timeline parsing.

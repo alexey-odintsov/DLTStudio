@@ -7,7 +7,6 @@ import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.MinMaxEntriesExtractor
 import org.junit.Test
-import kotlin.collections.get
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 

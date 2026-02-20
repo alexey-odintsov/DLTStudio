@@ -3,12 +3,13 @@ package alexey.odintsov.dltmessage.verbosepayload
 import alexey.odintsov.datautils.Endian
 import alexey.odintsov.datautils.readInt
 import alexey.odintsov.datautils.readUShort
+import alexey.odintsov.dltmessage.Payload
 import alexey.odintsov.logger.Log
 
 
 data class VerbosePayload(
     val arguments: List<Argument>
-) : alexey.odintsov.dltmessage.Payload {
+) : Payload {
 
     override fun getSize(): Int {
         var size = 0

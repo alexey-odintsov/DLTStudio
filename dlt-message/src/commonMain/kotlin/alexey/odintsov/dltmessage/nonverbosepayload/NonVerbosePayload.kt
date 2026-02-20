@@ -1,11 +1,12 @@
 package alexey.odintsov.dltmessage.nonverbosepayload
 
 import alexey.odintsov.datautils.toHex
+import alexey.odintsov.dltmessage.Payload
 
 data class NonVerbosePayload(
     val messageId: UInt,
     val data: ByteArray
-) : alexey.odintsov.dltmessage.Payload {
+) : Payload {
     override fun getSize(): Int {
         return MESSAGE_ID_SIZE_BYTES + data.size
     }

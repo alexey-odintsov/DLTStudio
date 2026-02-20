@@ -1,10 +1,13 @@
 package alexey.odintsov.dltmessage
 
+import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
+import alexey.odintsov.dltmessage.standardheader.StandardHeader
+
 
 data class StructuredDLTMessage(
     override val timeStampUs: Long,
-    override val standardHeader: alexey.odintsov.dltmessage.standardheader.StandardHeader,
-    override val extendedHeader: alexey.odintsov.dltmessage.extendedheader.ExtendedHeader?,
+    override val standardHeader: StandardHeader,
+    override val extendedHeader: ExtendedHeader?,
     val payload: Payload?,
 ) : DLTMessage(timeStampUs, standardHeader, extendedHeader) {
 

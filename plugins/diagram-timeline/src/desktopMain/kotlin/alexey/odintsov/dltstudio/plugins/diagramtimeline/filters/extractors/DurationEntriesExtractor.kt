@@ -5,7 +5,6 @@ import alexey.odintsov.dltstudio.charts.model.DurationEntry
 import alexey.odintsov.dltstudio.charts.model.StringKey
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.NO_KEY
-import kotlin.text.get
 
 class DurationEntriesExtractor : EntriesExtractor<DurationChartData<LogMessage>> {
 

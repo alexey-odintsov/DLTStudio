@@ -3,7 +3,6 @@ package alexey.odintsov.dltstudio.plugins.loginsights
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
-import kotlin.text.get
 
 internal data class CompiledRule(
     val regex: Regex,
