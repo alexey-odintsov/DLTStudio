@@ -1,9 +1,9 @@
 package com.alekso.dltstudio.tests.logs.colorfilters
 
 import androidx.compose.ui.graphics.Color
-import com.alekso.dltstudio.logs.CellStyle
-import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import com.alekso.dltstudio.logs.colorfilters.ColorFilterManager
+import alexey.odintsov.dltstudio.logs.CellStyle
+import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
+import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterManager
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria
@@ -13,7 +13,8 @@ import kotlin.test.assertTrue
 
 class ColorFiltersLoadingTest {
 
-    private val filtersManager = ColorFilterManager()
+    private val filtersManager =
+        _root_ide_package_.alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterManager()
 
     @Test
     fun `Test loading Colors from string`() {

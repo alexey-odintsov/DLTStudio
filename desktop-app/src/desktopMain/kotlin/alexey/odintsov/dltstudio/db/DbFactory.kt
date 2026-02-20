@@ -2,7 +2,7 @@ package alexey.odintsov.dltstudio.db
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.alekso.dltstudio.Env
+import alexey.odintsov.dltstudio.Env
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 

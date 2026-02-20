@@ -8,15 +8,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.alekso.dltstudio.Env
-import com.alekso.dltstudio.MainMenu
 import alexey.odintsov.dltstudio.model.SettingsPlugins
 import alexey.odintsov.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
-import com.alekso.dltstudio.plugins.DependencyManager
-import com.alekso.dltstudio.settings.SettingsDialog
+import alexey.odintsov.dltstudio.plugins.DependencyManager
+import alexey.odintsov.dltstudio.settings.SettingsDialog
 import com.alekso.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.ui.MainWindow
+import alexey.odintsov.dltstudio.ui.MainWindow
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 import com.alekso.logger.Log
 
