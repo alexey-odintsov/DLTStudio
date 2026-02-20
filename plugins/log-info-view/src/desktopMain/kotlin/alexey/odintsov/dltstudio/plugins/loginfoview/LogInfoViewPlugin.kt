@@ -1,0 +1,63 @@
+package alexey.odintsov.dltstudio.plugins.loginfoview
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import alexey.odintsov.dltstudio.model.contract.Formatter
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.FormatterConsumer
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
+import kotlin.collections.get
+
+val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
+
+
+class LogInfoViewPlugin : DLTStudioPlugin, PluginLogPreview, FormatterConsumer {
+    private lateinit var viewModel: LogInfoViewViewModel
+    private lateinit var formatter: Formatter
+    private lateinit var messagesRepository: MessagesRepository
+
+    override fun pluginName(): String = "Log info view"
+    override fun pluginDirectoryName(): String = "log-info-view"
+    override fun pluginVersion(): String = "0.0.1"
+    override fun pluginClassName(): String = LogInfoViewPlugin::class.simpleName.toString()
+    override fun author(): String = "Alexey Odintsov"
+    override fun pluginLink(): String? = null
+    override fun description(): String = "Shows selected log message in easy to read format. Allows message commenting."
+    override fun getPanelName(): String = "Info view"
+
+    override fun init(
+        messagesRepository: MessagesRepository,
+        onProgressUpdate: (Float) -> Unit,
+        pluginFilesPath: String,
+    ) {
+        this.messagesRepository = messagesRepository
+        viewModel = LogInfoViewViewModel(messagesRepository)
+    }
+
+    override fun onLogsChanged() {
+        // do nothing
+    }
+
+    @Composable
+    override fun renderPreview(modifier: Modifier, logMessage: LogMessage?) {
+        val comments = messagesRepository.getComments().collectAsState()
+
+        CompositionLocalProvider(LocalFormatter provides formatter) {
+            LogInfoView(
+                modifier = modifier,
+                logMessage = logMessage,
+                comment = comments.value[logMessage?.id],
+                onCommentUpdated = viewModel::onCommentUpdated,
+            )
+        }
+    }
+
+    override fun initFormatter(formatter: Formatter) {
+        this.formatter = formatter
+    }
+}
