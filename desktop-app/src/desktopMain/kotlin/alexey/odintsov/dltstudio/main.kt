@@ -1,4 +1,4 @@
-package com.alekso.dltstudio
+package alexey.odintsov.dltstudio
 
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -8,8 +8,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import com.alekso.dltstudio.model.SettingsPlugins
-import com.alekso.dltstudio.model.SettingsUI
+import com.alekso.dltstudio.Env
+import com.alekso.dltstudio.MainMenu
+import alexey.odintsov.dltstudio.model.SettingsPlugins
+import alexey.odintsov.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.settings.SettingsDialog

@@ -1,16 +1,16 @@
-package com.alekso.dltstudio.db
+package alexey.odintsov.dltstudio.db
 
+import alexey.odintsov.dltstudio.db.preferences.ColumnParamsEntity
+import alexey.odintsov.dltstudio.db.preferences.PreferencesDao
+import alexey.odintsov.dltstudio.db.preferences.RecentColorFilterFileEntry
+import alexey.odintsov.dltstudio.db.preferences.SearchEntity
+import alexey.odintsov.dltstudio.db.settings.PluginStateEntity
+import alexey.odintsov.dltstudio.db.settings.SettingsDao
+import alexey.odintsov.dltstudio.db.settings.SettingsLogsEntity
+import alexey.odintsov.dltstudio.db.settings.SettingsUIEntity
 import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.alekso.dltstudio.db.preferences.ColumnParamsEntity
-import com.alekso.dltstudio.db.preferences.PreferencesDao
-import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
-import com.alekso.dltstudio.db.preferences.SearchEntity
-import com.alekso.dltstudio.db.settings.PluginStateEntity
-import com.alekso.dltstudio.db.settings.SettingsDao
-import com.alekso.dltstudio.db.settings.SettingsLogsEntity
-import com.alekso.dltstudio.db.settings.SettingsUIEntity
 
 @Database(
     entities = [

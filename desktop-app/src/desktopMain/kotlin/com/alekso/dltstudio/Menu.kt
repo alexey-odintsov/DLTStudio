@@ -3,7 +3,7 @@ package com.alekso.dltstudio
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.FrameWindowScope
 import androidx.compose.ui.window.MenuBar
-import com.alekso.dltstudio.db.preferences.RecentColorFilterFileEntry
+import alexey.odintsov.dltstudio.db.preferences.RecentColorFilterFileEntry
 import java.io.File
 
 interface MainMenuCallbacks {

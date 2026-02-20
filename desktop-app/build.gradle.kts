@@ -62,12 +62,12 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "com.alekso.dltstudio.MainKt"
+        mainClass = "alexey.odintsov.dltstudio.MainKt"
         jvmArgs += listOf("-Xmx8G")
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
-            packageName = "com.alekso.dltstudio"
+            packageName = "alexey.odintsov.dltstudio"
             packageVersion = "1.2.1"
         }
     }

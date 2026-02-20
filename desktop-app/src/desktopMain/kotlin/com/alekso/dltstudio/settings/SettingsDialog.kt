@@ -18,10 +18,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltmessage.PayloadStorageType
-import com.alekso.dltstudio.model.PluginState
-import com.alekso.dltstudio.model.SettingsLogs
-import com.alekso.dltstudio.model.SettingsPlugins
-import com.alekso.dltstudio.model.SettingsUI
+import alexey.odintsov.dltstudio.model.PluginState
+import alexey.odintsov.dltstudio.model.SettingsLogs
+import alexey.odintsov.dltstudio.model.SettingsPlugins
+import alexey.odintsov.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.TabsPanel

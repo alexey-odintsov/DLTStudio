@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.logs
 
+import alexey.odintsov.dltstudio.model.ColumnParams
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,7 +32,6 @@ import com.alekso.dltstudio.logs.search.SearchState
 import com.alekso.dltstudio.logs.toolbar.LogsToolbar
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarCallbacks
 import com.alekso.dltstudio.logs.toolbar.LogsToolbarState
-import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi

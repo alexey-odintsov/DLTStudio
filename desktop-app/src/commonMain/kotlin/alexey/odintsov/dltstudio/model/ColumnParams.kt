@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.model
+package alexey.odintsov.dltstudio.model
 
 enum class Column(
     val title: String,

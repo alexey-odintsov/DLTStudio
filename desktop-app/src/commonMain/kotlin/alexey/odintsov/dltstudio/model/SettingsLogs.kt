@@ -1,7 +1,7 @@
-package com.alekso.dltstudio.model
+package alexey.odintsov.dltstudio.model
 
 import com.alekso.dltmessage.PayloadStorageType
-import com.alekso.dltstudio.db.settings.SettingsLogsEntity
+import alexey.odintsov.dltstudio.db.settings.SettingsLogsEntity
 import java.io.File
 
 data class SettingsLogs(

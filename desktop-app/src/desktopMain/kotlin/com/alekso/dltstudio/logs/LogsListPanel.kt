@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.logs
 
+import alexey.odintsov.dltstudio.model.ColumnParams
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
@@ -10,7 +11,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.ui.Panel
 

@@ -1,6 +1,7 @@
-package com.alekso.dltstudio.model
+package alexey.odintsov.dltstudio.model
 
-import com.alekso.dltstudio.db.settings.PluginStateEntity
+import alexey.odintsov.dltstudio.db.settings.PluginStateEntity
+
 
 data class PluginState(
     val key: String,

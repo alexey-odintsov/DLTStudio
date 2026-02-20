@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.db
+package alexey.odintsov.dltstudio.db
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver

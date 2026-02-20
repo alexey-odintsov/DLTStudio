@@ -1,6 +1,6 @@
-package com.alekso.dltstudio.db.settings
+package alexey.odintsov.dltstudio.db.settings
 
-import com.alekso.dltstudio.db.AppDatabase
+import alexey.odintsov.dltstudio.db.AppDatabase
 import com.alekso.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow

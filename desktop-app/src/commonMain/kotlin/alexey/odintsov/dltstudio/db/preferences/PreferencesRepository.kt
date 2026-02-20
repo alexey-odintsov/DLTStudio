@@ -1,7 +1,7 @@
-package com.alekso.dltstudio.db.preferences
+package alexey.odintsov.dltstudio.db.preferences
 
-import com.alekso.dltstudio.db.AppDatabase
-import com.alekso.dltstudio.model.ColumnParams
+import alexey.odintsov.dltstudio.model.ColumnParams
+import alexey.odintsov.dltstudio.db.AppDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 

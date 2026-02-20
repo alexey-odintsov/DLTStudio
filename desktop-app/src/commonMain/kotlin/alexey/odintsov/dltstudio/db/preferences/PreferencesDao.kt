@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.db.preferences
+package alexey.odintsov.dltstudio.db.preferences
 
 import androidx.room.Dao
 import androidx.room.Query

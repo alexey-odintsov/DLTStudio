@@ -34,8 +34,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.model.PluginState
-import com.alekso.dltstudio.model.SettingsPlugins
+import alexey.odintsov.dltstudio.model.PluginState
+import alexey.odintsov.dltstudio.model.SettingsPlugins
 import com.alekso.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.theme.SystemTheme

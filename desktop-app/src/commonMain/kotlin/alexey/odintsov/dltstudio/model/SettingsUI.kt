@@ -1,7 +1,7 @@
-package com.alekso.dltstudio.model
+package alexey.odintsov.dltstudio.model
 
 import androidx.compose.ui.text.font.FontFamily
-import com.alekso.dltstudio.db.settings.SettingsUIEntity
+import alexey.odintsov.dltstudio.db.settings.SettingsUIEntity
 
 enum class SupportedFontFamilies(
     val id: Int,

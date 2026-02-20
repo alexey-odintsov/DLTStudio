@@ -1,9 +1,9 @@
-package com.alekso.dltstudio.db.preferences
+package alexey.odintsov.dltstudio.db.preferences
 
+import alexey.odintsov.dltstudio.model.Column
+import alexey.odintsov.dltstudio.model.ColumnParams
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.alekso.dltstudio.model.Column
-import com.alekso.dltstudio.model.ColumnParams
 
 @Entity
 data class ColumnParamsEntity(

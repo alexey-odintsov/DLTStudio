@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.model
+package alexey.odintsov.dltstudio.model
 
 data class SettingsPlugins(
     val selectedPlugin: String? = null,

@@ -1,5 +1,7 @@
 package com.alekso.dltstudio.logs
 
+import alexey.odintsov.dltstudio.LocalFormatter
+import alexey.odintsov.dltstudio.model.ColumnParams
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
@@ -27,9 +29,7 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.LocalFormatter
 import com.alekso.dltstudio.logs.colorfilters.ColorFilter
-import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.model.contract.LogMessage
 
 
@@ -115,8 +115,7 @@ fun LazyScrollable(
                         colorFilters.firstOrNull { filter -> filter.assess(dltMessage) }?.cellStyle
 
                     val index: Int = logMessage.id
-                    val sTime: String =
-                        LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
+                    val sTime: String = LocalFormatter.current.formatDateTime(dltMessage.timeStampUs)
                     val sTimeOffset: String =
                         if (dltMessage.standardHeader.timeStamp != null) "%.4f".format(dltMessage.standardHeader.timeStamp!!.toLong() / 10000f) else "-"
                     val sEcuId = "${dltMessage.standardHeader.ecuId}"

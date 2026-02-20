@@ -1,5 +1,6 @@
 package com.alekso.dltstudio.logs
 
+import alexey.odintsov.dltstudio.model.ColumnParams
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,7 +27,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.alekso.dltstudio.logs.colorfilters.ColorFilterFatal
-import com.alekso.dltstudio.model.ColumnParams
 import com.alekso.dltstudio.theme.AppTheme
 import com.alekso.dltstudio.theme.SystemTheme
 import com.alekso.dltstudio.theme.ThemeManager

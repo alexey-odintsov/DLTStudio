@@ -1,10 +1,10 @@
 package com.alekso.dltstudio.logs
 
+import alexey.odintsov.dltstudio.model.Column
+import alexey.odintsov.dltstudio.model.ColumnParams
 import androidx.compose.foundation.ContextMenuArea
 import androidx.compose.foundation.ContextMenuItem
 import androidx.compose.runtime.Composable
-import com.alekso.dltstudio.model.Column
-import com.alekso.dltstudio.model.ColumnParams
 
 interface ColumnsContextMenuCallbacks {
     fun onToggleColumnVisibility(key: Column, checked: Boolean)

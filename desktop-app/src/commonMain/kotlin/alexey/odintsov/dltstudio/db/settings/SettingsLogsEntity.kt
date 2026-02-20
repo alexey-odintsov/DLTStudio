@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.db.settings
+package alexey.odintsov.dltstudio.db.settings
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -17,8 +17,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.model.SettingsUI
-import com.alekso.dltstudio.model.SupportedFontFamilies
+import alexey.odintsov.dltstudio.model.SettingsUI
+import alexey.odintsov.dltstudio.model.SupportedFontFamilies
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
