@@ -13,7 +13,7 @@ import alexey.odintsov.dltstudio.model.SettingsUI
 import com.alekso.dltstudio.model.contract.Formatter
 import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.settings.SettingsDialog
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.ui.MainWindow
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
 import com.alekso.logger.Log

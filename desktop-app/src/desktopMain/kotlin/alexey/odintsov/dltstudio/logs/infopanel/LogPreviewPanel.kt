@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
-import com.alekso.dltstudio.theme.SystemTheme
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.TabsPanel
 
 @Composable

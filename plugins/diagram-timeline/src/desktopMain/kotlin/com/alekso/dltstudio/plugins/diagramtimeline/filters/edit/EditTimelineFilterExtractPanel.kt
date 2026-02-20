@@ -23,8 +23,8 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.ExtractorChecker
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelinePreviewFactory
-import com.alekso.dltstudio.theme.SystemTheme
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.logger.Log

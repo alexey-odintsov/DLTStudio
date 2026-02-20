@@ -27,9 +27,9 @@ import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.theme.AppTheme
-import com.alekso.dltstudio.theme.SystemTheme
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.AppTheme
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource

@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.theme
+package alexey.odintsov.dltstudio.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ColorScheme

@@ -22,7 +22,7 @@ import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialog
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialogState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomCheckbox
 import com.alekso.dltstudio.uicomponents.ImageButton

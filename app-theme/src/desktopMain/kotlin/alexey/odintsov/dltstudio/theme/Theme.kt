@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.theme
+package alexey.odintsov.dltstudio.theme
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Shapes

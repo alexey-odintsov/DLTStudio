@@ -31,9 +31,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.theme.AppTheme
-import com.alekso.dltstudio.theme.SystemTheme
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.AppTheme
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell

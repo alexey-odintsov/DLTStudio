@@ -27,7 +27,7 @@ import com.alekso.dltstudio.charts.ui.ChartStyle
 import com.alekso.dltstudio.charts.ui.ChartType
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.ThemeManager
 
 private val timeFrame = TimeFrame(0L, 5_000_000L)
 

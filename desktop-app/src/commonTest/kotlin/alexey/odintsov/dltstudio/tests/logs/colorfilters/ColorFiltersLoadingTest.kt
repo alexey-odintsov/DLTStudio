@@ -1,9 +1,8 @@
-package com.alekso.dltstudio.tests.logs.colorfilters
+package alexey.odintsov.dltstudio.tests.logs.colorfilters
 
-import androidx.compose.ui.graphics.Color
 import alexey.odintsov.dltstudio.logs.CellStyle
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
-import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterManager
+import androidx.compose.ui.graphics.Color
 import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
 import com.alekso.dltstudio.model.contract.filtering.FilterParameter
 import com.alekso.dltstudio.model.contract.filtering.TextCriteria

@@ -18,8 +18,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.theme.SystemTheme
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 
 
 @Composable

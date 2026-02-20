@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.theme
+package alexey.odintsov.dltstudio.theme
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background

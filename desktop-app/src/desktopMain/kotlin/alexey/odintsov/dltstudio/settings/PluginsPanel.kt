@@ -38,8 +38,8 @@ import alexey.odintsov.dltstudio.model.PluginState
 import alexey.odintsov.dltstudio.model.SettingsPlugins
 import alexey.odintsov.dltstudio.plugins.DependencyManager
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.theme.SystemTheme
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.table.TableDivider
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi

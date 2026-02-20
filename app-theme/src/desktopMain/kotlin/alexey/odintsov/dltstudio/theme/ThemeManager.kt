@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.theme
+package alexey.odintsov.dltstudio.theme
 
 import androidx.compose.runtime.Composable
 

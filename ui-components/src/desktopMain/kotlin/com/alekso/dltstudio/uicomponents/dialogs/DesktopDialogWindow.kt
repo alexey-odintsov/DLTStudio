@@ -9,7 +9,7 @@ import androidx.compose.ui.window.DialogState
 import androidx.compose.ui.window.DialogWindow
 import androidx.compose.ui.window.DialogWindowScope
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.theme.ThemeManager
 
 @Composable
 fun DesktopDialogWindow(
