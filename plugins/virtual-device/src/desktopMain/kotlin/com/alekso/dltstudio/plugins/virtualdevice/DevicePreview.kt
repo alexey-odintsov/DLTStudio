@@ -18,7 +18,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.virtualdevice.model.VirtualDevice
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown

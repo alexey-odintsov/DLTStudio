@@ -1,7 +1,7 @@
 package com.alekso.dltstudio.plugins.loginsights
 
 import androidx.compose.runtime.mutableStateListOf
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.logger.Log
 
 class LogInsightsViewModel(

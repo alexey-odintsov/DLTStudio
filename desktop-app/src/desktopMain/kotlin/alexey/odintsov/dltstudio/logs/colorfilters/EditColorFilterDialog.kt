@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
-import com.alekso.dltstudio.model.contract.filtering.FilterParameter
-import com.alekso.dltstudio.model.contract.filtering.TextCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
 import com.alekso.dltstudio.uicomponents.CustomButton
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText

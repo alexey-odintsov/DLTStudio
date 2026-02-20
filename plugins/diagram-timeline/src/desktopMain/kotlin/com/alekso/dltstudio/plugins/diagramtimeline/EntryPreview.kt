@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import dltstudio.resources.icon_unmark

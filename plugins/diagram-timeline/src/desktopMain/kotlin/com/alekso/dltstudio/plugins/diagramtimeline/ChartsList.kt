@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 
 private val TIME_MARKER_WIDTH_DP = 140.dp

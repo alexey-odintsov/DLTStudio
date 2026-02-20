@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import alexey.odintsov.dltstudio.LogRemoveContext
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 
 interface RowContextMenuCallbacks {
     fun onMarkClicked(i: Int, message: LogMessage)

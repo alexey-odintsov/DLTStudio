@@ -13,7 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager

@@ -1,8 +1,8 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters
 
-import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
-import com.alekso.dltstudio.model.contract.filtering.FilterParameter
-import com.alekso.dltstudio.model.contract.filtering.TextCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 

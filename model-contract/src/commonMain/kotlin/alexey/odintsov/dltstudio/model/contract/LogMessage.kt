@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.model.contract
+package alexey.odintsov.dltstudio.model.contract
 
 import alexey.odintsov.dltmessage.DLTMessage
 import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo

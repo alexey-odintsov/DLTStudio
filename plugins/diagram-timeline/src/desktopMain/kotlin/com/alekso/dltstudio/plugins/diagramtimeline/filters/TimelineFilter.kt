@@ -1,9 +1,9 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters
 
 import alexey.odintsov.dltmessage.DLTMessage
-import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
-import com.alekso.dltstudio.model.contract.filtering.FilterParameter
-import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.checkTextCriteria
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import kotlinx.serialization.Serializable

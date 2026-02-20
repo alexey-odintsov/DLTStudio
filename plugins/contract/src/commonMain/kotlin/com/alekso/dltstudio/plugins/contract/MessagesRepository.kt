@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.plugins.contract
 
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import kotlinx.coroutines.flow.StateFlow
 
 interface MessagesRepository {

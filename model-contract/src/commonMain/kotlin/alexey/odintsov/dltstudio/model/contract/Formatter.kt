@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.model.contract
+package alexey.odintsov.dltstudio.model.contract
 
 import kotlinx.datetime.TimeZone
 

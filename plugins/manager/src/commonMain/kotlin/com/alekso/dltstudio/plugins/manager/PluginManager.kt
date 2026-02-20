@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.plugins.manager
 
-import com.alekso.dltstudio.model.contract.Formatter
+import alexey.odintsov.dltstudio.model.contract.Formatter
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.FormatterConsumer
 import com.alekso.dltstudio.plugins.contract.MessagesRepository

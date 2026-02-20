@@ -18,7 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
 import alexey.odintsov.dltstudio.extraction.forEachWithProgress
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepository

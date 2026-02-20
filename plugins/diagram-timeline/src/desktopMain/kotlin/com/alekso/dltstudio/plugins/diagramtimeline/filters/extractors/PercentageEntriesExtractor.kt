@@ -3,7 +3,7 @@ package com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors
 import alexey.odintsov.dltstudio.charts.model.PercentageChartData
 import alexey.odintsov.dltstudio.charts.model.PercentageEntry
 import alexey.odintsov.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.ExtractionType
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor.Param

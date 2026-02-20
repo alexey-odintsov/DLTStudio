@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.model.contract.filtering
+package alexey.odintsov.dltstudio.model.contract.filtering
 
 import kotlinx.serialization.Serializable
 

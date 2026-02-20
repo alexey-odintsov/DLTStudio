@@ -2,7 +2,7 @@ package com.alekso.dltstudio.plugins.contract
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 
 interface PluginLogPreview {
     @Composable

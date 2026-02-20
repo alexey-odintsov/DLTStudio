@@ -4,10 +4,10 @@ import alexey.odintsov.dltmessage.DLTMessage
 import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import alexey.odintsov.dltstudio.logs.CellStyle
 import androidx.compose.ui.graphics.Color
-import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
-import com.alekso.dltstudio.model.contract.filtering.FilterParameter
-import com.alekso.dltstudio.model.contract.filtering.TextCriteria
-import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.checkTextCriteria
 import kotlinx.serialization.Serializable
 
 

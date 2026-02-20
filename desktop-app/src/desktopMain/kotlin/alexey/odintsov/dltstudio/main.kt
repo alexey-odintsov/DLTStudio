@@ -10,7 +10,7 @@ import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import alexey.odintsov.dltstudio.model.SettingsPlugins
 import alexey.odintsov.dltstudio.model.SettingsUI
-import com.alekso.dltstudio.model.contract.Formatter
+import alexey.odintsov.dltstudio.model.contract.Formatter
 import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.settings.SettingsDialog
 import alexey.odintsov.dltstudio.theme.ThemeManager

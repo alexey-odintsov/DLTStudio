@@ -3,7 +3,7 @@ package com.alekso.dltstudio.plugins.diagramtimiline.extractors
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltstudio.charts.model.EventsChartData
 import com.alekso.dltstudio.charts.model.StringKey
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EventEntriesExtractor
 import org.junit.Test

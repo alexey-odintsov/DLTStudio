@@ -7,7 +7,7 @@ import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
 import alexey.odintsov.dltstudio.charts.model.PercentageChartData
 import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
 import alexey.odintsov.dltstudio.charts.model.StateChartData
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.diagramtimeline.DiagramType
 
 

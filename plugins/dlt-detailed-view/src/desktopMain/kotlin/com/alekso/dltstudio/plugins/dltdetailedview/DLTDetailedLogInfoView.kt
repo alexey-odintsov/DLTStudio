@@ -16,7 +16,7 @@ import alexey.odintsov.datautils.toBinary
 import alexey.odintsov.datautils.toHex
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
-import com.alekso.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.uicomponents.table.TableTextCell
 
 @Composable

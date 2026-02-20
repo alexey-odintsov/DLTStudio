@@ -3,9 +3,9 @@ package alexey.odintsov.dltstudio.tests.logs.colorfilters
 import alexey.odintsov.dltstudio.logs.CellStyle
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
 import androidx.compose.ui.graphics.Color
-import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
-import com.alekso.dltstudio.model.contract.filtering.FilterParameter
-import com.alekso.dltstudio.model.contract.filtering.TextCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

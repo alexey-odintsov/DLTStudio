@@ -36,10 +36,10 @@ import alexey.odintsov.dltstudio.settings.SettingsDialogCallbacks
 import alexey.odintsov.dltstudio.settings.SettingsPluginsCallbacks
 import androidx.compose.foundation.lazy.LazyListState
 import alexey.odintsov.dltparser.DLTParser
-import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.model.contract.filtering.FilterCriteria
-import com.alekso.dltstudio.model.contract.filtering.FilterParameter
-import com.alekso.dltstudio.model.contract.filtering.checkTextCriteria
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.checkTextCriteria
 import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview

@@ -3,7 +3,7 @@ package alexey.odintsov.dltstudio
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.alekso.dltstudio.model.contract.Formatter
+import alexey.odintsov.dltstudio.model.contract.Formatter
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
