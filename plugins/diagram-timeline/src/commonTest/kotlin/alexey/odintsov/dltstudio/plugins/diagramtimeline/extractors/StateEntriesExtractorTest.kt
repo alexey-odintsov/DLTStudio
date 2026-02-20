@@ -1,8 +1,8 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline.extractors
 
-import com.alekso.dltmessage.SampleData
-import com.alekso.dltstudio.charts.model.StateChartData
-import com.alekso.dltstudio.charts.model.StringKey
+import alexey.odintsov.dltmessage.SampleData
+import alexey.odintsov.dltstudio.charts.model.StateChartData
+import alexey.odintsov.dltstudio.charts.model.StringKey
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.StateEntriesExtractor

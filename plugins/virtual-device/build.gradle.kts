@@ -8,7 +8,7 @@ plugins {
 }
 
 
-group = "com.alekso.dltstudio.plugins.virtualdevice"
+group = "alexey.odintsov.dltstudio.plugins.virtualdevice"
 version = "1.0.0"
 
 kotlin {

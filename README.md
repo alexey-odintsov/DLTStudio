@@ -73,5 +73,5 @@ Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-mu
 
 # Inspect Composable stability
 ```
-./gradlew assemble -Pcom.alekso.dltstudio.android.enableComposeCompilerReports=true -Pcom.alekso.dltstudio.android.enableComposeCompilerMetrics=true --rerun-tasks
+./gradlew assemble -Palexey.odintsov.dltstudio.android.enableComposeCompilerReports=true -Palexey.odintsov.dltstudio.android.enableComposeCompilerMetrics=true --rerun-tasks
 ```

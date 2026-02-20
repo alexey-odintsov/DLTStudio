@@ -1,10 +1,10 @@
 package alexey.odintsov.dltstudio.tests
 
+import alexey.odintsov.dltmessage.PayloadStorageType
 import alexey.odintsov.dltstudio.db.settings.SettingsLogsEntity
 import alexey.odintsov.dltstudio.model.SettingsLogs
 import alexey.odintsov.dltstudio.model.toSettingsLogs
 import alexey.odintsov.dltstudio.model.toSettingsLogsEntity
-import com.alekso.dltmessage.PayloadStorageType
 import org.junit.Assert
 import org.junit.Test
 

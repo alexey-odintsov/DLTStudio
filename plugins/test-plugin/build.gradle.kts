@@ -5,7 +5,7 @@ plugins {
 }
 
 
-group = "com.alekso.dltstudio.plugins.testplugin"
+group = "alexey.odintsov.dltstudio.plugins.testplugin"
 version = "1.0.0"
 
 kotlin {
