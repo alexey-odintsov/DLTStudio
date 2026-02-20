@@ -33,7 +33,7 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState

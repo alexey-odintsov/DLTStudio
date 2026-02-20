@@ -40,10 +40,10 @@ import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
 import alexey.odintsov.dltstudio.model.contract.filtering.checkTextCriteria
-import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.plugins.contract.PluginLogPreview
-import com.alekso.dltstudio.plugins.contract.PluginPanel
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation

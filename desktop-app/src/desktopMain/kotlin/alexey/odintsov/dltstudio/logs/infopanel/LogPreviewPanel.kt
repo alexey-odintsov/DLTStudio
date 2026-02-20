@@ -14,7 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.uicomponents.TabsPanel

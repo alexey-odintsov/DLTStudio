@@ -16,8 +16,8 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.MainViewModel
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFiltersDialog
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.plugins.contract.PluginPanel
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 import dltstudio.resources.Res
 import dltstudio.resources.icon_upload
 import org.jetbrains.compose.resources.painterResource

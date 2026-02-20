@@ -7,10 +7,10 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import alexey.odintsov.dltstudio.model.contract.Formatter
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.contract.FormatterConsumer
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.FormatterConsumer
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 

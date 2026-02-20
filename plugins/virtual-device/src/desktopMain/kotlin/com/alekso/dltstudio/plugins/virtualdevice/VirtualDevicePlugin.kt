@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.virtualdevice.db.VirtualDeviceRepository
 import com.alekso.dltstudio.plugins.virtualdevice.db.VirtualDeviceRepositoryImpl
 import kotlinx.coroutines.CoroutineScope

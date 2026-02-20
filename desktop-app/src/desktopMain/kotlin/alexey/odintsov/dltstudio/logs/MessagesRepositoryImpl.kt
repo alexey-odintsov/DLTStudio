@@ -2,7 +2,7 @@ package alexey.odintsov.dltstudio.logs
 
 import alexey.odintsov.dltstudio.extraction.forEachWithProgress
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive

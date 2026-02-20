@@ -22,7 +22,7 @@ import alexey.odintsov.dltstudio.model.PluginState
 import alexey.odintsov.dltstudio.model.SettingsLogs
 import alexey.odintsov.dltstudio.model.SettingsPlugins
 import alexey.odintsov.dltstudio.model.SettingsUI
-import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
 import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi

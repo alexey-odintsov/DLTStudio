@@ -3,9 +3,9 @@ package com.alekso.dltstudio.plugins.loginsights
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 
 class LogInsightsPlugin : DLTStudioPlugin, PluginLogPreview {
     private lateinit var viewModel: LogInsightsViewModel

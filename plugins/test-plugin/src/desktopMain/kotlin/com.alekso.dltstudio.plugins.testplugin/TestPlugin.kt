@@ -3,9 +3,9 @@ package com.alekso.dltstudio.plugins.testplugin
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.plugins.contract.PluginPanel
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 
 class TestPlugin : DLTStudioPlugin, PluginPanel {
     override fun pluginName(): String = "TestPlugin"

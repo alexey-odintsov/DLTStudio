@@ -2,7 +2,7 @@ package com.alekso.dltstudio.plugins
 
 import alexey.odintsov.dltstudio.model.contract.Formatter
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

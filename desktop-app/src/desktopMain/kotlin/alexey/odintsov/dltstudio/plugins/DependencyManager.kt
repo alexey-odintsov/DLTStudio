@@ -11,7 +11,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import alexey.odintsov.dltparser.DLTParserV2
 import alexey.odintsov.dltstudio.model.contract.Formatter
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

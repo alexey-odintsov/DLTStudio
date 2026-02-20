@@ -1,11 +1,11 @@
 package com.alekso.dltstudio.plugins.manager
 
 import alexey.odintsov.dltstudio.model.contract.Formatter
-import com.alekso.dltstudio.plugins.contract.DLTStudioPlugin
-import com.alekso.dltstudio.plugins.contract.FormatterConsumer
-import com.alekso.dltstudio.plugins.contract.MessagesRepository
-import com.alekso.dltstudio.plugins.contract.PluginLogPreview
-import com.alekso.dltstudio.plugins.contract.PluginPanel
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.dltstudio.plugins.contract.FormatterConsumer
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
+import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 import alexey.odintsov.logger.Log
 import kotlinx.coroutines.coroutineScope
 import java.io.File
