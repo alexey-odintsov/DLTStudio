@@ -1,9 +1,9 @@
 package com.alekso.dltmessage.verbosepayload
 
-import com.alekso.datautils.Endian
-import com.alekso.datautils.readInt
-import com.alekso.datautils.readShort
-import com.alekso.datautils.toHex
+import alexey.odintsov.datautils.Endian
+import alexey.odintsov.datautils.readInt
+import alexey.odintsov.datautils.readShort
+import alexey.odintsov.datautils.toHex
 
 
 data class Argument(

@@ -1,6 +1,5 @@
-package com.alekso.datautils.tests
+package alexey.odintsov.datautils
 
-import com.alekso.datautils.isBitSet
 import org.junit.Assert
 import org.junit.Test
 

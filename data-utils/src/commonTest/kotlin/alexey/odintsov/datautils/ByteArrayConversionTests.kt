@@ -1,8 +1,5 @@
-package com.alekso.datautils.tests
+package alexey.odintsov.datautils
 
-import com.alekso.datautils.Endian
-import com.alekso.datautils.readInt
-import com.alekso.datautils.readUShort
 import org.junit.Assert
 import org.junit.Test
 

@@ -1,7 +1,7 @@
 package com.alekso.dltmessage
 
-import com.alekso.datautils.Endian
-import com.alekso.datautils.readInt
+import alexey.odintsov.datautils.Endian
+import alexey.odintsov.datautils.readInt
 import com.alekso.dltmessage.extendedheader.ExtendedHeader
 import com.alekso.dltmessage.extendedheader.MessageType
 import com.alekso.dltmessage.extendedheader.MessageTypeInfo

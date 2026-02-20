@@ -1,6 +1,6 @@
 package com.alekso.dltmessage.nonverbosepayload
 
-import com.alekso.datautils.toHex
+import alexey.odintsov.datautils.toHex
 import com.alekso.dltmessage.Payload
 
 data class NonVerbosePayload(

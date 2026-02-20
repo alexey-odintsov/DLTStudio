@@ -2,7 +2,7 @@ package alexey.odintsov.dltstudio.utils
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.alekso.datautils.toHex
+import alexey.odintsov.datautils.toHex
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor

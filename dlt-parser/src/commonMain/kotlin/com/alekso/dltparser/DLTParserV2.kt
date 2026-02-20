@@ -1,8 +1,8 @@
 package com.alekso.dltparser
 
-import com.alekso.datautils.Endian
-import com.alekso.datautils.isBitSet
-import com.alekso.datautils.toHex
+import alexey.odintsov.datautils.Endian
+import alexey.odintsov.datautils.isBitSet
+import alexey.odintsov.datautils.toHex
 import com.alekso.dltmessage.BinaryDLTMessage
 import com.alekso.dltmessage.ControlMessagePayload
 import com.alekso.dltmessage.DLTMessage

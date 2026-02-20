@@ -1,4 +1,4 @@
-package com.alekso.datautils
+package alexey.odintsov.datautils
 
 fun Long.isBitSet(position: Int): Boolean {
     val mask = 1L shl position

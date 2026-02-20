@@ -1,10 +1,10 @@
 package com.alekso.dltmessage.standardheader
 
 
-import com.alekso.datautils.Endian
-import com.alekso.datautils.isBitSet
-import com.alekso.datautils.readString
-import com.alekso.datautils.readUShort
+import alexey.odintsov.datautils.Endian
+import alexey.odintsov.datautils.isBitSet
+import alexey.odintsov.datautils.readString
+import alexey.odintsov.datautils.readUShort
 import java.io.RandomAccessFile
 
 

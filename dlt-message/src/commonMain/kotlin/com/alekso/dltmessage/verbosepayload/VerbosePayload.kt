@@ -1,8 +1,8 @@
 package com.alekso.dltmessage.verbosepayload
 
-import com.alekso.datautils.Endian
-import com.alekso.datautils.readInt
-import com.alekso.datautils.readUShort
+import alexey.odintsov.datautils.Endian
+import alexey.odintsov.datautils.readInt
+import alexey.odintsov.datautils.readUShort
 import com.alekso.dltmessage.Payload
 import com.alekso.logger.Log
 

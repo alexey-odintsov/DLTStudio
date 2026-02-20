@@ -12,8 +12,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.alekso.datautils.toBinary
-import com.alekso.datautils.toHex
+import alexey.odintsov.datautils.toBinary
+import alexey.odintsov.datautils.toHex
 import com.alekso.dltmessage.SampleData
 import com.alekso.dltmessage.extendedheader.ExtendedHeader
 import com.alekso.dltstudio.model.contract.LogMessage

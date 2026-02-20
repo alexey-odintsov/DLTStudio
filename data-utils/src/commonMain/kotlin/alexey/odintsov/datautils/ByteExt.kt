@@ -1,4 +1,4 @@
-package com.alekso.datautils
+package alexey.odintsov.datautils
 
 fun Byte.isBitSet(position: Int): Boolean {
     val mask = 1 shl position

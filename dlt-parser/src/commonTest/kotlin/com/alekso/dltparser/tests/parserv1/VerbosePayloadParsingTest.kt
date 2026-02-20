@@ -1,7 +1,7 @@
 package com.alekso.dltparser.tests.parserv1
 
-import com.alekso.datautils.Endian
-import com.alekso.datautils.readInt
+import alexey.odintsov.datautils.Endian
+import alexey.odintsov.datautils.readInt
 import com.alekso.dltmessage.verbosepayload.Argument
 import com.alekso.dltmessage.verbosepayload.TypeInfo
 import com.alekso.dltmessage.verbosepayload.VerbosePayload

@@ -1,4 +1,4 @@
-package com.alekso.datautils
+package alexey.odintsov.datautils
 
 fun ByteArray.toHex(): String =
     joinToString(separator = " ") { eachByte -> "%02x".format(eachByte) }
