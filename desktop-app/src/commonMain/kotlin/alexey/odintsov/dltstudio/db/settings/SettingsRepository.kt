@@ -1,7 +1,7 @@
 package alexey.odintsov.dltstudio.db.settings
 
 import alexey.odintsov.dltstudio.db.AppDatabase
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 

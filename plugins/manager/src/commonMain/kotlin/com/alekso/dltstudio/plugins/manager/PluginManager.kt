@@ -6,7 +6,7 @@ import com.alekso.dltstudio.plugins.contract.FormatterConsumer
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import kotlinx.coroutines.coroutineScope
 import java.io.File
 import java.net.URI

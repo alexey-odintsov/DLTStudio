@@ -1,6 +1,6 @@
 package alexey.odintsov.dltstudio.logs.colorfilters
 
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.io.File

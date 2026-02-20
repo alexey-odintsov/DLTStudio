@@ -1,6 +1,6 @@
 package com.alekso.dltstudio.plugins.diagramtimeline.filters
 
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import java.io.File

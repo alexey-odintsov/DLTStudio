@@ -49,7 +49,7 @@ import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
 import com.alekso.dltstudio.uicomponents.dialogs.FileTypeSelection
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO

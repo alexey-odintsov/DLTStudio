@@ -18,7 +18,7 @@ import alexey.odintsov.dltmessage.nonverbosepayload.NonVerbosePayload
 import alexey.odintsov.dltmessage.standardheader.HeaderType
 import alexey.odintsov.dltmessage.standardheader.StandardHeader
 import alexey.odintsov.dltmessage.verbosepayload.VerbosePayload
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import java.io.EOFException
 import java.io.File
 

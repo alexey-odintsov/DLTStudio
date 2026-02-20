@@ -16,7 +16,7 @@ import alexey.odintsov.dltstudio.settings.SettingsDialog
 import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.ui.MainWindow
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 
 
 val LocalFormatter = staticCompositionLocalOf { Formatter.STUB }

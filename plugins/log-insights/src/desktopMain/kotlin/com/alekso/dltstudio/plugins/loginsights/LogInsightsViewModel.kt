@@ -2,7 +2,7 @@ package com.alekso.dltstudio.plugins.loginsights
 
 import androidx.compose.runtime.mutableStateListOf
 import com.alekso.dltstudio.model.contract.LogMessage
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 
 class LogInsightsViewModel(
     private val insightsRepository: InsightsRepository,

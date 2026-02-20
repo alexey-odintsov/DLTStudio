@@ -17,7 +17,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 
-import com.alekso.dltstudio.extraction.forEachWithProgress
+import alexey.odintsov.dltstudio.extraction.forEachWithProgress
 import com.alekso.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.MessagesRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
@@ -30,7 +30,7 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesEx
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.predefinedTimelineFilters
 import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
 import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main

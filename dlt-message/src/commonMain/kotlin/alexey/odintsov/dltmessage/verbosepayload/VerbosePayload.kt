@@ -3,7 +3,7 @@ package alexey.odintsov.dltmessage.verbosepayload
 import alexey.odintsov.datautils.Endian
 import alexey.odintsov.datautils.readInt
 import alexey.odintsov.datautils.readUShort
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 
 
 data class VerbosePayload(

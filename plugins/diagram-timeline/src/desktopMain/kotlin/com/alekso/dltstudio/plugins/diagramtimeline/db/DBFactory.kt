@@ -2,7 +2,7 @@ package com.alekso.dltstudio.plugins.diagramtimeline.db
 
 import androidx.room.Room
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 import kotlinx.coroutines.Dispatchers
 import java.io.File
 

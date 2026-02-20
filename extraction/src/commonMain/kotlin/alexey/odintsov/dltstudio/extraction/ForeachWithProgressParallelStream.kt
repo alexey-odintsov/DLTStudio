@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.extraction
+package alexey.odintsov.dltstudio.extraction
 
 import java.util.concurrent.atomic.AtomicInteger
 

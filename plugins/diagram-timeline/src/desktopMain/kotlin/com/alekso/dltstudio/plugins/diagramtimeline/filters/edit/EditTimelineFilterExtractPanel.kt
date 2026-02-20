@@ -27,7 +27,7 @@ import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
 import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 
 private val COL_VALUE = 250.dp
 private val COL_PATTERN = 400.dp

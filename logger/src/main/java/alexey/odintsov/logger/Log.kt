@@ -1,4 +1,4 @@
-package com.alekso.logger
+package alexey.odintsov.logger
 
 import java.io.File
 import java.time.Instant

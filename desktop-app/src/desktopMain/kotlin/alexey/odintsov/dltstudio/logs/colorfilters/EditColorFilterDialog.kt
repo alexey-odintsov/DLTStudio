@@ -35,7 +35,7 @@ import com.alekso.dltstudio.uicomponents.CustomDropDown
 import com.alekso.dltstudio.uicomponents.CustomEditText
 import com.alekso.dltstudio.uicomponents.dialogs.ColorPickerDialog
 import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
-import com.alekso.logger.Log
+import alexey.odintsov.logger.Log
 
 
 class EditDialogState(

@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.extraction
+package alexey.odintsov.dltstudio.extraction
 
 inline fun <T> forEachWithProgress(
     collection: Collection<T>,
