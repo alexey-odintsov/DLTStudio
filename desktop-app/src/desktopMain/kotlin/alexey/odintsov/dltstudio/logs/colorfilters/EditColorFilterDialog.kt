@@ -30,11 +30,11 @@ import androidx.compose.ui.window.rememberDialogState
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
 import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
-import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.CustomDropDown
-import com.alekso.dltstudio.uicomponents.CustomEditText
-import com.alekso.dltstudio.uicomponents.dialogs.ColorPickerDialog
-import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.dltstudio.uicomponents.dialogs.ColorPickerDialog
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import alexey.odintsov.logger.Log
 
 

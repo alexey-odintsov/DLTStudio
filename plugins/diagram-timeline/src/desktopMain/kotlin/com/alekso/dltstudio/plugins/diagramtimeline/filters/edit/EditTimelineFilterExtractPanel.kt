@@ -25,8 +25,8 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesEx
 import com.alekso.dltstudio.plugins.diagramtimeline.graph.TimelinePreviewFactory
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.uicomponents.CustomDropDown
-import com.alekso.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 import alexey.odintsov.logger.Log
 
 private val COL_VALUE = 250.dp

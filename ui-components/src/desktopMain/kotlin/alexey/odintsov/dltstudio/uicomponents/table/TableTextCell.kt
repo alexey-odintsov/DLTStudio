@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.uicomponents.table
+package alexey.odintsov.dltstudio.uicomponents.table
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

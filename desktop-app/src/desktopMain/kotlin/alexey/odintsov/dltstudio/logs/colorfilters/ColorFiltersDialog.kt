@@ -25,10 +25,10 @@ import androidx.compose.ui.window.rememberDialogState
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
 import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
-import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.CustomCheckbox
-import com.alekso.dltstudio.uicomponents.ImageButton
-import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_down

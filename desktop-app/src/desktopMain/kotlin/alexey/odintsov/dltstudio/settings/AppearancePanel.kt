@@ -19,9 +19,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.model.SettingsUI
 import alexey.odintsov.dltstudio.model.SupportedFontFamilies
-import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.CustomDropDown
-import com.alekso.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 
 @Composable
 fun AppearancePanel(

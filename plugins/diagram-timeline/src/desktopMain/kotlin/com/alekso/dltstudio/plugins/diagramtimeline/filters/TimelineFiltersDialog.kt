@@ -23,9 +23,9 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFil
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialogState
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.CustomCheckbox
-import com.alekso.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_down

@@ -25,7 +25,7 @@ import androidx.compose.ui.draganddrop.dragData
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.MainViewModel
 import alexey.odintsov.dltstudio.plugins.DependencyManager
-import com.alekso.dltstudio.uicomponents.TabsPanel
+import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 import java.io.File
 import java.net.URI
 

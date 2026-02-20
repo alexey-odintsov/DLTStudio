@@ -26,10 +26,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.uicomponents.AutoCompleteEditText
-import com.alekso.dltstudio.uicomponents.ImageButton
-import com.alekso.dltstudio.uicomponents.ToggleImageButton
-import com.alekso.dltstudio.uicomponents.Tooltip
+import alexey.odintsov.dltstudio.uicomponents.AutoCompleteEditText
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.ToggleImageButton
+import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters
 import dltstudio.resources.icon_comments

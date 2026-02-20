@@ -14,7 +14,7 @@ import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.diagramtimeline.db.DBFactory
 import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepository
 import com.alekso.dltstudio.plugins.diagramtimeline.db.TimelineRepositoryImpl
-import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
+import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob

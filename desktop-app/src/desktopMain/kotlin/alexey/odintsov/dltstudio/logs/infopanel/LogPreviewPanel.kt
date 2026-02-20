@@ -17,7 +17,7 @@ import alexey.odintsov.dltstudio.model.contract.LogMessage
 import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.uicomponents.TabsPanel
+import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 
 @Composable
 fun LogPreviewPanel(

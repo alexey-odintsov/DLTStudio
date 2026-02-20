@@ -46,9 +46,9 @@ import com.alekso.dltstudio.plugins.contract.PluginLogPreview
 import com.alekso.dltstudio.plugins.contract.PluginPanel
 import com.alekso.dltstudio.plugins.manager.PluginManager
 import com.alekso.dltstudio.plugins.predefinedplugins.predefinedPlugins
-import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
-import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
-import com.alekso.dltstudio.uicomponents.dialogs.FileTypeSelection
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
+import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
+import alexey.odintsov.dltstudio.uicomponents.dialogs.FileTypeSelection
 import alexey.odintsov.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default

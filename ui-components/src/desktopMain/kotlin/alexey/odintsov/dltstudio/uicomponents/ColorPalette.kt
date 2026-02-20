@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.uicomponents
+package alexey.odintsov.dltstudio.uicomponents
 
 import androidx.compose.ui.graphics.Color
 import kotlin.random.Random

@@ -22,9 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.plugins.virtualdevice.model.VirtualDevice
-import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.CustomEditText
-import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 
 
 class EditVirtualDeviceDialogState(

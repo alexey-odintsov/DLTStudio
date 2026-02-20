@@ -28,8 +28,8 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.predefinedTimelineFilters
-import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
-import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
+import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

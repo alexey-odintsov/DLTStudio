@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.uicomponents.dialogs
+package alexey.odintsov.dltstudio.uicomponents.dialogs
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize

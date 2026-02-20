@@ -18,8 +18,8 @@ import com.alekso.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.uicomponents.CustomDropDown
-import com.alekso.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
+import alexey.odintsov.dltstudio.uicomponents.CustomEditText
 
 private val COL_NAME_SIZE_DP = 150.dp
 private val COL_VALUE = 250.dp

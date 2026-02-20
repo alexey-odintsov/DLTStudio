@@ -27,7 +27,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.alekso.dltstudio.uicomponents.ColorPalette
+import alexey.odintsov.dltstudio.uicomponents.ColorPalette
 import kotlin.math.max
 import kotlin.math.min
 

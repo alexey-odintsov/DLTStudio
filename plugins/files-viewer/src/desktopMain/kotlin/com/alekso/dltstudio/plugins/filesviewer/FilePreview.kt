@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import dltstudio.resources.Res
 import dltstudio.resources.icon_copy
 import dltstudio.resources.icon_download

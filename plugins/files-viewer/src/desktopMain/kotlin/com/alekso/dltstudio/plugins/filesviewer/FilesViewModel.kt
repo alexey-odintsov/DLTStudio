@@ -9,8 +9,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.ImageBitmap
 import alexey.odintsov.dltstudio.extraction.forEachWithProgress
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.uicomponents.dialogs.DialogOperation
-import com.alekso.dltstudio.uicomponents.dialogs.FileDialogState
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
+import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.logger.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default

@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
 import com.alekso.dltstudio.plugins.virtualdevice.model.VirtualDevice
-import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.ImageButton
-import com.alekso.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
 import dltstudio.resources.Res
 import dltstudio.resources.icon_delete
 import dltstudio.resources.icon_edit

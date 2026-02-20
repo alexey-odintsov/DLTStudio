@@ -71,22 +71,22 @@ class DLTParserV2() : DLTParser {
                     try {
                         // Skip until 'DLT' signature found
                         bufByte = stream.readByte()
-                        if (bufByte != DLTParser.Companion.SIGNATURE_D) {
+                        if (bufByte != DLTParser.SIGNATURE_D) {
                             i++; skippedBytes++
                             continue
                         }
                         bufByte = stream.readByte()
-                        if (bufByte != DLTParser.Companion.SIGNATURE_L) {
+                        if (bufByte != DLTParser.SIGNATURE_L) {
                             i++; skippedBytes++
                             continue
                         }
                         bufByte = stream.readByte()
-                        if (bufByte != DLTParser.Companion.SIGNATURE_T) {
+                        if (bufByte != DLTParser.SIGNATURE_T) {
                             i++; skippedBytes++
                             continue
                         }
                         bufByte = stream.readByte()
-                        if (bufByte != DLTParser.Companion.SIGNATURE_01) {
+                        if (bufByte != DLTParser.SIGNATURE_01) {
                             i++; skippedBytes++
                             continue
                         }
@@ -123,7 +123,7 @@ class DLTParserV2() : DLTParser {
         val microSeconds = stream.readIntLittle()
         val timeStampUs = timeStampSec * 1000000L + microSeconds
         stream.readString(4) // don't remove it!
-        i += DLTParser.Companion.DLT_HEADER_SIZE_BYTES
+        i += DLTParser.DLT_HEADER_SIZE_BYTES
 
         val standardHeader = parseStandardHeader(stream)
         i += standardHeader.getSize()
@@ -262,10 +262,10 @@ class DLTParserV2() : DLTParser {
         val sessionId = if (headerType.withSessionId) stream.readInt() else null
         val timeStamp = if (headerType.withTimestamp) stream.readInt().toUInt() else null
 
-        if (DLTParser.Companion.DEBUG_LOG) {
+        if (DLTParser.DEBUG_LOG) {
             println(
                 "   messageCounter: $messageCounter; length: $length: ecuId: '$ecuId', sessionId: $sessionId; timeStamp: ${
-                    if (timeStamp != null) DLTParser.Companion.simpleDateFormat.format(timeStamp.toLong() / 10000) else "null"
+                    if (timeStamp != null) DLTParser.simpleDateFormat.format(timeStamp.toLong() / 10000) else "null"
                 }"
             )
         }
@@ -283,7 +283,7 @@ class DLTParserV2() : DLTParser {
         val withTimestamp = byte.isBitSet(4)
         val versionNumber = (byte.toInt() shr 5).toByte()
 
-        if (DLTParser.Companion.DEBUG_LOG) {
+        if (DLTParser.DEBUG_LOG) {
             println(
                 "   HeaderType.parse: " + "${byte.toHex()} (${
                     byte.toString(2).padStart(8, '0')
@@ -305,7 +305,7 @@ class DLTParserV2() : DLTParser {
     private fun parseExtendedHeader(
         stream: ParserInputStream,
     ): ExtendedHeader {
-        if (DLTParser.Companion.DEBUG_LOG) {
+        if (DLTParser.DEBUG_LOG) {
             println("ExtendedHeader.parse:")
         }
         val messageInfo = parseMessageInfo(stream.readByte())
@@ -313,7 +313,7 @@ class DLTParserV2() : DLTParser {
         val applicationId = stringPool.intern(stream.readString(4))
         val contextId = stringPool.intern(stream.readString(4))
 
-        if (DLTParser.Companion.DEBUG_LOG) {
+        if (DLTParser.DEBUG_LOG) {
             println(
                 "   messageInfo: $messageInfo, argumentsCount: $argumentsCount, applicationId: $applicationId, contextId: $contextId"
             )

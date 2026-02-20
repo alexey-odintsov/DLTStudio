@@ -1,4 +1,4 @@
-package com.alekso.dltstudio.uicomponents
+package alexey.odintsov.dltstudio.uicomponents
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.padding

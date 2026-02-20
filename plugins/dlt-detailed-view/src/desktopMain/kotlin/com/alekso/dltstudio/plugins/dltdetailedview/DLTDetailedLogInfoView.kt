@@ -17,7 +17,7 @@ import alexey.odintsov.datautils.toHex
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.uicomponents.table.TableTextCell
+import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
 
 @Composable
 fun DLTDetailedInfoView(

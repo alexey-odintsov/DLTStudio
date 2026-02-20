@@ -35,7 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import com.alekso.dltstudio.uicomponents.Tooltip
+import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import kotlinx.datetime.Clock
 
 @Composable

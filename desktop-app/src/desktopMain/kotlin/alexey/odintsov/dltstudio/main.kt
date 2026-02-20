@@ -15,7 +15,7 @@ import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.settings.SettingsDialog
 import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.ui.MainWindow
-import com.alekso.dltstudio.uicomponents.dialogs.FileDialog
+import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialog
 import alexey.odintsov.logger.Log
 
 

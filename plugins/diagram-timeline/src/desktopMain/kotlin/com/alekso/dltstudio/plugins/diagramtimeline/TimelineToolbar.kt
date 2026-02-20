@@ -36,11 +36,11 @@ import com.alekso.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileE
 import com.alekso.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import com.alekso.dltstudio.uicomponents.CustomButton
-import com.alekso.dltstudio.uicomponents.CustomDropDownButton
-import com.alekso.dltstudio.uicomponents.DropDownItem
-import com.alekso.dltstudio.uicomponents.ImageButton
-import com.alekso.dltstudio.uicomponents.Tooltip
+import alexey.odintsov.dltstudio.uicomponents.CustomButton
+import alexey.odintsov.dltstudio.uicomponents.CustomDropDownButton
+import alexey.odintsov.dltstudio.uicomponents.DropDownItem
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters
 import dltstudio.resources.icon_fit
