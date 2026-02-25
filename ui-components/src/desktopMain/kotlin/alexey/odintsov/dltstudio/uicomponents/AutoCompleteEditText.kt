@@ -19,8 +19,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -48,7 +50,7 @@ fun AutoCompleteEditText(
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
             modifier = Modifier.fillMaxWidth()
                 .onKeyEvent { e ->
-                    if (e.key == Key.Enter) {
+                    if (e.key == Key.Enter && e.type == KeyEventType.KeyUp) {
                         expanded = false
                         onEnterClicked()
                         true
