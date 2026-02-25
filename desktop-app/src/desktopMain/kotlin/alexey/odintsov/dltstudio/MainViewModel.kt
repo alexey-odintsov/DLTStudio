@@ -784,10 +784,21 @@ class MainViewModel(
             }
             Log.d("Start searching for $searchType '$searchText'")
 
-            val searchRegex = if (_searchState.value.searchUseRegex) searchText.toRegex() else null
+            val searchRegex = if (_searchState.value.searchUseRegex) {
+                try {
+                    searchText.toRegex()
+                } catch (e: Exception) {
+                    Log.e("Invalid regex pattern: $searchText $e")
+                    null
+                }
+            } else {
+                null
+            }
+
+            val markedIdsSet = markedIds.value.toSet()
 
             val duration = messagesRepository.searchMessages(onProgressChanged) {
-                matchSearch(searchType, searchRegex, searchText, it, markedIds.value)
+                matchSearch(searchType, searchRegex, searchText, it, markedIdsSet)
             }
 
             _searchState.value = _searchState.value.copy(
@@ -802,24 +813,33 @@ class MainViewModel(
         searchRegex: Regex?,
         searchText: String,
         logMessage: LogMessage,
-        markedIds: List<Int>,
+        markedIds: Set<Int>,
     ): Boolean {
-        val payload = logMessage.getMessageText()
         return when (searchType) {
-
-            SearchType.Text -> {
-                ((searchRegex != null && searchRegex.containsMatchIn(payload))
-                        || (payload.contains(searchText)))
-            }
-
             SearchType.MarkedRows -> {
                 logMessage.id in markedIds
             }
 
+            SearchType.Text -> {
+                val payload = logMessage.getMessageText()
+                if (searchRegex != null) {
+                    searchRegex.containsMatchIn(payload)
+                } else {
+                    payload.contains(searchText, ignoreCase = false)
+                }
+            }
+
             SearchType.TextAndMarkedRows -> {
-                logMessage.id in markedIds || ((searchRegex != null && searchRegex.containsMatchIn(
-                    payload
-                )) || (payload.contains(searchText)))
+                if (logMessage.id in markedIds) {
+                    true
+                } else {
+                    val payload = logMessage.getMessageText()
+                    if (searchRegex != null) {
+                        searchRegex.containsMatchIn(payload)
+                    } else {
+                        payload.contains(searchText, ignoreCase = false)
+                    }
+                }
             }
         }
     }
