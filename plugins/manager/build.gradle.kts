@@ -18,8 +18,8 @@ kotlin {
             api(project(":model-contract"))
             api(project(":plugins:contract"))
             implementation(project(":logger"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
         }
     }
 }
