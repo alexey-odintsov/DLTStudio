@@ -3,6 +3,12 @@ package alexey.odintsov.dltstudio.logs.toolbar
 import alexey.odintsov.dltstudio.LocalFormatter
 import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.search.SearchType
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.uicomponents.AutoCompleteEditText
+import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.dltstudio.uicomponents.ToggleImageButton
+import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
@@ -22,14 +28,8 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.AutoCompleteEditText
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.ToggleImageButton
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import dltstudio.resources.Res
 import dltstudio.resources.icon_color_filters
 import dltstudio.resources.icon_comments
@@ -53,7 +53,7 @@ fun LogsToolbar(
     state: LogsToolbarState,
     searchState: SearchState,
     searchAutoComplete: List<String>,
-    callbacks: LogsToolbarCallbacks,
+    onAction: (LogsToolbarAction) -> Unit,
     focusedBookmarkId: Int?,
     markedIds: List<Int>,
 ) {
@@ -64,7 +64,7 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_f,
                 title = "Enable fatal logs highlight",
                 checkedTintColor = Color.Red,
-                updateCheckedState = callbacks::updateToolbarFatalCheck
+                updateCheckedState = { onAction(LogsToolbarAction.ToggleFatal) }
             )
         }
         Tooltip(text = "Toggle error logs highlight") {
@@ -73,7 +73,7 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_e,
                 title = "Enable error logs highlight",
                 checkedTintColor = Color.Red,
-                updateCheckedState = callbacks::updateToolbarErrorCheck
+                updateCheckedState = { onAction(LogsToolbarAction.ToggleError) }
             )
         }
         Tooltip(text = "Toggle warning logs highlight") {
@@ -82,7 +82,7 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_w,
                 title = "Enable warning logs highlight",
                 checkedTintColor = Color(0xE7, 0x62, 0x29),
-                updateCheckedState = callbacks::updateToolbarWarningCheck
+                updateCheckedState = { onAction(LogsToolbarAction.ToggleWarning) }
             )
         }
         Tooltip(text = "Toggle comments") {
@@ -91,7 +91,7 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_comments,
                 title = "Toggle comments",
                 checkedTintColor = Color.Blue,
-                updateCheckedState = callbacks::updateToolbarCommentsCheck,
+                updateCheckedState = { onAction(LogsToolbarAction.ToggleComments) },
             )
         }
         Tooltip(text = "Toggle content wrapping") {
@@ -100,7 +100,7 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_wordwrap,
                 title = "Wrap content",
                 checkedTintColor = Color.Blue,
-                updateCheckedState = callbacks::updateToolbarWrapContentCheck,
+                updateCheckedState = { onAction(LogsToolbarAction.ToggleWrapContent) },
             )
         }
         Tooltip(text = "Manage color filters") {
@@ -108,7 +108,7 @@ fun LogsToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_color_filters,
                 title = "Color filters",
-                onClick = callbacks::onColorFiltersClicked,
+                onClick = { onAction(LogsToolbarAction.ClickColorFilters) },
                 tintable = false,
             )
         }
@@ -118,7 +118,7 @@ fun LogsToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_sort,
                 title = "Change order",
-                onClick = callbacks::onChangeOrderClicked,
+                onClick = { onAction(LogsToolbarAction.ClickChangeOrder) },
             )
         }
         VerticalDivider(Modifier.height(32.dp).width(1.dp))
@@ -133,7 +133,7 @@ fun LogsToolbar(
                 },
                 title = "Show marked logs",
                 onClick = {
-                    callbacks.onSearchButtonClicked(SearchType.MarkedRows, "")
+                    onAction(LogsToolbarAction.ClickSearch(SearchType.MarkedRows, ""))
                 },
                 tintable = false,
             )
@@ -144,9 +144,7 @@ fun LogsToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_left,
                 title = "Prev marked log",
-                onClick = {
-                    callbacks.onPrevMarkedLog()
-                },
+                onClick = { onAction(LogsToolbarAction.ClickPrevMark) },
                 tintable = false,
             )
         }
@@ -164,9 +162,7 @@ fun LogsToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_right,
                 title = "Next marked log",
-                onClick = {
-                    callbacks.onNextMarkedLog()
-                },
+                onClick = { onAction(LogsToolbarAction.ClickNextMark) },
                 tintable = false,
             )
         }
@@ -178,7 +174,7 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_search_marks,
                 title = "Search results with marked logs",
                 checkedTintColor = Color.Blue,
-                updateCheckedState = callbacks::updateToolbarSearchWithMarkedCheck,
+                updateCheckedState = { onAction(LogsToolbarAction.ToggleSearchWithMarked) },
             )
         }
         Tooltip(text = "Toggle regular expression or plain search") {
@@ -187,15 +183,13 @@ fun LogsToolbar(
                 icon = Res.drawable.icon_regex,
                 title = "Use Regex or Plain text search",
                 checkedTintColor = Color.Blue,
-                updateCheckedState = callbacks::onSearchUseRegexChanged
+                updateCheckedState = { onAction(LogsToolbarAction.ToggleSearchRegex) },
             )
         }
         var text by rememberSaveable { mutableStateOf(searchState.searchText) }
         AutoCompleteEditText(
             modifier = Modifier.weight(1f),
-            onEnterClicked = {
-                callbacks.onSearchButtonClicked(SearchType.Text, text)
-            },
+            onEnterClicked = { onAction(LogsToolbarAction.ClickSearch(SearchType.Text, text)) },
             value = text,
             onValueChange = {
                 text = it
@@ -212,9 +206,7 @@ fun LogsToolbar(
                     Res.drawable.icon_stop
                 },
                 title = "Search",
-                onClick = {
-                    callbacks.onSearchButtonClicked(SearchType.Text, text)
-                },
+                onClick = { onAction(LogsToolbarAction.ClickSearch(SearchType.Text, text)) },
                 tintable = false,
             )
         }
@@ -227,10 +219,10 @@ fun LogsToolbar(
             value = timeZoneText,
             onValueChange = {
                 timeZoneText = it
-                callbacks.onTimeZoneChanged(it)
+                onAction(LogsToolbarAction.ChangeTimeZone(it))
             },
             onEnterClicked = {
-                callbacks.onTimeZoneChanged(timeZoneText)
+                onAction(LogsToolbarAction.ChangeTimeZone(timeZoneText))
             },
             items = TimeZone.availableZoneIds.map { it }.toMutableStateList()
         )
@@ -263,7 +255,7 @@ private fun PreviewLogsToolbar() {
         ),
         searchState = SearchState(searchText = "Search text"),
         searchAutoComplete = mutableStateListOf(),
-        callbacks = LogsToolbarCallbacks.Stub,
+        onAction = {},
         focusedBookmarkId = null,
         markedIds = mutableStateListOf()
     )

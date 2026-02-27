@@ -9,9 +9,11 @@ import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterWarn
 import alexey.odintsov.dltstudio.logs.infopanel.LogPreviewPanel
 import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbar
-import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarCallbacks
+import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarAction
 import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarState
 import alexey.odintsov.dltstudio.model.ColumnParams
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,10 +32,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
-import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.HorizontalSplitPane
 import org.jetbrains.compose.splitpane.SplitPaneState
@@ -59,7 +59,7 @@ fun LogsPanel(
     searchAutoComplete: List<String>,
     colorFilters: List<ColorFilter>,
     logsToolbarState: LogsToolbarState,
-    logsToolbarCallbacks: LogsToolbarCallbacks,
+    onToolbarAction: (LogsToolbarAction) -> Unit,
     vSplitterState: SplitPaneState,
     hSplitterState: SplitPaneState,
     logsListState: LazyListState,
@@ -80,7 +80,7 @@ fun LogsPanel(
             logsToolbarState,
             searchState,
             searchAutoComplete,
-            callbacks = logsToolbarCallbacks,
+            onAction = onToolbarAction,
             focusedBookmarkId = focusedBookmarkId,
             markedIds = markedIds,
         )
@@ -217,7 +217,7 @@ private fun PreviewLogsPanel() {
             toolbarWrapContentChecked = true,
             toolbarCommentsChecked = false,
         ),
-        logsToolbarCallbacks = LogsToolbarCallbacks.Stub,
+        onToolbarAction = {},
         vSplitterState = SplitPaneState(0.8f, true),
         hSplitterState = SplitPaneState(0.8f, true),
         logsListState = LazyListState(),

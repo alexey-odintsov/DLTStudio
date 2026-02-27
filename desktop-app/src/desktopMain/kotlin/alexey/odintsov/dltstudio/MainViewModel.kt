@@ -1,6 +1,7 @@
 package alexey.odintsov.dltstudio
 
 import alexey.odintsov.dltmessage.DLTMessage
+import alexey.odintsov.dltparser.DLTParser
 import alexey.odintsov.dltstudio.db.preferences.PreferencesRepository
 import alexey.odintsov.dltstudio.db.preferences.RecentColorFilterFileEntry
 import alexey.odintsov.dltstudio.db.preferences.SearchEntity
@@ -17,7 +18,7 @@ import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterManager
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
 import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.search.SearchType
-import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarCallbacks
+import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarAction
 import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbarState
 import alexey.odintsov.dltstudio.model.Column
 import alexey.odintsov.dltstudio.model.ColumnParams
@@ -25,6 +26,10 @@ import alexey.odintsov.dltstudio.model.PluginState
 import alexey.odintsov.dltstudio.model.SettingsLogs
 import alexey.odintsov.dltstudio.model.SettingsPlugins
 import alexey.odintsov.dltstudio.model.SettingsUI
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.checkTextCriteria
 import alexey.odintsov.dltstudio.model.toPluginState
 import alexey.odintsov.dltstudio.model.toPluginStateEntity
 import alexey.odintsov.dltstudio.model.toSettingsLogs
@@ -32,24 +37,19 @@ import alexey.odintsov.dltstudio.model.toSettingsLogsEntity
 import alexey.odintsov.dltstudio.model.toSettingsUI
 import alexey.odintsov.dltstudio.model.toSettingsUIEntity
 import alexey.odintsov.dltstudio.plugins.DependencyManager
-import alexey.odintsov.dltstudio.settings.SettingsDialogCallbacks
-import alexey.odintsov.dltstudio.settings.SettingsPluginsCallbacks
-import androidx.compose.foundation.lazy.LazyListState
-import alexey.odintsov.dltparser.DLTParser
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
-import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
-import alexey.odintsov.dltstudio.model.contract.filtering.checkTextCriteria
 import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
 import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
 import alexey.odintsov.dltstudio.plugins.contract.PluginLogPreview
 import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 import alexey.odintsov.dltstudio.plugins.manager.PluginManager
 import alexey.odintsov.dltstudio.plugins.predefinedplugins.predefinedPlugins
+import alexey.odintsov.dltstudio.settings.SettingsDialogCallbacks
+import alexey.odintsov.dltstudio.settings.SettingsPluginsCallbacks
 import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
 import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.dltstudio.uicomponents.dialogs.FileTypeSelection
 import alexey.odintsov.logger.Log
+import androidx.compose.foundation.lazy.LazyListState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers.Default
 import kotlinx.coroutines.Dispatchers.IO
@@ -267,98 +267,111 @@ class MainViewModel(
         colorFiltersDialogState.value = false
     }
 
-    val logsToolbarCallbacks = object : LogsToolbarCallbacks {
-        override fun onSearchButtonClicked(searchType: SearchType, text: String) {
-            if (logsToolbarState.value.toolbarSearchWithMarkedChecked && searchType == SearchType.Text) {
-                onSearchClicked(SearchType.TextAndMarkedRows, text)
-            } else {
-                onSearchClicked(searchType, text)
-            }
-        }
+    fun handleLogsToolbarAction(action: LogsToolbarAction) {
+        when (action) {
+            is LogsToolbarAction.ClickSearch -> onSearchButtonClicked(
+                action.searchType,
+                action.text
+            )
 
-        override fun updateToolbarFatalCheck(checked: Boolean) {
-            logsToolbarState.value =
-                LogsToolbarState.updateToolbarFatalCheck(logsToolbarState.value, checked)
+            LogsToolbarAction.ToggleError -> updateToolbarErrorCheck()
+            LogsToolbarAction.ToggleFatal -> updateToolbarFatalCheck()
+            LogsToolbarAction.ToggleWarning -> updateToolbarWarningCheck()
+            LogsToolbarAction.ToggleComments -> updateToolbarCommentsCheck()
+            LogsToolbarAction.ToggleSearchWithMarked -> updateToolbarSearchWithMarkedCheck()
+            LogsToolbarAction.ToggleWrapContent -> updateToolbarWrapContentCheck()
+            LogsToolbarAction.ToggleSearchRegex -> onSearchUseRegexChanged()
+            LogsToolbarAction.ClickColorFilters -> onColorFiltersClicked()
+            LogsToolbarAction.ClickChangeOrder -> onChangeOrderClicked()
+            is LogsToolbarAction.ChangeTimeZone -> onTimeZoneChanged(action.timeZoneName)
+            LogsToolbarAction.ClickNextMark -> onNextMarkedLog()
+            LogsToolbarAction.ClickPrevMark -> onPrevMarkedLog()
         }
+    }
 
-        override fun updateToolbarErrorCheck(checked: Boolean) {
-            logsToolbarState.value =
-                LogsToolbarState.updateToolbarErrorCheck(logsToolbarState.value, checked)
+    private fun onSearchButtonClicked(searchType: SearchType, text: String) {
+        if (logsToolbarState.value.toolbarSearchWithMarkedChecked && searchType == SearchType.Text) {
+            onSearchClicked(SearchType.TextAndMarkedRows, text)
+        } else {
+            onSearchClicked(searchType, text)
         }
+    }
 
-        override fun updateToolbarWarningCheck(checked: Boolean) {
-            logsToolbarState.value =
-                LogsToolbarState.updateToolbarWarnCheck(logsToolbarState.value, checked)
+    private fun updateToolbarFatalCheck() {
+        logsToolbarState.update { it.copy(toolbarFatalChecked = !it.toolbarFatalChecked) }
+    }
+
+    private fun updateToolbarErrorCheck() {
+        logsToolbarState.update { it.copy(toolbarErrorChecked = !it.toolbarErrorChecked) }
+    }
+
+    private fun updateToolbarWarningCheck() {
+        logsToolbarState.update { it.copy(toolbarWarningChecked = !it.toolbarWarningChecked) }
+    }
+
+    private fun updateToolbarCommentsCheck() {
+        logsToolbarState.update { it.copy(toolbarCommentsChecked = !it.toolbarCommentsChecked) }
+    }
+
+    private fun updateToolbarSearchWithMarkedCheck() {
+        logsToolbarState.update { it.copy(toolbarSearchWithMarkedChecked = !it.toolbarSearchWithMarkedChecked) }
+    }
+
+    private fun updateToolbarWrapContentCheck() {
+        logsToolbarState.update { it.copy(toolbarWrapContentChecked = !it.toolbarWrapContentChecked) }
+    }
+
+    private fun onSearchUseRegexChanged() {
+        _searchState.update { it.copy(searchUseRegex = !it.searchUseRegex) }
+    }
+
+    private fun onColorFiltersClicked() {
+        colorFiltersDialogState.value = true
+    }
+
+    private fun onChangeOrderClicked() {
+        _changeOrderDialogState.value = _changeOrderDialogState.value.copy(visible = true)
+    }
+
+    private fun onTimeZoneChanged(timeZoneName: String) {
+        try {
+            formatter.setTimeZone(TimeZone.of(timeZoneName))
+        } catch (_: Exception) {
+            // parsing will fail while typing timeZoneName
         }
+    }
 
-        override fun updateToolbarCommentsCheck(checked: Boolean) {
-            logsToolbarState.value =
-                LogsToolbarState.updateToolbarCommentsCheck(logsToolbarState.value, checked)
-        }
-
-        override fun updateToolbarSearchWithMarkedCheck(checked: Boolean) {
-            logsToolbarState.value =
-                LogsToolbarState.updateToolbarSearchWithMarkedCheck(logsToolbarState.value, checked)
-        }
-
-        override fun updateToolbarWrapContentCheck(checked: Boolean) {
-            logsToolbarState.value =
-                LogsToolbarState.updateToolbarWrapContentCheck(logsToolbarState.value, checked)
-        }
-
-        override fun onSearchUseRegexChanged(checked: Boolean) {
-            _searchState.value = _searchState.value.copy(searchUseRegex = checked)
-        }
-
-        override fun onColorFiltersClicked() {
-            colorFiltersDialogState.value = true
-        }
-
-        override fun onChangeOrderClicked() {
-            _changeOrderDialogState.value = _changeOrderDialogState.value.copy(visible = true)
-        }
-
-        override fun onTimeZoneChanged(timeZoneName: String) {
-            try {
-                formatter.setTimeZone(TimeZone.of(timeZoneName))
-            } catch (_: Exception) {
-                // parsing will fail while typing timeZoneName
-            }
-        }
-
-        override fun onPrevMarkedLog() {
-            messagesRepository.selectPrevMarkedLog()
-            viewModelScope.launch {
-                val id = messagesRepository.getSelectedMessage().value?.id
-                if (id != null) {
-                    val index = messages.value.indexOfFirst { it.id == id }
-                    logsListState.scrollToItem(index)
-                    selectLogRow(index, id)
-                    val searchIndex = searchResults.value.indexOfFirst { it.id == id }
-                    if (searchIndex > 0) {
-                        searchListState.scrollToItem(searchIndex)
-                    }
-                }
-            }
-        }
-
-        override fun onNextMarkedLog() {
-            messagesRepository.selectNextMarkedLog()
-            viewModelScope.launch {
-                val id = messagesRepository.getSelectedMessage().value?.id
-                if (id != null) {
-                    val index = messages.value.indexOfFirst { it.id == id }
-                    logsListState.scrollToItem(index)
-                    selectLogRow(index, id)
-                    val searchIndex = searchResults.value.indexOfFirst { it.id == id }
-                    if (searchIndex > 0) {
-                        searchListState.scrollToItem(searchIndex)
-                    }
+    private fun onPrevMarkedLog() {
+        messagesRepository.selectPrevMarkedLog()
+        viewModelScope.launch {
+            val id = messagesRepository.getSelectedMessage().value?.id
+            if (id != null) {
+                val index = messages.value.indexOfFirst { it.id == id }
+                logsListState.scrollToItem(index)
+                selectLogRow(index, id)
+                val searchIndex = searchResults.value.indexOfFirst { it.id == id }
+                if (searchIndex > 0) {
+                    searchListState.scrollToItem(searchIndex)
                 }
             }
         }
     }
 
+    private fun onNextMarkedLog() {
+        messagesRepository.selectNextMarkedLog()
+        viewModelScope.launch {
+            val id = messagesRepository.getSelectedMessage().value?.id
+            if (id != null) {
+                val index = messages.value.indexOfFirst { it.id == id }
+                logsListState.scrollToItem(index)
+                selectLogRow(index, id)
+                val searchIndex = searchResults.value.indexOfFirst { it.id == id }
+                if (searchIndex > 0) {
+                    searchListState.scrollToItem(searchIndex)
+                }
+            }
+        }
+    }
 
     val previewPlugins = MutableStateFlow<List<PluginLogPreview>>(emptyList())
     private fun stopSearch() {
