@@ -1,5 +1,9 @@
 package alexey.odintsov.dltstudio.logs
 
+import alexey.odintsov.dltstudio.MainViewModel
+import alexey.odintsov.dltstudio.logs.colorfilters.ColorFiltersDialog
+import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
+import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,10 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.MainViewModel
-import alexey.odintsov.dltstudio.logs.colorfilters.ColorFiltersDialog
-import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
-import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 import dltstudio.resources.Res
 import dltstudio.resources.icon_upload
 import org.jetbrains.compose.resources.painterResource
@@ -92,7 +92,7 @@ class LogsPlugin(
                 searchResult = searchResults.value,
                 colorFilters = colorFilters.value,
                 logsToolbarState = logsToolbarState.value,
-                logsToolbarCallbacks = viewModel.logsToolbarCallbacks,
+                onToolbarAction = viewModel::handleLogsToolbarAction,
                 vSplitterState = viewModel.vSplitterState,
                 hSplitterState = viewModel.hSplitterState,
                 logsListState = viewModel.logsListState,
