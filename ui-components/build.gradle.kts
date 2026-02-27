@@ -19,16 +19,16 @@ kotlin {
             implementation(project(":app-theme"))
             implementation(project(":logger"))
             implementation(project(":resources"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.ui)
+            implementation(libs.compose.components.resources)
             implementation(libs.material.icons)
         }
 
         desktopMain.dependencies {
-            implementation(compose.material3)
-            implementation(compose.materialIconsExtended)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.material.icons.extended)
             implementation(compose.desktop.currentOs)
         }
 

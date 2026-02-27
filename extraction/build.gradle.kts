@@ -19,8 +19,8 @@ kotlin {
             implementation(project(":logger"))
             implementation(project(":dlt-message"))
             implementation(project(":model-contract"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
         }
 
         desktopMain.dependencies {

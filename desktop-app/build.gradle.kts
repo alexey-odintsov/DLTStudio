@@ -27,12 +27,12 @@ kotlin {
             implementation(project(":plugins:contract"))
             implementation(project(":plugins:manager"))
             implementation(project(":plugins:predefined-plugins"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material3)
-            implementation(compose.ui)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.ui)
             implementation(libs.compose.splitpane)
-            implementation(compose.components.resources)
+            implementation(libs.compose.components.resources)
             implementation(libs.kotlin.coroutines.swing)
             implementation(libs.androidx.room.runtime)
             implementation(libs.sqlite.bundled)
@@ -51,7 +51,7 @@ kotlin {
 
         val desktopTest by getting {
             dependencies {
-                implementation(compose.desktop.uiTestJUnit4)
+                implementation(libs.jetbrains.compose.ui.test.junit)
                 implementation(compose.desktop.currentOs)
             }
         }

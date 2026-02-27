@@ -17,14 +17,14 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(project(":logger"))
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.ui)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.ui)
             implementation(libs.kotlin.datetime)
         }
 
         desktopMain.dependencies {
-            implementation(compose.material3)
+            implementation(libs.compose.material3)
             implementation(compose.desktop.currentOs)
         }
 
