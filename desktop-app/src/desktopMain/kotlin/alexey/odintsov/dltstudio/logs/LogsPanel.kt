@@ -3,9 +3,6 @@ package alexey.odintsov.dltstudio.logs
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.LogSelection
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
-import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterError
-import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterFatal
-import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterWarn
 import alexey.odintsov.dltstudio.logs.infopanel.LogPreviewPanel
 import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.toolbar.LogsToolbar
@@ -26,7 +23,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -86,19 +82,6 @@ fun LogsPanel(
         )
 
         HorizontalDivider()
-        // TODO: Move to viewModel
-        val mergedFilters = mutableStateListOf<ColorFilter>()
-        mergedFilters.addAll(colorFilters)
-        if (logsToolbarState.toolbarWarningChecked) {
-            mergedFilters.add(ColorFilterWarn)
-        }
-        if (logsToolbarState.toolbarErrorChecked) {
-            mergedFilters.add(ColorFilterError)
-        }
-        if (logsToolbarState.toolbarFatalChecked) {
-            mergedFilters.add(ColorFilterFatal)
-        }
-
 
         VerticalSplitPane(splitPaneState = vSplitterState) {
             first(50.dp) {
@@ -111,7 +94,7 @@ fun LogsPanel(
                             columnParams = columnParams,
                             messages = logMessages,
                             markedIds = markedIds,
-                            colorFilters = mergedFilters,
+                            colorFilters = colorFilters,
                             selectedRow = logSelection.logsIndex,
                             logsListState = logsListState,
                             onLogsRowSelected = onLogsRowSelected,
@@ -156,8 +139,8 @@ fun LogsPanel(
                 SearchResultsPanel(
                     Modifier.fillMaxSize(),
                     columnParams = columnParams,
-                    searchResult =searchResult,
-                    colorFilters = mergedFilters,
+                    searchResult = searchResult,
+                    colorFilters = colorFilters,
                     searchResultSelectedRow = logSelection.searchIndex,
                     searchListState = searchListState,
                     onSearchRowSelected = onSearchRowSelected,

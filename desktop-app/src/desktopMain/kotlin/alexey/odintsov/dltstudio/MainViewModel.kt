@@ -14,7 +14,10 @@ import alexey.odintsov.dltstudio.logs.LogsPlugin
 import alexey.odintsov.dltstudio.logs.RemoveLogsDialogState
 import alexey.odintsov.dltstudio.logs.RowContextMenuCallbacks
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
+import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterError
+import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterFatal
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterManager
+import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterWarn
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFiltersDialogCallbacks
 import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.search.SearchType
@@ -62,6 +65,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combineTransform
 import kotlinx.coroutines.flow.mapNotNull
@@ -107,8 +111,39 @@ class MainViewModel(
     val searchResults = messagesRepository.getSearchResults()
     val markedIds = messagesRepository.getMarkedIds()
 
+    var logsToolbarState = MutableStateFlow(
+        LogsToolbarState(
+            toolbarFatalChecked = true,
+            toolbarErrorChecked = true,
+            toolbarWarningChecked = true,
+            toolbarSearchWithMarkedChecked = false,
+            toolbarWrapContentChecked = false,
+            toolbarCommentsChecked = true,
+        )
+    )
+
     private val colorFilters = MutableStateFlow<List<ColorFilter>>(emptyList())
-    fun getColorFilters(): StateFlow<List<ColorFilter>> = colorFilters
+    fun getColorFilters(): StateFlow<List<ColorFilter>> = colorFilters.asStateFlow()
+    fun getMergedColorFilters(): StateFlow<List<ColorFilter>> =
+        colorFilters.combineTransform(logsToolbarState) { filters, toolbarState ->
+            val mergedFilters = mutableListOf<ColorFilter>()
+            mergedFilters.addAll(filters)
+            if (toolbarState.toolbarWarningChecked) {
+                mergedFilters.add(ColorFilterWarn)
+            }
+            if (toolbarState.toolbarErrorChecked) {
+                mergedFilters.add(ColorFilterError)
+            }
+            if (toolbarState.toolbarFatalChecked) {
+                mergedFilters.add(ColorFilterFatal)
+            }
+            emit(mergedFilters)
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
+        )
+
 
     val settingsCallbacks: SettingsDialogCallbacks = object : SettingsDialogCallbacks {
         override fun onSettingsUIUpdate(settings: SettingsUI) {
@@ -252,16 +287,6 @@ class MainViewModel(
     val vSplitterState = SplitPaneState(0.8f, true)
     val hSplitterState = SplitPaneState(0.78f, true)
     val colorFiltersDialogState = MutableStateFlow(false)
-    var logsToolbarState = MutableStateFlow(
-        LogsToolbarState(
-            toolbarFatalChecked = true,
-            toolbarErrorChecked = true,
-            toolbarWarningChecked = true,
-            toolbarSearchWithMarkedChecked = false,
-            toolbarWrapContentChecked = false,
-            toolbarCommentsChecked = true,
-        )
-    )
 
     fun closeColorFiltersDialog() {
         colorFiltersDialogState.value = false

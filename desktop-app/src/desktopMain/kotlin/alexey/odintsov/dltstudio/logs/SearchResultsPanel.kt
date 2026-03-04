@@ -2,20 +2,19 @@ package alexey.odintsov.dltstudio.logs
 
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
 import alexey.odintsov.dltstudio.model.ColumnParams
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.ui.Panel
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.ui.Panel
 
 @Composable
 fun SearchResultsPanel(
     modifier: Modifier = Modifier,
     columnParams: List<ColumnParams>,
     searchResult: List<LogMessage>,
-    colorFilters: SnapshotStateList<ColorFilter>,
+    colorFilters: List<ColorFilter>,
     searchResultSelectedRow: Int,
     searchListState: LazyListState,
     onSearchRowSelected: (Int, Int) -> Unit,

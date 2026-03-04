@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
@@ -19,7 +18,7 @@ fun LogsListPanel(
     modifier: Modifier = Modifier,
     columnParams: List<ColumnParams>,
     messages: List<LogMessage>,
-    colorFilters: SnapshotStateList<ColorFilter>,
+    colorFilters: List<ColorFilter>,
     selectedRow: Int,
     logsListState: LazyListState,
     onLogsRowSelected: (Int, Int) -> Unit,
@@ -57,7 +56,7 @@ fun LogsListPanel(
 @Preview
 @Composable
 private fun PreviewLogsListPanel() {
-    val list = SnapshotStateList<LogMessage>()
+    val list = mutableListOf<LogMessage>()
     list.addAll(
         SampleData.getSampleDltMessages(20)
             .map { LogMessage(dltMessage = it) })
