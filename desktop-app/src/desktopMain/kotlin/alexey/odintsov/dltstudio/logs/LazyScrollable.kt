@@ -3,6 +3,7 @@ package alexey.odintsov.dltstudio.logs
 import alexey.odintsov.dltstudio.LocalFormatter
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilter
 import alexey.odintsov.dltstudio.model.ColumnParams
+import alexey.odintsov.dltstudio.model.contract.LogMessage
 import androidx.compose.foundation.HorizontalScrollbar
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.horizontalScroll
@@ -18,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -30,7 +30,6 @@ import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
 
 
 @Composable
@@ -38,7 +37,7 @@ fun LazyScrollable(
     modifier: Modifier,
     columnParams: List<ColumnParams>,
     logMessages: List<LogMessage>,
-    colorFilters: SnapshotStateList<ColorFilter>,
+    colorFilters: List<ColorFilter>,
     selectedRow: Int,
     onRowSelected: (Int, Int) -> Unit,
     listState: LazyListState,

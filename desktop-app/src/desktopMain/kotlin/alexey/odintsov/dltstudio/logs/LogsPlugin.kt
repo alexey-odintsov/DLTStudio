@@ -39,6 +39,7 @@ class LogsPlugin(
         val focusedMarkedIdIndex = messagesRepository.getFocusedMarkedIdIndex().collectAsState()
         val comments = messagesRepository.getComments().collectAsState()
         val colorFilters = viewModel.getColorFilters().collectAsState()
+        val mergedColorFilters = viewModel.getMergedColorFilters().collectAsState()
         val previewPanels = viewModel.previewPanels.collectAsState()
         val logSelection = viewModel.logSelection.collectAsState()
         val searchAutoComplete = viewModel.searchAutocomplete.collectAsState()
@@ -90,7 +91,7 @@ class LogsPlugin(
                 searchState = searchState.value,
                 searchAutoComplete = searchAutoComplete.value,
                 searchResult = searchResults.value,
-                colorFilters = colorFilters.value,
+                colorFilters = mergedColorFilters.value,
                 logsToolbarState = logsToolbarState.value,
                 onToolbarAction = viewModel::handleLogsToolbarAction,
                 vSplitterState = viewModel.vSplitterState,
