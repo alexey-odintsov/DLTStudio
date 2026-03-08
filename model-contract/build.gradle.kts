@@ -12,6 +12,12 @@ kotlin {
             implementation(libs.kotlin.datetime)
             implementation(libs.kotlin.serializaion)
         }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
     }
 }
 

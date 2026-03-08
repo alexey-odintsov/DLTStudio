@@ -7,6 +7,7 @@ import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
 import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
+import alexey.odintsov.dltstudio.theme.ThemeManager.AppTheme
 import alexey.odintsov.dltstudio.uicomponents.CustomButton
 import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
 import alexey.odintsov.dltstudio.uicomponents.CustomEditText
@@ -246,8 +247,9 @@ fun RemoveLogsDialogPanel(
 @Composable
 private fun PreviewRemoveLogsDialogPanel() {
     val message = LogMessage(SampleData.getSampleDltMessages(1)[0])
-
-    Column(Modifier.width(550.dp).background(Color(238, 238, 238))) {
-        RemoveLogsDialogPanel(message, { _ -> }) {}
+    AppTheme {
+        Column(Modifier.width(550.dp).background(Color(238, 238, 238))) {
+            RemoveLogsDialogPanel(message, { _ -> }) {}
+        }
     }
 }
