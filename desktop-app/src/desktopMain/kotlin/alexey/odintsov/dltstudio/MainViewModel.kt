@@ -699,19 +699,19 @@ class MainViewModel(
                 }
 
                 FilterParameter.EcuId -> {
-                    checkTextCriteria(criteria, message.standardHeader.ecuId)
+                    checkTextCriteria(criteria, message.standardHeader.ecuId ?: "")
                 }
 
                 FilterParameter.ContextId -> {
-                    checkTextCriteria(criteria, message.extendedHeader?.contextId)
+                    checkTextCriteria(criteria, message.extendedHeader?.contextId ?: "")
                 }
 
                 FilterParameter.AppId -> {
-                    checkTextCriteria(criteria, message.extendedHeader?.applicationId)
+                    checkTextCriteria(criteria, message.extendedHeader?.applicationId ?: "")
                 }
 
                 FilterParameter.SessionId -> {
-                    criteria.value.isNotEmpty() && message.standardHeader.sessionId == criteria.value.toInt()
+                    checkTextCriteria(criteria, message.standardHeader.sessionId?.toString() ?: "")
                 }
 
                 FilterParameter.Payload -> {
@@ -752,7 +752,7 @@ class MainViewModel(
     }
 
     fun removeMessagesByFilters(filters: Map<FilterParameter, FilterCriteria>) {
-        viewModelScope.launch(IO) {
+        viewModelScope.launch(Default) {
             Log.d("start removing messages by filter '$filters'")
             val duration = messagesRepository.removeMessages(onProgressChanged) {
                 assessFilter(filters, it.dltMessage)
