@@ -144,15 +144,31 @@ class DLTParserV2 : DLTParser {
 
         val dltMessage = when (payloadStorageType) {
             PayloadStorageType.Structured -> {
-                i += payloadSize
-                val payload = parseStructuredPayload(stream, payloadSize, extendedHeader, payloadEndian)
+                var payload: Payload? = null
+                if (payloadSize < 0) {
+                    Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
+                } else if (payloadSize != 0) {
+                    i += payloadSize
+                    payload =
+                        parseStructuredPayload(stream, payloadSize, extendedHeader, payloadEndian)
+                }
                 StructuredDLTMessage(timeStampUs, standardHeader, extendedHeader, payload)
             }
 
             PayloadStorageType.Plain -> {
-                i += payloadSize
-                val payload = parseStructuredPayload(stream, payloadSize, extendedHeader, payloadEndian)?.asText()
-                payload?.removeSuffix("\n")
+                var payload: String? = null
+                if (payloadSize < 0) {
+                    Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
+                } else if (payloadSize != 0) {
+                    i += payloadSize
+                    payload = parseStructuredPayload(
+                        stream,
+                        payloadSize,
+                        extendedHeader,
+                        payloadEndian
+                    )?.asText()
+                    payload?.removeSuffix("\n")
+                }
                 PlainDLTMessage(
                     timeStampUs = timeStampUs,
                     standardHeader = standardHeader,
@@ -165,7 +181,6 @@ class DLTParserV2 : DLTParser {
                 var payload: ByteArray? = null
                 if (payloadSize < 0) {
                     Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
-                    i += 1
                 } else if (payloadSize != 0) {
                     i += payloadSize
                     payload = parseBinaryPayload(stream, payloadSize)
