@@ -25,7 +25,7 @@ import java.io.File
 
 private const val PROGRESS_UPDATE_DEBOUNCE_MS = 30
 
-class DLTParserV2() : DLTParser {
+class DLTParserV2 : DLTParser {
 
     init {
         Log.d("Init parser ${this.javaClass.simpleName}")
@@ -38,6 +38,7 @@ class DLTParserV2() : DLTParser {
             return pool.getOrPut(value) { value }
         }
     }
+
     val stringPool = StringPool()
 
     /**
@@ -95,7 +96,7 @@ class DLTParserV2() : DLTParser {
                         val (dltMessage, len) = parseDLTMessage(stream, i, payloadStorageType)
                         messages.add(dltMessage)
                         i += len
-                    } catch (e: EOFException) {
+                    } catch (_: EOFException) {
                         i = fileSize
                     }
                     val nowTs = System.currentTimeMillis()
@@ -137,12 +138,16 @@ class DLTParserV2() : DLTParser {
         val payloadEndian =
             if (standardHeader.headerType.payloadBigEndian) Endian.BIG else Endian.LITTLE
 
+        val extendedHeaderSize = (extendedHeader?.getSize() ?: 0)
+        val messageSize = standardHeader.length.toInt()
+        val payloadSize = messageSize - standardHeader.getSize() - extendedHeaderSize
+
         val dltMessage = when (payloadStorageType) {
             PayloadStorageType.Structured -> {
                 var payload: Payload? = null
-                if (extendedHeader != null) {
-                    val payloadSize =
-                        standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
+                if (payloadSize < 0) {
+                    Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
+                } else if (payloadSize != 0) {
                     i += payloadSize
                     payload =
                         parseStructuredPayload(stream, payloadSize, extendedHeader, payloadEndian)
@@ -152,9 +157,9 @@ class DLTParserV2() : DLTParser {
 
             PayloadStorageType.Plain -> {
                 var payload: String? = null
-                if (extendedHeader != null) {
-                    val payloadSize =
-                        standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
+                if (payloadSize < 0) {
+                    Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
+                } else if (payloadSize != 0) {
                     i += payloadSize
                     payload = parseStructuredPayload(
                         stream,
@@ -162,9 +167,7 @@ class DLTParserV2() : DLTParser {
                         extendedHeader,
                         payloadEndian
                     )?.asText()
-//                    if (payload.endsWith("\n")) {
                     payload?.removeSuffix("\n")
-//                    }
                 }
                 PlainDLTMessage(
                     timeStampUs = timeStampUs,
@@ -176,16 +179,11 @@ class DLTParserV2() : DLTParser {
 
             PayloadStorageType.Binary -> {
                 var payload: ByteArray? = null
-                if (extendedHeader != null) {
-                    val payloadSize =
-                        standardHeader.length.toInt() - standardHeader.getSize() - extendedHeader.getSize()
-                    if (payloadSize <= 0) {
-                        Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
-                        i += 1
-                    } else {
-                        i += payloadSize
-                        payload = parseBinaryPayload(stream, payloadSize)
-                    }
+                if (payloadSize < 0) {
+                    Log.e("Wrong payload size $payloadSize for offset: $offset headers: $standardHeader $extendedHeader")
+                } else if (payloadSize != 0) {
+                    i += payloadSize
+                    payload = parseBinaryPayload(stream, payloadSize)
                 }
                 BinaryDLTMessage(
                     timeStampUs = timeStampUs,
