@@ -1,77 +1,89 @@
-DLT logs analyzing app written with Compose Multiplatform for Desktop.
+# DLT Studio
 
-Logs/search
+DLT (Diagnostic Log and Trace) logs analyzing application written with Compose Multiplatform for Desktop.
 
+## Screenshots
+
+### Logs View & Search
 <img src="doc/dlt_studio_logs.png" width="600"> 
 
-Logs color Filters
-
+### Color Filters
 <img src="doc/dlt_studio_color_filters.png" width="300"> <img src="doc/dlt_studio_color_filters_edit.png" width="300">
 
-Timeline
-
+### Timeline Analysis
 <img src="doc/dlt_studio_timeline.png" width="600">
 
-Timeline filters
-
+### Timeline Filters
 <img src="doc/dlt_studio_timeline_filters.png" width="300"> <img src="doc/dlt_studio_timeline_filters_edit.png" width="300">
 
-# Features
-- Logs view screen
-  - Adjustable font size and font family
-  - Customizable and resizable columns
-  - Customizable color filters that can be exported/imported
-  - Plain text and regex search
-  - Logs marking and filtering for marked logs
-  - Commenting logs
-  - Logs word wrapping
-  - Apply time zone to logs
-  - Logs removal based on criteria (App, Context, Ecu, Session, everything before/after)
-  - Virtual device preview - renders rectangles of your views in virtual devices. 
-- Timeline screen
-  - Zoomable and movable timeline
-  - Define your custom rules to extract data from logs and represent it as diagrams.
-  - Export and import timeline rules.
-- Plugins system
-  - Write your own plugins and use them within the app (as source code or jar file) - do whatever you want with logs.
-  - File plugin example - extracts files attached to logs. Preview text and images, other files can be saved as files.
-  - Device analyze plugin example - execute different predefined adb commands and see results.
+## Features
 
-# Usage
-Drag and drop your dlt files to the app or use menu.
+- **High-Performance Parsing**: Optimized DLT message parsing with string interning.
+- **Advanced Logs View**:
+  - Adjustable font size and font family.
+  - Customizable and resizable columns.
+  - Flexible color filters (exportable/importable).
+  - Powerful search: Plain text and Regex.
+  - Log marking, filtering, and commenting.
+  - Word wrapping and time zone adjustments.
+  - Advanced log cleanup/removal based on App, Context, Ecu, or Session.
+- **Timeline Engine**:
+  - Interactive, zoomable, and movable timeline.
+  - Custom extraction rules to transform logs into visual diagrams.
+  - Rule set import/export.
+- **Extensible Plugin System**:
+  - Load plugins from source code or JAR files.
+  - **Included Plugins**:
+    - **Detailed View**: Deep dive into message headers and payload.
+    - **Files Viewer**: Extract and preview files (images, text) attached to DLT logs.
+    - **Log Insights**: Automatically detect patterns and issues.
+    - **Virtual Device**: Render UI view hierarchies from logs.
+    - **Device Analyze**: Integrated ADB command execution and result viewing.
+    - **Timeline**: Integrated diagram generation.
 
-To analyze timeline open/setup timeline filters and click green Play button.
+## Getting Started
 
-# Run
+### Usage
+Simply **drag and drop** your `.dlt` files into the application or use the **File** menu to open them.
 
-IntelliJ IDEA / Android Studio
+To start a timeline analysis:
+1. Open/setup your timeline filters.
+2. Click the green **Play** button.
 
-1. New -> Project from Version Control -> Specify clone Url
+### Development
 
-2. Add new Gradle configuration and specify run task
-<img src="doc/gradle_configuration.png" width="400">
+#### Requirements
+- IntelliJ IDEA or Android Studio.
+- JDK 17 or higher.
 
-3. Click 'Run'
+#### Running from IDE
+1. `New` -> `Project from Version Control` -> Specify the clone URL.
+2. Create a new **Gradle** run configuration with the `run` task for `:desktop-app`.
+3. Click **Run**.
 
-or in terminal run command:
-```
+#### Running from Terminal
+```bash
 ./gradlew :desktop-app:run
 ```
 
+## Distribution
 
-# Distribute
+To package the application for your platform:
 
-Depending on the platform run one of the following tasks:
-```
-./gradlew packageDmg
-./gradlew packageExe
-./gradlew packageDeb
-./gradlew packageMsi
-```
+| Platform | Command |
+| :--- | :--- |
+| **macOS (DMG)** | `./gradlew packageDmg` |
+| **Windows (EXE)** | `./gradlew packageExe` |
+| **Windows (MSI)** | `./gradlew packageMsi` |
+| **Linux (Debian)** | `./gradlew packageDeb` |
 
-Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
+## Technical Details
 
-# Inspect Composable stability
-```
+
+### Inspecting Compose Stability
+```bash
 ./gradlew assemble -Palexey.odintsov.dltstudio.android.enableComposeCompilerReports=true -Palexey.odintsov.dltstudio.android.enableComposeCompilerMetrics=true --rerun-tasks
 ```
+
+---
+Learn more about [Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/).
