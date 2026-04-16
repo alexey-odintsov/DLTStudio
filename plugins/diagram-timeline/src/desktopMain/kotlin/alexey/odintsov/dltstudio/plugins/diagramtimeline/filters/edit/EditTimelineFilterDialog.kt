@@ -111,7 +111,9 @@ fun EditTimelineFilterPanel(
             }
         }
 
-        CustomButton(onClick = viewModel::onUpdateClicked) {
+        CustomButton(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            onClick = viewModel::onUpdateClicked) {
             Text(text = if (filterIndex >= 0) "Update" else "Add")
         }
 

@@ -257,7 +257,7 @@ fun EditColorFilterPanel(
         }
 
         CustomButton(
-            modifier = Modifier.align(Alignment.End),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
                 val map = mutableMapOf<FilterParameter, FilterCriteria>()
                 messageType?.let {

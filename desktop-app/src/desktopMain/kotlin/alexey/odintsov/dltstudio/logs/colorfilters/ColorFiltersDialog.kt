@@ -139,7 +139,7 @@ fun ColorFiltersPanel(
         }
 
         CustomButton(
-            modifier = Modifier.align(Alignment.End),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
                 onEditFilterClick(
                     -1,

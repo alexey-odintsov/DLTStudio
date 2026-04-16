@@ -11,6 +11,7 @@ import alexey.odintsov.dltstudio.uicomponents.ImageButton
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -86,7 +87,7 @@ fun ColorFiltersPanel(
     onEditFilterClick: (Int, TimelineFilter) -> Unit,
     callbacks: TimelineFiltersDialogCallbacks,
 ) {
-    Column(modifier = Modifier.padding(4.dp)) {
+    Column(modifier = Modifier.fillMaxSize().padding(4.dp)) {
         LazyColumn(Modifier.weight(1f)) {
             items(timelineFilters.size) { i ->
                 val filter = timelineFilters[i]
@@ -147,6 +148,7 @@ fun ColorFiltersPanel(
             onClick = {
                 onEditFilterClick(-1, TimelineFilter.Empty)
             },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
         ) {
             Text("Add filter")
         }
