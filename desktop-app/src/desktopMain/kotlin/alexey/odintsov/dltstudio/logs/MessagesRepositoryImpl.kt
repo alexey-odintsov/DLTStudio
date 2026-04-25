@@ -57,32 +57,22 @@ class MessagesRepositoryImpl : MessagesRepository {
         progress: (Float) -> Unit,
         predicate: (LogMessage) -> Boolean
     ): Long {
-        val filtered = mutableListOf<LogMessage>()
+        val removedIds = mutableSetOf<Int>()
         val duration = forEachWithProgress(logMessages.value, progress) { _, logMessage ->
             val shouldRemove = predicate(logMessage)
-            if (!shouldRemove) {
-                filtered.add(logMessage)
-            } else {
-                markedItemsIds.update {
-                    it.toMutableList().apply { removeIf { it == logMessage.id } }
-                }
-                comments.update {
-                    it.toMutableMap().apply {
-                        remove(logMessage.id)
-                    }
-                }
+            if (shouldRemove) {
+                removedIds.add(logMessage.id)
             }
         }
-        storeMessages(filtered)
-        val searchFiltered = mutableListOf<LogMessage>()
-        val searchDuration = forEachWithProgress(searchResults.value, progress) { _, logMessage ->
-            val shouldRemove = predicate(logMessage)
-            if (!shouldRemove) {
-                searchFiltered.add(logMessage)
-            }
+
+        if (removedIds.isNotEmpty()) {
+            markedItemsIds.update { it.filter { id -> id !in removedIds } }
+            comments.update { it.filterKeys { id -> id !in removedIds } }
         }
-        searchResults.value = searchFiltered
-        return duration + searchDuration
+
+        logMessages.value = logMessages.value.filter { it.id !in removedIds }
+        searchResults.value = searchResults.value.filter { it.id !in removedIds }
+        return duration
     }
 
     override suspend fun removeMessage(logMessage: LogMessage) {
