@@ -184,38 +184,32 @@ class MessagesRepositoryImpl : MessagesRepository {
     }
 
     override fun selectPrevMarkedLog() {
-        if (markedItemsIds.value.isEmpty()) return
-        var index = focusedMarkedIdIndex.value
-        focusedMarkedIdIndex.value = if (index == null) {
-            0
+        val ids = markedItemsIds.value
+        if (ids.isEmpty()) return
+        val currentIndex = focusedMarkedIdIndex.value
+        val nextIndex = if (currentIndex == null || currentIndex >= ids.size || currentIndex <= 0) {
+            ids.size - 1
         } else {
-            if (index > 0) {
-                index - 1
-            } else {
-                markedItemsIds.value.size - 1
-            }
+            currentIndex - 1
         }
-        index = focusedMarkedIdIndex.value
-        if (index != null) {
-            selectMessage(markedItemsIds.value[index])
+        focusedMarkedIdIndex.value = nextIndex
+        ids.getOrNull(nextIndex)?.let {
+            selectMessage(it)
         }
     }
 
     override fun selectNextMarkedLog() {
-        if (markedItemsIds.value.isEmpty()) return
-        var index = focusedMarkedIdIndex.value
-        focusedMarkedIdIndex.value = if (index == null) {
+        val ids = markedItemsIds.value
+        if (ids.isEmpty()) return
+        val currentIndex = focusedMarkedIdIndex.value
+        val nextIndex = if (currentIndex == null || currentIndex >= ids.size - 1 || currentIndex < 0) {
             0
         } else {
-            if (index < markedItemsIds.value.size - 1) {
-                index + 1
-            } else {
-                0
-            }
+            currentIndex + 1
         }
-        index = focusedMarkedIdIndex.value
-        if (index != null) {
-            selectMessage(markedItemsIds.value[index])
+        focusedMarkedIdIndex.value = nextIndex
+        ids.getOrNull(nextIndex)?.let {
+            selectMessage(it)
         }
     }
 
