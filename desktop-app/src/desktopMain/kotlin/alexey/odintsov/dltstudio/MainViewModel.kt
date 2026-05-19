@@ -501,6 +501,7 @@ class MainViewModel(
                 directory = currentFolder
                     ?: settingsLogs.value.defaultLogsFolder,
                 isMultiSelectionEnabled = true,
+                fileTypeSelection = FileTypeSelection.FILES_AND_DIRECTORIES,
                 operation = DialogOperation.OPEN,
                 fileCallback = { parseFile(it) },
                 cancelCallback = ::closeFileDialog
@@ -614,25 +615,35 @@ class MainViewModel(
         }
     }
 
-    fun parseFile(dltFiles: List<File>) {
+    fun parseFile(files: List<File>) {
         viewModelScope.launch(Default) {
             pluginManager.notifyLogsChanged()
         }
         parseJob?.cancel()
-        if (dltFiles.isEmpty()) return
+        if (files.isEmpty()) return
 
         parseJob = viewModelScope.launch(IO) {
-            filesPath.value = if (dltFiles.size < 2) {
-                " – ${dltFiles[0].absolutePath}"
+            val allFiles = files.flatMap { file ->
+                if (file.isDirectory) {
+                    file.walkTopDown().filter { it.isFile }.toList()
+                } else {
+                    listOf(file)
+                }
+            }.distinct().sortedBy { it.absolutePath }
+
+            if (allFiles.isEmpty()) return@launch
+
+            filesPath.value = if (allFiles.size < 2) {
+                " – ${allFiles[0].absolutePath}"
             } else {
-                " – ${dltFiles[0].parentFile.absolutePath}/ ${dltFiles.size} file(s)"
+                " – ${allFiles[0].parentFile.absolutePath}/ ${allFiles.size} file(s)"
             }
-            currentFolder = dltFiles.first().parentFile
+            currentFolder = files.first().let { if (it.isDirectory) it else it.parentFile }
             clearMessages()
             LogMessage.resetCounter()
             messagesRepository.storeMessages(
                 dltParser.read(
-                    dltFiles,
+                    allFiles,
                     settingsLogs.value.backendType,
                     DependencyManager.onProgressUpdate
                 ).map { LogMessage(it) })
