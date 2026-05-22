@@ -22,7 +22,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            implementation(project(":logger"))
+            implementation(libs.alexey.odintsov.logger)
             implementation(project(":ui-components"))
             implementation(project(":plugins:contract"))
             implementation(libs.compose.runtime)
