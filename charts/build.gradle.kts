@@ -16,7 +16,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            implementation(project(":logger"))
+            implementation(libs.alexey.odintsov.logger)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.ui)
