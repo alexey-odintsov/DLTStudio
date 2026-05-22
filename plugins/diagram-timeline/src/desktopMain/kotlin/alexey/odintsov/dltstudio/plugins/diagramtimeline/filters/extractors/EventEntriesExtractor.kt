@@ -1,8 +1,8 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import alexey.odintsov.dltstudio.charts.model.EventEntry
-import alexey.odintsov.dltstudio.charts.model.EventsChartData
-import alexey.odintsov.dltstudio.charts.model.StringKey
+import alexey.odintsov.charts.model.EventEntry
+import alexey.odintsov.charts.model.EventsChartData
+import alexey.odintsov.charts.model.StringKey
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.NO_KEY
 

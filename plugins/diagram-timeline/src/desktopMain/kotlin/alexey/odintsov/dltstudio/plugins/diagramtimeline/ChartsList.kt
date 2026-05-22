@@ -1,12 +1,14 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
-import alexey.odintsov.dltstudio.charts.model.ChartData
-import alexey.odintsov.dltstudio.charts.model.ChartEntry
-import alexey.odintsov.dltstudio.charts.model.ChartKey
-import alexey.odintsov.dltstudio.charts.model.TimeFrame
-import alexey.odintsov.dltstudio.charts.ui.Chart
-import alexey.odintsov.dltstudio.charts.ui.ChartType
-import alexey.odintsov.dltstudio.charts.ui.calculateTimestamp
+import alexey.odintsov.charts.model.ChartData
+import alexey.odintsov.charts.model.ChartEntry
+import alexey.odintsov.charts.model.ChartKey
+import alexey.odintsov.charts.model.ChartType
+import alexey.odintsov.charts.model.TimeFrame
+import alexey.odintsov.charts.ui.Chart
+import alexey.odintsov.charts.ui.calculateTimestamp
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
@@ -46,8 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
 private val TIME_MARKER_HEIGHT_DP = 12.dp

@@ -1,12 +1,12 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors
 
-import alexey.odintsov.dltstudio.charts.model.ChartData
-import alexey.odintsov.dltstudio.charts.model.DurationChartData
-import alexey.odintsov.dltstudio.charts.model.EventsChartData
-import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
-import alexey.odintsov.dltstudio.charts.model.PercentageChartData
-import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
-import alexey.odintsov.dltstudio.charts.model.StateChartData
+import alexey.odintsov.charts.model.ChartData
+import alexey.odintsov.charts.model.DurationChartData
+import alexey.odintsov.charts.model.EventsChartData
+import alexey.odintsov.charts.model.MinMaxChartData
+import alexey.odintsov.charts.model.PercentageChartData
+import alexey.odintsov.charts.model.SingleStateChartData
+import alexey.odintsov.charts.model.StateChartData
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
 

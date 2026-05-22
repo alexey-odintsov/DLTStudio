@@ -1,11 +1,11 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.charts.model.ChartData
+import alexey.odintsov.charts.model.ChartEntry
+import alexey.odintsov.charts.model.ChartKey
+import alexey.odintsov.charts.model.EventsChartData
+import alexey.odintsov.charts.model.TimeFrame
 import alexey.odintsov.dltmessage.SampleData
-import alexey.odintsov.dltstudio.charts.model.ChartData
-import alexey.odintsov.dltstudio.charts.model.ChartEntry
-import alexey.odintsov.dltstudio.charts.model.ChartKey
-import alexey.odintsov.dltstudio.charts.model.EventsChartData
-import alexey.odintsov.dltstudio.charts.model.TimeFrame
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState

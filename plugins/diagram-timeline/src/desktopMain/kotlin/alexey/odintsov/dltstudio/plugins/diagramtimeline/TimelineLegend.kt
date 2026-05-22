@@ -1,13 +1,13 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
-import alexey.odintsov.dltstudio.charts.model.ChartData
-import alexey.odintsov.dltstudio.charts.model.ChartKey
-import alexey.odintsov.dltstudio.charts.model.EventEntry
-import alexey.odintsov.dltstudio.charts.model.EventsChartData
-import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
-import alexey.odintsov.dltstudio.charts.model.MinMaxEntry
-import alexey.odintsov.dltstudio.charts.model.StringKey
-import alexey.odintsov.dltstudio.charts.ui.ChartPalette
+import alexey.odintsov.charts.model.ChartData
+import alexey.odintsov.charts.model.ChartKey
+import alexey.odintsov.charts.model.EventEntry
+import alexey.odintsov.charts.model.EventsChartData
+import alexey.odintsov.charts.model.MinMaxChartData
+import alexey.odintsov.charts.model.MinMaxEntry
+import alexey.odintsov.charts.model.StringKey
+import alexey.odintsov.charts.ui.ChartPalette
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.uicomponents.Tooltip
 import androidx.compose.foundation.VerticalScrollbar

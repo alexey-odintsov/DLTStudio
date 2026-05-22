@@ -1,22 +1,15 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
-import alexey.odintsov.dltstudio.charts.model.ChartData
-import alexey.odintsov.dltstudio.charts.model.ChartEntry
-import alexey.odintsov.dltstudio.charts.model.ChartKey
-import alexey.odintsov.dltstudio.charts.model.DurationChartData
-import alexey.odintsov.dltstudio.charts.model.EventsChartData
-import alexey.odintsov.dltstudio.charts.model.MinMaxChartData
-import alexey.odintsov.dltstudio.charts.model.PercentageChartData
-import alexey.odintsov.dltstudio.charts.model.SingleStateChartData
-import alexey.odintsov.dltstudio.charts.model.StateChartData
-import alexey.odintsov.dltstudio.charts.model.TimeFrame
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-
+import alexey.odintsov.charts.model.ChartData
+import alexey.odintsov.charts.model.ChartEntry
+import alexey.odintsov.charts.model.ChartKey
+import alexey.odintsov.charts.model.DurationChartData
+import alexey.odintsov.charts.model.EventsChartData
+import alexey.odintsov.charts.model.MinMaxChartData
+import alexey.odintsov.charts.model.PercentageChartData
+import alexey.odintsov.charts.model.SingleStateChartData
+import alexey.odintsov.charts.model.StateChartData
+import alexey.odintsov.charts.model.TimeFrame
 import alexey.odintsov.dltstudio.extraction.forEachWithProgress
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
@@ -31,6 +24,12 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.predefinedTimel
 import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
 import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.logger.Log
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main

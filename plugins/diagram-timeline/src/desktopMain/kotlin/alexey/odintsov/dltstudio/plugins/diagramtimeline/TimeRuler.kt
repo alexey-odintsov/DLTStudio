@@ -1,7 +1,7 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
-import alexey.odintsov.dltstudio.charts.model.TimeFrame
-import alexey.odintsov.dltstudio.charts.ui.calculateX
+import alexey.odintsov.charts.model.TimeFrame
+import alexey.odintsov.charts.ui.calculateX
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -1,8 +1,8 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.charts.model.ChartEntry
+import alexey.odintsov.charts.model.EventEntry
 import alexey.odintsov.dltmessage.SampleData
-import alexey.odintsov.dltstudio.charts.model.ChartEntry
-import alexey.odintsov.dltstudio.charts.model.EventEntry
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar

@@ -27,7 +27,7 @@ kotlin {
             implementation(project(":data-utils"))
             implementation(project(":dlt-message"))
             implementation(project(":resources"))
-            implementation(project(":charts"))
+            implementation(libs.alexey.odintsov.charts)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
             implementation(libs.compose.material3)
