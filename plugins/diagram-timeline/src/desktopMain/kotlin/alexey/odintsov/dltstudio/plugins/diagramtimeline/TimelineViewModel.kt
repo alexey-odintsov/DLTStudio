@@ -65,8 +65,10 @@ class TimelineViewModel(
     var timeTotal = _timeTotal.asStateFlow()
 
 
-    val filtersDialogState = mutableStateOf(false)
-    var entriesMap = mutableStateMapOf<String, ChartData<LogMessage>>()
+    private val _filtersDialogState = MutableStateFlow(false)
+    val filtersDialogState = _filtersDialogState.asStateFlow()
+    private var _entriesMap = MutableStateFlow<Map<String, ChartData<LogMessage>>>(emptyMap())
+    val entriesMap = _entriesMap.asStateFlow()
     var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
     private var _selectedEntry = MutableStateFlow<ChartEntry<LogMessage>?>(null)
     var selectedEntry = _selectedEntry.asStateFlow()
@@ -92,14 +94,14 @@ class TimelineViewModel(
     )
 
     fun onCloseFiltersDialogClicked() {
-        filtersDialogState.value = false
+        _filtersDialogState.value = false
     }
 
     val toolbarCallbacks = object : ToolbarCallbacks {
         override fun onAnalyzeClicked() = startAnalyzing()
 
         override fun onTimelineFiltersClicked() {
-            filtersDialogState.value = true
+            _filtersDialogState.value = true
         }
 
         override fun onLoadFilterClicked() {
@@ -191,7 +193,7 @@ class TimelineViewModel(
     }
 
     fun cleanup() {
-        entriesMap.clear()
+        _entriesMap.value = emptyMap()
         highlightedKeysMap.clear()
     }
 
@@ -246,10 +248,9 @@ class TimelineViewModel(
 
                 _timeFrame.value = TimeFrame(timeStart, timeEnd)
                 _timeTotal.value = TimeFrame(timeStart, timeEnd)
+                _entriesMap.value = entries
                 withContext(Main) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
-                    entriesMap.clear()
-                    entriesMap.putAll(entries)
                     _analyzeState.value = AnalyzeState.IDLE
                 }
             }
@@ -314,12 +315,12 @@ class TimelineViewModel(
 
     fun retrieveEntriesForFilter(filter: TimelineFilter): ChartData<LogMessage>? {
         return when (filter.diagramType) {
-            DiagramType.Percentage -> entriesMap[filter.key] as? PercentageChartData
-            DiagramType.MinMaxValue -> entriesMap[filter.key] as? MinMaxChartData
-            DiagramType.State -> entriesMap[filter.key] as? StateChartData
-            DiagramType.SingleState -> entriesMap[filter.key] as? SingleStateChartData
-            DiagramType.Duration -> entriesMap[filter.key] as? DurationChartData
-            DiagramType.Events -> entriesMap[filter.key] as? EventsChartData
+            DiagramType.Percentage -> _entriesMap.value[filter.key] as? PercentageChartData
+            DiagramType.MinMaxValue -> _entriesMap.value[filter.key] as? MinMaxChartData
+            DiagramType.State -> _entriesMap.value[filter.key] as? StateChartData
+            DiagramType.SingleState -> _entriesMap.value[filter.key] as? SingleStateChartData
+            DiagramType.Duration -> _entriesMap.value[filter.key] as? DurationChartData
+            DiagramType.Events -> _entriesMap.value[filter.key] as? EventsChartData
         }
     }
 

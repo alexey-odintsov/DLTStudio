@@ -59,7 +59,7 @@ internal fun ChartsList(
     timeTotal: TimeFrame,
     timeFrame: TimeFrame,
     timelineFilters: SnapshotStateList<TimelineFilter>,
-    entriesMap: SnapshotStateMap<String, ChartData<LogMessage>>,
+    entriesMap: Map<String, ChartData<LogMessage>>,
     highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
     onLegendResized: (Float) -> Unit,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,

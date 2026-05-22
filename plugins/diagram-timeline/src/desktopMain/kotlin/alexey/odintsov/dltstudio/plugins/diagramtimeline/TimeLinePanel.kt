@@ -58,7 +58,7 @@ fun TimeLinePanel(
     analyzeState: AnalyzeState,
     timelineFilters: SnapshotStateList<TimelineFilter>,
     filtersDialogState: Boolean,
-    entriesMap: SnapshotStateMap<String, ChartData<LogMessage>>,
+    entriesMap: Map<String, ChartData<LogMessage>>,
     highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
     filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
