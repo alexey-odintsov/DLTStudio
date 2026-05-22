@@ -64,6 +64,10 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     override fun renderPanel(modifier: Modifier) {
         val analyzeState by viewModel.analyzeState.collectAsState()
         val markedIds = messagesRepository.getMarkedIds().collectAsState()
+        val hoveredEntry = viewModel.hoveredEntry.collectAsState()
+        val selectedEntry = viewModel.selectedEntry.collectAsState()
+        val timeTotal = viewModel.timeTotal.collectAsState()
+        val timeFrame = viewModel.timeFrame.collectAsState()
 
         CompositionLocalProvider(LocalFormatter provides formatter) {
             if (viewModel.fileDialogState.visible) {
@@ -72,8 +76,8 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
 
             TimeLinePanel(
                 modifier = modifier,
-                timeTotal = viewModel.timeTotal,
-                timeFrame = viewModel.timeFrame,
+                timeTotal = timeTotal.value,
+                timeFrame = timeFrame.value,
                 listState = viewModel.listState,
                 analyzeState = analyzeState,
                 timelineFilters = viewModel.timelineFilters,
@@ -88,8 +92,8 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 toolbarCallbacks = viewModel.toolbarCallbacks,
                 filtersDialogState = viewModel.filtersDialogState.value,
                 onCloseFiltersDialog = viewModel::onCloseFiltersDialogClicked,
-                selectedEntry = viewModel.selectedEntry,
-                hoveredEntry = viewModel.hoveredEntry,
+                selectedEntry = selectedEntry.value,
+                hoveredEntry = hoveredEntry.value,
                 onEntrySelected = viewModel::onEntrySelected,
                 onEntryHovered = viewModel::onEntryHovered,
                 vSplitterState = viewModel.vSplitterState,

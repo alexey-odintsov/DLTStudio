@@ -37,6 +37,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,15 +59,19 @@ class TimelineViewModel(
 
     val messages = messagesRepository.getMessages()
 
-    var timeFrame by mutableStateOf(TimeFrame(0L, 1L))
-    var timeTotal by mutableStateOf(TimeFrame(0L, 1L))
+    private var _timeFrame = MutableStateFlow(TimeFrame(0L, 1L))
+    var timeFrame = _timeFrame.asStateFlow()
+    private var _timeTotal = MutableStateFlow(TimeFrame(0L, 1L))
+    var timeTotal = _timeTotal.asStateFlow()
 
 
     val filtersDialogState = mutableStateOf(false)
     var entriesMap = mutableStateMapOf<String, ChartData<LogMessage>>()
     var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
-    var selectedEntry by mutableStateOf<ChartEntry<LogMessage>?>(null)
-    var hoveredEntry by mutableStateOf<ChartEntry<LogMessage>?>(null)
+    private var _selectedEntry = MutableStateFlow<ChartEntry<LogMessage>?>(null)
+    var selectedEntry = _selectedEntry.asStateFlow()
+    private var _hoveredEntry = MutableStateFlow<ChartEntry<LogMessage>?>(null)
+    var hoveredEntry = _hoveredEntry.asStateFlow()
 
     private var _analyzeState = MutableStateFlow(AnalyzeState.IDLE)
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
@@ -138,27 +143,27 @@ class TimelineViewModel(
         }
 
         override fun onLeftClicked() {
-            timeFrame = timeFrame.move(-100000)
+            _timeFrame.value = _timeFrame.value.move(-100000)
         }
 
         override fun onRightClicked() {
-            timeFrame = timeFrame.move(100000)
+            _timeFrame.value = _timeFrame.value.move(100000)
         }
 
         override fun onZoomInClicked() {
-            timeFrame = timeFrame.zoom(true)
+            _timeFrame.value = _timeFrame.value.zoom(true)
         }
 
         override fun onZoomOutClicked() {
-            timeFrame = timeFrame.zoom(false)
+            _timeFrame.value = _timeFrame.value.zoom(false)
         }
 
         override fun onZoomFitClicked() {
-            timeFrame = TimeFrame(timeTotal.timeStart, timeTotal.timeEnd)
+            _timeFrame.value = TimeFrame(_timeTotal.value.timeStart, _timeTotal.value.timeEnd)
         }
 
         override fun onDragTimeline(dx: Float) {
-            timeFrame = timeFrame.move(dx.toLong())
+            _timeFrame.value = _timeFrame.value.move(dx.toLong())
         }
 
     }
@@ -239,12 +244,12 @@ class TimelineViewModel(
                     }
                 }
 
+                _timeFrame.value = TimeFrame(timeStart, timeEnd)
+                _timeTotal.value = TimeFrame(timeStart, timeEnd)
                 withContext(Main) {
                     // we need copies of ParseSession's collections to prevent ConcurrentModificationException
                     entriesMap.clear()
                     entriesMap.putAll(entries)
-                    timeFrame = TimeFrame(timeStart, timeEnd)
-                    timeTotal = TimeFrame(timeStart, timeEnd)
                     _analyzeState.value = AnalyzeState.IDLE
                 }
             }
@@ -325,11 +330,11 @@ class TimelineViewModel(
     }
 
     fun onEntrySelected(chartEntry: ChartEntry<LogMessage>) {
-        selectedEntry = chartEntry
+        _selectedEntry.value = chartEntry
     }
 
     fun onEntryHovered(chartEntry: ChartEntry<LogMessage>?) {
-        hoveredEntry = chartEntry
+        _hoveredEntry.value = chartEntry
     }
 
 }
