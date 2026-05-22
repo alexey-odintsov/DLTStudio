@@ -30,7 +30,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -58,7 +57,7 @@ internal fun ChartsList(
     legendSize: Float,
     timeTotal: TimeFrame,
     timeFrame: TimeFrame,
-    timelineFilters: SnapshotStateList<TimelineFilter>,
+    timelineFilters: List<TimelineFilter>,
     entriesMap: Map<String, ChartData<LogMessage>>,
     highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
     onLegendResized: (Float) -> Unit,

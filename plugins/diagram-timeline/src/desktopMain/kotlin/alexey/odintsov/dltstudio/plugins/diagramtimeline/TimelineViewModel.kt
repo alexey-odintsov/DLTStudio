@@ -26,7 +26,6 @@ import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.logger.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -39,6 +38,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
@@ -79,7 +79,8 @@ class TimelineViewModel(
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
     val listState = LazyListState(0, 0)
 
-    val timelineFilters = mutableStateListOf(*predefinedTimelineFilters.toTypedArray())
+    private val _timelineFilters = MutableStateFlow<List<TimelineFilter>>(predefinedTimelineFilters)
+    val timelineFilters = _timelineFilters.asStateFlow()
 
     private var _recentTimelineFiltersFiles = MutableStateFlow<List<RecentTimelineFilterFileEntry>>(emptyList())
     var recentTimelineFiltersFiles = _recentTimelineFiltersFiles.asStateFlow()
@@ -212,7 +213,7 @@ class TimelineViewModel(
 
                 val regexps = mutableListOf<Regex?>()
                 // prefill timeline data holders
-                timelineFilters.forEachIndexed { index, timelineFilter ->
+                _timelineFilters.value.forEachIndexed { index, timelineFilter ->
                     entries[timelineFilter.key] = timelineFilter.diagramType.createEntries()
                     highlightedKeysMap[timelineFilter.key] = null
 
@@ -230,7 +231,7 @@ class TimelineViewModel(
                         timeStart = ts
                     }
 
-                    timelineFilters.forEachIndexed { i, timelineFilter ->
+                    _timelineFilters.value.forEachIndexed { i, timelineFilter ->
                         if (timelineFilter.enabled && regexps[i] != null && TimelineFilter.assessFilter(
                                 timelineFilter,
                                 message.dltMessage
@@ -261,20 +262,30 @@ class TimelineViewModel(
 
     val timelineFiltersDialogCallbacks = object : TimelineFiltersDialogCallbacks {
         override fun onTimelineFilterUpdate(index: Int, filter: TimelineFilter) {
-            if (index < 0 || index > timelineFilters.size) {
-                timelineFilters.add(filter)
-            } else timelineFilters[index] = filter
+            _timelineFilters.update {
+                it.toMutableList().apply {
+                    if (index < 0 || index > it.size) {
+                        add(filter)
+                    } else set(index, filter)
+                }
+            }
         }
 
         override fun onTimelineFilterDelete(index: Int) {
-            timelineFilters.removeAt(index)
+            _timelineFilters.update {
+                it.toMutableList().apply { removeAt(index) }
+            }
         }
 
         override fun onTimelineFilterMove(index: Int, offset: Int) {
-            if (index + offset in 0..<timelineFilters.size) {
-                val temp = timelineFilters[index]
-                timelineFilters[index] = timelineFilters[index + offset]
-                timelineFilters[index + offset] = temp
+            _timelineFilters.update {
+                it.toMutableList().apply {
+                    if (index + offset in 0..<it.size) {
+                        val temp = it[index]
+                        set(index, it[index + offset])
+                        set(index + offset, temp)
+                    }
+                }
             }
         }
     }
@@ -286,7 +297,7 @@ class TimelineViewModel(
 
     private fun saveTimeLineFilters(file: File) {
         viewModelScope.launch {
-            TimeLineFilterManager().saveToFile(timelineFilters, file)
+            TimeLineFilterManager().saveToFile(_timelineFilters.value, file)
             timelineRepository.addNewRecentTimelineFilter(
                 RecentTimelineFilterFileEntry(
                     file.name,
@@ -298,10 +309,14 @@ class TimelineViewModel(
 
 
     private fun loadTimeLineFilters(file: File) {
-        timelineFilters.clear()
+        _timelineFilters.value = emptyList()
         viewModelScope.launch {
-            TimeLineFilterManager().loadFromFile(file)?.let {
-                timelineFilters.addAll(it)
+            TimeLineFilterManager().loadFromFile(file)?.let { list ->
+                _timelineFilters.update {
+                    it.toMutableList().apply {
+                        addAll((list))
+                    }
+                }
             }
             val fileEntry = RecentTimelineFilterFileEntry(file.name, file.absolutePath)
             timelineRepository.addNewRecentTimelineFilter(fileEntry)
@@ -311,7 +326,7 @@ class TimelineViewModel(
 
     private fun clearTimeLineFilters() {
         _currentFilterFile.value = null
-        timelineFilters.clear()
+        _timelineFilters.value = emptyList()
     }
 
     fun retrieveEntriesForFilter(filter: TimelineFilter): ChartData<LogMessage>? {

@@ -72,6 +72,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         val entriesMap = viewModel.entriesMap.collectAsState()
         val recentTimelineFiltersFiles = viewModel.recentTimelineFiltersFiles.collectAsState()
         val currentFilterFile = viewModel.currentFilterFile.collectAsState()
+        val timelineFilters = viewModel.timelineFilters.collectAsState()
 
         CompositionLocalProvider(LocalFormatter provides formatter) {
             if (viewModel.fileDialogState.visible) {
@@ -84,7 +85,7 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
                 timeFrame = timeFrame.value,
                 listState = viewModel.listState,
                 analyzeState = analyzeState,
-                timelineFilters = viewModel.timelineFilters,
+                timelineFilters = timelineFilters.value,
                 entriesMap = entriesMap.value,
                 highlightedKeysMap = viewModel.highlightedKeysMap,
                 legendSize = viewModel.legendSize,
