@@ -83,7 +83,8 @@ class TimelineViewModel(
 
     private var _recentTimelineFiltersFiles = MutableStateFlow<List<RecentTimelineFilterFileEntry>>(emptyList())
     var recentTimelineFiltersFiles = _recentTimelineFiltersFiles.asStateFlow()
-    var currentFilterFile by mutableStateOf<RecentTimelineFilterFileEntry?>(null)
+    private var _currentFilterFile = MutableStateFlow<RecentTimelineFilterFileEntry?>(null)
+    var currentFilterFile = _currentFilterFile.asStateFlow()
 
     var fileDialogState by mutableStateOf(
         FileDialogState(
@@ -119,7 +120,7 @@ class TimelineViewModel(
         }
 
         override fun onSaveFilterClicked() {
-            currentFilterFile?.let { fileEntry ->
+            _currentFilterFile.value?.let { fileEntry ->
                 saveTimeLineFilters(File(fileEntry.path))
             }
         }
@@ -304,12 +305,12 @@ class TimelineViewModel(
             }
             val fileEntry = RecentTimelineFilterFileEntry(file.name, file.absolutePath)
             timelineRepository.addNewRecentTimelineFilter(fileEntry)
-            currentFilterFile = fileEntry
+            _currentFilterFile.value = fileEntry
         }
     }
 
     private fun clearTimeLineFilters() {
-        currentFilterFile = null
+        _currentFilterFile.value = null
         timelineFilters.clear()
     }
 
