@@ -30,7 +30,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -59,7 +58,7 @@ internal fun ChartsList(
     timeFrame: TimeFrame,
     timelineFilters: List<TimelineFilter>,
     entriesMap: Map<String, ChartData<LogMessage>>,
-    highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
+    highlightedKeysMap: Map<String, ChartKey?>,
     onLegendResized: (Float) -> Unit,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
     toolbarCallbacks: ToolbarCallbacks,
@@ -67,6 +66,7 @@ internal fun ChartsList(
     hoveredEntry: ChartEntry<LogMessage>?,
     onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)?,
     onEntryHovered: ((ChartEntry<LogMessage>?) -> Unit)?,
+    onHighlightKey: (String, ChartKey?) -> Unit,
     listState: LazyListState,
     modifier: Modifier
 ) {
@@ -93,9 +93,7 @@ internal fun ChartsList(
                             modifier = Modifier.width(legendSize.dp).height(200.dp),
                             title = timelineFilter.name,
                             entries = entriesMap[timelineFilter.key],
-                            { key ->
-                                highlightedKeysMap[timelineFilter.key] = key
-                            },
+                            updateHighlightedKey = { key -> onHighlightKey(timelineFilter.key, key) },
                             highlightedKey = highlightedKeysMap[timelineFilter.key]
                         )
                         LegendResizer(

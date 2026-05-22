@@ -26,7 +26,6 @@ import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.logger.Log
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
@@ -69,7 +68,8 @@ class TimelineViewModel(
     val filtersDialogState = _filtersDialogState.asStateFlow()
     private var _entriesMap = MutableStateFlow<Map<String, ChartData<LogMessage>>>(emptyMap())
     val entriesMap = _entriesMap.asStateFlow()
-    var highlightedKeysMap = mutableStateMapOf<String, ChartKey?>()
+    private var _highlightedKeysMap = MutableStateFlow<Map<String, ChartKey?>>(emptyMap())
+    var highlightedKeysMap = _highlightedKeysMap.asStateFlow()
     private var _selectedEntry = MutableStateFlow<ChartEntry<LogMessage>?>(null)
     var selectedEntry = _selectedEntry.asStateFlow()
     private var _hoveredEntry = MutableStateFlow<ChartEntry<LogMessage>?>(null)
@@ -197,7 +197,7 @@ class TimelineViewModel(
 
     fun cleanup() {
         _entriesMap.value = emptyMap()
-        highlightedKeysMap.clear()
+        _highlightedKeysMap.value = emptyMap()
     }
 
     private fun startAnalyzing(dltMessages: List<LogMessage>) {
@@ -206,7 +206,7 @@ class TimelineViewModel(
         analyzeJob = viewModelScope.launch(Dispatchers.Default) {
             val start = System.currentTimeMillis()
             if (dltMessages.isNotEmpty()) {
-                val entries = mutableStateMapOf<String, ChartData<LogMessage>>()
+                val entries = mutableMapOf<String, ChartData<LogMessage>>()
                 var timeStart = Long.MAX_VALUE
                 var timeEnd = Long.MIN_VALUE
 
@@ -216,7 +216,11 @@ class TimelineViewModel(
                 // prefill timeline data holders
                 _timelineFilters.value.forEachIndexed { index, timelineFilter ->
                     entries[timelineFilter.key] = timelineFilter.diagramType.createEntries()
-                    highlightedKeysMap[timelineFilter.key] = null
+                    _highlightedKeysMap.update {
+                        it.toMutableMap().apply {
+                            set(timelineFilter.key, null)
+                        }
+                    }
 
                     // precompile regex in advance
                     regexps.add(index, timelineFilter.extractPattern?.toRegex())
@@ -258,6 +262,14 @@ class TimelineViewModel(
                 }
             }
             Log.d("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
+        }
+    }
+
+    fun updateHighlightedKey(filterKey: String, key: ChartKey?) {
+        _highlightedKeysMap.update {
+            it.toMutableMap().apply {
+                set(filterKey, key)
+            }
         }
     }
 

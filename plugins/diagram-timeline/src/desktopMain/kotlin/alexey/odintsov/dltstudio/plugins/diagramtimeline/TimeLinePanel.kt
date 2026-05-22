@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -59,7 +58,7 @@ fun TimeLinePanel(
     timelineFilters: List<TimelineFilter>,
     filtersDialogState: Boolean,
     entriesMap: Map<String, ChartData<LogMessage>>,
-    highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
+    highlightedKeysMap: Map<String, ChartKey?>,
     filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
     onLegendResized: (Float) -> Unit = { _ -> },
@@ -72,6 +71,7 @@ fun TimeLinePanel(
     hoveredEntry: ChartEntry<LogMessage>? = null,
     onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)? = null,
     onEntryHovered: ((ChartEntry<LogMessage>?) -> Unit)? = null,
+    onHighlightKey: (String, ChartKey?) -> Unit,
     vSplitterState: SplitPaneState,
     markedIds: List<Int>,
     onEntryMarkToggle: (Int) -> Unit,
@@ -138,6 +138,7 @@ fun TimeLinePanel(
                     hoveredEntry,
                     onEntrySelected,
                     onEntryHovered,
+                    onHighlightKey,
                     listState,
                     modifier
                 )
@@ -223,5 +224,6 @@ private fun PreviewTimeline() {
         vSplitterState = SplitPaneState(1f, false),
         markedIds = mutableStateListOf(),
         onEntryMarkToggle = {},
+        onHighlightKey = { _, _ ->},
     )
 }
