@@ -16,7 +16,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            implementation(project(":logger"))
+            implementation(libs.alexey.odintsov.logger)
             implementation(project(":dlt-message"))
             implementation(project(":model-contract"))
             implementation(libs.compose.runtime)

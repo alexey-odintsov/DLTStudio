@@ -12,7 +12,7 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            implementation(project(":logger"))
+            implementation(libs.alexey.odintsov.logger)
         }
     }
 }

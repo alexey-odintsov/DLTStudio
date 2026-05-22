@@ -17,7 +17,7 @@ kotlin {
         commonMain.dependencies {
             api(project(":model-contract"))
             api(project(":plugins:contract"))
-            implementation(project(":logger"))
+            implementation(libs.alexey.odintsov.logger)
             implementation(libs.compose.runtime)
             implementation(libs.compose.foundation)
         }

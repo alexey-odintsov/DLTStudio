@@ -18,7 +18,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":app-theme"))
             implementation(project(":resources"))
-            implementation(project(":logger"))
+            implementation(libs.alexey.odintsov.logger)
             implementation(project(":data-utils"))
             implementation(project(":extraction"))
             implementation(project(":dlt-message"))
