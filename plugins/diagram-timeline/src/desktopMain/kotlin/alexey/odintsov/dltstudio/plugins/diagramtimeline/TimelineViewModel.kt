@@ -87,7 +87,7 @@ class TimelineViewModel(
     private var _currentFilterFile = MutableStateFlow<RecentTimelineFilterFileEntry?>(null)
     var currentFilterFile = _currentFilterFile.asStateFlow()
 
-    var fileDialogState by mutableStateOf(
+    private var _fileDialogState = MutableStateFlow(
         FileDialogState(
             title = "Save filter",
             operation = DialogOperation.SAVE,
@@ -95,6 +95,7 @@ class TimelineViewModel(
             cancelCallback = ::closeFileDialog
         )
     )
+    val fileDialogState = _fileDialogState.asStateFlow()
 
     fun onCloseFiltersDialogClicked() {
         _filtersDialogState.value = false
@@ -108,7 +109,7 @@ class TimelineViewModel(
         }
 
         override fun onLoadFilterClicked() {
-            fileDialogState = FileDialogState(
+            _fileDialogState.value = FileDialogState(
                 title = "Load filter",
                 visible = true,
                 operation = DialogOperation.OPEN,
@@ -127,7 +128,7 @@ class TimelineViewModel(
         }
 
         override fun onSaveFilterAsClicked() {
-            fileDialogState = FileDialogState(
+            _fileDialogState.value = FileDialogState(
                 title = "Save filter",
                 visible = true,
                 operation = DialogOperation.SAVE,
@@ -292,7 +293,7 @@ class TimelineViewModel(
 
 
     private fun closeFileDialog() {
-        fileDialogState = fileDialogState.copy(visible = false)
+        _fileDialogState.value = _fileDialogState.value.copy(visible = false)
     }
 
     private fun saveTimeLineFilters(file: File) {

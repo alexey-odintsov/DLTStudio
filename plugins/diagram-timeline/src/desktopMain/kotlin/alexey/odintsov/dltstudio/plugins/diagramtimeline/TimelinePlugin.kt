@@ -73,10 +73,11 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
         val recentTimelineFiltersFiles = viewModel.recentTimelineFiltersFiles.collectAsState()
         val currentFilterFile = viewModel.currentFilterFile.collectAsState()
         val timelineFilters = viewModel.timelineFilters.collectAsState()
+        val fileDialogState = viewModel.fileDialogState.collectAsState()
 
         CompositionLocalProvider(LocalFormatter provides formatter) {
-            if (viewModel.fileDialogState.visible) {
-                FileDialog(viewModel.fileDialogState)
+            if (fileDialogState.value.visible) {
+                FileDialog(fileDialogState.value)
             }
 
             TimeLinePanel(
