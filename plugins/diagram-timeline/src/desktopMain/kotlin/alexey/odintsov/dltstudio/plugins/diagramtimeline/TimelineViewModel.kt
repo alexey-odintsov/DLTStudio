@@ -25,9 +25,6 @@ import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
 import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.logger.Log
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.Main
@@ -353,10 +350,11 @@ class TimelineViewModel(
         }
     }
 
-    var legendSize by mutableStateOf(250f)
+    private var _legendSize = MutableStateFlow(250f)
+    val legendSize = _legendSize.asStateFlow()
 
     fun onLegendResized(diff: Float) {
-        legendSize += diff
+        _legendSize.value += diff
     }
 
     fun onEntrySelected(chartEntry: ChartEntry<LogMessage>) {
