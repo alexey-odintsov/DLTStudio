@@ -64,7 +64,7 @@ fun TimeLinePanel(
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
     onLegendResized: (Float) -> Unit = { _ -> },
     legendSize: Float,
-    recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
+    recentFiltersFiles: List<RecentTimelineFilterFileEntry>,
     currentFilterFile: RecentTimelineFilterFileEntry?,
     toolbarCallbacks: ToolbarCallbacks,
     onCloseFiltersDialog: () -> Unit,

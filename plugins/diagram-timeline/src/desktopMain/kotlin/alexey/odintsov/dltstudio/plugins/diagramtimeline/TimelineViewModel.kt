@@ -81,7 +81,8 @@ class TimelineViewModel(
 
     val timelineFilters = mutableStateListOf(*predefinedTimelineFilters.toTypedArray())
 
-    var recentTimelineFiltersFiles = mutableStateListOf<RecentTimelineFilterFileEntry>()
+    private var _recentTimelineFiltersFiles = MutableStateFlow<List<RecentTimelineFilterFileEntry>>(emptyList())
+    var recentTimelineFiltersFiles = _recentTimelineFiltersFiles.asStateFlow()
     var currentFilterFile by mutableStateOf<RecentTimelineFilterFileEntry?>(null)
 
     var fileDialogState by mutableStateOf(
@@ -174,8 +175,7 @@ class TimelineViewModel(
     init {
         viewModelScope.launch {
             timelineRepository.getRecentTimelineFilters().collectLatest {
-                recentTimelineFiltersFiles.clear()
-                recentTimelineFiltersFiles.addAll(it)
+                _recentTimelineFiltersFiles.value = it
             }
         }
     }
