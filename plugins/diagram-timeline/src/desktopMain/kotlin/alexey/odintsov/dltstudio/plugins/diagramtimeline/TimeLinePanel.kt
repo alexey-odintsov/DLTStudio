@@ -65,7 +65,7 @@ fun TimeLinePanel(
     legendSize: Float,
     recentFiltersFiles: List<RecentTimelineFilterFileEntry>,
     currentFilterFile: RecentTimelineFilterFileEntry?,
-    toolbarCallbacks: ToolbarCallbacks,
+    onToolbarAction: (ToolbarAction) -> Unit,
     onCloseFiltersDialog: () -> Unit,
     selectedEntry: ChartEntry<LogMessage>? = null,
     hoveredEntry: ChartEntry<LogMessage>? = null,
@@ -80,22 +80,22 @@ fun TimeLinePanel(
         if (e.type == KeyEventType.KeyDown) {
             when (e.key) {
                 Key.A -> {
-                    toolbarCallbacks.onRightClicked()
+                    onToolbarAction(ToolbarAction.RightClicked)
                     true
                 }
 
                 Key.D -> {
-                    toolbarCallbacks.onLeftClicked()
+                    onToolbarAction(ToolbarAction.LeftClicked)
                     true
                 }
 
                 Key.W -> {
-                    toolbarCallbacks.onZoomInClicked()
+                    onToolbarAction(ToolbarAction.ZoomInClicked)
                     true
                 }
 
                 Key.S -> {
-                    toolbarCallbacks.onZoomOutClicked()
+                    onToolbarAction(ToolbarAction.ZoomOutClicked)
                     true
                 }
 
@@ -107,7 +107,7 @@ fun TimeLinePanel(
     }) {
         TimelineToolbar(
             analyzeState = analyzeState,
-            callbacks = toolbarCallbacks,
+            onAction = onToolbarAction,
             recentFiltersFiles = recentFiltersFiles,
             currentFilterFile = currentFilterFile,
         )
@@ -133,7 +133,7 @@ fun TimeLinePanel(
                     highlightedKeysMap,
                     onLegendResized,
                     retrieveEntriesForFilter,
-                    toolbarCallbacks,
+                    { dx -> onToolbarAction(ToolbarAction.DragTimeline(dx)) },
                     selectedEntry,
                     hoveredEntry,
                     onEntrySelected,
@@ -219,7 +219,7 @@ private fun PreviewTimeline() {
         legendSize = 250f,
         recentFiltersFiles = mutableStateListOf(),
         currentFilterFile = null,
-        toolbarCallbacks = ToolbarCallbacks.Stub,
+        onToolbarAction = {},
         onCloseFiltersDialog = {},
         vSplitterState = SplitPaneState(1f, false),
         markedIds = mutableStateListOf(),

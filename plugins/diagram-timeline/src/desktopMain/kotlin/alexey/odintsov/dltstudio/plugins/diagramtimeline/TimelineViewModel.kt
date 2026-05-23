@@ -36,7 +36,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import java.io.File
@@ -45,7 +44,7 @@ import java.io.File
 class TimelineViewModel(
     private val onProgressChanged: (Float) -> Unit,
     private val timelineRepository: TimelineRepository,
-    private val messagesRepository: MessagesRepository,
+    messagesRepository: MessagesRepository,
 ) {
     @OptIn(ExperimentalSplitPaneApi::class)
     val vSplitterState = SplitPaneState(0.9f, true)
@@ -76,7 +75,7 @@ class TimelineViewModel(
     val analyzeState: StateFlow<AnalyzeState> = _analyzeState
     val listState = LazyListState(0, 0)
 
-    private val _timelineFilters = MutableStateFlow<List<TimelineFilter>>(predefinedTimelineFilters)
+    private val _timelineFilters = MutableStateFlow(predefinedTimelineFilters)
     val timelineFilters = _timelineFilters.asStateFlow()
 
     private var _recentTimelineFiltersFiles = MutableStateFlow<List<RecentTimelineFilterFileEntry>>(emptyList())
@@ -98,79 +97,75 @@ class TimelineViewModel(
         _filtersDialogState.value = false
     }
 
-    val toolbarCallbacks = object : ToolbarCallbacks {
-        override fun onAnalyzeClicked() = startAnalyzing()
-
-        override fun onTimelineFiltersClicked() {
-            _filtersDialogState.value = true
+    fun handleToolbarAction(action: ToolbarAction) {
+        when (action) {
+            ToolbarAction.AnalyzeClicked -> startAnalyzing()
+            ToolbarAction.ClearFilterClicked -> clearTimeLineFilters()
+            is ToolbarAction.DragTimeline -> dragTimeline(action.dx)
+            ToolbarAction.LeftClicked -> move(-100000)
+            ToolbarAction.LoadFilterClicked -> loadFilterClicked()
+            is ToolbarAction.RecentFilterClicked -> loadTimeLineFilters(File(action.path))
+            ToolbarAction.RightClicked -> move(100000)
+            ToolbarAction.SaveFilterAsClicked -> saveFilterAsClicked()
+            ToolbarAction.SaveFilterClicked -> saveFilterClicked()
+            ToolbarAction.TimelineFiltersClicked -> timelineFiltersClicked()
+            ToolbarAction.ZoomFitClicked -> zoomFit()
+            ToolbarAction.ZoomInClicked -> zoom(true)
+            ToolbarAction.ZoomOutClicked -> zoom(false)
         }
-
-        override fun onLoadFilterClicked() {
-            _fileDialogState.value = FileDialogState(
-                title = "Load filter",
-                visible = true,
-                operation = DialogOperation.OPEN,
-                fileCallback = {
-                    closeFileDialog()
-                    loadTimeLineFilters(it[0])
-                },
-                cancelCallback = ::closeFileDialog
-            )
-        }
-
-        override fun onSaveFilterClicked() {
-            _currentFilterFile.value?.let { fileEntry ->
-                saveTimeLineFilters(File(fileEntry.path))
-            }
-        }
-
-        override fun onSaveFilterAsClicked() {
-            _fileDialogState.value = FileDialogState(
-                title = "Save filter",
-                visible = true,
-                operation = DialogOperation.SAVE,
-                fileCallback = {
-                    closeFileDialog()
-                    saveTimeLineFilters(it[0])
-                },
-                cancelCallback = ::closeFileDialog
-            )
-        }
-
-        override fun onClearFilterClicked() {
-            clearTimeLineFilters()
-        }
-
-        override fun onRecentFilterClicked(path: String) {
-            loadTimeLineFilters(File(path))
-        }
-
-        override fun onLeftClicked() {
-            _timeFrame.value = _timeFrame.value.move(-100000)
-        }
-
-        override fun onRightClicked() {
-            _timeFrame.value = _timeFrame.value.move(100000)
-        }
-
-        override fun onZoomInClicked() {
-            _timeFrame.value = _timeFrame.value.zoom(true)
-        }
-
-        override fun onZoomOutClicked() {
-            _timeFrame.value = _timeFrame.value.zoom(false)
-        }
-
-        override fun onZoomFitClicked() {
-            _timeFrame.value = TimeFrame(_timeTotal.value.timeStart, _timeTotal.value.timeEnd)
-        }
-
-        override fun onDragTimeline(dx: Float) {
-            _timeFrame.value = _timeFrame.value.move(dx.toLong())
-        }
-
     }
 
+    private fun loadFilterClicked() {
+        _fileDialogState.value = FileDialogState(
+            title = "Load filter",
+            visible = true,
+            operation = DialogOperation.OPEN,
+            fileCallback = {
+                closeFileDialog()
+                loadTimeLineFilters(it[0])
+            },
+            cancelCallback = ::closeFileDialog
+        )
+    }
+
+    private fun timelineFiltersClicked() {
+        _filtersDialogState.value = true
+    }
+
+    private fun saveFilterAsClicked() {
+        _fileDialogState.value = FileDialogState(
+            title = "Save filter",
+            visible = true,
+            operation = DialogOperation.SAVE,
+            fileCallback = {
+                closeFileDialog()
+                saveTimeLineFilters(it[0])
+            },
+            cancelCallback = ::closeFileDialog
+        )
+    }
+
+    private fun saveFilterClicked() {
+        _currentFilterFile.value?.let { fileEntry ->
+            saveTimeLineFilters(File(fileEntry.path))
+        }
+    }
+
+    private fun move(dx: Long) {
+        _timeFrame.value = _timeFrame.value.move(dx)
+    }
+
+    private fun dragTimeline(dx: Float) {
+        _timeFrame.value = _timeFrame.value.move(dx.toLong())
+    }
+
+    private fun zoom(zoomIn: Boolean) {
+        _timeFrame.value = _timeFrame.value.zoom(zoomIn)
+    }
+
+    private fun zoomFit() {
+        _timeFrame.value = TimeFrame(_timeTotal.value.timeStart, _timeTotal.value.timeEnd)
+    }
 
     init {
         viewModelScope.launch {
@@ -253,10 +248,7 @@ class TimelineViewModel(
                 _timeFrame.value = TimeFrame(timeStart, timeEnd)
                 _timeTotal.value = TimeFrame(timeStart, timeEnd)
                 _entriesMap.value = entries
-                withContext(Main) {
-                    // we need copies of ParseSession's collections to prevent ConcurrentModificationException
-                    _analyzeState.value = AnalyzeState.IDLE
-                }
+                _analyzeState.value = AnalyzeState.IDLE
             }
             Log.d("Done analyzing timeline ${System.currentTimeMillis() - start}ms")
         }
