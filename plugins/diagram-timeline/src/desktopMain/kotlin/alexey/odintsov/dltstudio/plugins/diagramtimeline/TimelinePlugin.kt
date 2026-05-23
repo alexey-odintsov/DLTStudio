@@ -1,11 +1,5 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.staticCompositionLocalOf
-import androidx.compose.ui.Modifier
 import alexey.odintsov.dltstudio.model.contract.Formatter
 import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
 import alexey.odintsov.dltstudio.plugins.contract.FormatterConsumer
@@ -15,6 +9,12 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.DBFactory
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.TimelineRepository
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.TimelineRepositoryImpl
 import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialog
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -64,37 +64,50 @@ class TimelinePlugin : DLTStudioPlugin, PluginPanel, FormatterConsumer {
     override fun renderPanel(modifier: Modifier) {
         val analyzeState by viewModel.analyzeState.collectAsState()
         val markedIds = messagesRepository.getMarkedIds().collectAsState()
+        val hoveredEntry = viewModel.hoveredEntry.collectAsState()
+        val selectedEntry = viewModel.selectedEntry.collectAsState()
+        val timeTotal = viewModel.timeTotal.collectAsState()
+        val timeFrame = viewModel.timeFrame.collectAsState()
+        val filtersDialogState = viewModel.filtersDialogState.collectAsState()
+        val entriesMap = viewModel.entriesMap.collectAsState()
+        val highlightedKeysMap = viewModel.highlightedKeysMap.collectAsState()
+        val recentTimelineFiltersFiles = viewModel.recentTimelineFiltersFiles.collectAsState()
+        val currentFilterFile = viewModel.currentFilterFile.collectAsState()
+        val timelineFilters = viewModel.timelineFilters.collectAsState()
+        val fileDialogState = viewModel.fileDialogState.collectAsState()
+        val legendSize = viewModel.legendSize.collectAsState()
 
         CompositionLocalProvider(LocalFormatter provides formatter) {
-            if (viewModel.fileDialogState.visible) {
-                FileDialog(viewModel.fileDialogState)
+            if (fileDialogState.value.visible) {
+                FileDialog(fileDialogState.value)
             }
 
             TimeLinePanel(
                 modifier = modifier,
-                timeTotal = viewModel.timeTotal,
-                timeFrame = viewModel.timeFrame,
+                timeTotal = timeTotal.value,
+                timeFrame = timeFrame.value,
                 listState = viewModel.listState,
                 analyzeState = analyzeState,
-                timelineFilters = viewModel.timelineFilters,
-                entriesMap = viewModel.entriesMap,
-                highlightedKeysMap = viewModel.highlightedKeysMap,
-                legendSize = viewModel.legendSize,
+                timelineFilters = timelineFilters.value,
+                entriesMap = entriesMap.value,
+                highlightedKeysMap = highlightedKeysMap.value,
+                legendSize = legendSize.value,
                 filtersDialogCallbacks = viewModel.timelineFiltersDialogCallbacks,
                 retrieveEntriesForFilter = viewModel::retrieveEntriesForFilter,
-                currentFilterFile = viewModel.currentFilterFile,
+                currentFilterFile = currentFilterFile.value,
                 onLegendResized = viewModel::onLegendResized,
-                recentFiltersFiles = viewModel.recentTimelineFiltersFiles,
-                toolbarCallbacks = viewModel.toolbarCallbacks,
-                filtersDialogState = viewModel.filtersDialogState.value,
+                recentFiltersFiles = recentTimelineFiltersFiles.value,
+                onToolbarAction = viewModel::handleToolbarAction,
+                filtersDialogState = filtersDialogState.value,
                 onCloseFiltersDialog = viewModel::onCloseFiltersDialogClicked,
-                selectedEntry = viewModel.selectedEntry,
-                hoveredEntry = viewModel.hoveredEntry,
+                selectedEntry = selectedEntry.value,
+                hoveredEntry = hoveredEntry.value,
                 onEntrySelected = viewModel::onEntrySelected,
                 onEntryHovered = viewModel::onEntryHovered,
                 vSplitterState = viewModel.vSplitterState,
                 markedIds = markedIds.value,
                 onEntryMarkToggle = messagesRepository::toggleMark,
+                onHighlightKey = viewModel::updateHighlightedKey
             )
         }
     }

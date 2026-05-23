@@ -1,12 +1,14 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
-import alexey.odintsov.dltstudio.charts.model.ChartData
-import alexey.odintsov.dltstudio.charts.model.ChartEntry
-import alexey.odintsov.dltstudio.charts.model.ChartKey
-import alexey.odintsov.dltstudio.charts.model.TimeFrame
-import alexey.odintsov.dltstudio.charts.ui.Chart
-import alexey.odintsov.dltstudio.charts.ui.ChartType
-import alexey.odintsov.dltstudio.charts.ui.calculateTimestamp
+import alexey.odintsov.charts.model.ChartData
+import alexey.odintsov.charts.model.ChartEntry
+import alexey.odintsov.charts.model.ChartKey
+import alexey.odintsov.charts.model.ChartType
+import alexey.odintsov.charts.model.TimeFrame
+import alexey.odintsov.charts.ui.Chart
+import alexey.odintsov.charts.ui.calculateTimestamp
+import alexey.odintsov.dltstudio.model.contract.LogMessage
+import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
@@ -28,8 +30,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -46,8 +46,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 
 private val TIME_MARKER_WIDTH_DP = 140.dp
 private val TIME_MARKER_HEIGHT_DP = 12.dp
@@ -58,16 +56,17 @@ internal fun ChartsList(
     legendSize: Float,
     timeTotal: TimeFrame,
     timeFrame: TimeFrame,
-    timelineFilters: SnapshotStateList<TimelineFilter>,
-    entriesMap: SnapshotStateMap<String, ChartData<LogMessage>>,
-    highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
+    timelineFilters: List<TimelineFilter>,
+    entriesMap: Map<String, ChartData<LogMessage>>,
+    highlightedKeysMap: Map<String, ChartKey?>,
     onLegendResized: (Float) -> Unit,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
-    toolbarCallbacks: ToolbarCallbacks,
+    onDragTimeline: (Float) -> Unit,
     selectedEntry: ChartEntry<LogMessage>?,
     hoveredEntry: ChartEntry<LogMessage>?,
     onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)?,
     onEntryHovered: ((ChartEntry<LogMessage>?) -> Unit)?,
+    onHighlightKey: (String, ChartKey?) -> Unit,
     listState: LazyListState,
     modifier: Modifier
 ) {
@@ -94,9 +93,7 @@ internal fun ChartsList(
                             modifier = Modifier.width(legendSize.dp).height(200.dp),
                             title = timelineFilter.name,
                             entries = entriesMap[timelineFilter.key],
-                            { key ->
-                                highlightedKeysMap[timelineFilter.key] = key
-                            },
+                            updateHighlightedKey = { key -> onHighlightKey(timelineFilter.key, key) },
                             highlightedKey = highlightedKeysMap[timelineFilter.key]
                         )
                         LegendResizer(
@@ -116,7 +113,7 @@ internal fun ChartsList(
                             modifier = viewModifier,
                             entries = retrieveEntriesForFilter(timelineFilter),
                             highlightedKey = highlightedKeysMap[timelineFilter.key],
-                            onDragged = toolbarCallbacks::onDragTimeline,
+                            onDragged = onDragTimeline,
                             totalTime = timeTotal,
                             timeFrame = timeFrame,
                             type = chartType,

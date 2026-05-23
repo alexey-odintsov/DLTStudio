@@ -1,11 +1,11 @@
 package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
+import alexey.odintsov.charts.model.ChartData
+import alexey.odintsov.charts.model.ChartEntry
+import alexey.odintsov.charts.model.ChartKey
+import alexey.odintsov.charts.model.EventsChartData
+import alexey.odintsov.charts.model.TimeFrame
 import alexey.odintsov.dltmessage.SampleData
-import alexey.odintsov.dltstudio.charts.model.ChartData
-import alexey.odintsov.dltstudio.charts.model.ChartEntry
-import alexey.odintsov.dltstudio.charts.model.ChartKey
-import alexey.odintsov.dltstudio.charts.model.EventsChartData
-import alexey.odintsov.dltstudio.charts.model.TimeFrame
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
@@ -28,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -56,22 +55,23 @@ fun TimeLinePanel(
     timeFrame: TimeFrame,
     listState: LazyListState,
     analyzeState: AnalyzeState,
-    timelineFilters: SnapshotStateList<TimelineFilter>,
+    timelineFilters: List<TimelineFilter>,
     filtersDialogState: Boolean,
-    entriesMap: SnapshotStateMap<String, ChartData<LogMessage>>,
-    highlightedKeysMap: SnapshotStateMap<String, ChartKey?>,
+    entriesMap: Map<String, ChartData<LogMessage>>,
+    highlightedKeysMap: Map<String, ChartKey?>,
     filtersDialogCallbacks: TimelineFiltersDialogCallbacks,
     retrieveEntriesForFilter: (filter: TimelineFilter) -> ChartData<LogMessage>?,
     onLegendResized: (Float) -> Unit = { _ -> },
     legendSize: Float,
-    recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
+    recentFiltersFiles: List<RecentTimelineFilterFileEntry>,
     currentFilterFile: RecentTimelineFilterFileEntry?,
-    toolbarCallbacks: ToolbarCallbacks,
+    onToolbarAction: (ToolbarAction) -> Unit,
     onCloseFiltersDialog: () -> Unit,
     selectedEntry: ChartEntry<LogMessage>? = null,
     hoveredEntry: ChartEntry<LogMessage>? = null,
     onEntrySelected: ((ChartEntry<LogMessage>) -> Unit)? = null,
     onEntryHovered: ((ChartEntry<LogMessage>?) -> Unit)? = null,
+    onHighlightKey: (String, ChartKey?) -> Unit,
     vSplitterState: SplitPaneState,
     markedIds: List<Int>,
     onEntryMarkToggle: (Int) -> Unit,
@@ -80,22 +80,22 @@ fun TimeLinePanel(
         if (e.type == KeyEventType.KeyDown) {
             when (e.key) {
                 Key.A -> {
-                    toolbarCallbacks.onRightClicked()
+                    onToolbarAction(ToolbarAction.RightClicked)
                     true
                 }
 
                 Key.D -> {
-                    toolbarCallbacks.onLeftClicked()
+                    onToolbarAction(ToolbarAction.LeftClicked)
                     true
                 }
 
                 Key.W -> {
-                    toolbarCallbacks.onZoomInClicked()
+                    onToolbarAction(ToolbarAction.ZoomInClicked)
                     true
                 }
 
                 Key.S -> {
-                    toolbarCallbacks.onZoomOutClicked()
+                    onToolbarAction(ToolbarAction.ZoomOutClicked)
                     true
                 }
 
@@ -107,7 +107,7 @@ fun TimeLinePanel(
     }) {
         TimelineToolbar(
             analyzeState = analyzeState,
-            callbacks = toolbarCallbacks,
+            onAction = onToolbarAction,
             recentFiltersFiles = recentFiltersFiles,
             currentFilterFile = currentFilterFile,
         )
@@ -133,11 +133,12 @@ fun TimeLinePanel(
                     highlightedKeysMap,
                     onLegendResized,
                     retrieveEntriesForFilter,
-                    toolbarCallbacks,
+                    { dx -> onToolbarAction(ToolbarAction.DragTimeline(dx)) },
                     selectedEntry,
                     hoveredEntry,
                     onEntrySelected,
                     onEntryHovered,
+                    onHighlightKey,
                     listState,
                     modifier
                 )
@@ -218,10 +219,11 @@ private fun PreviewTimeline() {
         legendSize = 250f,
         recentFiltersFiles = mutableStateListOf(),
         currentFilterFile = null,
-        toolbarCallbacks = ToolbarCallbacks.Stub,
+        onToolbarAction = {},
         onCloseFiltersDialog = {},
         vSplitterState = SplitPaneState(1f, false),
         markedIds = mutableStateListOf(),
         onEntryMarkToggle = {},
+        onHighlightKey = { _, _ ->},
     )
 }

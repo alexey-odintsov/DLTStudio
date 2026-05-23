@@ -35,7 +35,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,45 +50,27 @@ import dltstudio.resources.icon_stop
 import dltstudio.resources.icon_zoom_in
 import dltstudio.resources.icon_zoom_out
 
-interface ToolbarCallbacks {
-    fun onAnalyzeClicked()
-    fun onTimelineFiltersClicked()
-    fun onLoadFilterClicked()
-    fun onSaveFilterClicked()
-    fun onSaveFilterAsClicked()
-    fun onClearFilterClicked()
-    fun onRecentFilterClicked(path: String)
-    fun onLeftClicked()
-    fun onRightClicked()
-    fun onZoomInClicked()
-    fun onZoomOutClicked()
-    fun onZoomFitClicked()
-    fun onDragTimeline(dx: Float)
-
-
-    object Stub : ToolbarCallbacks {
-        override fun onAnalyzeClicked() = Unit
-        override fun onTimelineFiltersClicked() = Unit
-        override fun onLoadFilterClicked() = Unit
-        override fun onSaveFilterClicked() = Unit
-        override fun onSaveFilterAsClicked() = Unit
-        override fun onClearFilterClicked() = Unit
-        override fun onRecentFilterClicked(path: String) = Unit
-        override fun onLeftClicked() = Unit
-        override fun onRightClicked() = Unit
-        override fun onZoomInClicked() = Unit
-        override fun onZoomOutClicked() = Unit
-        override fun onZoomFitClicked() = Unit
-        override fun onDragTimeline(dx: Float) = Unit
-    }
+sealed interface ToolbarAction {
+    object AnalyzeClicked : ToolbarAction
+    object TimelineFiltersClicked : ToolbarAction
+    object LoadFilterClicked : ToolbarAction
+    object SaveFilterClicked : ToolbarAction
+    object SaveFilterAsClicked : ToolbarAction
+    object ClearFilterClicked : ToolbarAction
+    object LeftClicked : ToolbarAction
+    object RightClicked : ToolbarAction
+    object ZoomInClicked : ToolbarAction
+    object ZoomOutClicked : ToolbarAction
+    object ZoomFitClicked : ToolbarAction
+    data class RecentFilterClicked(val path: String) : ToolbarAction
+    data class DragTimeline(val dx: Float) : ToolbarAction
 }
-
 
 @Composable
 fun TimelineToolbar(
     analyzeState: AnalyzeState,
-    callbacks: ToolbarCallbacks,
-    recentFiltersFiles: SnapshotStateList<RecentTimelineFilterFileEntry>,
+    onAction: (ToolbarAction) -> Unit,
+    recentFiltersFiles: List<RecentTimelineFilterFileEntry>,
     currentFilterFile: RecentTimelineFilterFileEntry?,
 ) {
 
@@ -107,7 +88,7 @@ fun TimelineToolbar(
                     Res.drawable.icon_stop
                 },
                 title = "Analyze timeline",
-                onClick = callbacks::onAnalyzeClicked,
+                onClick = { onAction(ToolbarAction.AnalyzeClicked) },
                 tintable = false
             )
         }
@@ -118,7 +99,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_left,
                 title = "Move left",
-                onClick = callbacks::onLeftClicked
+                onClick = { onAction(ToolbarAction.LeftClicked) }
             )
         }
         Tooltip(text = "Move offset to the right") {
@@ -126,7 +107,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_right,
                 title = "Move right",
-                onClick = callbacks::onRightClicked
+                onClick = { onAction(ToolbarAction.RightClicked) }
             )
         }
 
@@ -135,7 +116,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_zoom_in,
                 title = "Zoom in",
-                onClick = callbacks::onZoomInClicked
+                onClick = { onAction(ToolbarAction.ZoomInClicked) }
             )
         }
         Tooltip(text = "Zoom out") {
@@ -143,7 +124,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_zoom_out,
                 title = "Zoom out",
-                onClick = callbacks::onZoomOutClicked
+                onClick = { onAction(ToolbarAction.ZoomOutClicked) }
             )
         }
         Tooltip(text = "Fit timeline") {
@@ -151,7 +132,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_fit,
                 title = "Fit timeline",
-                onClick = callbacks::onZoomFitClicked
+                onClick = { onAction(ToolbarAction.ZoomFitClicked) },
             )
         }
 
@@ -161,7 +142,7 @@ fun TimelineToolbar(
                 modifier = Modifier.size(32.dp),
                 icon = Res.drawable.icon_color_filters,
                 title = "Timeline filters",
-                onClick = callbacks::onTimelineFiltersClicked,
+                onClick = { onAction(ToolbarAction.TimelineFiltersClicked) },
                 tintable = false,
             )
         }
@@ -191,7 +172,7 @@ fun TimelineToolbar(
                             },
                             onClick = {
                                 expanded = false
-                                callbacks.onRecentFilterClicked(recentFiltersFiles[index].path)
+                                onAction(ToolbarAction.RecentFilterClicked(recentFiltersFiles[index].path))
                             }
                         )
                     }
@@ -200,7 +181,7 @@ fun TimelineToolbar(
         }
 
         CustomButton(
-            modifier = Modifier, onClick = callbacks::onLoadFilterClicked
+            modifier = Modifier, onClick = { onAction(ToolbarAction.LoadFilterClicked) },
         ) {
             Text("Load")
         }
@@ -208,14 +189,14 @@ fun TimelineToolbar(
         CustomDropDownButton(
             items = remember {
                 listOf(
-                    DropDownItem("Save", callbacks::onSaveFilterClicked),
-                    DropDownItem("Save As", callbacks::onSaveFilterAsClicked),
+                    DropDownItem("Save", { onAction(ToolbarAction.SaveFilterClicked) }),
+                    DropDownItem("Save As", { onAction(ToolbarAction.SaveFilterAsClicked) }),
                 )
             }
         )
 
         CustomButton(
-            modifier = Modifier, onClick = callbacks::onClearFilterClicked
+            modifier = Modifier, onClick = { onAction(ToolbarAction.ClearFilterClicked) },
         ) {
             Text("Clear")
         }
@@ -241,7 +222,7 @@ private fun PreviewTimelineToolbar() {
     Column {
         TimelineToolbar(
             analyzeState = AnalyzeState.ANALYZING,
-            callbacks = ToolbarCallbacks.Stub,
+            onAction = {},
             recentFiltersFiles = mutableStateListOf(
                 RecentTimelineFilterFileEntry("timeline-filter.txt", "/path/to/file/"),
                 RecentTimelineFilterFileEntry("timeline-filter2.txt", "/path/to/file/"),
