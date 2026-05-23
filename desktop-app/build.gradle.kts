@@ -68,7 +68,7 @@ compose.desktop {
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb, TargetFormat.Exe)
             packageName = "alexey.odintsov.dltstudio"
-            packageVersion = "1.3.1"
+            packageVersion = "1.4.0"
         }
     }
     composeCompiler {
