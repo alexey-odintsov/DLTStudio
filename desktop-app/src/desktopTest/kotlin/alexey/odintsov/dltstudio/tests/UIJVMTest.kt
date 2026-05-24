@@ -1,9 +1,9 @@
 package alexey.odintsov.dltstudio.tests
 
+import alexey.odintsov.uicomponents.tabs.TabsPanel
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
-import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 import org.junit.Rule
 import org.junit.Test
 

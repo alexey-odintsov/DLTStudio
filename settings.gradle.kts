@@ -3,6 +3,7 @@ enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 
 pluginManagement {
     repositories {
+        mavenLocal()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
         google()
         gradlePluginPortal()
@@ -12,6 +13,7 @@ pluginManagement {
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         google()
         mavenCentral()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
@@ -21,12 +23,10 @@ dependencyResolutionManagement {
 include(":resources")
 include(":extraction")
 include(":desktop-app")
-include(":app-theme")
 include(":data-utils")
 include(":dlt-message")
 include(":dlt-parser")
 include(":model-contract")
-include(":ui-components")
 include(":plugins:contract")
 include(":plugins:manager")
 include(":plugins:predefined-plugins")

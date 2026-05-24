@@ -1,5 +1,12 @@
 package alexey.odintsov.dltstudio.settings
 
+import alexey.odintsov.dltstudio.model.PluginState
+import alexey.odintsov.dltstudio.model.SettingsPlugins
+import alexey.odintsov.dltstudio.plugins.DependencyManager
+import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
+import alexey.odintsov.uicomponents.table.TableDivider
+import alexey.odintsov.uicomponents.table.TableTextCell
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -31,17 +38,9 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.model.PluginState
-import alexey.odintsov.dltstudio.model.SettingsPlugins
-import alexey.odintsov.dltstudio.plugins.DependencyManager
-import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.table.TableDivider
-import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
-import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.splitpane.ExperimentalSplitPaneApi
 import org.jetbrains.compose.splitpane.SplitPaneState
 import org.jetbrains.compose.splitpane.VerticalSplitPane
@@ -230,26 +229,13 @@ private fun PreviewPluginsPanel() {
     val selectedPlugin = "VirtualDevicePlugin"
     val pluginsState = listOf(PluginState(selectedPlugin, true))
 
-    Column(Modifier.fillMaxSize()) {
-        Column(Modifier.weight(1f)) {
-            ThemeManager.CustomTheme(SystemTheme(false)) {
-                PluginsPanel(
-                    SettingsPlugins(
-                        selectedPlugin = selectedPlugin,
-                        pluginsState = pluginsState,
-                    ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
-                )
-            }
-        }
-        Column(Modifier.weight(1f)) {
-            ThemeManager.CustomTheme(SystemTheme(true)) {
-                PluginsPanel(
-                    SettingsPlugins(
-                        selectedPlugin = selectedPlugin,
-                        pluginsState = pluginsState,
-                    ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
-                )
-            }
-        }
+    PreviewDarkAndLightTheme(true) {
+        PluginsPanel(
+            SettingsPlugins(
+                selectedPlugin = selectedPlugin,
+                pluginsState = pluginsState,
+            ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
+        )
     }
+
 }

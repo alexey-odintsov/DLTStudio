@@ -1,5 +1,8 @@
 package alexey.odintsov.dltstudio.ui
 
+import alexey.odintsov.dltstudio.MainViewModel
+import alexey.odintsov.dltstudio.plugins.DependencyManager
+import alexey.odintsov.uicomponents.tabs.TabsPanel
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.draganddrop.dragAndDropTarget
 import androidx.compose.foundation.layout.Box
@@ -21,11 +24,8 @@ import androidx.compose.ui.draganddrop.DragAndDropEvent
 import androidx.compose.ui.draganddrop.DragAndDropTarget
 import androidx.compose.ui.draganddrop.DragData
 import androidx.compose.ui.draganddrop.dragData
-import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.MainViewModel
-import alexey.odintsov.dltstudio.plugins.DependencyManager
-import alexey.odintsov.dltstudio.uicomponents.TabsPanel
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import java.io.File
 import java.net.URI
 

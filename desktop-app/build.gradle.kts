@@ -16,14 +16,13 @@ kotlin {
         val desktopMain by getting
 
         commonMain.dependencies {
-            implementation(project(":app-theme"))
             implementation(project(":resources"))
             implementation(libs.alexey.odintsov.logger)
             implementation(project(":data-utils"))
             implementation(project(":extraction"))
             implementation(project(":dlt-message"))
             implementation(project(":dlt-parser"))
-            implementation(project(":ui-components"))
+            implementation(libs.alexey.odintsov.uicomponents)
             implementation(project(":plugins:contract"))
             implementation(project(":plugins:manager"))
             implementation(project(":plugins:predefined-plugins"))

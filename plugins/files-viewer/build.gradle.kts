@@ -17,11 +17,10 @@ kotlin {
         }
         commonMain.dependencies {
             implementation(libs.alexey.odintsov.logger)
-            implementation(project(":app-theme"))
             implementation(project(":dlt-message"))
             implementation(project(":extraction"))
             implementation(project(":model-contract"))
-            implementation(project(":ui-components"))
+            implementation(libs.alexey.odintsov.uicomponents)
             implementation(project(":plugins:contract"))
             implementation(project(":resources"))
             implementation(libs.compose.components.resources)

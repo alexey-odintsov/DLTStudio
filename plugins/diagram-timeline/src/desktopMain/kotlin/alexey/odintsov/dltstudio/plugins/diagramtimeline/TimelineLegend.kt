@@ -9,7 +9,7 @@ import alexey.odintsov.charts.model.MinMaxEntry
 import alexey.odintsov.charts.model.StringKey
 import alexey.odintsov.charts.ui.ChartPalette
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
+import alexey.odintsov.uicomponents.Tooltip
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

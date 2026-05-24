@@ -2,9 +2,9 @@ package alexey.odintsov.dltstudio.settings
 
 import alexey.odintsov.dltstudio.model.SettingsUI
 import alexey.odintsov.dltstudio.model.SupportedFontFamilies
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.edit.CustomEditText
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

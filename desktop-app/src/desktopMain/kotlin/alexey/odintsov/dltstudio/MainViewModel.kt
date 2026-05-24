@@ -48,9 +48,9 @@ import alexey.odintsov.dltstudio.plugins.manager.PluginManager
 import alexey.odintsov.dltstudio.plugins.predefinedplugins.predefinedPlugins
 import alexey.odintsov.dltstudio.settings.SettingsDialogCallbacks
 import alexey.odintsov.dltstudio.settings.SettingsPluginsCallbacks
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
-import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
-import alexey.odintsov.dltstudio.uicomponents.dialogs.FileTypeSelection
+import alexey.odintsov.uicomponents.dialogs.DialogOperation
+import alexey.odintsov.uicomponents.dialogs.FileDialogState
+import alexey.odintsov.uicomponents.dialogs.FileTypeSelection
 import alexey.odintsov.logger.Log
 import androidx.compose.foundation.lazy.LazyListState
 import kotlinx.coroutines.CoroutineScope

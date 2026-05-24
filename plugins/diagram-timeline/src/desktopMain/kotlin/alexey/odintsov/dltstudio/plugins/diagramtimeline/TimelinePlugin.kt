@@ -8,7 +8,7 @@ import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.DBFactory
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.TimelineRepository
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.TimelineRepositoryImpl
-import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialog
+import alexey.odintsov.uicomponents.dialogs.FileDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState

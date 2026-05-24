@@ -1,6 +1,5 @@
 package alexey.odintsov.dltstudio.plugins.virtualdevice
 
-import alexey.odintsov.dltstudio.uicomponents.ColorPalette
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -30,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 @Composable
 fun VirtualDevicePreview(
@@ -184,4 +185,38 @@ private fun PreviewVirtualDevicePreview() {
             PointerView(325f, 150f),
         )
     )
+}
+
+private object ColorPalette {
+
+    private val colors = mutableListOf(
+        Color.Blue,
+        Color.Red,
+        Color.Green,
+        Color.Yellow,
+        Color.White,
+        Color.Cyan,
+        Color.Magenta,
+        Color.LightGray,
+        Color.DarkGray,
+        Color.Gray,
+        Color.Black
+    )
+
+    fun getColor(index: Int, alpha: Float = 1f): Color {
+        if (index >= colors.size) {
+            // in the upper level index could be increased without calling getColor method.
+            for (i in 0..(index - colors.size)) {
+                colors.add(
+                    // todo: Exclude existing and similar colors
+                    Color(
+                        Random.nextInt(0..255),
+                        Random.nextInt(0..255),
+                        Random.nextInt(0..255)
+                    )
+                )
+            }
+        }
+        return Color(colors[index].red, colors[index].green, colors[index].blue, alpha)
+    }
 }

@@ -7,11 +7,11 @@ import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
 import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
-import alexey.odintsov.dltstudio.theme.ThemeManager.AppTheme
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.edit.CustomEditText
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -247,7 +247,7 @@ fun RemoveLogsDialogPanel(
 @Composable
 private fun PreviewRemoveLogsDialogPanel() {
     val message = LogMessage(SampleData.getSampleDltMessages(1)[0])
-    AppTheme {
+    PreviewDarkAndLightTheme(true) {
         Column(Modifier.width(550.dp).background(Color(238, 238, 238))) {
             RemoveLogsDialogPanel(message, { _ -> }) {}
         }

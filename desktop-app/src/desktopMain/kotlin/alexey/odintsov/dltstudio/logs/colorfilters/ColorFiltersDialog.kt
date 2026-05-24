@@ -4,10 +4,10 @@ import alexey.odintsov.dltstudio.logs.CellStyle
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
 import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.checkbox.CustomCheckbox
+import alexey.odintsov.uicomponents.dialogs.DesktopDialogWindow
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

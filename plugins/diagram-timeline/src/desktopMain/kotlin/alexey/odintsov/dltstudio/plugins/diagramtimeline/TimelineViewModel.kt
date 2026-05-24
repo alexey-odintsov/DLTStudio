@@ -21,8 +21,8 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFiltersDialogCallbacks
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.predefinedTimelineFilters
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DialogOperation
-import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialogState
+import alexey.odintsov.uicomponents.dialogs.DialogOperation
+import alexey.odintsov.uicomponents.dialogs.FileDialogState
 import alexey.odintsov.logger.Log
 import androidx.compose.foundation.lazy.LazyListState
 import kotlinx.coroutines.CoroutineScope

@@ -9,7 +9,7 @@ import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
 import alexey.odintsov.dltstudio.plugins.contract.FormatterConsumer
 import alexey.odintsov.dltstudio.plugins.contract.MessagesRepository
 import alexey.odintsov.dltstudio.plugins.contract.PluginPanel
-import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialog
+import alexey.odintsov.uicomponents.dialogs.FileDialog
 
 val LocalFormatter = staticCompositionLocalOf<Formatter> { Formatter.STUB }
 

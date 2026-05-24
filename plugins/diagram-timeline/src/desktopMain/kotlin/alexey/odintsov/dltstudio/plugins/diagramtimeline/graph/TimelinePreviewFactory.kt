@@ -20,7 +20,7 @@ import alexey.odintsov.charts.ui.Chart
 import alexey.odintsov.charts.ui.ChartStyle
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
-import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.uicomponents.theme.ThemeManager
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width

@@ -1,13 +1,11 @@
 package alexey.odintsov.dltstudio.plugins.deviceplugin
 
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.edit.CustomEditText
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -116,21 +113,7 @@ fun DeviceAnalysePanel(
 @Preview
 @Composable
 private fun PreviewDeviceAnalysePanel() {
-    Column {
-        ThemeManager.CustomTheme(SystemTheme(false)) {
-            Surface {
-                Text("Text")
-            }
-        }
-        Box(Modifier.weight(1f)) {
-            ThemeManager.CustomTheme(SystemTheme(true)) {
-                DeviceAnalysePanel(Modifier, remember { mutableStateListOf("Response") }, {})
-            }
-        }
-        Box(Modifier.weight(1f)) {
-            ThemeManager.CustomTheme(SystemTheme(false)) {
-                DeviceAnalysePanel(Modifier, remember { mutableStateListOf("Response") }, {})
-            }
-        }
+    PreviewDarkAndLightTheme(true) {
+        DeviceAnalysePanel(Modifier, remember { mutableStateListOf("Response") }, {})
     }
 }

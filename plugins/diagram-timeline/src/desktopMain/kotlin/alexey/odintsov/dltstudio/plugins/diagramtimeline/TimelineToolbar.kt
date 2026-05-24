@@ -2,18 +2,16 @@ package alexey.odintsov.dltstudio.plugins.diagramtimeline
 
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilterFileEntry
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDownButton
-import alexey.odintsov.dltstudio.uicomponents.DropDownItem
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
+import alexey.odintsov.uicomponents.Tooltip
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.buttons.CustomDropDownButton
+import alexey.odintsov.uicomponents.buttons.DropDownItem
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -206,20 +204,8 @@ fun TimelineToolbar(
 
 @Preview
 @Composable
-private fun PreviewLogsToolbarTheme() {
-    Column {
-        ThemeManager.CustomTheme(SystemTheme(true)) {
-            PreviewTimelineToolbar()
-        }
-        ThemeManager.CustomTheme(SystemTheme(false)) {
-            PreviewTimelineToolbar()
-        }
-    }
-}
-
-@Composable
 private fun PreviewTimelineToolbar() {
-    Column {
+    PreviewDarkAndLightTheme(true) {
         TimelineToolbar(
             analyzeState = AnalyzeState.ANALYZING,
             onAction = {},

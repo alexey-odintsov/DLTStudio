@@ -1,8 +1,7 @@
 package alexey.odintsov.dltstudio.plugins.filesviewer
 
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -130,7 +129,7 @@ fun OtherFilePreview(state: FilePreviewState) {
 @Preview
 @Composable
 private fun PreviewTextContent() {
-    ThemeManager.CustomTheme(theme = SystemTheme(true)) {
+    PreviewDarkAndLightTheme(true) {
         Box(Modifier) {
 //            TextContent(TextPreviewState(FileEntry("This is a text file content.. This is a text file content.. This is a text file content.. ", { _->}))
         }

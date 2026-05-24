@@ -3,13 +3,11 @@ package alexey.odintsov.dltstudio.logs.toolbar
 import alexey.odintsov.dltstudio.LocalFormatter
 import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.search.SearchType
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.AutoCompleteEditText
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.ToggleImageButton
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
-import androidx.compose.foundation.layout.Column
+import alexey.odintsov.uicomponents.Tooltip
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.buttons.ToggleImageButton
+import alexey.odintsov.uicomponents.edit.AutoCompleteEditText
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -232,32 +230,22 @@ fun LogsToolbar(
 
 @Preview
 @Composable
-private fun PreviewLogsToolbarTheme() {
-    Column {
-        ThemeManager.CustomTheme(SystemTheme(true)) {
-            PreviewLogsToolbar()
-        }
-        ThemeManager.CustomTheme(SystemTheme(false)) {
-            PreviewLogsToolbar()
-        }
-    }
-}
-
-@Composable
 private fun PreviewLogsToolbar() {
-    LogsToolbar(
-        state = LogsToolbarState(
-            toolbarFatalChecked = true,
-            toolbarErrorChecked = true,
-            toolbarWarningChecked = true,
-            toolbarSearchWithMarkedChecked = false,
-            toolbarWrapContentChecked = true,
-            toolbarCommentsChecked = false,
-        ),
-        searchState = SearchState(searchText = "Search text"),
-        searchAutoComplete = mutableStateListOf(),
-        onAction = {},
-        focusedBookmarkId = null,
-        markedIds = mutableStateListOf()
-    )
+    PreviewDarkAndLightTheme(true) {
+        LogsToolbar(
+            state = LogsToolbarState(
+                toolbarFatalChecked = true,
+                toolbarErrorChecked = true,
+                toolbarWarningChecked = true,
+                toolbarSearchWithMarkedChecked = false,
+                toolbarWrapContentChecked = true,
+                toolbarCommentsChecked = false,
+            ),
+            searchState = SearchState(searchText = "Search text"),
+            searchAutoComplete = mutableStateListOf(),
+            onAction = {},
+            focusedBookmarkId = null,
+            markedIds = mutableStateListOf()
+        )
+    }
 }

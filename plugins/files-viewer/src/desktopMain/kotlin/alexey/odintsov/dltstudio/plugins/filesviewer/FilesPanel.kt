@@ -1,11 +1,10 @@
 package alexey.odintsov.dltstudio.plugins.filesviewer
 
-import alexey.odintsov.dltstudio.theme.AppTheme
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.table.TableDivider
-import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
+import alexey.odintsov.uicomponents.table.TableDivider
+import alexey.odintsov.uicomponents.table.TableTextCell
+import alexey.odintsov.uicomponents.theme.ThemeManager
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background
@@ -143,7 +142,7 @@ fun FilesList(
                 Row(
                     Modifier
                         .padding(bottom = 1.dp)
-                        .background(AppTheme.colors.logRow)
+                        .background(ThemeManager.currentTheme().colors().logRow)
                         .height(IntrinsicSize.Max)
                 ) {
                     TableTextCell(
@@ -206,7 +205,10 @@ fun FileItem(
     Row(
         modifier
             .padding(bottom = 1.dp)
-            .background(if (isSelected) MaterialTheme.colorScheme.secondary else AppTheme.colors.logRow)
+            .background(
+                if (isSelected) MaterialTheme.colorScheme.secondary else ThemeManager.currentTheme()
+                    .colors().logRow
+            )
             .height(IntrinsicSize.Max)
     ) {
         TableTextCell(
@@ -237,24 +239,22 @@ fun FileItem(
 @Preview
 @Composable
 private fun PreviewFilesPanel() {
-    ThemeManager.CustomTheme(SystemTheme(true)) {
-        Box(Modifier.background(Color.Gray)) {
-            FilesPanel(
-                FilesState.IDLE,
-                mutableStateListOf(
-                    FileEntry(
-                        name = "test_file.txt",
-                        size = 143,
-                        creationDate = "24 Jul 2039 14:46:18"
-                    ),
-                    FileEntry(name = "App crash.txt", size = 512),
-                    FileEntry(name = "anr.gz", size = 123456789L),
-                    FileEntry(name = "some screenshot.png", size = 456643),
+    PreviewDarkAndLightTheme(true) {
+        FilesPanel(
+            FilesState.IDLE,
+            mutableStateListOf(
+                FileEntry(0L,
+                    name = "test_file.txt",
+                    size = 143,
+                    creationDate = "24 Jul 2039 14:46:18"
                 ),
-                mutableStateOf<PreviewState?>(null),
-                {},
-                {},
-            )
-        }
+                FileEntry(1L, name = "App crash.txt", size = 512),
+                FileEntry(2L, name = "anr.gz", size = 123456789L),
+                FileEntry(3L, name = "some screenshot.png", size = 456643),
+            ),
+            mutableStateOf<PreviewState?>(null),
+            {},
+            {},
+        )
     }
 }
