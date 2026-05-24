@@ -16,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.dialogs.DesktopDialogWindow
 import androidx.compose.ui.tooling.preview.Preview
 
 data class ChangeLogsOrderDialogState(

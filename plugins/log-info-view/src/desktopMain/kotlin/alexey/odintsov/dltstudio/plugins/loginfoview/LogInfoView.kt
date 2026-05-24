@@ -4,9 +4,9 @@ import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.edit.CustomEditText
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

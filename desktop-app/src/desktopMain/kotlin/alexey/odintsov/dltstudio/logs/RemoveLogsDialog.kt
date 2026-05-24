@@ -8,10 +8,10 @@ import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
 import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
 import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
 import alexey.odintsov.dltstudio.theme.ThemeManager.AppTheme
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.edit.CustomEditText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

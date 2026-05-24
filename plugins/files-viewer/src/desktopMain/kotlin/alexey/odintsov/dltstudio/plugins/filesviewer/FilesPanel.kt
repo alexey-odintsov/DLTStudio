@@ -3,9 +3,9 @@ package alexey.odintsov.dltstudio.plugins.filesviewer
 import alexey.odintsov.dltstudio.theme.AppTheme
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.table.TableDivider
-import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.table.TableDivider
+import alexey.odintsov.uicomponents.table.TableTextCell
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background

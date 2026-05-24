@@ -22,7 +22,7 @@ kotlin {
             implementation(project(":app-theme"))
             implementation(libs.alexey.odintsov.logger)
             implementation(project(":extraction"))
-            implementation(project(":ui-components"))
+            implementation(libs.alexey.odintsov.uicomponents)
             implementation(project(":plugins:contract"))
             implementation(project(":data-utils"))
             implementation(project(":dlt-message"))

@@ -5,7 +5,7 @@ import alexey.odintsov.datautils.toHex
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.uicomponents.table.TableTextCell
+import alexey.odintsov.uicomponents.table.TableTextCell
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth

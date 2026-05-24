@@ -1,5 +1,14 @@
 package alexey.odintsov.dltstudio
 
+import alexey.odintsov.dltstudio.model.SettingsPlugins
+import alexey.odintsov.dltstudio.model.SettingsUI
+import alexey.odintsov.dltstudio.model.contract.Formatter
+import alexey.odintsov.dltstudio.plugins.DependencyManager
+import alexey.odintsov.dltstudio.settings.SettingsDialog
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.dltstudio.ui.MainWindow
+import alexey.odintsov.logger.Log
+import alexey.odintsov.uicomponents.dialogs.FileDialog
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -8,15 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
-import alexey.odintsov.dltstudio.model.SettingsPlugins
-import alexey.odintsov.dltstudio.model.SettingsUI
-import alexey.odintsov.dltstudio.model.contract.Formatter
-import alexey.odintsov.dltstudio.plugins.DependencyManager
-import alexey.odintsov.dltstudio.settings.SettingsDialog
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.ui.MainWindow
-import alexey.odintsov.dltstudio.uicomponents.dialogs.FileDialog
-import alexey.odintsov.logger.Log
 
 
 val LocalFormatter = staticCompositionLocalOf { Formatter.STUB }

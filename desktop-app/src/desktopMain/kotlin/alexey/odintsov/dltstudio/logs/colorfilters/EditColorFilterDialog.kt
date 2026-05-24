@@ -3,6 +3,15 @@ package alexey.odintsov.dltstudio.logs.colorfilters
 import alexey.odintsov.dltmessage.extendedheader.MessageType
 import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
 import alexey.odintsov.dltstudio.logs.CellStyle
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
+import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
+import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
+import alexey.odintsov.logger.Log
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.dialogs.ColorPickerDialog
+import alexey.odintsov.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.edit.CustomEditText
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,18 +33,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import alexey.odintsov.dltstudio.model.contract.filtering.FilterCriteria
-import alexey.odintsov.dltstudio.model.contract.filtering.FilterParameter
-import alexey.odintsov.dltstudio.model.contract.filtering.TextCriteria
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.dltstudio.uicomponents.dialogs.ColorPickerDialog
-import alexey.odintsov.dltstudio.uicomponents.dialogs.DesktopDialogWindow
-import alexey.odintsov.logger.Log
-import androidx.compose.ui.tooling.preview.Preview
 
 
 class EditDialogState(

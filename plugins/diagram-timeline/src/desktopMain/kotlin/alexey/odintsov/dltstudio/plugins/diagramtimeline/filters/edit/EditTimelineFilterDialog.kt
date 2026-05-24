@@ -4,9 +4,9 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
-import alexey.odintsov.dltstudio.uicomponents.TabsPanel
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.edit.CustomEditText
+import alexey.odintsov.uicomponents.tabs.TabsPanel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

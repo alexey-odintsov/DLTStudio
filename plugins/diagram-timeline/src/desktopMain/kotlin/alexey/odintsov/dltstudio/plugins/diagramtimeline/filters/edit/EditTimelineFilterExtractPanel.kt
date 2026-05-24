@@ -7,8 +7,8 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.Entr
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.graph.TimelinePreviewFactory
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import alexey.odintsov.dltstudio.uicomponents.CustomEditText
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.edit.CustomEditText
 import alexey.odintsov.logger.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

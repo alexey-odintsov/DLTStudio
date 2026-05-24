@@ -4,11 +4,11 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.db.RecentTimelineFilter
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.AnalyzeState
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDownButton
-import alexey.odintsov.dltstudio.uicomponents.DropDownItem
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.buttons.CustomDropDownButton
+import alexey.odintsov.uicomponents.buttons.DropDownItem
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.Tooltip
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

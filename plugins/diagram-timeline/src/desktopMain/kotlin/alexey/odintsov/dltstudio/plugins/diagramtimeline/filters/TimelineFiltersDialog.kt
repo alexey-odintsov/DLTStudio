@@ -5,9 +5,9 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit.EditTimeli
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit.EditTimelineFilterDialogState
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomCheckbox
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.checkbox.CustomCheckbox
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

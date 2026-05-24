@@ -23,7 +23,7 @@ kotlin {
             implementation(project(":extraction"))
             implementation(project(":dlt-message"))
             implementation(project(":dlt-parser"))
-            implementation(project(":ui-components"))
+            implementation(libs.alexey.odintsov.uicomponents)
             implementation(project(":plugins:contract"))
             implementation(project(":plugins:manager"))
             implementation(project(":plugins:predefined-plugins"))

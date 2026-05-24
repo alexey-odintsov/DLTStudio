@@ -1,6 +1,11 @@
 package alexey.odintsov.dltstudio.settings
 
 import alexey.odintsov.dltmessage.PayloadStorageType
+import alexey.odintsov.dltstudio.model.SettingsLogs
+import alexey.odintsov.dltstudio.theme.SystemTheme
+import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.uicomponents.CustomDropDown
+import alexey.odintsov.uicomponents.buttons.CustomButton
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,14 +23,9 @@ import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.model.SettingsLogs
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.CustomButton
-import alexey.odintsov.dltstudio.uicomponents.CustomDropDown
-import androidx.compose.ui.tooling.preview.Preview
 
 
 @Composable

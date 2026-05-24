@@ -2,7 +2,7 @@ package alexey.odintsov.dltstudio.plugins.filesviewer
 
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
+import alexey.odintsov.uicomponents.buttons.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.background

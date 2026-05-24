@@ -5,10 +5,10 @@ import alexey.odintsov.dltstudio.logs.search.SearchState
 import alexey.odintsov.dltstudio.logs.search.SearchType
 import alexey.odintsov.dltstudio.theme.SystemTheme
 import alexey.odintsov.dltstudio.theme.ThemeManager
-import alexey.odintsov.dltstudio.uicomponents.AutoCompleteEditText
-import alexey.odintsov.dltstudio.uicomponents.ImageButton
-import alexey.odintsov.dltstudio.uicomponents.ToggleImageButton
-import alexey.odintsov.dltstudio.uicomponents.Tooltip
+import alexey.odintsov.uicomponents.Tooltip
+import alexey.odintsov.uicomponents.buttons.ImageButton
+import alexey.odintsov.uicomponents.buttons.ToggleImageButton
+import alexey.odintsov.uicomponents.edit.AutoCompleteEditText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
