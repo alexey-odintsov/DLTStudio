@@ -6,8 +6,8 @@ import alexey.odintsov.dltstudio.model.SettingsLogs
 import alexey.odintsov.dltstudio.model.SettingsPlugins
 import alexey.odintsov.dltstudio.model.SettingsUI
 import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.uicomponents.tabs.TabsPanel
+import alexey.odintsov.uicomponents.theme.ThemeManager
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding

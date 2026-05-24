@@ -21,8 +21,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import alexey.odintsov.dltstudio.theme.AppTheme
 import alexey.odintsov.dltstudio.utils.ColorSerializer
+import alexey.odintsov.uicomponents.theme.ThemeManager
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -49,8 +49,8 @@ fun Cell(
     content: (@Composable () -> Unit)? = null,
 ) {
     val color = if (cellStyle != null) {
-        cellStyle.textColor ?: AppTheme.colors.onLogRow
-    } else AppTheme.colors.onLogRow
+        cellStyle.textColor ?: ThemeManager.currentTheme().colors().onLogRow
+    } else ThemeManager.currentTheme().colors().onLogRow
 
     if (content != null) {
         Box(modifier = modifier) {

@@ -4,8 +4,7 @@ import alexey.odintsov.dltstudio.model.PluginState
 import alexey.odintsov.dltstudio.model.SettingsPlugins
 import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.plugins.contract.DLTStudioPlugin
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import alexey.odintsov.uicomponents.table.TableDivider
 import alexey.odintsov.uicomponents.table.TableTextCell
 import androidx.compose.foundation.VerticalScrollbar
@@ -230,26 +229,13 @@ private fun PreviewPluginsPanel() {
     val selectedPlugin = "VirtualDevicePlugin"
     val pluginsState = listOf(PluginState(selectedPlugin, true))
 
-    Column(Modifier.fillMaxSize()) {
-        Column(Modifier.weight(1f)) {
-            ThemeManager.CustomTheme(SystemTheme(false)) {
-                PluginsPanel(
-                    SettingsPlugins(
-                        selectedPlugin = selectedPlugin,
-                        pluginsState = pluginsState,
-                    ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
-                )
-            }
-        }
-        Column(Modifier.weight(1f)) {
-            ThemeManager.CustomTheme(SystemTheme(true)) {
-                PluginsPanel(
-                    SettingsPlugins(
-                        selectedPlugin = selectedPlugin,
-                        pluginsState = pluginsState,
-                    ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
-                )
-            }
-        }
+    PreviewDarkAndLightTheme(true) {
+        PluginsPanel(
+            SettingsPlugins(
+                selectedPlugin = selectedPlugin,
+                pluginsState = pluginsState,
+            ), SettingsPluginsCallbacks.Stub, SplitPaneState(0.2f, true)
+        )
     }
+
 }

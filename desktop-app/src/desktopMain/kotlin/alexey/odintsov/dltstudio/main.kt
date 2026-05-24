@@ -5,10 +5,10 @@ import alexey.odintsov.dltstudio.model.SettingsUI
 import alexey.odintsov.dltstudio.model.contract.Formatter
 import alexey.odintsov.dltstudio.plugins.DependencyManager
 import alexey.odintsov.dltstudio.settings.SettingsDialog
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.dltstudio.ui.MainWindow
 import alexey.odintsov.logger.Log
 import alexey.odintsov.uicomponents.dialogs.FileDialog
+import alexey.odintsov.uicomponents.theme.ThemeManager
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -46,6 +46,7 @@ fun main() = application {
         val settingsDialogState = mainViewModel.settingsDialogState.collectAsState()
 
         window.title = "DLT Studio ${filePath.value}"
+        ThemeManager.setIsDark(true)
         ThemeManager.AppTheme {
             CompositionLocalProvider(
                 LocalFormatter provides DependencyManager.provideFormatter(),

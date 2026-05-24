@@ -2,6 +2,8 @@ package alexey.odintsov.dltstudio.logs
 
 import alexey.odintsov.dltstudio.logs.colorfilters.ColorFilterFatal
 import alexey.odintsov.dltstudio.model.ColumnParams
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
+import alexey.odintsov.uicomponents.theme.ThemeManager
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -25,11 +27,8 @@ import androidx.compose.ui.input.pointer.PointerIcon
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import alexey.odintsov.dltstudio.theme.AppTheme
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import dltstudio.resources.Res
 import dltstudio.resources.icon_mark
 import org.jetbrains.compose.resources.painterResource
@@ -74,11 +73,11 @@ fun LogRow(
         Row(
             modifier.height(IntrinsicSize.Max).background(
                 if (isHeader) {
-                    AppTheme.colors.logRow
+                    ThemeManager.currentTheme().colors().logRow
                 } else if (finalCellStyle != null) {
-                    finalCellStyle.backgroundColor ?: AppTheme.colors.logRow
+                    finalCellStyle.backgroundColor ?: ThemeManager.currentTheme().colors().logRow
                 } else {
-                    AppTheme.colors.logRow
+                    ThemeManager.currentTheme().colors().logRow
                 }
             )
         ) {
@@ -258,9 +257,9 @@ fun LogRow(
             Row(
                 modifier.height(IntrinsicSize.Max).background(
                     if (finalCellStyle != null) {
-                        finalCellStyle.backgroundColor ?: AppTheme.colors.logRow
+                        finalCellStyle.backgroundColor ?: ThemeManager.currentTheme().colors().logRow
                     } else {
-                        AppTheme.colors.logRow
+                        ThemeManager.currentTheme().colors().logRow
                     }
                 )
             ) {
@@ -311,7 +310,7 @@ fun RowDivider() {
 @Preview
 @Composable
 private fun LogRowPreview() {
-    ThemeManager.CustomTheme(SystemTheme(isDark = true)) {
+    PreviewDarkAndLightTheme(true) {
         val contents = listOf(
             listOf("Content", null),
             listOf("Another string with _ character", "This is a comment"),

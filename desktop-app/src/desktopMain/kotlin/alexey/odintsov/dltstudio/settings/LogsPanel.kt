@@ -2,10 +2,9 @@ package alexey.odintsov.dltstudio.settings
 
 import alexey.odintsov.dltmessage.PayloadStorageType
 import alexey.odintsov.dltstudio.model.SettingsLogs
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.uicomponents.CustomDropDown
 import alexey.odintsov.uicomponents.buttons.CustomButton
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -130,22 +129,11 @@ fun LogsPanel(callbacks: SettingsDialogCallbacks, settingsLogs: SettingsLogs) {
 
 @Preview
 @Composable
-private fun PreviewLogsPanelTheme() {
-    Column {
-        ThemeManager.CustomTheme(SystemTheme(true)) {
-            PreviewLogsPanel()
-        }
-        ThemeManager.CustomTheme(SystemTheme(false)) {
-            PreviewLogsPanel()
-        }
-    }
-}
-
-@Preview
-@Composable
 private fun PreviewLogsPanel() {
-    LogsPanel(
-        callbacks = SettingsDialogCallbacks.Stub,
-        settingsLogs = SettingsLogs.Default.copy(defaultLogsFolderPath = "file/path/goes/here"),
-    )
+    PreviewDarkAndLightTheme(true) {
+        LogsPanel(
+            callbacks = SettingsDialogCallbacks.Stub,
+            settingsLogs = SettingsLogs.Default.copy(defaultLogsFolderPath = "file/path/goes/here"),
+        )
+    }
 }

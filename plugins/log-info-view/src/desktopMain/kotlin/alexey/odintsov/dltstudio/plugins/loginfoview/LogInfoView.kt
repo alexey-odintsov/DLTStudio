@@ -2,11 +2,10 @@ package alexey.odintsov.dltstudio.plugins.loginfoview
 
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltstudio.model.contract.LogMessage
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.uicomponents.buttons.CustomButton
 import alexey.odintsov.uicomponents.buttons.ImageButton
 import alexey.odintsov.uicomponents.edit.CustomEditText
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.VerticalScrollbar
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -154,7 +153,7 @@ fun Header(
 @Preview
 @Composable
 private fun PreviewLogSimplifiedInfoView() {
-    ThemeManager.CustomTheme(SystemTheme(false)) {
+    PreviewDarkAndLightTheme(true) {
         val dltMessage = SampleData.create(
             payloadText = "TestView[2797]: onGlobalFocusChanged: oldFocus:com.ui.custom.ProgressBarFrameLayout{f5e8f76 VFE...CL. ......ID 2298,22-2835,709 #7f090453 app:id/theme_container aid=1073741849}, newFocus:com.android.car.ui.FocusParkingView{736743f VFED..... .F...... 0,0-1,1 #7f090194 app:id/focus_parking_view aid=1073741832} {bounds:Rect(0, 0 - 342, 240),hasBoundsTransaction,}",
         )

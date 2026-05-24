@@ -3,12 +3,10 @@ package alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.edit
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.DiagramType
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.uicomponents.CustomDropDown
 import alexey.odintsov.uicomponents.edit.CustomEditText
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -93,19 +91,6 @@ fun EditTimelineFilterFilterPanel(
 
 @Preview
 @Composable
-private fun PreviewEditTimelineFilterFilterPanelThemes() {
-    Column(modifier = Modifier.padding(4.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        ThemeManager.CustomTheme(SystemTheme(isDark = false)) {
-            PreviewEditTimelineFilterFilterPanel()
-        }
-        ThemeManager.CustomTheme(SystemTheme(isDark = true)) {
-            PreviewEditTimelineFilterFilterPanel()
-        }
-    }
-}
-
-@Preview
-@Composable
 private fun PreviewEditTimelineFilterFilterPanel() {
     val filter = TimelineFilter(
         name = "CPU Usage by PID", enabled = true,
@@ -116,9 +101,11 @@ private fun PreviewEditTimelineFilterFilterPanel() {
         testClause = "cpu0: 36.9% cpu1: 40.4% cpu2: 40% cpu3: 43.5% cpu4: 45.3% cpu5: 27.9% cpu6: 16.8% cpu7: 14.1%",
     )
 
-    Column(Modifier.background(Color(238, 238, 238))) {
-        EditTimelineFilterFilterPanel(
-            EditTimelineFilterViewModel(0, filter, {_, _ ->}, {})
-        )
+    PreviewDarkAndLightTheme(true) {
+        Column(Modifier.background(Color(238, 238, 238))) {
+            EditTimelineFilterFilterPanel(
+                EditTimelineFilterViewModel(0, filter, { _, _ -> }, {})
+            )
+        }
     }
 }

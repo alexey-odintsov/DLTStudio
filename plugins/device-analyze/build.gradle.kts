@@ -16,7 +16,6 @@ kotlin {
             }
         }
         commonMain.dependencies {
-            implementation(project(":app-theme"))
             implementation(libs.alexey.odintsov.logger)
             implementation(libs.alexey.odintsov.uicomponents)
             implementation(project(":plugins:contract"))

@@ -16,7 +16,6 @@ kotlin {
         val desktopMain by getting
 
         commonMain.dependencies {
-            implementation(project(":app-theme"))
             implementation(project(":resources"))
             implementation(libs.alexey.odintsov.logger)
             implementation(project(":data-utils"))

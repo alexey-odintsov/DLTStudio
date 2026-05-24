@@ -14,11 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.rememberDialogState
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.uicomponents.buttons.CustomButton
 import alexey.odintsov.uicomponents.CustomDropDown
 import alexey.odintsov.uicomponents.dialogs.DesktopDialogWindow
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.ui.tooling.preview.Preview
 
 data class ChangeLogsOrderDialogState(
@@ -75,10 +74,7 @@ fun ChangeLogsOrderDialogPanel(onApplyClicked: (LogsOrder) -> Unit, logsOrder: L
 @Composable
 private fun PreviewChangeLogsOrderDialogPanel() {
     Column {
-        ThemeManager.CustomTheme(SystemTheme(true)) {
-            ChangeLogsOrderDialogPanel(onApplyClicked = {}, logsOrder = LogsOrder.Timestamp)
-        }
-        ThemeManager.CustomTheme(SystemTheme(false)) {
+        PreviewDarkAndLightTheme(true) {
             ChangeLogsOrderDialogPanel(onApplyClicked = {}, logsOrder = LogsOrder.Timestamp)
         }
     }

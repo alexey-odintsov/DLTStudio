@@ -5,11 +5,10 @@ import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.ExtractorChecke
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.extractors.EntriesExtractor
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.graph.TimelinePreviewFactory
-import alexey.odintsov.dltstudio.theme.SystemTheme
-import alexey.odintsov.dltstudio.theme.ThemeManager
 import alexey.odintsov.uicomponents.CustomDropDown
 import alexey.odintsov.uicomponents.edit.CustomEditText
 import alexey.odintsov.logger.Log
+import alexey.odintsov.uicomponents.preview.PreviewDarkAndLightTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -165,7 +164,7 @@ fun EditTimelineFilterExtractPanel(viewModel: EditTimelineFilterViewModel) {
 @Preview
 @Composable
 private fun PreviewEditTimelineFilterExtractPanel() {
-    ThemeManager.CustomTheme(SystemTheme(true)) {
+    PreviewDarkAndLightTheme(true) {
         val filter = TimelineFilter(
             name = "CPU Usage by PID", enabled = true,
             filters = mutableMapOf(),
