@@ -46,7 +46,6 @@ fun main() = application {
         val settingsDialogState = mainViewModel.settingsDialogState.collectAsState()
 
         window.title = "DLT Studio ${filePath.value}"
-        ThemeManager.setIsDark(true)
         ThemeManager.AppTheme {
             CompositionLocalProvider(
                 LocalFormatter provides DependencyManager.provideFormatter(),
