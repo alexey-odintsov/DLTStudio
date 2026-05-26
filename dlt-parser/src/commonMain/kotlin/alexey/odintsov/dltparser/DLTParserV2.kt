@@ -1,8 +1,8 @@
 package alexey.odintsov.dltparser
 
 import alexey.odintsov.datautils.Endian
-import alexey.odintsov.datautils.isBitSet
-import alexey.odintsov.datautils.toHex
+import alexey.odintsov.datautils.byte.isBitSet
+import alexey.odintsov.datautils.byte.toHex
 import alexey.odintsov.dltmessage.BinaryDLTMessage
 import alexey.odintsov.dltmessage.ControlMessagePayload
 import alexey.odintsov.dltmessage.DLTMessage

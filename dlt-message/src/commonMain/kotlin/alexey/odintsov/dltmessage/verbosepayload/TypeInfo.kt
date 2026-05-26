@@ -1,7 +1,7 @@
 package alexey.odintsov.dltmessage.verbosepayload
 
 import alexey.odintsov.datautils.Endian
-import alexey.odintsov.datautils.isBitSet
+import alexey.odintsov.datautils.int.isBitSet
 
 data class TypeInfo(
     val typeLengthBits: Int = 0,

@@ -1,8 +1,8 @@
 package alexey.odintsov.dltmessage.verbosepayload
 
 import alexey.odintsov.datautils.Endian
-import alexey.odintsov.datautils.readInt
-import alexey.odintsov.datautils.readUShort
+import alexey.odintsov.datautils.bytearray.readInt
+import alexey.odintsov.datautils.bytearray.readUShort
 import alexey.odintsov.dltmessage.Payload
 import alexey.odintsov.logger.Log
 

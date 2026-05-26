@@ -2,9 +2,9 @@ package alexey.odintsov.dltmessage.standardheader
 
 
 import alexey.odintsov.datautils.Endian
-import alexey.odintsov.datautils.isBitSet
-import alexey.odintsov.datautils.readString
-import alexey.odintsov.datautils.readUShort
+import alexey.odintsov.datautils.byte.isBitSet
+import alexey.odintsov.datautils.bytearray.readString
+import alexey.odintsov.datautils.bytearray.readUShort
 import java.io.RandomAccessFile
 
 

@@ -1,6 +1,6 @@
 package alexey.odintsov.dltmessage.extendedheader
 
-import alexey.odintsov.datautils.isBitSet
+import alexey.odintsov.datautils.byte.isBitSet
 import alexey.odintsov.dltmessage.extendedheader.MessageInfo.Companion.messageTypeInfoFromByte
 
 

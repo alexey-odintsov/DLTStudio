@@ -1,6 +1,8 @@
 package alexey.odintsov.dltmessage
 
-import alexey.odintsov.datautils.toHex
+import alexey.odintsov.datautils.bytearray.toHex
+import alexey.odintsov.datautils.int.toHex
+
 
 data class ControlMessagePayload(
     val messageId: Int,

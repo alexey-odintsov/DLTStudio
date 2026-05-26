@@ -1,7 +1,7 @@
 package alexey.odintsov.dltparser.parserv1
 
 import alexey.odintsov.datautils.Endian
-import alexey.odintsov.datautils.readInt
+import alexey.odintsov.datautils.bytearray.readInt
 import alexey.odintsov.dltmessage.verbosepayload.Argument
 import alexey.odintsov.dltmessage.verbosepayload.TypeInfo
 import alexey.odintsov.dltmessage.verbosepayload.VerbosePayload
