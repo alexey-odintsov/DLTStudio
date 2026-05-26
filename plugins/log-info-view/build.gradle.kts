@@ -19,7 +19,7 @@ kotlin {
             implementation(libs.alexey.odintsov.logger)
             implementation(libs.alexey.odintsov.uicomponents)
             implementation(project(":plugins:contract"))
-            implementation(project(":data-utils"))
+            implementation(libs.alexey.odintsov.datautils)
             implementation(project(":dlt-message"))
             implementation(project(":resources"))
             implementation(libs.compose.components.resources)

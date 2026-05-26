@@ -1,7 +1,7 @@
 package alexey.odintsov.dltstudio.plugins.dltdetailedview
 
-import alexey.odintsov.datautils.toBinary
-import alexey.odintsov.datautils.toHex
+import alexey.odintsov.datautils.byte.toBinary
+import alexey.odintsov.datautils.byte.toHex
 import alexey.odintsov.dltmessage.SampleData
 import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
 import alexey.odintsov.dltstudio.model.contract.LogMessage

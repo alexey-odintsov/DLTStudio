@@ -1,9 +1,9 @@
 package alexey.odintsov.dltmessage.verbosepayload
 
 import alexey.odintsov.datautils.Endian
-import alexey.odintsov.datautils.readInt
-import alexey.odintsov.datautils.readShort
-import alexey.odintsov.datautils.toHex
+import alexey.odintsov.datautils.bytearray.readInt
+import alexey.odintsov.datautils.bytearray.readShort
+import alexey.odintsov.datautils.bytearray.toHex
 
 
 data class Argument(

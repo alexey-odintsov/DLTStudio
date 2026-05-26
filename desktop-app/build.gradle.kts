@@ -18,7 +18,7 @@ kotlin {
         commonMain.dependencies {
             implementation(project(":resources"))
             implementation(libs.alexey.odintsov.logger)
-            implementation(project(":data-utils"))
+            implementation(libs.alexey.odintsov.datautils)
             implementation(project(":extraction"))
             implementation(project(":dlt-message"))
             implementation(project(":dlt-parser"))

@@ -1,7 +1,7 @@
 package alexey.odintsov.dltmessage
 
 import alexey.odintsov.datautils.Endian
-import alexey.odintsov.datautils.readInt
+import alexey.odintsov.datautils.bytearray.readInt
 import alexey.odintsov.dltmessage.extendedheader.ExtendedHeader
 import alexey.odintsov.dltmessage.extendedheader.MessageType
 import alexey.odintsov.dltmessage.extendedheader.MessageTypeInfo
