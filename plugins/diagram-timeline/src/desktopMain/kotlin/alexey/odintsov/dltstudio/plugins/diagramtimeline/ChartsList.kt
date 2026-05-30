@@ -6,6 +6,7 @@ import alexey.odintsov.charts.model.ChartKey
 import alexey.odintsov.charts.model.ChartType
 import alexey.odintsov.charts.model.TimeFrame
 import alexey.odintsov.charts.ui.Chart
+import alexey.odintsov.charts.ui.TimeRuler
 import alexey.odintsov.charts.ui.calculateTimestamp
 import alexey.odintsov.dltstudio.model.contract.LogMessage
 import alexey.odintsov.dltstudio.plugins.diagramtimeline.filters.TimelineFilter
@@ -79,6 +80,7 @@ internal fun ChartsList(
                 Modifier.fillMaxWidth(1f),
                 timeTotal = timeTotal,
                 timeFrame = timeFrame,
+                timeZone = LocalFormatter.current.getTimeZone(),
             )
         }
 
