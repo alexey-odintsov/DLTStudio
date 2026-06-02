@@ -68,6 +68,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combineTransform
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -124,17 +125,23 @@ class MainViewModel(
 
     private val colorFilters = MutableStateFlow<List<ColorFilter>>(emptyList())
     fun getColorFilters(): StateFlow<List<ColorFilter>> = colorFilters.asStateFlow()
-    fun getMergedColorFilters(): StateFlow<List<ColorFilter>> =
-        colorFilters.combineTransform(logsToolbarState) { filters, toolbarState ->
+
+    private val toolbarColorFilterFlags = logsToolbarState
+        .mapNotNull {
+            Triple(it.toolbarWarningChecked, it.toolbarErrorChecked, it.toolbarFatalChecked)
+        }.distinctUntilChanged()
+
+    val mergedColorFilters: StateFlow<List<ColorFilter>> =
+        colorFilters.combineTransform(toolbarColorFilterFlags) { filters, flags ->
             val mergedFilters = mutableListOf<ColorFilter>()
             mergedFilters.addAll(filters)
-            if (toolbarState.toolbarWarningChecked) {
+            if (flags.first) {
                 mergedFilters.add(ColorFilterWarn)
             }
-            if (toolbarState.toolbarErrorChecked) {
+            if (flags.second) {
                 mergedFilters.add(ColorFilterError)
             }
-            if (toolbarState.toolbarFatalChecked) {
+            if (flags.third) {
                 mergedFilters.add(ColorFilterFatal)
             }
             emit(mergedFilters)
